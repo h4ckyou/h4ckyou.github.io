@@ -33,7 +33,7 @@ Noticing the url we can see that it's including the file *home.html*
 We can say that this is vulnerable to local file inclusion lets confirm it 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1c0a9997-6e39-48e1-be14-a0bfa3c115f0)
 
-One way we can exploit this is by trying to perform ntlm hash stealing 
+One way we can exploit this is by trying to perform ntlm hash theft 
 
 Using responder i'll steal the ntlm hash
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6c41a537-551f-4fe6-aaa5-c3c21bcec541)
