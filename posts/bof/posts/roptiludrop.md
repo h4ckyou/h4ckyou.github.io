@@ -70,3 +70,28 @@ unsigned __int64 life()
 }
 ```
 
+Here's what it does:
+- Stack canary is first initialzed to generate random 8 bytes
+- Receives our input using gets() # bug here
+- Uses printf to print out input back without using a format specifier # bug here
+- Gives us a libc printf leak 
+- Reads in 0x50 bytes from standard input to the format buffer
+- Checks if the stack canary is still intact then if it returns true it goes back to the main function
+
+From here we can see that we have a format string vulnerability and also a buffer overflow
+
+Since there's a stack canary and also PIE is enabled we would need to work our way around that
+
+The issue with PIE being enabled is that whenever the program runs it's memory region gets randomized making ROPing difficult 
+
+But since we know we've got a format string vulnerability we can leak an ELF section from the binary then calculate the ELF main address
+
+That's settled how about bypassing the stack canary?
+
+Also it can still be bypassed since we've got a format string vulnerability that means we can leak the canary value off the stack 
+
+That's settled I guess?
+
+Let's get to exploitation!!!
+
+
