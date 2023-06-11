@@ -47,6 +47,26 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 }
 ```
 
-From the main function we see that it just does buffering and then calls the life() function and after the life function returns back to the main it prints out the text `Party!`
+From the main function we see that it just does buffering it then calls the life() function which returns back to the main function and prints out the text `Party!`
 
 Here's the decompiled life function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83ab3d49-82f8-4ea3-9d8e-875c86fc909a)
+
+```c
+unsigned __int64 life()
+{
+  char format[24]; // [rsp+0h] [rbp-20h] BYREF
+  unsigned __int64 v2; // [rsp+18h] [rbp-8h]
+
+  v2 = __readfsqword(0x28u);
+  printf("DO NOT STOP ROPPING\n> ");
+  gets(format);
+  printf(format);
+  printf("What is this? %p\n", &printf);
+  printf("\nDO NOT STOP ROPPING\n> ");
+  fread(format, 1uLL, 0x50uLL, stdin);
+  puts(format);
+  return __readfsqword(0x28u) ^ v2;
+}
+```
+
