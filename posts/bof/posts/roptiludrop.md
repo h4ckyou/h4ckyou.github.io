@@ -147,3 +147,25 @@ for i in range(41):
     except EOFError:
         pass
 ```
+
+Running it shows this address which the last values doesn't change making it suitable for our PIE leak
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/85132920-fa36-40e9-8f58-164b7cc80a25)
+
+Let's open up our debugger in this case `gdb-gef` and get what that address value it's pointed to
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1bb5f30b-a8ee-4cbe-a5a2-f2cf0a051768)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61f3f346-c474-461e-b9b1-5a03e94a7586)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5bc54ecd-d7f1-430e-aef8-0d54718564be)
+
+I used `%15$p` since that's the offset we want to leak 
+
+Ok cool that's the main address of the binary which makes our PIE base address calculation quite easy
+
+Now we need to get the canary address
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aba84a71-b646-4871-b6cd-4fdf6f7b406a)
+
+From the fuzz script I can tell it's at offset 9 also we can confirm it with using a debugger I used `gdb-pwndgb` I'm quite lazy :(
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/89626a6e-0663-494e-9812-660010059010)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/626457b5-1b4a-4594-a8df-6f4c74ae2ab6)
+
+That's confirmed that our canary offset is at 9 
+
