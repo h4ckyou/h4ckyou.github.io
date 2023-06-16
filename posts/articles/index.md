@@ -17,3 +17,4 @@ Hacking cheatsheet....
 - [[Mar 12 2023]] [Authentication](https://h4ckyou.github.io/posts/articles/posts/authentication.html) `Authentication Bypass`
 - [[Mar 13 2023]] [File Upload Vulnerability](https://h4ckyou.github.io/posts/articles/posts/fileupload.html) `File Upload Vuln`
 - [[Mar 13 2023]] [SSRF](https://h4ckyou.github.io/posts/articles/posts/ssrf.html) `Server Side Request Forgery`
+- [[Mar 13 2023]] [SSTI](https://h4ckyou.github.io/posts/articles/posts/ssti.html) `Server Side Template Injection`
