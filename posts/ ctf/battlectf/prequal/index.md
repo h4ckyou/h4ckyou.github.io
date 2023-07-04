@@ -1585,3 +1585,57 @@ After some minutes on looking at it I got the right flag from it
 ```
 Flag: battleCTF{Beyond_Our_Galaxie}
 ```
+
+#### Babyrev
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/248279a7-141a-4c8a-8219-184a1570a855)
+
+After downloading the file I checked the file type
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/974b0710-cf7f-47ab-92de-042bbbe9eb25)
+
+We are working with a x64 binary which is dynamically linked and not stripped
+
+I ran the binary and it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/50c1ccca-efb8-45bb-a5ff-79bb5ff7f354)
+
+I decompiled it using IDA and here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/239f3dd0-b2a1-46df-afab-25485e0f6d28)
+
+```c
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  char s[112]; // [rsp+0h] [rbp-70h] BYREF
+
+  puts("Welcome to battleCTF invite code verification portal.");
+  printf("Enter your invite code to verify: ");
+  fgets(s, 100, stdin);
+  encrypt(s, 15LL);
+  if ( !strcmp(s, _TMC_END__) )
+    puts("Valid code... !");
+  else
+    puts("Invalid code...!");
+  return 0;
+}
+```
+
+We can see what it does:
+- After it prints out some words it receives out input which is stored in array s
+- It then calls the encrypt function on our value
+- After it does that a string compare is done against the s value and _TMC_END__
+- If it is right it prints valid code else invalid code
+
+Here's the value of _TMC_END__:
+
+```
+qpiiatRIU{Pvqp_Ugt3_UDDS_Stn_d0D!_85864r1277qu8195pqqtp6540494pr46}
+```
+
+I didn't take a look at the encrypt function since I saw strcmp is used 🙂
+
+We can cheat our way around here 😜
+
+I opened up gdb-pwngdb and set a breakpoint at the strcmp call with `abcdefghijklmnopqrstuvwxyz` as my input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d0e59a8c-00f2-4a0d-9a2e-08ecc2e802e2)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/017abeff-7f3d-4a45-bba3-0814755e5f2f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e9824377-240b-4488-a5a5-55662d4b56e6)
+
+
