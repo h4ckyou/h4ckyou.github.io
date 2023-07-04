@@ -215,3 +215,63 @@ And now we can get it's content
 ```
 Flag: battleCTF{phP_useragentt_l1kes_wahala_1357f40569024191137a63aa10098f60}
 ```
+
+### Web 8/10 :~
+
+#### Civilization
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5c8c1db4-b900-4284-b233-7290325bb062)
+
+Going over to the web service shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/afd0b9b2-5275-46c1-9a42-03749fc372fb)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61070af0-fe48-4b1a-8bbe-b737c7fc072e)
+
+Since the text says we should get the source code by going to `/?source` let us get it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3594b883-6a0a-4782-a942-e2f025923cd0)
+
+From the page source we get this:
+
+```php
+<?php
+require("./flag.php");
+if(isset($_GET['source'])){
+    highlight_file(__FILE__);  
+}
+if(isset($_GET['ami'])){
+    $input = $_GET['ami'];
+    $cigar = 'africacradlecivilization';
+    if (preg_replace("/$cigar/",'',$input) === $cigar) {
+        africa();
+    }
+}
+include("home.html");
+?>
+```
+
+We can tell what it does:
+- Checks if the GET parameter `ami` is set
+- If it returns true then the value of the parameter is set as the `input` variable
+- The text `africacradlecivilization` is set as the cigar variable
+- It does a preg replace on the value of input and cigar
+- If the value formed after preg replace is done is equal to the cigar value we get the into the africa function which should likely contain the flag
+
+From this we know that we need to make the input value to be `africacradlecivilization` in order to get the flag
+
+But the issue is after preg_replace is done it will check that input is it contains `africacradlecivilization` and replace it with null values
+
+How do we bypass it?
+
+We can do this:
+
+```
+africaafricacradlecivilizationcradlecivilization
+```
+
+Now after preg replace removes the `africacradlecivilization` from that string it then forms `africacradlecivilization` 
+
+Let us get the flag now
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58d511e7-a965-4d01-af0a-7e0d124d8c36)
+
+```
+Flag: battleCTF{pr3gr4plAcebyp455_0x0x0x0x}
+```
+
