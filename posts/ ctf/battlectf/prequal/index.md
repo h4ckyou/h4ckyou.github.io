@@ -483,3 +483,37 @@ Cool we can now dump the flag table
 Flag: battleCTF{Like_based_SQLi_Fu_0af52e4e8696a3dffe7eea367eeb277d}
 ```
 
+#### Cobalt Injection 2 [First Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0de00648-9821-4bd5-82e5-cecf0f9bf3bd)
+
+So this is the revenge for `Cobalt Injection 1` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/64aba670-3a60-40b1-95c2-aab73e276547)
+
+Trying the basic ssti payload still works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0016ed26-1dca-4394-b6bd-47910964e9cd)
+
+But when I try the payload used it doesn't work
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8a464f6f-770c-4e4a-82d2-224d9fdf6181)
+
+Seems they added like a filter of some sort
+
+After playing with it I figured it filters dot and underscores 
+
+Looking at [this](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#jinja2---filter-bypass)
+
+I got the payload to be used and we can see it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/15f339ef-49ca-40bc-8882-348fdede3d96)
+
+I can now get the flag 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/08e7d928-8e80-433c-9a08-237a635b21f0)
+
+```
+Note: Since dot is filtered I did 'cat flag\x2etxt'
+```
+
+And here's the flag
+
+```
+Flag: battleCTF{C0untry_1nj3ct!on_f1!73r_Bypass_534d3d21720fbdb1cc1a58e75e25993a}
+```
+
