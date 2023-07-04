@@ -1,4 +1,4 @@
-<h3> BattleCTF Prequal 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f5aa3f22-d963-4cca-8d4c-744c19c8959f)<h3> BattleCTF Prequal 2023 </h3>
 
 #### Description: This was a fun ctf I participated in as an individual player. Thanks to the organizers for the awesome challenges
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b550193f-987a-48ca-a355-bf5a0948eeef)
@@ -133,5 +133,85 @@ I saw this
 Seems we are in a restriced environment!!
 
 I ran `bash` and it seemed to broke out of it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/93503b8a-c0f2-41a1-94e8-09927afc44b9)
+
+Still I can't run commands
+
+After playing with some characters I figured using command injection payloads work quite well
+
+And I got the flag that way
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3f7223d0-89e8-494e-8cc2-0fe7fe035ffc)
+
+```
+Flag: battleCTF{Agb0d0_J4!L_Awhouangan}
+```
 
 ### BUG|PWN
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6da61151-dfca-43c6-b4af-b3c1e25c0a94)
+
+After going to the twitter page of the [BUG|PWN](https://twitter.com/0xbugpwn/status/1672272446257340417) organizers I found some hex values
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7cdc216a-76b3-40bc-bd7b-bf492785032b)
+
+Well those hex values are the messages while the key is the founder's name `RAVEN` 
+
+I wrote a script to decode it 🙂
+
+```python
+#!/usr/bin/env python3
+from pwn import xor
+import warnings
+warnings.filterwarnings('ignore')
+
+cipher = b'\x0e\x39\x60\x77\x12\x2a\x77\x67\x19\x36\x65\x75\x0a\x3d\x79\x66\x1d\x2e\x73\x2d\x0e\x39\x60\x70\x12\x2a\x75\x65\x19\x36\x67\x75\x0a\x3d\x7a\x64\x1d\x2e\x72\x2c\x0e\x39\x62\x77\x12\x2a\x74\x63\x19\x36\x66\x76\x0a\x3d\x79\x31\x1d\x2e\x70\x7e\x0e\x39\x63\x72\x12\x2a\x75\x33\x19\x36\x67\x27\x0a\x3d\x7a\x31\x1d\x2e\x73\x28\x0e\x39\x61\x73\x12\x2a\x77\x63\x19\x36\x65\x72\x0a\x3d\x7b\x34\x1d\x2e\x70\x7b\x0e\x39\x65\x75\x12\x2a\x76\x6e\x19\x36\x61\x71\x0a\x3d\x79\x6a\x1d\x2e\x72\x2a'
+key = b'RAVEN'
+
+xored = xor(cipher, key).decode()
+print(f'H3X: {xored}')
+
+## LINKS ##
+# https://twitter.com/bug_pwn/status/1672272446257340417
+# https://twitter.com/w31rdr4v3n
+```
+
+Running it decodes to this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2a326366-bc8c-4eac-9d72-ed17f5d0947b)
+
+For some reason python `bytes.fromhex` doesn't work on it so I used cyberchef
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00362a5a-ed3c-4398-8ea4-6fb7e97b7874)
+
+```
+Flag: battleCTF{BUG|PWN_Loves_U0x0x}
+```
+
+###  php zlib 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b6ed939a-441d-40d4-8e38-e4d027c49531)
+
+We are given the source and also the web service url
+
+To be honest I didn't take a look at the source 😃
+
+After going to the web service I saw the header to be this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bbca78f0-8f50-4232-95c7-6e17d2524c78)
+
+The user agent header value looks interesting:
+
+```
+PHP/8.1.0-dev
+```
+
+Searching for exploits leads [here](https://www.exploit-db.com/exploits/49933)
+
+Running it works and we are root on the docker container
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/17618b4f-b19a-4d7d-9e91-ed328c17e351)
+
+But the flag isn't there. 
+
+I then used `find` command to get the path to where the flag is 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b2a06d38-e047-429f-b036-118bd6fbfbef)
+
+And now we can get it's content
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/22a95025-8df5-4c33-a701-395eea578a80)
+
+```
+Flag: battleCTF{phP_useragentt_l1kes_wahala_1357f40569024191137a63aa10098f60}
+```
