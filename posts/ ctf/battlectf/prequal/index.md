@@ -790,3 +790,18 @@ void check_capcha(int login, int auth) {
 	}
 }
 ```
+
+Since we know there's a buffer overflow that means we can overwrite the return address `EIP` and set it anywhere we like
+
+And in x86 which is the binary architecture arguments are passed from the stack as fun, ret, arg1, arg2... Since the ret address in the next step will confuse the parameter passing, so ret is generally pressed
+
+Now let us get the offset needed to overwrite the instruction pointer and I'll use gdb-gef for it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a96785a9-12bc-473d-9bb6-6e86b20171cd)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/20326d72-1d49-4f85-a8af-c14b3cc0155c)
+
+The offset is 22
+
+I'll also need some pop gadgets
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6716aad0-55b2-4d8b-a524-23a66877f794)
+
+Here's my exploit [script]()
