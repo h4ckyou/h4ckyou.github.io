@@ -43,6 +43,7 @@
 ## Reverse Engineering
 - SEYI
 - Welcome
+- Infinity
 - babyrev
 - checker
 - Mazui
@@ -1392,7 +1393,7 @@ undefined8 hausa(void)
 }
 ```
 
-It returns 0xf which is an essential assembly value needed for performing Sigreturn Oriented Programming (SROP) 
+It returns 0xf which is an essential assembly instruction needed for performing Sigreturn Oriented Programming (SROP) 
 
 In the hood it does
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/93665173-11ab-4e10-9ee6-ec857a414106)
@@ -1492,4 +1493,78 @@ It also works remotely
 ```
 Flag: battleCTF{Ethnicity_SigROP_Syscall_Army_f0d9e29e9c1d03c996083bb9c3325d33}
 ```
+
+### Reverse Engineering 6/8 :~
+
+#### SEYI 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/afddabf1-743a-41ca-9161-dff46bc6c2d5)
+
+After downloading the binary running strings on it gave me the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f28863d2-b363-410d-9983-59c5f56d9932)
+
+```
+Flag: battleCTF{The_path_to_light}
+```
+
+#### Welcome
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dff0c77f-12fc-4531-a3b3-dd2c4bc6999c)
+
+After downloading the binary I checked the file type
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3567618-84e8-4e25-89cd-9d65de607bd5)
+
+From the result we can see it's a statically linked binary 
+
+Running it just shows some text
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/92bc3277-5a31-4039-a256-77d8122c787f)
+
+Opening it up in gdb-gef and disassemblying the _start function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4f64832a-4c3b-48cc-8102-a87c0c97e057)
+
+From there we can see it does a simple calculation
+
+I just did the same thing but with python here's the script
+
+```
+#!/usr/bin/python3
+a = 0x522d1b20f6
+b = a + 0x1ee2eeee
+c = b ^ 0xaa84aaa
+print(bytes.fromhex(hex(c)[2:]))
+```
+
+Running it gives:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad8dbd2d-9b1b-4bbb-a1da-9f7f52de40a4)
+
+So here's how I came about it
+
+From the assembly instruction it does
+
+```asm
+   0x0000000000401000 <+0>:     movabs rbx,0x522d1b20f6
+   0x000000000040100a <+10>:    mov    rax,rbx
+   0x000000000040100d <+13>:    add    rax,0x1ee2eeee
+   0x0000000000401013 <+19>:    nop
+   0x0000000000401014 <+20>:    xor    rax,0xaa84aaa
+```
+
+And what that does is:
+- Stores the value of 0x522d1b20f6 to the rbx
+- Moves the rbx to the rax
+- Adds 0x1ee2eeee to the rax
+- Xors the rax with 0xaa84aaa
+
+```
+Flag: battleCTF{RAVEN}
+```
+
+#### Infinity
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/06123516-73e7-4174-9853-6d60fc6d380d)
+
+After downloading the binary I checked the file type
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/35a7f3d6-ebbf-4556-b792-be41a91e5a9a)
+
+We are working with x64 binary which is dynamically linked and not stripped
+
+When I tried running it I got seg fault
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a6ee577-b19a-44ad-acf1-4581396a8ecb)
 
