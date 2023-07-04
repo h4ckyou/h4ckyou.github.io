@@ -370,6 +370,7 @@ Going over to the web page shows this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f2aa757-ee37-4504-87c4-4696e1d20d29)
 
 Checking wappalyzer shows it is PHP but is it ?
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b78344fa-1490-4571-8c87-1b2d4b42ffd7)
 
 I confirmed using `curl` and it shows it is python werkzeug
