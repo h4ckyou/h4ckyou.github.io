@@ -1548,10 +1548,10 @@ From the assembly instruction it does
 ```
 
 And what that does is:
-- Stores the value of 0x522d1b20f6 to the rbx
+- Stores the value of `0x522d1b20f6` to the rbx
 - Moves the rbx to the rax
-- Adds 0x1ee2eeee to the rax
-- Xors the rax with 0xaa84aaa
+- Adds `0x1ee2eeee` to the rax
+- Xors the rax with `0xaa84aaa`
 
 ```
 Flag: battleCTF{RAVEN}
@@ -1568,3 +1568,20 @@ We are working with x64 binary which is dynamically linked and not stripped
 When I tried running it I got seg fault
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a6ee577-b19a-44ad-acf1-4581396a8ecb)
 
+I opened it up in gdb then saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/918d88a7-286d-433d-a9b1-8a808759038f)
+
+Disassemblying it gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cd227f3d-325b-4900-9472-6674d136c05e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/140450dd-bcc9-413f-863e-d42fc2822cc8)
+
+Looking at that we can see some push instruction which will cause the stack to be unstable causing the seg fault
+
+I took those values out and on decoding it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dc3c3d40-456b-4cd1-8f95-ac7793fa3027)
+
+After some minutes on looking at it I got the right flag from it
+
+```
+Flag: battleCTF{Beyond_Our_Galaxie}
+```
