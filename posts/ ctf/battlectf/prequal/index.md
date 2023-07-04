@@ -630,3 +630,16 @@ And after doing that I got [this](https://www.google.com/maps/place/Boulevard+de
 ```
 Flag: battleCTF{Google_Pixel4XL_back_Benin_Cotonou}
 ```
+
+#### Base64
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56e84680-78de-4571-931d-48d5dc2573a9)
+
+After looking around the platform I found the base64 encoded string [here](https://prequal.battlectf.online/users?page=6)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a268c1f2-0466-46fb-bb25-b790a542eef4)
+
+Decoding it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3142fd8e-4f4a-4f89-99b7-d66c9272e932)
+
+```
+Flag: battleCTF{b4s3_64_4_3nc0d1n9}
+```
