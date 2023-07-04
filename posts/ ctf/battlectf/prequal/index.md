@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/df7bddc4-0a78-4b23-9c71-412e590135e1)<h3> BattleCTF Prequal 2023 </h3>
+<h3> BattleCTF Prequal 2023 </h3>
 
 #### Description: This was a fun ctf I participated in as an individual player. Thanks to the organizers for the awesome challenges
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b550193f-987a-48ca-a355-bf5a0948eeef)
