@@ -1638,4 +1638,72 @@ I opened up gdb-pwngdb and set a breakpoint at the strcmp call with `abcdefghijk
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/017abeff-7f3d-4a45-bba3-0814755e5f2f)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e9824377-240b-4488-a5a5-55662d4b56e6)
 
+Now you can see the strcmp call on our encrypted input with the flag compared value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/21052480-6735-4c72-a463-9b772a7f378a)
+
+Since we know our input will be turned to: `pqrstuvwxyzabcdefghijklmno` and it's compared against `qpiiatRIU{Pvqp_Ugt3_UDDS_Stn_d0D!_85864r1277qu8195pqqtp6540494pr46}` 
+
+I can match it to get the right input:
+
+```
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+p q r s t u v w x y z a b c d e f g h i j k l m n o
+```
+
+After doing that I got the flag
+
+```
+Flag: battleCTF{Agba_Fre3_FOOD_Dey_o0O!_85864c1277bf8195abbea6540494ac46}
+```
+
+#### Checker
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e1af621-23ad-47df-966e-842cd10c41e3)
+
+I checked the file type
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c80ad860-8e7a-4cec-8e26-0a01b8343f15)
+
+We are working with a x64 binary which is dynamically linked and it's stripped
+
+On running shows the invite code prompt as the previous one
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/104ce891-a107-4bd6-bdf6-ba996526fc10)
+
+Decompiling it in IDA here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ec82163-175b-4a45-9c89-b75c90de853e)
+
+```c
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  char s[112]; // [rsp+0h] [rbp-70h] BYREF
+
+  puts("Welcome to battleCTF invite code verification portal.");
+  printf("Enter your invite code to verify: ");
+  fgets(s, 100, stdin);
+  sub_1179(s);
+  if ( !strcmp(s, s2) )
+    puts("Valid code... !");
+  else
+    puts("Invalid code...!");
+  return 0LL;
+}
+```
+
+It uses strcmp again !! Very good
+
+I'll cheat my way around here again
+
+Following the way I solved the previous one you should get this
+
+```
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+f g h i j k l m n o p q r s t u v w x y z a b c d e
+
+expected = gfyyqjHYK{Flg4_d0z_i3d_xr0p3_1lg0?}
+```
+
+From there we can map the char of the flag to be:
+
+```
+Flag: battleCTF{Agb4_y0u_d3y_sm0k3_1gb0?}
+```
+
 
