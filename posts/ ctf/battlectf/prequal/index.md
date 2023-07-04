@@ -1524,7 +1524,7 @@ From there we can see it does a simple calculation
 
 I just did the same thing but with python here's the script
 
-```
+```python
 #!/usr/bin/python3
 a = 0x522d1b20f6
 b = a + 0x1ee2eeee
