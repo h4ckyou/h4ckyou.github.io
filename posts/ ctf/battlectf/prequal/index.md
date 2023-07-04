@@ -1786,5 +1786,108 @@ So the flag is:
 Flag: battleCTF{AFRICAFAMILY}
 ```
 
-####
+#### Blind
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2a8cf089-0468-476d-ba82-f21b7b3ddab5)
+
+Checking the file content shows this
+
+```
+&?g}-PN(9}P5MAm&?h7^PPOlbIq>h1&?hiR&?i)xPP!xdZ2CY{&?h.0PTrZKO-lrJ&?i*vPR*.wG5SCP&?h>4PQB/jXz<fx&?hE]PTrZKKk=*:&?hE]PT:0OQt?&1&?j0APQB/jG5SD3&?hE]PT:0OO-lrH&?i*vPR*.wM/sWz&?g[.PN#f@G5SC^&?i*vPN#f@O-lrp&?i:tPQjVhRq!e8&?i:tPN#f@WbN:H&?i2]
+```
+
+Using cyberchef magic decoded it to be this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/17a0ee01-de9f-476a-b0d5-97c237b28cd7)
+
+It decoded to this:
+
+```
+⠃⠁⠞⠞⠇⠑⠉⠞⠋{⠺⠓⠽⠸⠙⠴⠝⠶⠸⠦⠂⠂⠝⠙⠸⠏⠒⠴⠏⠂⠒⠸⠢⠅⠽⠙⠂⠧⠒⠸⠝⠴⠸⠦⠗⠲⠂⠂⠂⠒⠸⠂⠝⠢⠶⠗⠥⠉⠶⠂⠴⠝⠢}
+```
+
+That's Braille cipher and cyberchef decoded it to get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c7881c2b-accd-4c22-9762-1bed7d29ed58)
+
+```
+Flag: BATTLECTF{WHY_D0N7_811ND_P30P13_5KYD1V3_N0_8R41113_1N57RUC710N5}
+```
+
+#### Gooss
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a459e4e7-42a2-4286-bdb2-c2ac165bd279)
+
+Looking at the script given shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e194ca3-23a8-482c-8a6a-61dd22ff0084)
+
+```python
+import random
+flag = 'battleCTF{******}'
+a = random.randint(4,9999999999)
+b = random.randint(4,9999999999)
+c = random.randint(4,9999999999)
+d = random.randint(4,9999999999)
+e = random.randint(4,9999999999)
+
+enc = []
+for x in flag:
+    res = (2*a*pow(ord(x),4)+b*pow(ord(x),3)+c*pow(ord(x),2)+d*ord(x)+e)
+    enc.append(res)
+print(enc)
+
+#Output: [1245115057305148164, 1195140205147730541, 2441940832124642988, 2441940832124642988, 1835524676869638124, 1404473868033353193, 272777109172255911, 672752034376118188, 324890781330979572, 3086023531811583439, 475309634185807521, 1195140205147730541, 2441940832124642988, 1578661367846445708, 2358921859155462327, 1099718459319293547, 773945458916291731, 78288818574073053, 2441940832124642988, 1578661367846445708, 1099718459319293547, 343816904985468003, 1195140205147730541, 2527132076695959961, 2358921859155462327, 2358921859155462327, 1099718459319293547, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 3291439457645322417]
+```
+
+From looking at writeups online based on this I figured that maybe to solve it the inverse will be calculated with gaussian elimination
+
+But after searching deeper I got this which works faster
+
+```python
+from sage.all import *
+
+var('a', 'b', 'c', 'd', 'e')
+
+solution = solve([1245115057305148164 == 2*a*98**4 + b*98**3 + c*98**2+d*98+e,
+       1835524676869638124 == 2*a*108**4 + b*108**3 + c*108**2+d*108+e,
+       1195140205147730541 == 2*a*97**4 + b*97**3 + c*97**2+d*97+e,
+       2441940832124642988 == 2*a*116**4 + b*116**3 + c*116**2+d*116+e,
+       1404473868033353193 == 2*a*101**4 + b*101**3 + c*101**2+d*101+e], [a,b,c,d,e])
+
+ct = [1245115057305148164, 1195140205147730541, 2441940832124642988, 2441940832124642988, 1835524676869638124, 1404473868033353193, 272777109172255911, 672752034376118188, 324890781330979572, 3086023531811583439, 475309634185807521, 1195140205147730541, 2441940832124642988, 1578661367846445708, 2358921859155462327, 1099718459319293547, 773945458916291731, 78288818574073053, 2441940832124642988, 1578661367846445708, 1099718459319293547, 343816904985468003, 1195140205147730541, 2527132076695959961, 2358921859155462327, 2358921859155462327, 1099718459319293547, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 3291439457645322417]
+
+print(solution)
+
+var('x')
+poly = 2*solution[0][0].rhs()*x**4 + solution[0][1].rhs()*x**3 + solution[0][2].rhs()*x**2+solution[0][3].rhs()*x+solution[0][4].rhs()
+
+pt = ""
+for ciphertext in ct:
+    #sol = solve(poly == ciphertext, x)
+    for b in range(256):
+        value = int(poly(x=b))
+        if value == ciphertext:
+            pt += chr(b)
+            break
+    else:
+        print(f"Couldn't solve '{ciphertext}' in bytes")
+print(pt)
+```
+
+5 unknown variables can be solved with 5 equations. After this you have the random polynomial, and you could either calculate the inverse of it to get the plaintext or you could also substract the ciphertext value from the polynomial and then the plaintext should be one of the zeros of that new polynomial.
+
+```python
+1245115057305148164 = 2*a*98^4 + b*98^3 + c*98^2+d*98+e
+1835524676869638124 = 2*a*108^4 + b*108^3 + c*108^2+d*108+e
+1195140205147730541 = 2*a*97^4 + b*97^3 + c*97^2+d*97+e
+2441940832124642988 = 2*a*116^4 + b*116^3 + c*116^2+d*116+e
+1404473868033353193 = 2*a*101^4 + b*101^3 + c*101^2+d*101+e
+```
+
+With that, running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f1137f2-35a2-46c3-ac2a-5c1d992aead5)
+
+```
+Flag: battleCTF{Maths_W1th_Gauss_0x0x0x}
+```
+
+And that's all 🙂
+
+Thanks for reading 😄
 
