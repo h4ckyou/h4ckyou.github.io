@@ -935,7 +935,7 @@ It's a small C file and here's what it does:
 - The main function prints out some text and uses gets() to receive our input # bug here
 - The function print_file is never called but what it does is to print out the content of what is passed in the argument
 
-Now the aim of what we should do here is that since we know there's a buffer overflow since gets is used we can overwrite the EIP to call the print_file function then pass in a memory address containing `flag.txt` as the argument
+Now the aim of what we should do here is that since we know there's a buffer overflow since gets is used we can overwrite the RIP to call the print_file function then pass in a memory address containing `flag.txt` as the argument
 
 But the issue is `flag.txt` isn't in the binary memory and we can't pass it as a string but rather an address
 
