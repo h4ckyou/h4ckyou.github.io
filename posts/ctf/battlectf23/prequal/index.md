@@ -10,7 +10,7 @@
 - Way
 - Go
 - Minon Agbodo
-- BUG|PWN
+- `BUG|PWN`
 - php zlib
 
 ## Web
