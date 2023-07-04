@@ -1266,3 +1266,87 @@ And it works remotely also
 ```
 Flag: battleCTF{ROP_sw33t_R0P}
 ```
+
+#### battleCTF Event Portal 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5368fdbc-a467-4825-950d-7e93b94cdcbc)
+
+After downloading the attached file and unzipping it I got the source code and the make file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/afd4f885-1ff2-4e39-a9d7-d55539496992)
+
+Checking the source code shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5cb79293-44d4-4ef5-903a-db4e0a9b91fc)
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main(){
+	long pass;
+	puts("Welcome to battleCTF Event portal.");
+	printf("Enter you invite code to participe:");
+	scanf("%s",&pass);
+	if(pass * 0x726176656e70776eu == 0x407045989b3284aeu){
+		execl("/bin/sh", "sh", 0);
+	}
+	else
+		puts("\nWrong password ..!");
+	return 0;
+}
+
+```
+
+We can see after it prints out some text it then receives our input using scanf without specifying the amoung of data to read in (doesn't matter in this even though it's a buffer overflow)
+
+It then compares the result formed from multilying our input with `0x726176656e70776eu` to `0x407045989b3284aeu`
+
+If it returns true it spawns a shell
+
+We can try to decode that value and try to get it's inverse but it isn't possible
+
+So I used z3 which is a powerful framework for solving problems
+
+[This](https://infosecadalid.com/2021/08/27/my-introduction-to-z3-and-solving-satisfiability-problems/) helped me with it 
+
+Here's the script
+
+```python
+#!/usr/bin/python3
+from z3 import *
+
+s = Solver()
+
+x = BitVec("0", 64)
+
+s.add(((x * 0x726176656e70776e) & 0xffffffffffffffff) == 0x407045989b3284ae)
+
+if s.check() == sat:
+    solution = s.model()
+    solution = hex(int(str(solution[x])))
+    solution = solution[2:]
+
+    value = ""
+    i = int(len(solution) / 2)
+    while i > 0:
+        i -= 1
+        y = solution[(i*2):(i*2) + 2]
+        value += chr(int("0x" + y, 16))
+
+    print("Value: " + value)
+else:
+    print("Error")
+```
+
+Running it gives `anniepwn`
+
+```
+➜  eventportal python3 solve.py
+Value: anniepwn
+➜  eventportal 
+```
+
+Now I can connect to the remove instance and give that as the value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e38325bf-2240-40ad-8dde-bbb66e097e31)
+
+```
+Flag: battleCTF{N3w_1nteg3r_0v3rfl0w_bb4a0612f6b3ad0d04223e022687600c}
+```
