@@ -1764,3 +1764,27 @@ Running it gives the flag
 ```
 Flag: battleCTF{S1mple_MovInShell}
 ```
+
+### Cryptography 3/8 :~
+
+#### Back TO Origin
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/57674b6a-2abc-4e8f-b58e-a2c5b0c82aae)
+
+We are given this image file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ea76464b-1ebf-43cb-bc4a-510ba171557e)
+
+I searched it up and found it to be `Hieroglyphs`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f2b7a7a-513f-4945-b92c-fb183f20a455)
+
+After searching for a decoder I found [this](ancient-egyptian-hieroglyphs)
+
+Using it I decoded the image to be `AFRICAFAMILY`
+
+So the flag is:
+
+```
+Flag: battleCTF{AFRICAFAMILY}
+```
+
+####
+
