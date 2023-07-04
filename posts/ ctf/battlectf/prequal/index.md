@@ -517,3 +517,20 @@ And here's the flag
 Flag: battleCTF{C0untry_1nj3ct!on_f1!73r_Bypass_534d3d21720fbdb1cc1a58e75e25993a}
 ```
 
+#### Perfect Timing 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3e4f944-f9cd-4729-844f-3bc0c7985a5b)
+
+Going over to the web page shows this login page
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e6017fb6-3be3-44f2-a6e6-d27ebbd0dd75)
+
+I saved the post request to a file to check for sql injection
+
+And it turned out to be a time based sql injection
+
+Just follow the process I did for `Hebiossa Injection` you will get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/74940e68-242d-4f20-b7dd-7a50282da6a7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/41204953-0d44-4826-b3c8-ee56c3b35869)
+
+```
+Flag: battleCTF{Common_SQLi_Time_558de3659cc32ee7bc9f1745ecd63ae2}
+```
