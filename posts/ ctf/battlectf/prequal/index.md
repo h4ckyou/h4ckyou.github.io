@@ -643,3 +643,62 @@ Decoding it gives the flag
 ```
 Flag: battleCTF{b4s3_64_4_3nc0d1n9}
 ```
+
+#### GIFt
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9e93c20e-f777-4b28-a572-5cad31c258b7)
+
+Checking the file type of the attached file shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c7a44c8b-268c-431f-a645-0321fb19f65f)
+
+It doesn't recognise it cause the file header is messed up 
+
+So I used `xxd` to check the hex dump
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/962af485-bc9c-4f94-ba72-9165c8727c07)
+
+We can see this `NETSCAPE2.0`
+
+After doing research I found that it is a GIF file
+
+And in order to fix it we need to append this to the file header `0x47494638`
+
+I made a script to do that
+
+```python
+#!/usr/bin/python3
+
+buf = open('gift.gif', 'rb').read()
+buf = b"\x47\x49\x46\x38" + buf
+with open('fix.gif', 'wb') as fd:
+    fd.write(buf)
+```
+
+Now we can check the file type for `fix.gif`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/812da551-df91-4675-b44f-6eb619a86788)
+
+Opening it shows some text file 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/95b3d6f4-6209-4d40-9a85-ccd7653ce27a)
+
+But since it is gif it removes and come back and I can't note the word 
+
+So I used stegsolve to extract the frames
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0b0c02a1-723a-4be1-a8d9-909bb9cd09a7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0765a414-0e65-4bb2-ad42-54bb5ad562d1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5803f266-ad36-44be-8442-23da193e71d9)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2f79748b-3c54-45c2-817c-f482342f08c7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1a45f0dd-4ea7-42c7-8a41-4ba87165b82c)
+
+Knowing that I just decoded it 
+
+```python
+#!/usr/bin/python3
+import base64
+s='ZmxhZ3tnMWZfb3JfajFmfQ=='
+print(base64.b64decode(s))
+```
+
+And got the flag
+
+```
+Flag: battleCTF{g1f_or_j1f}
+```
+
