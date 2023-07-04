@@ -275,3 +275,210 @@ Let us get the flag now
 Flag: battleCTF{pr3gr4plAcebyp455_0x0x0x0x}
 ```
 
+#### Own Reality
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/51a08221-339b-47b7-8c06-ea1a13b25026)
+
+Going over to the web page shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ad76c5b-c73b-4893-90af-d577132b7942)
+
+Immediately my `DogGit` firefox extension showed that there's an exposed `/.git` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/421f8c9a-9c1f-47e0-8603-4cffe31eaa85)
+
+Going over to `/.git` shows that it is indeed there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/69909769-e643-41b8-aafc-eaecf938f115)
+
+I'll use `git-dumper` to dump the git repo
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9b25ff75-45ee-4847-97df-ba5c713d6b4b)
+
+Now that is done let us check the commit using `git log`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2710bb92-76c7-44df-9d62-7a3577d33d3a)
+
+I can view the commit `a1346a3abab8f97748e5480b61eb6824d4692f44` using `git show a1346a3abab8f97748e5480b61eb6824d4692f44`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cbdfca62-5b6b-4daf-bd81-8bff15df7675)
+
+We can see this:
+
+```
+.__..._..__...._.___._...___._...__.__...__.._._._....__._._._..._...__..____.__._._._._.__.___..__._.__.__.___..__.____.___.___.__.___.._._____.__..._..__._.._.___._...___..__._._____..__..__..___.....__._...__.._._.__.._._.__...._..__._....___.._.__..._...__._....__..._..__.___.__.._._.__.._._..__.._..__..__..__..__...__._._.__...._..__..._..__..__.__..__..__..._..__.._...__...__.__...__.__...._..__.__..__..__...__..__..__.._...__.___._____._
+```
+
+It looks like morse code but after decoding it from morse doesn't give the flag
+
+After trying hours on this I then tried to convert the dots to 0 and underscores to 1
+
+I wrote a script to do that
+
+```python
+#!/usr/bin/python
+
+encoded = ".__..._..__...._.___._...___._...__.__...__.._._._....__._._._..._...__..____.__._._._._.__.___..__._.__.__.___..__.____.___.___.__.___.._._____.__..._..__._.._.___._...___..__._._____..__..__..___.....__._...__.._._.__.._._.__...._..__._....___.._.__..._...__._....__..._..__.___.__.._._.__.._._..__.._..__..__..__..__...__._._.__...._..__..._..__..__.__..__..__..._..__.._...__...__.__...__.__...._..__.__..__..__...__..__..__.._...__.___._____._"
+decode1 = encoded.replace('.', '0')
+decode2 = decode1.replace('_', '1')
+print(decode2)
+```
+
+Running it gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e9d31f9c-35da-4e93-b926-dc96a8610598)
+
+Using cyberchef to decode it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/29e490f5-58ee-402b-8683-a825721bf188)
+
+```
+Flag: battleCTF{Unknown_bits_384eea49b417ee2ff5a13fbdcca6f327}
+```
+
+#### It shock you 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4eade6ff-12de-4a35-8c2b-b25f8e39ba5f)
+
+Going over to the web service shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83028fb3-6437-49d9-a59d-7432ebcaa598)
+
+The apache version looks interesting
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4aad0eea-1625-400b-b54d-5ba9fea5ed2c)
+
+```
+Apache/2.4.49
+```
+
+Searching for exploits leads [here](https://github.com/CalfCrusher/Path-traversal-RCE-Apache-2.4.49-2.4.50-Exploit/blob/main/main.py) 
+
+From the source it does a directory transversal by using `.%2e`
+
+Running the exploit shows it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e2c8a909-5c37-4d65-9437-01866f89bc78)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a8cf47c8-090c-4e57-bf6d-7c3c4d945cf4)
+
+Since we want to look for the flag I decided to do it manually
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/25157e23-1276-4fe8-a2b6-8cdfef83262a)
+
+The flag is at `/flag.txt` but when I try access it I get 404 error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f0a4567f-a41d-4132-90b2-588c65ca9c1e)
+
+So here's what I did
+
+Since we know we can read a direct file `/etc/passwd` I can just go back one directory and get the flag `/etc/passwd/../flag.txt`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d34ca430-b485-4b4b-b83a-50ccfc6c103b)
+
+```
+Flag: battleCTF{Apache_2.4.49_wahala_26e223dfefdcc5ce214a4b6ad83f5a49}
+```
+
+### Cobalt Injection [First Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f68ef9ad-b9be-4d66-914a-55d67d0d2cec)
+
+Going over to the web page shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f2aa757-ee37-4504-87c4-4696e1d20d29)
+
+Checking wappalyzer shows it is PHP but is it ?
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b78344fa-1490-4571-8c87-1b2d4b42ffd7)
+
+I confirmed using `curl` and it shows it is python werkzeug
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7b4aa20e-40b7-43fc-ac02-b6e4e4f1bb08)
+
+Now that the web server language is confirmed let us get to solving it
+
+Checking the page source shows how it excepts the capital to be guessed
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/395db72a-a279-439d-92c7-c3a82d0b3e5d)
+
+```
+<!-- IP?capital=Benin -->
+```
+
+Doing that I noticed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/22757e57-ef77-45b8-91c3-6730c1e3df7e)
+
+We can now try SSTI payload since our input value seems to be rendered back
+
+And our payload gets evaluated
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/353e39d9-0f7b-4eec-995f-78531325debc)
+
+Checking the config doesn't really show any thing interesting
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/eb2a9b46-8f71-433f-b8ea-0336b343ca05)
+
+Let us get remote code execution then
+
+I used a payload gotten from [PayloadAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#exploit-the-ssti-by-calling-ospopenread)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/03fc99de-7789-42b8-9384-ac031310f826)
+
+```
+Flag: battleCTF{wahala_1nj3ction_in_country}
+```
+
+#### Africa [First Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b070fbc5-d7dc-4018-b0d4-edcccebe54bf)
+
+Going over to the web service shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/92d8cd58-1ff4-4f0b-9944-aef72923d971)
+
+Since this is a http-header based sorta web chall let us play with the header from burp
+
+I changed the `User-Agent` to `africa` and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/eb7baa85-fdab-4ed6-bcb4-b8a3053fa046)
+
+Hmm it's saying that it isn't coming from `local client` 
+
+I can use the `X-Forwarded-For` header
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a7dcd7a-4f61-4f46-a76f-327a5fa545cd)
+
+Now I get that error
+
+We can use the `Referer` header for that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a5fb78a-2938-4017-a46b-8f990f7ad446)
+
+Since this is based on the tracking header which is `DNT` 
+
+I'll set it to 1 and I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dc53882f-b987-44f0-8767-2eeb15f7927c)
+
+Instead of doing that manually I made a script for it 
+
+```python
+#!/usr/bin/python3
+import requests
+from bs4 import BeautifulSoup
+
+url = 'http://chall.battlectf.online:8081/'
+headers = {
+    'User-Agent': 'africa',
+    'DNT': '1',
+    'X-Forwarded-For': '127.0.0.1',
+    'Referer': 'battlectf.online'
+}
+
+req = requests.get(url, headers=headers)
+reqz = BeautifulSoup(req.text, 'html.parser')
+div_tag = reqz.find('div', class_='container')
+flag = div_tag.get_text(strip=True)
+print(flag)
+```
+
+#### Hebiosso injection 
+
+Going over to the web service shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04e44e8a-6bd4-4b06-a439-d09226606e46)
+
+One thing we can try here is sql injection 🙂
+
+I saved the search request to a file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/add106d2-7f3b-4f68-88b8-239d5cc0f176)
+
+Now we can use sqlmap to get check it
+
+Doing that shows it is vulnerable to `UNION query` sql injection
+
+Let us get the database present
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e6ebac90-4f69-4b84-9d4e-15e135f3f32e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/410f8dd3-45dc-4d9f-9f6a-0bc72f3c5827)
+
+So the database is `hebiosso` now let us get the tables present
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b122ac02-3074-424f-8cf8-da43ab4ad5ec)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/20bd726d-a924-4afe-9fca-acdb1817c72b)
+
+Cool we can now dump the flag table
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/464b7f2e-0c09-4d56-beda-a4a50dbf2e3a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/88f75b4e-bfad-4e0e-9a13-3491d12fd65a)
+
+```
+Flag: battleCTF{Like_based_SQLi_Fu_0af52e4e8696a3dffe7eea367eeb277d}
+```
+
