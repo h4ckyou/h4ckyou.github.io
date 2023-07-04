@@ -32,7 +32,7 @@
 - Gift
 - TorrentVerse
 
-## PWN
+## Binary Exploitation
 - AM1
 - youpi
 - AXOVI
@@ -702,3 +702,91 @@ And got the flag
 Flag: battleCTF{g1f_or_j1f}
 ```
 
+### Binary Exploitation 6/10 :~
+
+#### BlackRop
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ba882ce7-3452-4310-83f7-fb1af63976de)
+
+After downloading the file and unzipping it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/179782af-8b09-4845-807b-cbf251c439b1)
+
+Source code is given
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad2f99d2-d0a8-4980-8336-1daef2abccdd)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/69f59c40-1a4b-4c1e-8a5f-70ad4f59d4ee)
+
+From the source code we can see the main function calls the vuln function
+
+And the vuln function is vulnerable to buffer overflow since it uses `gets()` to receive our input
+
+```c
+void vuln()
+{
+	char buffer[10];
+
+	printf("check your identity and read the flag.\n");
+	gets(buffer);
+}
+```
+
+There's a win function called read_flag()
+
+```c
+void read_flag(){
+	if(!(check_file && african && invite_code && capcha)) {
+		printf("403|You aren't allowed to read the flag!\n");
+		exit(1);
+	}
+	
+	char flag[65];
+	FILE * f = fopen("flag.txt","r");
+	if (f == NULL){
+		printf("flag.txt doesn't exist, try again on the server\n");
+		exit(0);
+	}
+    fgets( flag, 65, f );
+    printf("%s\n",flag);
+    fflush(stdout);
+}
+```
+
+But before it works it does a check on the global variables `check_file && african && invite_code && capcha`
+
+And each of those variables are confirmed from other functions 
+
+Like the check_file is set when check_flag function returns true
+
+```c
+void check_flag(char* file) {
+	if(strcmp(file, "flag.txt") == 0) {
+		check_file = 1;
+	}
+}
+```
+
+african is true when the african function returns true
+
+```c
+void check_african() {
+	african = 1;
+}
+```
+
+invite_code is true when the check_invitecode function returns true
+
+```c
+void check_invitecode(int code) {
+	if(code == 0xbae) {
+		invite_code = 1;
+	}
+}
+```
+
+capcha is true when the check_capcha function returns true
+
+```c
+void check_capcha(int login, int auth) {
+	if(login == 0x062023 && auth == 0xbf1212) {
+		capcha = 1;
+	}
+}
+```
