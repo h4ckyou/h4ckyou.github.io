@@ -573,4 +573,60 @@ I opened it up in wireshark and check the protocol hierarchy
 
 We can see some HTTP protocol present in the pcapc file
 
-I can now apply it as filter i
+I can now apply it as filter and follow tcp stream
+
+Stream 3 shows this POST request with some login details
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/463a971c-27fa-45fc-a8e3-521d8f3c7f63)
+
+```
+userid=hardawayn&pswrd=UEFwZHNqUlRhZQ%3D%3D
+```
+
+Decoding it gives the password
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/754547d0-fd7b-4ebc-bc89-fb31c51c21a6)
+
+```
+Flag: battleCTF{PApdsjRTae}
+```
+
+#### Africa Beauty 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8fe26621-e01a-4e79-88f6-44165a606c1e)
+
+From the details it seems we need to get some values from the file attached
+
+The file attached is an image file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d56ba76-659c-43d3-8647-2199dd3ac4c8)
+
+And the details we need are:
+- Make
+- Camera Model
+- Front/Back
+- Country
+- City
+
+Let us use `exiftool` to get the image metadata
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0c1131f0-aa8e-4936-bced-a79898f8f98c)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9b810f08-704e-4b97-90c0-982668717904)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e6640050-65c0-4048-a311-780a7f89e600)
+
+Now we have the:
+- Make == Google
+- Camera Model == Pixel4XL
+- Front/Back == Back
+
+How do we get the country and city?
+
+The metadata also gave the GPS Position to be:
+
+```
+6 deg 20' 59.76" N, 2 deg 24' 48.96" E
+```
+
+We can use a gps to location checker for this 
+
+And after doing that I got [this](https://www.google.com/maps/place/Boulevard+de+la+Marina,+Cotonou,+Benin/@6.350245,2.4183454,17z/data=!3m1!4b1!4m6!3m5!1s0x102354572323f069:0x55e3471d46e14f66!8m2!3d6.350245!4d2.4183454!16s%2Fg%2F1tggksmn?entry=ttu)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1a160781-9fdd-46a7-ba4e-d65f09b860a2)
+
+```
+Flag: battleCTF{Google_Pixel4XL_back_Benin_Cotonou}
+```
