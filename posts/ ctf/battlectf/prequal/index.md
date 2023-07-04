@@ -534,3 +534,43 @@ Just follow the process I did for `Hebiossa Injection` you will get this
 ```
 Flag: battleCTF{Common_SQLi_Time_558de3659cc32ee7bc9f1745ecd63ae2}
 ```
+
+### Forensics 7/10 :~
+
+#### Thumb
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ce53232b-24a1-4274-97c4-ab979bfef7b0)
+
+After downloading the attached file I checked the file type and it is an image file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/648f120c-056f-4b54-be19-fc62fa0ae80f)
+
+Using binwalk shows there are other jpegs inside the image
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/695e2596-ad67-4d13-b900-93809f838054)
+
+I can extract them all
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f39100c7-dc55-4b21-af76-c7b928fd90ec)
+
+The extracted files are images
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a47ba596-682a-408d-86a3-7a39599ec6c4)
+
+The 102 file shows a QRCode
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a4aff63c-27e4-4c15-a885-a63c485ec86c)
+
+I then used `zbarimg` to decode it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2a2f434c-2c56-494b-997f-f87500cfc739)
+
+```
+Flag: battleCTF{3XP3C71N6_7HUM8N411_70_83 _41W4Y5_83_H1DD3N}
+```
+
+#### Find Me 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c08ee672-c462-4116-ae93-303015cd7ff6)
+
+After downloading the attached file shows that it is a wireshark packet file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/35c2c733-351e-4294-9893-9a9b0801ff3b)
+
+I opened it up in wireshark and check the protocol hierarchy
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d2e4fead-4a71-4dce-8211-565d2d6b9597)
+
+We can see some HTTP protocol present in the pcapc file
+
+I can now apply it as filter i
