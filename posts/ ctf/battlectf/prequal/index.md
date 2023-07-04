@@ -843,10 +843,6 @@ warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not by
 #                    EXPLOIT GOES HERE
 # ===========================================================
 
-# Lib-C library, can use pwninit/patchelf to patch binary
-# libc = ELF("./libc.so.6")
-# ld = ELF("./ld-2.27.so")
-
 # Start program
 io = start()
 
