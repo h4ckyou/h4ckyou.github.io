@@ -115,3 +115,23 @@ I then decoded it using [this](https://www.dcode.fr/rot-13-cipher)
 ```
 Flag: battleCTF{EndTime_is_great}
 ```
+
+### Minon Agbodo 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9e0a1365-e094-45cd-9daf-02c8ac596d99)
+
+We are given ssh credential to login with
+
+After I logged in using:
+
+```
+ssh battlectf@chall.battlectf.online -p 30000 -oHostKeyAlgorithms=+ssh-dss
+```
+
+I saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/714bbd60-0564-473d-9287-b2271f2a1873)
+
+Seems we are in a restriced environment!!
+
+I ran `bash` and it seemed to broke out of it
+
+### BUG|PWN
