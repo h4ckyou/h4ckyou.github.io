@@ -1706,4 +1706,21 @@ From there we can map the char of the flag to be:
 Flag: battleCTF{Agb4_y0u_d3y_sm0k3_1gb0?}
 ```
 
+#### Mazui 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/33239ead-2cff-47c0-8a30-f23cdc538c97)
+
+After downloading the binary and checking the file type I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dfb5a930-76f5-4cdf-a216-8ee355465bb5)
+
+We are working with a x64 binary which is dynamically linked and not stripped 
+
+Running it gives a seg fault
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2efa2b4b-3160-494c-af4b-6d7d4255a7b4)
+
+I opened it up in gdb-gef and saw a Flag function which i then disassembled
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02d02d3c-17b3-4af3-af48-7d47dbb0c97b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/da59fa0c-837c-4bcc-8044-a51b80a9c614)
+
+
+
 
