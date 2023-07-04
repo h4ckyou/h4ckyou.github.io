@@ -1721,6 +1721,46 @@ I opened it up in gdb-gef and saw a Flag function which i then disassembled
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02d02d3c-17b3-4af3-af48-7d47dbb0c97b)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/da59fa0c-837c-4bcc-8044-a51b80a9c614)
 
+There's also this 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a9f9906a-5581-4699-9499-4fbff0526f7f)
 
+We can reverse that 
 
+I made a script to reverse it
 
+```python
+#!/usr/bin/python3
+
+key = 0x41ef12
+flag = []
+
+val1 = 0x62209b66
+flag.append(bytes.fromhex(hex(val1 ^ key)[2:]))
+
+val2 = 0x6c24ac46
+flag.append(bytes.fromhex(hex(val2 ^ key)[2:]))
+
+val3 = 0x463abc23
+flag.append(bytes.fromhex(hex(val3 ^ key)[2:]))
+
+val4 = 0x6d318377
+flag.append(bytes.fromhex(hex(val4 ^ key)[2:]))
+
+val5 = 0x5f0c8064
+flag.append(bytes.fromhex(hex(val5 ^ key)[2:]))
+
+val6 = 0x492fbc7a
+flag.append(bytes.fromhex(hex(val6 ^ key)[2:]))
+ 
+val7 = 0x652d836f
+flag.append(bytes.fromhex(hex(val7 ^ key)[2:]))
+
+print(b''.join(flag))
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f1b63c5b-2dbc-42bc-9ea3-bb8dcd981674)
+
+```
+Flag: battleCTF{S1mple_MovInShell}
+```
