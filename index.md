@@ -87,7 +87,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Feb 20 2023]] [Stackler](https://markuched13.github.io/posts/echoctf/stackler.html) `Buffer Overflow`
 - [[Feb 21 2023]] [Nopal](https://markuched13.github.io/posts/echoctf/nopal.html) `Cacti RCE, SNMP RCE`
 - [[Mar 02 2023]] [Stringer](https://h4ckyou.github.io/posts/echoctf/posts/stringer.html) `Format String Vulnerability`
-- [[Mar 02 2023]] [Hairsplit](https://markuched13.github.io/posts/echoctf/posts/hairsploit.html) `API`
+- [[Mar 02 2023]] [Hairsplit](https://h4ckyou.github.io/posts/echoctf/posts/hairsplit.html) `API`
 
 * * *
 ### **Articles:~#**
