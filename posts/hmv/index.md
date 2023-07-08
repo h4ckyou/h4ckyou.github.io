@@ -14,4 +14,4 @@ An online platform to train your offensive IT security skills.
 <hr>
 <hr>
 
-- [[July 08 2023]] [Hairsplit](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/hmv/Doll.pdf) `Docker Registry, Sudo`
+- [[July 08 2023]] [Doll](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/hmv/posts/Doll.pdf) `Docker Registry, Sudo`
