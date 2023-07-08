@@ -1,1 +1,17 @@
+---
+layout: default
+title:  HackMyVM.
+---
 
+<h2 class="menu-header" id="indexhtml"><a href="../../index.html">Main</a></h2>
+<hr>
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0db839d6-e821-4dc8-9705-78a6e88d7196)
+
+* * *
+<h4 class="menu-header" id="hackmyvm">HackMyVM:</h4>
+An online platform to train your offensive IT security skills.
+<hr>
+<hr>
+
+- [[Mar 02 2023]] [Hairsplit](https://github.com/markuched13/markuched13.github.io/blob/main/posts/echoctf/hairsplit.md) `API`
