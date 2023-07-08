@@ -66,7 +66,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Feb 12 2023]] [HollyWood](https://markuched13.github.io/posts/ptd/hollywood.html) `ActiveMQ`
 - [[Feb 12 2023]] [MrBlue](https://markuched13.github.io/posts/ptd/mrblue.html) `Eternal Blue (MS17-010)`
 - [[Feb 12 2023]] [IAmGroot](https://markuched13.github.io/posts/ptd/groot.html) `[Not Authorized]`
-- 
+
 -
 
 * * *
@@ -79,6 +79,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Jan 17 2023]] [Fantastic](https://markuched13.github.io/posts/pg/fantastic.html) `Grafana, Disk Group `
 - [[Jan 17 2023]] [PlanetExpress](https://markuched13.github.io/posts/pg/planetexpress.html) `RCE, Suid`
 - [[Jan 17 2023]] [Internal](https://markuched13.github.io/posts/pg/internal.html) `CVE-2009-3103`
+
 - 
 
 * * *
@@ -88,6 +89,14 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Feb 21 2023]] [Nopal](https://markuched13.github.io/posts/echoctf/nopal.html) `Cacti RCE, SNMP RCE`
 - [[Mar 02 2023]] [Stringer](https://h4ckyou.github.io/posts/echoctf/posts/stringer.html) `Format String Vulnerability`
 - [[Mar 02 2023]] [Hairsplit](https://h4ckyou.github.io/posts/echoctf/posts/hairsplit.html) `API`
+
+-
+
+* * *
+### **HackMyVM Writeups:~#**
+- [[July 08 2023]] [Doll](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/hmv/posts/Doll.pdf) `Docker Registry, Sudo`
+
+-
 
 * * *
 ### **Articles:~#**
@@ -101,6 +110,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Jan 28 2023]] [Helithumper_RE](https://markuched13.github.io/posts/re/helithumperre.html) `Reverse Engineering`
 - [[Mar 02 2023]] [P0lyn0mials](https://h4ckyou.github.io/posts/re/posts/p0lyn0mials.html) `Reverse Engineering`
 
+-
 
 * * *
 ### **Buffer Overflow Practice:~#**
@@ -111,8 +121,8 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Jan 29 2023]] [TFC_21](https://markuched13.github.io/posts/bof/secret.html) 
 - [[Jan 29 2023]] [KCTF_23](https://markuched13.github.io/posts/bof/chall.html) `Ret2Win`
 - [[Jan 31 2023]] [TU_17](https://markuched13.github.io/posts/bof/vulnchat.html) `Variable Overwrite, Ret2Win`
-- 
 
+- 
 
 * * *
 ### **CTF Writeups:~#**
@@ -122,10 +132,12 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[Mar 07 2023]] [DP CTF](https://h4ckyou.github.io/posts/ctf/dp23/dpctf.html) `Web, Pwn, RE`
 - [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup.html) `General, Web, Crypto, Forensics, Pwn, RE`
 - [[April 02 2023]] [RITSEC CTF](https://h4ckyou.github.io/posts/ctf/ritsec23/writeup.html) `Web, Pwn, Crypto`
-- [[April 28 2023]] [CyberStarters 2023 Qualif](https://h4ckyou.github.io/posts/ctf/cyberstarters23/qualif/index.html) `Web, Crypto, Web3, OSINT`
+- [[April 28 2023]] [CyberStarters '23 Qualif](https://h4ckyou.github.io/posts/ctf/cyberstarters23/qualif/index.html) `Web, Crypto, Web3, OSINT`
 - [[May 06 2023]] [CyberStarters 2023 Final](https://h4ckyou.github.io/posts/ctf/cyberstarters23/final/index.html) `Web, Crypto, Forensics`
 - [[May 15 2023]] [HeroCTF 2023](https://h4ckyou.github.io/posts/ctf/heroctf23/index.html) `Web, Boot2Root`
 - [[July 4 2023]] [BattleCTF 2023](https://h4ckyou.github.io/posts/ctf/battlectf23/prequal/index.html) `Web. Pwn, RE, Forensics, Misc, Crypto`
+
+-
 
 * * *
 #### **Support Or Contact Me:~#**
