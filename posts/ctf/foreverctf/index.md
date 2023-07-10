@@ -207,3 +207,29 @@ Back on the [webhook](https://webhook.site) site I got multiple http requess and
 ```
 Flag: utflag{boop_beep_ddj333}
 ```
+
+#### Server Side Request Forgery
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58e97247-e19e-4289-8a1e-ef278ac6594d)
+
+Accessing the url shows this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76e62907-9313-4072-9fa9-4c9ec0e7ee2d)
+
+```
+Sorry, only cool kids on the internal network are allowed to login.
+```
+
+I then accessed `http://forever.isss.io:4225/` and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d2293dfb-fcd0-4024-a6ab-337695cbb159)
+
+We can try using `file` protocol to read local files
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1c4e3b0f-32e0-4a6e-a21d-2efe602ce1f4)
+
+But we need the flag
+
+The challenge name has already given us the hint of solving this which is a Server Side Request Forgery (SSRF) vulnerability
+
+With this vulnerability we can access internal services running on the host
+
+What we would want to access is `{url}/flag` 
+
+Doing that I got the flag
