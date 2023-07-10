@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3e3f137b-3e18-4bbf-a2ea-2d76e5506701)<h3> ForeverCTF  </h3>
+<h3> ForeverCTF  </h3>
 
 <h3> Challenge Solved: </h3>
 
