@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e34efe47-9bc1-4dc5-8f1f-fd7154e95fc7)<h3> ForeverCTF  </h3>
+<h3> ForeverCTF  </h3>
 
 <h3> Challenge Solved: </h3>
 
@@ -233,3 +233,8 @@ With this vulnerability we can access internal services running on the host
 What we would want to access is `{url}/flag` 
 
 Doing that I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0d6c771a-87f2-46ac-88e1-45e21cc632fb)
+
+```
+Flag: utflag{SSRF_isnt_so_bad_after_all}
+```
