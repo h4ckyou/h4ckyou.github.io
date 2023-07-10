@@ -126,7 +126,7 @@ We can also tell from the Challenge name 😉
 Since only a single table is available and the flag is in the password column. I will use a `union` query to get that
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6221124d-4394-42c3-a4b5-912586b3b50e)
 
-```
+```r
 Payload: ' union select password from users --
 ```
 
@@ -269,7 +269,7 @@ if __name__ == '__main__':
 
 We can see that if the request made is a `GET` request it returns the content of `index.html` else if the http request method is `POST` it gets the content of the url from the request form and does a ping command on the url sent 
 
-Since the comman is passed through subprocess and shell is set to True we can get command injection 🙂
+Since the command is passed through subprocess and shell is set to True we can get command injection 🙂
 
 Here's my script for it
 
@@ -302,4 +302,31 @@ while True:
 ```
 
 Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/483c9ed9-dc59-4f3f-aeb0-f9918819d3d0)
+
+```
+Flag: utflag{c0mmand_1nj3ct3d!}
+```
+
+#### SQLi
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5277b34a-fd94-4c4f-9fd1-ac2d6dba3cd0)
+
+We are given this
+
+```sql
+ INSERT INTO ***********(***********, ***********, ***********) VALUES ('admin', 'utflag{*****************}', 'contact@isss.io');
+```
+
+Since this is a sequel to Baby SQLi 
+
+I'll go straight to exploitation
+
+In this case we don't know the table nor the column where the flag is stored
+
+But we can of cause get it 😉
+
+First let us dump all the tables
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f9769f93-9c57-4c4b-81f3-f7efc7a47c7e)
+
+```r
 
