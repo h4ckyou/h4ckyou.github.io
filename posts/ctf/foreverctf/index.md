@@ -360,3 +360,29 @@ Payload: ' union select passfrase from secret_users_table_sfd33 --
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/efdaedac-30c9-441d-98a9-0f760ebd995c)
 
 #### uint64_t
+
+
+### Reverse Engineering 4/7:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a4540bf-eac9-470a-a6c6-8755119c8b1e)
+
+
+### Cryptography 7/13:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0bd79645-1d31-4c93-a58f-a7b5c3f02286)
+
+
+### Forensics 6/6:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7c9fbcf3-4546-42cc-9952-11598399e914)
+
+
+### Miscellaneous 1/4:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b518c94-0782-434a-9c8b-e317dde6dcd4)
+
+
+### Networking 1/1:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9a64af52-5864-402e-9ddf-e85ee9d07066)
+
+### Tools 7/7:~
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0b90704c-b1d3-440c-87ff-d978dfae063b)
+
+
+P.S I'll be updating it >3
