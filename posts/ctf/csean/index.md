@@ -410,7 +410,7 @@ Going over to the web url shows this
 When I search for something it gives this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3c5fe403-6c0b-4df3-b982-5b6e06af3ed0)
 
-At this point I was really confused cause I used `cewl` to get the words from the web server and fuzzed for allowed words but got this
+At this point I was really confused cause I used `cewl` to get the words from the web server and fuzzed for allowed words but got nothing
 
 After some minutes I noticed when I give it `../../../../../flag.txt` it gives the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c05ab17a-57c1-4545-9d5f-8b42a7813893)
@@ -422,6 +422,113 @@ Flag: csean-ctf{I_hope_i_DIDNT_tr!ck_YOU_OR_D!D_I_hehe:)}
 #### Report Phish [First Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b00464a0-4a7e-4cbb-88f6-ce53d0907e93)
 
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/18efa1ef-fa76-474a-ad2f-a29b620ca23b)
 
+Seems to be a service used for reporting sites used for phishing
 
+To check if it indeeds make some sort of http request to the site submitted I used [webhook.site](https://webhook.site/) 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56cc7657-b8bc-4ce0-9804-63594bc853b1)
+
+Submitting that url I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/21f1c96b-293a-44cf-855d-43cff1e343b3)
+
+Then after some minutes of waiting patiently (I didn't wait patiently I sent the request multiple times 😂) I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/414a6d32-090d-4c51-a6c7-8cbe03fce0d5)
+
+The flag is in the referer header
+
+```
+Flag: csean-ctf{TH!S_really_l00ks_l!ke_A_PHISH_OR_NOT?} 
+```
+
+#### Stupid Reset 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e95dcf7d-0971-4598-95d0-54f2782a18d2)
+
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f54d7399-f0b2-4aa3-8016-99e314e4c8fb)
+
+There's a sign in and also a register function
+
+I registered an account
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a9a52481-247d-411c-b2a4-6bb26575e10b)
+
+Here's the request made when we register
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3fed8acd-f29f-4390-a362-55f52d8c37c6)
+
+Now I can login
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b49a67d9-a90c-4394-a4f1-931daa321e42)
+
+It redirects to `/dashboard` and shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e1cfcf35-13be-453a-9200-b210d8df0848)
+
+The page source shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6bf751de-1063-4902-822b-2140ccce884d)
+
+That's the js file used by the web server 
+
+Back on the sign in page there's a forgot password function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/db5b797f-2f23-4c98-acc1-3d174f74ed19)
+
+Clicking it shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/625bc51c-0de6-44c3-8374-794eb0483cbd)
+
+When I gave in my user created mail `root@sec.io` and also intercepted the request I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ca0c99c-2c1b-40d6-8401-051f29ff2e2a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ea62ee2c-47ae-4670-825d-c243f89566b6)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a56df470-b8e0-4c4a-b07a-9a76f168e8c6)
+
+We can see that during the process of the forgot password function, it leaks the token in the response in the json body
+
+How do we take advantage of this since the pop up already said `the reset instruction has been sent to your email address. Kindly click the link within the mail body to initiate the password reset.`
+
+Well I looked back to the `user.js` and saw this endpoint
+
+```js
+const resetPassword = () => {
+  let current_loc = window.location.href.split("/").pop();
+  const data = {
+    user: {
+      password: document.getElementById("password").value,
+    },
+  };
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  fetch(`/api/reset/${current_loc}`, options)
+    .then((data) => {
+      return data.json();
+    })
+    .then((response) => {
+      window.alert(response.message);
+      window.location.href = "/sign-in";
+    })
+    .catch((e) => {
+      window.alert(JSON.stringify(e));
+    });
+```
+
+Accessing it shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf5434e6-10e3-4025-98e6-b140180d977b)
+
+Looking at it shows that it requires a valid token to be passed in from the url therefore giving us the opportunity to do a password reset
+
+I used the forgot password function to get a token for the user I created `root@sec.io` and did this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/be0578da-508c-44bc-ac11-73cab2812a2f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/909d6b19-8892-4356-b75c-8341b6c64ebf)
+
+I changed the password to `pwned` and when I logged in it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3a1586fa-d73f-43d3-bf9d-3355b446d320)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f01902e2-9b8e-41e9-bad0-b9d2fd30ce9d)
+
+This means we can basically reset any user password cool right?
+
+At this point I looked at the main page then got a user which looked worth it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dacc3082-1544-4c39-abfe-19b19908bc9e)
+
+Let us reset `admin@stupid-reset.com` 
 
