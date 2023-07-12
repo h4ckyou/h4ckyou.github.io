@@ -206,7 +206,7 @@ This is a hint that's based on using months and days
 
 I then make a script to create a wordlist and brute force the password
 
-Here's the script I used to create the wordlist
+Here's the script I used to create the [wordlist](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/csean/pwn/chatterbox/wordlist.py)
 
 ```
 #!/usr/bin/python3
@@ -243,7 +243,7 @@ with open('wordlist.txt', 'w') as fd:
         fd.write(i+'\n')
 ```
 
-And I used this to brute force 
+And I used this to [brute force](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/csean/pwn/chatterbox/brute.py)
 
 ```python
 #!/usr/bin/python3
@@ -544,7 +544,7 @@ With this set we should be able to login with `admin@stupid-reset.com:pwned` and
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2206d454-e300-47e6-9e0f-4ac322038fdf)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/696e6454-5729-40c6-b4e4-8986262a6add)
 
-Doing this manually is pain so I made a script to automate the stress for us 
+Doing this manually is pain so I made a [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/csean/web/stupid_reset/reset.py) to automate the stress for us 
 
 ```python
 #!/usr/bin/python3
