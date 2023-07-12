@@ -88,4 +88,121 @@ Next thing is to convert it to a `.pyc` file then decompile the `.pyc`
 To convert it to a `.pyc` file I used [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) 
 
 Here's the resource that helped me out [hacktricks](https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/specific-software-file-type-tricks/.pyc) 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/80d555e4-769d-4c78-a77c-ca8898f08f0a)
+
+Now I will use [uncompyle6](https://pypi.org/project/uncompyle6/) to decompile it
+
+```r
+uncompyle6 client.pyc > client.py
+```
+
+Doing that gives me this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/592012df-889d-4529-9ffd-b4a5700bf80b)
+
+```python
+from pwn import *
+import platform
+import subprocess
+content.log_level = 'warning'
+
+def send_command(host, port, command):
+    conn = recvuntil(host, port)
+    conn.recvuntil(b'$> ')
+    conn.sendline(b'' _ command.encode())
+    output = conn.recv(10240).decode().strip()
+    conn.close()
+    return f'''{output}'''
+
+host = '0.cloud.chals.io'
+port = 21440
+command = 'hostname'
+response = send_command(host, port, command)
+note = 'Congratulations! You have been hacked. Now you are part of our mighty and growing botnets'
+response = response.split('\n')[:-2]
+response = '\n'.join(response)
+print(response)
+```
+
+We can see that this script basically executes command on this remote instance `0.cloud.chals.io` running on port `21440`
+
+I connect to it and it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad1f41d9-48a5-40b5-8e71-27f3a31576b6)
+
+I tried catting the flag but got this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d7ffd688-6429-42ab-979b-578d2e9cad50)
+
+Seems to filter that
+
+But it was easily bypassable 
+
+Since `ls` isn't filtered I did this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/57cefcd7-ac06-4c29-936b-bbb62f241eca)
+
+The commands will execute if an allowed command is also used
+
+I checked the source and got the allowed commands
+
+```python
+allowed_commands = ["curl", "wget", "hostname", "date", "ls", "whoami"]
+```
+
+If we assume that an intensive filter check is used we can still get the flag since we have access to `curl` 
+
+Basically using `file` wrapper
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/102972b9-6eaa-4181-985a-6a5f2cbb9210)
+
+```
+Flag: csean-ctf{when_THE_HACKER_gets_hacked :)}
+```
+
+### Misc 1/1:~
+
+#### Welcome! Welcome!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c44b22fe-1286-4904-b011-91b9ab7e965a)
+
+We are given this string `Y3NlYW4tY3Rme3dlbGNvbWVfdG9fdGhlX2dhbWV6enp6IX0=` and we can tell it's base64 cause of `=` 
+
+Decoding it can be done from the terminal
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38cf17cb-7e39-4f51-9fa6-51a0f4e1f3c8)
+
+But if I didn't know what it was I would have used [cyberchef](https://gchq.github.io/CyberChef/) or [dcodefr](https://www.dcode.fr/cipher-identifier)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/752ccb44-86c1-4abf-837d-241ff46db2e0)
+
+```
+Flag: csean-ctf{welcome_to_the_gamezzzz!}
+```
+
+### Pwn 1/1:~
+
+#### ChatterBox [First Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6bb8ee28-f7ad-4803-a864-700b9a1e31a2)
+
+This challenge isn't really pwn in my opinion just more of like scripting
+
+Anyways we are given this:
+
+```
+If you ever need to talk, just reach out to any of our employees.
+
+As a side note, we think you should know we like talking in months and days. Hopefully you understand.
+```
+
+Connecting to the remote instance shows this prompt
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/29c4cb02-fc71-4e12-9472-98f7bd319d04)
+
+So we are to find a way to access this
+
+I assumed that the username will be `admin` but now for the password how do we go about it?
+
+Well I can always try brute force using a wordlist like rockyou but it might take a while
+
+So back to what the description says :
+
+```
+As a side note, we think you should know we like talking in months and days. Hopefully you understand.
+```
+
+This is a hint 
+
+
 
