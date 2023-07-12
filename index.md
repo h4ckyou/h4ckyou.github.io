@@ -136,6 +136,7 @@ Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tr
 - [[May 06 2023]] [CyberStarters 2023 Final](https://h4ckyou.github.io/posts/ctf/cyberstarters23/final/index.html) `Web, Crypto, Forensics`
 - [[May 15 2023]] [HeroCTF 2023](https://h4ckyou.github.io/posts/ctf/heroctf23/index.html) `Web, Boot2Root`
 - [[July 4 2023]] [BattleCTF 2023](https://h4ckyou.github.io/posts/ctf/battlectf23/prequal/index.html) `Web. Pwn, RE, Forensics, Misc, Crypto`
+- [[July 12 2023]] [CSEAN CTF 2023](https://h4ckyou.github.io/posts/ctf/csean/index.html) `Web, Pwn, Misc, RE, Forensics`
 
 -
 
