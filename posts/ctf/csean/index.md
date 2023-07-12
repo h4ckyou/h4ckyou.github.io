@@ -536,4 +536,15 @@ First I got the token
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/142b4298-0e63-4495-8661-4cc982194008)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bd96c60-8c03-4753-9984-fd2060245c11)
 
+Now I use the `/reset` endpoint and change the password to `pwned`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/60cc0164-314d-4377-9f32-67dc41b550de)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/32512c95-3b4f-4318-a240-c3c4c0ed69ab)
+
+With this set we should be able to login with `admin@stupid-reset.com:pwned` and get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2206d454-e300-47e6-9e0f-4ac322038fdf)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/696e6454-5729-40c6-b4e4-8986262a6add)
+
+```
+Flag: csean-ctf{th!s_RESET_1s_SECURE_you_should_REALly_TrusT_m3!}
+```
 
