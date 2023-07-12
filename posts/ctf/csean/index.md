@@ -670,4 +670,7 @@ Flag: csean-ctf{Joan!I_told_you_not_TO_trust_us3r_inputs_buh_YOU_NEVER_LISTEN!}
 
 That's all I was able to solve 😅
 
-Till the next ctf 🥷
+At the end of the struggle we managed to take first 🙂
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b676dc5-733e-4e76-80b3-7667da45e6b8)
+
+Till the next ctf 🥷 @Urahara 
