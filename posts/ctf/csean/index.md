@@ -360,9 +360,21 @@ But when I tried fuzzing more values there it just doesn't work
 It really frustrated me
 
 Then I decided to use [feroxbuster](https://github.com/epi052/feroxbuster) 
-![Uploading image.png…]()
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/053c27b2-c187-48ec-ac23-c776bc40c5e2)
 
 ```
 feroxbuster --url https://csean-enum-pain.chals.io/api/ -X POST
+```
+
+Ferobuster got `/api/secret` with `GET` http method
+
+I then accessed it and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4887099e-eb07-4c3b-94f9-f64de5998694)
+
+Hmmmm! I then tried using `POST` request to access `/api/secret` and it got me the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e4f01421-0269-4fd6-94ba-e827553972d3)
+
+```
+Flag: csean-ctf{Y0u_SAW_it_in_4_d!fferent_MeTH0D!!}
 ```
 
