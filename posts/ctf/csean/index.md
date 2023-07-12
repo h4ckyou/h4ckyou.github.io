@@ -206,7 +206,7 @@ This is a hint that's based on using months and days
 
 I then make a script to create a wordlist and brute force the password
 
-Here's the script used to create the wordlist
+Here's the script I used to create the wordlist
 
 ```
 #!/usr/bin/python3
