@@ -177,7 +177,7 @@ Flag: csean-ctf{welcome_to_the_gamezzzz!}
 #### ChatterBox [First Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6bb8ee28-f7ad-4803-a864-700b9a1e31a2)
 
-This challenge isn't really bianry exploitation in my opinion just more of like scripting
+This challenge isn't really binary exploitation in my opinion just more of like scripting
 
 Anyways we are given this:
 
@@ -530,5 +530,10 @@ This means we can basically reset any user password cool right?
 At this point I looked at the main page then got a user which looked worth it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dacc3082-1544-4c39-abfe-19b19908bc9e)
 
-Let us reset `admin@stupid-reset.com` 
+Let us reset user `admin@stupid-reset.com` password
+
+First I got the token
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/142b4298-0e63-4495-8661-4cc982194008)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bd96c60-8c03-4753-9984-fd2060245c11)
+
 
