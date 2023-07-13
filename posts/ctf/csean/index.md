@@ -363,7 +363,7 @@ Then I decided to use [feroxbuster](https://github.com/epi052/feroxbuster)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/053c27b2-c187-48ec-ac23-c776bc40c5e2)
 
 ```
-feroxbuster --url https://csean-enum-pain.chals.io/api/ -X POST
+feroxbuster --url https://csean-enum-pain.chals.io/api/ -m POST
 ```
 
 Ferobuster got `/api/secret` with `GET` http method
