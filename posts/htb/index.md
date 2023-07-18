@@ -62,3 +62,4 @@ The Hack The Box platform provides a wealth of challenges - in the form of virtu
 - [[June 9 2023]] [Updown](https://h4ckyou.github.io/posts/htb/posts/updown.html)
 - [[June 27 2023]] [Pilgrimage](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/htb/posts/Pilgrimage.pdf) `GIT, RCE`
 - [[July 08 2023]] [Sau](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/htb/posts/Sau.pdf) `SSRF, Command Injection, Sudo`
+- [[July 18 2023]] [Authority]() `Ansible Vault, ADCS, 
