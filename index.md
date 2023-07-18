@@ -136,12 +136,7 @@ Arigato 🫠
 - [[Mar 07 2023]] [DP CTF](https://h4ckyou.github.io/posts/ctf/dp23/dpctf.html) `Web, Pwn, RE`
 - [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup.html) `General, Web, Crypto, Forensics, Pwn, RE`
 - [[April 02 2023]] [RITSEC CTF](https://h4ckyou.github.io/posts/ctf/ritsec23/writeup.html) `Web, Pwn, Crypto`
-- [[April 28 2023]] [CyberStarters '23 Qualif](https://h4ckyou.github.io/posts/ctf/cyberstarters23/qualif/index.html) `Web, Crypto, Web3, OSINT`
-- [[May 06 2023]] [CyberStarters 2023 Final](https://h4ckyou.github.io/posts/ctf/cyberstarters23/final/index.html) `Web, Crypto, Forensics`
-- [[May 15 2023]] [HeroCTF 2023](https://h4ckyou.github.io/posts/ctf/heroctf23/index.html) `Web, Boot2Root`
-- [[July 4 2023]] [BattleCTF 2023](https://h4ckyou.github.io/posts/ctf/battlectf23/prequal/index.html) `Web. Pwn, RE, Forensics, Misc, Crypto`
-- [[July 12 2023]] [CSEAN CTF 2023](https://h4ckyou.github.io/posts/ctf/csean/index.html) `Web, Pwn, Misc, RE, Forensics`
-
+- 
 -
 
 * * *
