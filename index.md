@@ -21,7 +21,7 @@ Arigato 🫠
 
 - **My Name:**    `Mark Uche`
 - **Also Known As:** `Hack.You`
-- **What Do I Do:**  `CTF / Ethical Hacking / Programming`
+- **What I Do:**  `CTFs / Ethical Hacking / Programming`
 - **Twitter:** `https://twitter.com/0xMarkUche`
 - **Github:** `https://github.com/markuched13`
 
