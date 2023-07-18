@@ -35,6 +35,7 @@ __P.S I'll be updating since I haven't really solved all the challs and the ctf 
 - xor
 - Simple Checker
 - gdb
+- Annoying XOR 
 
 ## Cryptography
 - All Your Base Are Belong To Us
@@ -668,6 +669,9 @@ Note that the input length must be `36`
 ```
 Flag: utflag{k33p_yoUr_memory_t0_yourselF}
 ```
+
+#### Annoying XOR 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bc0c9c07-1544-4eb5-852d-b4968695c05e)
 
 
 ### Cryptography 7/13:~
