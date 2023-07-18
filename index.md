@@ -11,6 +11,10 @@ title: Home
 
 Yo 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Hacking Tricks, Writeups, Articles, Any Stuffs Related To Hacking That I Learn xD......
 
+To view more writeups click on the above links ☝️ 
+
+Arigato 🫠
+
 * * *
 ### Whoami:~#
 * * *
