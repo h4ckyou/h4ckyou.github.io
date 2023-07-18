@@ -136,7 +136,7 @@ Arigato 🫠
 - [[Mar 07 2023]] [DP CTF](https://h4ckyou.github.io/posts/ctf/dp23/dpctf.html) `Web, Pwn, RE`
 - [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup.html) `General, Web, Crypto, Forensics, Pwn, RE`
 - [[April 02 2023]] [RITSEC CTF](https://h4ckyou.github.io/posts/ctf/ritsec23/writeup.html) `Web, Pwn, Crypto`
-- 
+
 -
 
 * * *
