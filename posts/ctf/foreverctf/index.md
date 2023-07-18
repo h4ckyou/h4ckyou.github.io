@@ -364,7 +364,7 @@ Payload: ' union select passfrase from secret_users_table_sfd33 --
 
 
 ### Reverse Engineering 4/7:~
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a4540bf-eac9-470a-a6c6-8755119c8b1e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dba5ff9d-ab10-4008-b702-121ef18d3084)
 
 #### strings
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/82e9e178-cddf-4438-af78-88357bde6ee6)
