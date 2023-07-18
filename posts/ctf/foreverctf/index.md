@@ -673,7 +673,81 @@ Flag: utflag{k33p_yoUr_memory_t0_yourselF}
 #### Annoying XOR 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bc0c9c07-1544-4eb5-852d-b4968695c05e)
 
+Checking the file type shows the default configuration
 
+Decompiling in ghidra shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ba8e5e1-b889-4158-b549-81d0d72913c2)
+
+```c
+
+int main(int argc,char **argv)
+
+{
+  char cVar1;
+  int compare;
+  ulong uVar2;
+  undefined1 *flag_array;
+  char *pcVar3;
+  byte bVar4;
+  
+  bVar4 = 0;
+  if (argc != 2) {
+    __fprintf_chk(stderr,1,"Usage: %s <flag>\n",*argv);
+                    /* WARNING: Subroutine does not return */
+    exit(1);
+  }
+  srandom(0xf04d7e8c);
+  flag_array = flag;
+  do {
+    uVar2 = 0xffffffffffffffff;
+    pcVar3 = flag;
+    do {
+      if (uVar2 == 0) break;
+      uVar2 = uVar2 - 1;
+      cVar1 = *pcVar3;
+      pcVar3 = pcVar3 + (ulong)bVar4 * -2 + 1;
+    } while (cVar1 != '\0');
+    if ((byte *)(~uVar2 - 1) <= flag_array + -0x301010) {
+      compare = strcmp(flag,argv[1]);
+      if (compare == 0) {
+        puts("Right!");
+      }
+      else {
+        puts("Wrong!");
+        compare = 10;
+      }
+      return compare;
+    }
+    uVar2 = random();
+    *flag_array = *flag_array ^
+                  (byte)((long)uVar2 >>
+                        (((char)(uVar2 & 0xff) + (char)((uVar2 & 0xff) / 3) * -3) * '\b' & 0x3fU));
+    flag_array = flag_array + 1;
+  } while( true );
+}
+```
+
+It receives our input which is passed in argument one and does some annoying xor 😂
+
+Anywyas I'm not reversing that since it uses `strcmp` to check if our input matches the flag
+
+As I did in the previous chall `gdb` I'll set a breakpoint there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/89c7f6da-86e3-493d-8cce-fd956b9c6d63)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/356c770a-4500-4686-acc6-0396a698523b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/12d2937b-3490-4d1b-9c48-37273e8fe126)
+
+```
+break main
+c
+break *main+196
+r asdf
+```
+
+We get the flag
+
+```
+Flag: utflag{nowhere_is_safe}
+```
 ### Cryptography 7/13:~
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0bd79645-1d31-4c93-a58f-a7b5c3f02286)
 
