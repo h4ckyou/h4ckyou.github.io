@@ -1,4 +1,4 @@
-<h3> CyberStarters CTF '23 Final </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3f1a9e0c-59f7-440a-8147-e6b72390f019)<h3> CyberStarters CTF '23 Final </h3>
 
 Here are the challenges I was able to solve in the ctf which took place on the 6th May, 2023 at lasted from 9A.M - 3P.M
 
@@ -20,6 +20,8 @@ P.S:- The scoreboard was dynamic
 -      Slash (150 points)
 -      Cynic (150 points)
 
+## PWN
+-      Guess (200 points)
 
 # Cryptography
 
@@ -170,6 +172,99 @@ We can see that the *buy_flag* variable will return a huge number sweeeet 😅
 
 After I tried that it showed purchased then on viewing the jwt decoded token gives the flag
 
+# PWN
+
+#### Guess
+
+During the CTF I was unable to solve this due to my lack of knowledge on algorithm (learnt few things recently so I decided to give this a go)
+
+The source code wasn't given but here it is
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f63c862c-54e3-4769-a6d6-3e8319ef07b0)
+
+```python
+import random
+
+def game():
+    remaining_tries = 32
+    answer = random.randint(1,1000000000) 
+    while remaining_tries > 0:
+        try:
+            guess = int(input("Guess an integer btw 1 and 1 billion\n")) 
+            if guess == answer:
+                print("You got it right! DoHCTF{??????????????????}\n")
+                return
+            elif guess < answer:
+                print("Higher\n")
+            else:
+                print("Lower\n")
+            remaining_tries -= 1
+        except ValueError:
+            print("Not a valid integer. Please try again.\n")
+    print("Out of tries. Game over!\n")
+
+game()
+```
+
+From the python program we see that:
+- It creates a random number from 1 to a billion
+- Receives our input and compares it to the right answer
+- If our input is less than the answer it prints out Higher else Lower
+- And we have only 32 trials in order to guess the right answer
+
+Initially what I was trying during the ctf was to narrow down the answer
+
+I didn't know that it was random number each time we connected to the server and that took my time lol i'm a bad ctf player
+
+But anyways there's no way of brute forcing it because of the number of trials we have and also it will take lot of memory if we are to brute force
+
+So what's the way here
+
+Well the answer is using Binary Search Algorithm
+
+What the algorithm basically does is to narrow down a target value in a sorted array by repeatedly dividing the search interval in half
+
+The idea of binary search is to use the information that the array is sorted and reduce the time complexity to O(log N)
+
+You can read more about it [here](https://en.wikipedia.org/wiki/Binary_search_algorithm)
+
+Here's my solve script 
+
+```python
+# Implement Binary Search Algorithm 
+from pwn import *
+context.log_level = 'warning'
+
+io = remote('127.0.0.1', '1234')
+
+def binary_search():
+    left = 0
+    right = 1000000000
+
+    while True:
+        mid = (right + left) // 2
+        io.sendline(str(mid).encode())
+
+        recv = io.recv(1024).decode().strip()
+        log.info(f'Flag: {recv}')
+        if 'Higher' in recv:
+            left = mid
+            continue
+        elif 'Lower' in recv:
+            right = mid
+        else:
+            return recv
+
+result = binary_search()
+print(result)
+io.close()
+```
+
+Running it works and we get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/721266dd-ecb2-459c-bcfb-1ab2e7afba14)
+
+```
+Flag: DoHCTF{automation_is_king_}
+```
 
 #### Conclusion:
 
