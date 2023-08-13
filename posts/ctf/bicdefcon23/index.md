@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4747e2d1-66a2-4932-b965-863f83fb3966)<h3> BIC DEFCON CTF 2023 </h3>
+<h3> BIC DEFCON CTF 2023 </h3>
 
 ### Description: This was a fun ctf I did and it taught me new things >3
 
