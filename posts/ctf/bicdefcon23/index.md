@@ -1021,8 +1021,7 @@ io.sendline('/bin/bash')
 io.interactive()
 ```
 
-
-
-
+Running it spawns a shell
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/162cb370-ecee-40e1-9b33-0ed2fde04fc0)
 
 
