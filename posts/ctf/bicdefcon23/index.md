@@ -162,6 +162,10 @@ In order to do this we need gadgets
 And luckily the gadgets needed for the leak is available
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56e07656-a99f-48d0-b14b-ced64e073bcc)
 
+Why I need `pop rdi; ret` is because when `puts` is called to write values to stdout it requires a parameter to be passed 
+
+The way parameters are passed in x64 is via registers so in this case we want to populate the rdi with the address of `puts@got`
+
 Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/puts_in_boot/exploit.py)
 
 ```python
