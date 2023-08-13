@@ -654,7 +654,7 @@ Before I start anything here I want to patch the binary since I'm pretty sure th
 
 I used [pwninit](https://github.com/io12/pwninit) to do that
 
-```r
+```
 pwninit --bin dubdubdub libc6_2.35-0ubuntu3.1_amd64.so --no-template
 ```
 
@@ -729,3 +729,58 @@ void main(void)
   } while( true );
 }
 ```
+
+I won't explain what the code does since its kinda understandable looking at it
+
+But here's the vulnerability
+
+```c
+char buffer [264];
+fgets(buffer,0x100,stdin);
+printf(buffer);
+```
+
+It receives 255 bytes of our input and stores in a buffer that can hold up 264 bytes 
+
+No buffer overflow since there's amount of bytes the buffer can hold
+
+But below it, the program uses `printf` to print the content of the buffer which is basically our input
+
+That's where the bug lies!!! We have a format string vulnerability because it uses `printf` to print the content of `buffer` without using a format specifier
+
+How do we exploit this?
+
+First let us get the offset of our input on the stack using the `%p` format specifier
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa25a666-3ee6-4f5b-9b93-c2646cc74f57)
+
+Our input is at offset `8`
+
+Now what next?
+
+From the protections enabled on the binary we know that `No RELRO`
+
+That means we can overwrite the functions in the Global Offset Table (GOT) 
+
+And what we would want to overwrite is `printf` to `system` 
+
+So that when `printf` is called it would be `system`
+
+Luckily this binary is running in a loop making it our exploit stage less
+
+Since ASLR is enabled we would want to calculate the libc base address
+
+Here's how I got it
+
+First we need to know the format of how a libc function would look like and I used `vmmap` in gdb to do that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dad30164-0314-44d2-ba74-7472c1218b44)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e6af7db2-68a2-44e8-9a8c-b5e625d95aeb)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c0f7ce3-7787-4129-9092-6bed7027e8b2)
+
+Looking at that the libc starts from `0x00007ffff7c00000` and ends at `0x00007ffff7c28000`
+
+But that's the case is ASLR is disabled and gdb-gef disables it by default
+
+So I'll run it again but this time enabled aslr on gdb
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96aebbc0-dbab-49a5-9e93-acd2187854cb)
+
+
