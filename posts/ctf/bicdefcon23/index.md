@@ -646,4 +646,86 @@ Such a pain right?
 Let us move on
 
 Running the binary shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/448f1af9-8864-4bb9-978c-7fb21821b328)
 
+This program seems to be in a loop and it receives our input depending on the option chosen then prints it out 
+
+Before I start anything here I want to patch the binary since I'm pretty sure the remote will be using the same libc as the previous one
+
+I used [pwninit](https://github.com/io12/pwninit) to do that
+
+```r
+pwninit --bin dubdubdub libc6_2.35-0ubuntu3.1_amd64.so --no-template
+```
+
+Let us move on!
+
+Using ghidra I decompiled the binary here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/27e2e110-7d69-4e00-af2a-cdbdec75c77c)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4d227653-3235-465b-a0e5-2bc854cf741a)
+```c
+void main(void)
+
+{
+  int fd;
+  long in_FS_OFFSET;
+  char option;
+  char buffer [264];
+  undefined8 canary;
+  
+  canary = *(undefined8 *)(in_FS_OFFSET + 0x28);
+  do {
+    write(1,"Let\'s start a war! Kali or Parrot:\nKali\nParrot\nNeither\nChoose your fighter: ",0x4c
+         );
+    __isoc99_scanf("%s",&option);
+    fd = strncmp(&option,"Kali",4);
+    if (fd == 0) {
+      printf("%s","Right?? ");
+      fflush(stdout);
+      printf(&option);
+      fflush(stdout);
+      printf(" %s\n",&DAT_00102068);
+      fflush(stdout);
+    }
+    else {
+      fd = strncmp(&option,"Parrot",6);
+      if (fd == 0) {
+        puts("Nooooope!!");
+        fflush(stdout);
+      }
+      else {
+        fd = strncmp(&option,"Neither",7);
+        if (fd == 0) {
+          printf("%s","Oooh sorry. I meant to ask:\nArch\nGentoo\nChoose your fighter: ");
+          fflush(stdout);
+          __isoc99_scanf("%s",&option);
+          fd = strncmp(&option,"Arch",4);
+          if (fd == 0) {
+            puts("We are sorry!");
+            fflush(stdout);
+          }
+          else {
+            fd = strncmp(&option,"Gentoo",6);
+            if (fd == 0) {
+              puts(&DAT_00102118);
+              fflush(stdout);
+            }
+            else {
+              puts("Never heard of that, yikes!!");
+              fflush(stdout);
+            }
+          }
+        }
+        else {
+          write(1,"Which one is that??\n",0x14);
+        }
+      }
+    }
+    write(1,"Please tell me more about it: ",0x1e);
+    getchar();
+    fgets(buffer,0x100,stdin);
+    printf(buffer);
+    fflush(stdout);
+  } while( true );
+}
+```
