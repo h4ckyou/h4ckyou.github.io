@@ -391,7 +391,7 @@ write(0x1, write@got, 0x20)
 
 We will write 200 bytes of the value of got of `write` to standard output
 
-The byte can also be just `8` afterall it's just 8 bytes that will be the value
+The byte size can also be just `8` afterall it's just 8 bytes that will be the value
 
 Now we need the gadgets 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9802007d-c624-4aa7-9b5d-cb31edbead44)
