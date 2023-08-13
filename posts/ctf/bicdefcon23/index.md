@@ -162,7 +162,7 @@ In order to do this we need gadgets
 And luckily the gadgets needed for the leak is available
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56e07656-a99f-48d0-b14b-ced64e073bcc)
 
-Here's my exploit script
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/puts_in_boot/exploit.py)
 
 ```python
 #!/usr/bin/python3
@@ -255,3 +255,24 @@ io.sendline(payload)
 
 io.interactive()
 ```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6153b378-ce5c-48f1-a601-6bc705d591ce)
+
+The remote instance isn't up so I can't do it remotely
+
+But if it were up and we ran the exploit it won't work that's because the binary libc version is different from mine
+
+That doesn't change the fact it won't be leaked
+
+With that we can try to figure the libc being used remotely using this [site](https://libc.blukat.me/) 
+
+And just search for puts address which I got to be `libc6_2.35-0ubuntu3.1_amd64.so`
+
+With this I assumed that the other pwn challenges will be running on the same libc so if we eventually come across any challenge that requires leaking libc we won't need to worry about us figuring the remote libc 
+
+### Karma [First Blood 🩸]
+
+We are given a binary file attached to this challenge
+
+
