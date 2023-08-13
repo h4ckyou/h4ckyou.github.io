@@ -21,9 +21,9 @@
 - Veil of shadow
 - Unveiling
 
-#### PWN
+## PWN
 
-##### Puts in boot [First Blood 🩸]
+### Puts in boot [First Blood 🩸]
 
 We are given a binary file attached to it
 
@@ -1295,9 +1295,9 @@ Running it spawns a shell
 
 - I'll add the remaining solved 2 pwn chall later
 
-#### Cryptography
+## Cryptography
 
-##### Row row row your boat
+### Row row row your boat
 
 We are given a python file named `encrypt.py` and a text file `encrypted.txt`
 
