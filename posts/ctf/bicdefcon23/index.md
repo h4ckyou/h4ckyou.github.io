@@ -627,5 +627,23 @@ Running it works
 
 ### Dubdubdub [First Blood 🩸]
 
+After downloading the binary and checking the file type / mitgations I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e1c2786a-488f-497b-ae61-f1d22f262356)
 
+It's the same file type as the previous ones but what's different here is the mitigation enabled
+
+- NX ( No-Execute)
+- PIE (Position Independent Executable)
+
+I've talked about NX so let me talk about PIE
+
+Basically when PIE is enabled that means that during each time of program execution it will get loaded into different memory address
+
+This means you cannot hardcode values such as function addresses and gadget locations without finding out where they are
+
+Such a pain right?
+
+Let us move on
+
+Running the binary shows this
 
