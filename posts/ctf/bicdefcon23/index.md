@@ -1454,5 +1454,4 @@ I pasted the base64 encoded value to cyberchef to let it do it's magic and got t
 Flag: Bic{W1m_0r_sw1m}
 ```
 
-
-
+- There are other challenge categories not here because I can't access them again
