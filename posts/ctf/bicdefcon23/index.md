@@ -1,6 +1,6 @@
 <h3> BIC DEFCON CTF 2023 </h3>
 
-### Description: This was a fun ctf I did during the weekend and it taught me new things >3
+### Description: This was a fun ctf I did and it taught me new things >3
 
 <h3> Challenge Solved: </h3>
 
