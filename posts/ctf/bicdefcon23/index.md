@@ -107,5 +107,27 @@ void AI(void)
   }
   return;
 }
-
 ```
+
+I won't explain what each option does but only the vulnerable section of the code as it's quite readable and understandable
+
+The vulnerability in this program lies here:
+
+```c
+  char buffer [79];
+
+  if (option == 'A') {
+    puts("Andrej Karpathy!! You know, famous computer scientist?");
+    puts("A: Yeah, no!\nB: Oooh yeeah!");
+    fflush(stdout);
+    __isoc99_scanf("%1s",&option);
+    if (option == 'A') {
+      puts("This Gen Alpha...lol. Tell me, what do you do in your free time if not learning ML?");
+      fflush(stdout);
+      getchar();
+      fgets(buffer,0x100,stdin);
+    }
+```
+
+
+
