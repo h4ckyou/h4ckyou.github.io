@@ -1042,4 +1042,17 @@ It seems to just receive our input and exit
 Before I started I patched the binary also using pwninit as I did previously
 
 Looking at the decopmilation in ghidra shows the main function as this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c60e5223-126f-4ad5-b504-5213e47554be)
+```r
+
+
+
+
+
+
+
+
+
+
+
 
