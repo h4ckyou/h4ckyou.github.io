@@ -10,6 +10,9 @@
 -  Breakup
 -  Dubdubdub
 -  Shellstorm
+-  Fairplay
+-  Shellstorm2
+-  Dubdubdub2 [Unsolved]
 
 ## Cryptography
 - Row row row your boat
@@ -1024,4 +1027,19 @@ io.interactive()
 Running it spawns a shell
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/162cb370-ecee-40e1-9b33-0ed2fde04fc0)
 
+### Shellstorm [First Blood 🩸]
+
+After downloading the attached file checking the file type shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fc9c84d7-142a-4192-a47f-4f5a83b5b613)
+
+Same as usual 
+
+Running it shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d2975a0d-d51d-41ac-b56a-b218459c8f87)
+
+It seems to just receive our input and exit
+
+Before I started I patched the binary also using pwninit as I did previously
+
+Looking at the decopmilation in ghidra shows the main function as this
 
