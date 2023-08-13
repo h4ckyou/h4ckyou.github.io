@@ -1379,3 +1379,80 @@ Running it gives the flag
 ```
 Flag: BIC{24o8238a2483964fg93w86t43}
 ```
+
+## Forensics
+
+### Veil Of Shadows
+
+We are given a download file and on checking the file type doesn't show any thing reasonable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b52f3b83-e681-4480-9302-5b2295bc187f)
+
+Looking at the file header signature shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bfe31e33-bdb9-46f9-b8a9-8284c42f6436)
+
+The header is:
+
+```
+5749 4d00
+```
+
+Looking at [wikipedia](https://en.wikipedia.org/wiki/List_of_file_signatures) and searching that hex byte shows that it's a .WIM file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4ffb7f5e-a7e8-4655-aa6b-54a4928e065c)
+
+```
+4D 53 57 49 4D 00 00 00 D0 00 00 00 00
+```
+
+Comparing that to what we have we can tell that the file is missing two bytes which are `4D 53`
+
+I made a python script to fix the missing byte
+
+```python
+#!/usr/bin/python3
+
+buf = open('Challenge', 'rb').read()
+buf = b"\x4D\x53" + buf
+with open('shadow.wim', 'wb') as fd:
+    fd.write(buf)
+```
+
+Running it creates the `shadow.wim` file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4a5035a1-2fd1-4d93-b149-e5dd6e8ad6df)
+
+I extracted it using `wimlib-imagex` which I got after installing `wimtools`
+
+But we need the image name first
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/221f93bc-7121-4ec5-a401-6b34772675e4)
+
+```r
+wimlib-imagex info "shadow.wim"
+```
+
+Now we can extract it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/226eed1a-910d-420e-8f9e-f529e1aca6a8)
+
+```r
+wimlib-imagex extract shadow.wim Defcon-Drive/compress:max
+```
+
+It extracted 76 files
+
+Looking at the extracted file I saw this 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/051d0f58-ff4d-4e6e-8611-e79535216d13)
+
+The content shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c058bd22-6bba-4a7f-91dc-c1278c7e3b61)
+
+```
+H4sICHRVpmQAA0ZsYWcudHh0AHPKTK4ON8yNNyiKLy43zK3lAgCeyNDbEQAAAA==
+```
+
+I pasted the base64 encoded value to cyberchef to let it do it's magic and got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/281a6606-9914-4234-adad-5e57287705e4)
+
+```
+Flag: Bic{W1m_0r_sw1m}
+```
+
+
+
