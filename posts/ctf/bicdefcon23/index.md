@@ -1293,7 +1293,59 @@ io.interactive()
 Running it spawns a shell
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0145715f-2188-42a3-910d-ad5e083373ab)
 
-------------------------
-I'll add more pwn later
-------------------------
+- I'll add the remaining solved 2 pwn chall later
 
+#### Cryptography
+
+### Row row row your boat
+
+We are given a python file named `encrypt.py` and a text file `encrypted.txt`
+
+Here's the content of the encrypt file
+```python
+#!/usr/bin/env python3
+
+import random
+from Crypto.Util.number import getPrime, bytes_to_long
+
+with open('flag.txt', 'rb') as f:
+    flag = f.read()
+
+
+msgs = [
+    b'Let us paddle till our muscles ache',
+    b'We shall be vitorious!',
+    b'Navigating the waters is thrilling!'
+        ]
+msgs.append(flag)
+msgs *= 3
+random.shuffle(msgs)
+
+for msg in msgs:
+    p = getPrime(1024)
+    q = getPrime(1024)
+    n = p * q
+    e = 3
+    m = bytes_to_long(msg)
+    c = pow(m, e, n)
+    with open('encrypted.txt', 'a') as f:
+        f.write(f'n: {n}\n')
+        f.write(f'e: {e}\n')
+        f.write(f'c: {c}\n\n')
+```
+
+Looking at it we can tell this implements RSA Cryptography
+
+It opens up the flag appends it to the `msgs` array 
+
+Multiply the array by 3 and shuffles the values in the array
+
+For each values in the array it encrypts it using RSA
+
+The issue with this is the usage of a small public exponent `e`
+
+Because of that if we do `pow(m, e)` the result will be less than `n`
+
+With that we can take the `pow(m, 1/e)` to get the plaintext
+
+Here's my solve script
