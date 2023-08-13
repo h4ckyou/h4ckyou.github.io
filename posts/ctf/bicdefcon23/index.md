@@ -1455,3 +1455,9 @@ Flag: Bic{W1m_0r_sw1m}
 ```
 
 - There are other challenge categories not here because I can't access them again
+
+
+At the end of the CTF my team `n00b5` placed 5th though it would have been 4th because the pwn challenge for Shellstorm was the wrong binary and it worth 200pts :(
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c574825a-6de6-4242-bbf6-5782badf158c)
+
+That's all till next time `(　-_･)σ - - - - - - - `
