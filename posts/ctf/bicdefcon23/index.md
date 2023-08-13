@@ -1045,9 +1045,111 @@ Looking at the decopmilation in ghidra shows the main function as this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c60e5223-126f-4ad5-b504-5213e47554be)
 ```r
 
+undefined8 main(void)
 
+{
+  char buffer [64];
+  
+  fgets(buffer,0x100,stdin);
+  return 0;
+}
 
+```
 
+The binary is really simple it just receives our input and stores in the buffer 
+
+There's a buffer overflow since we're allowed to write 0x100 bytes to a 72 bytes buffer
+
+In the functions there's a seccomp function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/425bbfe9-d18f-416b-acc1-535a89930bc5)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7f31fdb1-e723-4696-86ae-355fa406dfe0)
+```c
+
+void seccomp(void)
+
+{
+  undefined8 uVar1;
+  
+  uVar1 = seccomp_init(0x7fff0000);
+  seccomp_rule_add(uVar1,0,2,0);
+  seccomp_rule_add(uVar1,0,0x28,0);
+  seccomp_load(uVar1);
+  return;
+}
+```
+
+That's a seccomp rule and it allows syscall of `0x2` and `0x28`
+
+Better still we can just dump the seccomp rule using `seccomp-tools`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/86c8cee4-7b0e-41b6-893b-3198fb8f9a34)
+
+Cool we can use `open & sendfile` syscall
+
+But it doesn't really block any other form of syscall so we can as well use `execve` which spawns a shell
+
+Wait!!!! How do we even achieve this NX is enabled so we can't use shellcode to spawn a shell 🤔
+
+Well the fact NX is enabled only just means that the stack won't be executable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1db677da-c2ee-41a8-8b22-d0108a26f2d3)
+
+But we can write to the stack and also read 
+
+How do we exploit this binary
+
+Thinking of leaking libc? Well that isn't possible because `fgets` can't be used to write value to stdout and no other C library function is used in this binary
+
+I spent hours here thinking until I decided to check the gadgets available
+
+Luckily I found interesting gadgets
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/01966e1f-1f6a-4054-8e25-86729f333faa)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/86a7de7b-b219-4dd2-b9c2-b077d502063a)
+
+The output might look tedious but here's a filter
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9d7dacc6-7b74-4d61-95d0-03cf1ba57a99)
+
+We have this list of gadgets
+
+```
+0x00000000004011a1: pop rax; ret; 
+0x000000000040117d: pop rbp; ret; 
+0x00000000004011a3: pop rdi; ret; 
+0x00000000004011a7: pop rdx; ret; 
+0x00000000004011a5: pop rsi; ret;
+```
+
+And one particular interesting one
+
+```
+0x00000000004011a9: mov qword ptr [rdi], rax; ret; 
+```
+
+From the instruction below we can see that the value of rax will be moved to the pointer of rdi
+
+```
+mov qword ptr [rdi], rax; ret; 
+```
+
+Basically it's deferencing the value of rax to the value of rdi
+
+This means we have kinda arbitrary write
+
+Now where would we want to write and what would we want to write?
+
+My goal is to spawn a shell not open up `flag.txt` so I'll write `/bin/sh\x00` into a section of the binary that doesn't contain anything
+
+Luckily the `.data` section suits this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c5248c34-f816-4d09-846d-f5749083544a)
+
+Now here's the idea of how I'll go about the write
+
+```s
+;Write /bin/sh to 0x000000000404038
+pop rax; 0x2f62696e2f736800
+pop rdi; 0x000000000404038
+mov qword ptr [rdi], rax; ret;
+```
+
+With
 
 
 
