@@ -1,5 +1,7 @@
 <h3> Imaginary CTF </h3>
 
+#### MISC
+
 #### No Cigar
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a735661-bd09-4e7c-bd72-243e04861359)
 
@@ -84,4 +86,5 @@ log.info(f'Flag: {flag}')
 Running it worked
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b3034d3-2577-408c-8ddf-1d12b1e09201)
 
-Cool I also ran it remotely
+Cool I also ran it remotely and got the flag
+
