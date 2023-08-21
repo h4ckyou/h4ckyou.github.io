@@ -87,4 +87,9 @@ Running it worked
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b3034d3-2577-408c-8ddf-1d12b1e09201)
 
 Cool I also ran it remotely and got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fbd446ce-3de8-4490-bb45-79d73eb5d32d)
+
+```
+Flag: ictf{customer_service_ftw_0d2f}
+```
 
