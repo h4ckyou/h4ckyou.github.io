@@ -122,7 +122,7 @@ Arigato 🫠
 - [[Jan 29 2023]] [TAMU_19](https://markuched13.github.io/posts/bof/pwn1.html) `Variable Overwrite`
 - [[Jan 29 2023]] [TW_17](https://markuched13.github.io/posts/bof/justdoit.html) `Variable Overwrite`
 - [[Jan 29 2023]] [CSAW_16](https://markuched13.github.io/posts/bof/warmup.html) `Ret2Win, Movaps Stack Allignment`
-- [[Jan 29 2023]] [TFC_21](https://markuched13.github.io/posts/bof/secret.html) 
+- [[Jan 29 2023]] [TFC_21](https://markuched13.github.io/posts/bof/secret.html) ``
 - [[Jan 29 2023]] [KCTF_23](https://markuched13.github.io/posts/bof/chall.html) `Ret2Win`
 - [[Jan 31 2023]] [TU_17](https://markuched13.github.io/posts/bof/vulnchat.html) `Variable Overwrite, Ret2Win`
 
