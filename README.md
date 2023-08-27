@@ -10,3 +10,5 @@
 - 💞️ I’m looking to collaborate on Projects
 
 - 📫 How to reach me on Discord @Hack.You#9120 Twitter @0xMarkUche
+
+[![asciicast](https://asciinema.org/a/dIvud7qrF5nTORsmi7g06Jr9M.svg)](https://asciinema.org/a/dIvud7qrF5nTORsmi7g06Jr9M)
