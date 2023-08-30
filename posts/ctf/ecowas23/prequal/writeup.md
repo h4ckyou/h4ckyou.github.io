@@ -2970,7 +2970,7 @@ Since the public key is generated from the public modulus and exponent we need t
 
 To do that I used this [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/cryptography/Ron%20Adi%20Leonard/extract.py)
 
-```python=
+```python
 from Crypto.PublicKey import RSA
 
 public_key = open('public.pem', "rb").read()
@@ -2989,7 +2989,7 @@ Cool we can! This makes it easy to solve since we can now get `d` which is the p
 
 Here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/cryptography/Ron%20Adi%20Leonard/solve.py)
 
-```python=
+```python
 #!/usr/bin/python3
 from Crypto.Util.number import long_to_bytes, bytes_to_long, inverse
 
@@ -3059,7 +3059,7 @@ With that said, to get the key we need to xor our known plaintext with base64 de
 I used python pwn.xor module to do that
 ![image](https://github.com/markuched13/CTFLearn/assets/113513376/a7c4c343-f7be-488e-844d-e6dfde598d42)
 
-```python=
+```python
 ➜  KasheKanka python3
 Python 3.11.2 (main, Feb 12 2023, 00:48:52) [GCC 12.2.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
@@ -3108,7 +3108,7 @@ You will get that `n` can be factorized from there get the value of `d`
 
 Here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/cryptography/goumin%20fraca/solve.py)
 
-```python=
+```python
 from Crypto.Util.number import *
 
 p = 198828927652291316291569791180652465177
@@ -3149,7 +3149,7 @@ Flag: flag{43bc9aaf8b315435c2459fcb5aaf710a683a917294130b64413f3814465aaf30ffb84
 Downloading the attached file and checking the python script shows this
 ![image](https://github.com/markuched13/CTFLearn/assets/113513376/ce810f31-ff15-4670-bcc2-bc9d37d14e89)
 
-```python=
+```python
 #!/usr/bin/env python
 
 from Crypto.Cipher import AES
@@ -3200,7 +3200,7 @@ Since AES works base on bitwise xor operation
 
 Here's the solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/cryptography/Dangbui/solve.py)
 
-```python=
+```python
 import binascii
 from pwn import xor
 
