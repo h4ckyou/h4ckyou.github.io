@@ -10,5 +10,39 @@ If n is even, the algorithm divides it by two, and if n is odd, the algorithm mu
 The algorithm repeats this, until n is one.
 
 For example, the sequence for n=3 is as follows:
-3→10→5→16→8→4→2→1
+3 → 10 → 5 → 16 → 8 → 4 → 2 → 1
+```
+
+The contraint is:
+
+```
+1 ≤ n ≤ 10^6
+```
+
+So we're to create an algorithm that does this:
+- When given a positive integer `n` provided as the input, it will check this:
+  - If the number provided is an even number it will divide it by 2
+  - If it's an odd number it will multiply it by 3 and add one to it
+  - The program will do this till `n` is 1
+
+Here's my solve script:
+
+```python
+def algo(n):
+    r = [n]
+    try:
+        while r[-1] != 1:
+            if n % 2 == 0:
+                n = n // 2
+            else:
+                n = (n * 3) + 1
+            r.append(n)
+    except Exception:
+        pass
+
+    return r
+
+n = int(input())
+sequence = algo(n)
+print(" ".join(map(str, sequence)))
 ```
