@@ -38,3 +38,48 @@ When to use Linear Search?
 
     When we are dealing with a small dataset.
     When you are searching for a dataset stored in contiguous memory.
+
+#### Example:
+
+Given an array Arr of N elements and a integer K. Your task is to return the position of first occurence of K in the given array.
+
+Note: Position of first element is considered as 1.
+
+Your Task:
+Complete the function `search()` which takes an array arr, two integers n and k, as input parameters and returns an integer denoting the answer. Return -1 if the number is not found in array. You don't to print answer or take inputs.
+
+Expected Time Complexity: O(N)
+Expected Auxiliary Space: O(1)
+
+Constraints:
+```
+1 <= N <= 10^6
+1 <= K <= 10^6
+1 <= Arr[i] <= 10^6
+```
+
+Parameters given:
+
+```
+N = 5, K = 16
+Arr[] = {9, 7, 2, 16, 4, 5, 1, 3, 10, 25, 31, 45, 60, 200}
+```
+
+The way to solve this:
+ - Iterate through the array
+ - If the 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
