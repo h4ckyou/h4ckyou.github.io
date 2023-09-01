@@ -13,7 +13,7 @@ For example, the sequence for n=3 is as follows:
 3 → 10 → 5 → 16 → 8 → 4 → 2 → 1
 ```
 
-The contraint is:
+The constraint is:
 
 ```
 1 ≤ n ≤ 10^6
