@@ -46,3 +46,18 @@ n = int(input())
 sequence = algo(n)
 print(" ".join(map(str, sequence)))
 ```
+
+Basically what it does is this:
+- Defines a function called `algo` which requires a number passed as the argument
+  - It sets the array `r` with the number passed into this function
+  - It will start a while loop that checks if the last number of the list is not equal to `1`
+  - If it isn't then it checks if the number is even or odd then performs the expected operation
+  - The result is then appended to the array
+  - And while the result isn't returning 1 the loop will continue
+- The final result is going to be returned as a list
+- Then using `map` I set it to the expected output required for this algorithm question
+
+Here's the result 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cab21dc7-8a76-48cd-a0b0-6a9b8aefca37)
+
+Btw the failed attempt is when I was trying to upload an empty script :D
