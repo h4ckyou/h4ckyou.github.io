@@ -52,6 +52,7 @@ for r in n3:
 ```
 
 It works but the time limit was exceeded
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fb80bac9-5f24-4bd2-9d38-ebfd59c7efe8)
 
 Well that's expected cause looping through large number has it's cons which includes the time complexity 🙂
