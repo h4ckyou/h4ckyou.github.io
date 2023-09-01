@@ -10,8 +10,8 @@ title:  Programming.
 
 
 * * *
-<h4 class="menu-header" id="ctf">Programming:</h4>
-Programming refers to a technological process for telling a computer which tasks to perform in order to solve problems.<hr>
+<h4 class="menu-header" id="programming">Programming:</h4>
+Programming refers to a technological process for telling a computer which tasks to perform in order to solve problems.
 <hr>
 
 - [[September 01 2023]] [CSES: Weird Algorithm](https://h4ckyou.github.io/posts/programming/cses/Weird%20Algorithm/solution.html) `Programming, Algorithm`
