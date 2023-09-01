@@ -1,4 +1,5 @@
 <h3> Weird Algorithm </h3>
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f796d484-7853-4afe-947b-6bb60b36ab4f)
 
 We are given the description as:
