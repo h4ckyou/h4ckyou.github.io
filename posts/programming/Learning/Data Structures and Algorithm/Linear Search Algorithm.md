@@ -74,7 +74,7 @@ def search(arr, N, k):
     position = 0
 
     for i in range(1, N+1):
-        if arr[i - 1] == k:
+        if arr[i - idx] == k:
             position = i
             break
         else:
