@@ -28,23 +28,23 @@ To solve this I'll do this:
 Here's my solve script
 
 ```python
-def repetition(sequence):
-    maximum = 0 
-    current = 1
-    previous = sequence[0]
+def findLongestRepetition(sequence):
+    maxRepetition = 0 
+    currentRepetition = 1
+    previousChar = sequence[0]
 
     for char in sequence[1:]:
-        if char == previous:
-            current += 1
+        if char == previousChar:
+            currentRepetition += 1
         else:
-            maximum = max(maximum, current)
-            current = 1
-            previous = char
+            maxRepetition = max(maxRepetition, currentRepetition)
+            currentRepetition = 1
+            previousChar = char
 
-    return max(maximum, current)
+    return max(maxRepetition, currentRepetition)
 
 sequence = list(input())
-r = repetition(sequence)
+r = findLongestRepetition(sequence)
 
 print(r)
 ```
