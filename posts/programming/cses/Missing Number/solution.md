@@ -57,3 +57,41 @@ It works but the time limit was exceeded
 Well that's expected cause looping through large number has it's cons which includes the time complexity 🙂
 
 So I thought of another way to make this more efficient and here's my final solution
+
+Notice that the sequence will always be in it's arithmetic form 
+
+Therefore to get the missing number we can say:
+
+```
+expected_sum - present_sum
+```
+
+The expected sum can be calculated this way:
+
+```
+Sum of nth term = n * (n + a) // 2
+n = number of terms
+a = first term which is always going to be 1
+```
+
+That's just the formular for finding the sum of arithemetic progression
+
+Now that we know that here's my solve script
+
+```python
+def find(n2, n1):
+    expected = (n1 * (n1 + 1)) // 2
+    known = sum(int(i) for i in n2)
+    missing = expected - known
+    return missing
+
+n1 = int(input())
+n2 = input().split()
+
+r = find(n2, n1)
+print(r)
+```
+
+It works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5ec65803-b67b-4a3a-ba89-d444d58fc0c0)
+
