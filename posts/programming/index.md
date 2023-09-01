@@ -16,4 +16,4 @@ Programming refers to a technological process for telling a computer which tasks
 
 - [[September 01 2023]] [CSES: Weird Algorithm](https://h4ckyou.github.io/posts/programming/cses/Weird%20Algorithm/solution.html) `Programming, Algorithm`
 - [[September 01 2023]] [CSES: Missing Number](https://h4ckyou.github.io/posts/programming/cses/Missing%20Number/solution.html) `Programming, Algorithm`
-- [[September 01 2023]] [CSES: Repetitions](https://h4ckyou.github.io/posts/programming/cses/Repeittions/solution.html) `Programming, Algorithm`
+- [[September 01 2023]] [CSES: Repetitions](https://h4ckyou.github.io/posts/programming/cses/Repeitions/solution.html) `Programming, Algorithm`
