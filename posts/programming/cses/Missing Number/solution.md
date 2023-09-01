@@ -41,14 +41,13 @@ def search(array, last):
         if str(i) not in array:
             missing.append(i)
 
-    return missing[1::]
+    return missing[1]
 
 n1 = int(input())
 n2 = sorted(input().split())
-n3 = search(n2, n1)
 
-for r in n3:
-    print(r)
+r = search(n2, n1)
+print(r)
 ```
 
 It works but the time limit was exceeded
