@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#Author: Hack.You
 
 if __name__ == '__main__':
     a = int(input())
