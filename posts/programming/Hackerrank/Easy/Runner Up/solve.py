@@ -11,5 +11,5 @@ if __name__ == '__main__':
     n = int(input())
     arr = list(map(int, input().split()))
 
-    result = getRunnerUp(arr, n)
+    result = getRunnerUp(arr, max(arr))
     print(result)
