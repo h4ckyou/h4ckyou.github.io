@@ -71,5 +71,16 @@ Don't mind that I have lot of skill isses :(
 
 ![skillissue-skill](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/050f0dcf-b2e7-4ede-a2e7-426ffa0f6630)
 
+Ok back to the challenge, I have done at least 2 `one byte overflow` before but it was on a x64 binary so solving this really taught me something new
 
+I decided to check out the overflow using `gdb-gef`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3c3cb7ec-7dd4-4f9f-a38e-f9d4e1be01e0)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dc16b498-4864-411e-8d7c-c19115751a69)
 
+Looking at that we can see that I inputted 17 A's which is the amount of bytes required to perform the one byte overwrite
+
+And from the result on our current instruction pointer which is the `eip` it is pointing to `0x41565562` 
+
+This is where I starter getting confused
+
+And the reason is becasue I'm used to seeing addresses being in form of Little Endian when I do one byte overwrite i.e `0x56565541`
