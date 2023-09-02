@@ -68,6 +68,7 @@ It is as we saw from the source code!
 I was still wondering why they gave us a elf section leak 🤔
 
 Don't mind that I have lot of skill isses :(
+
 ![skillissue-skill](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/050f0dcf-b2e7-4ede-a2e7-426ffa0f6630)
 
 
