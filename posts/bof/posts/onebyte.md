@@ -83,4 +83,18 @@ And from the result on our current instruction pointer which is the `eip` it is 
 
 This is where I starter getting confused
 
-And the reason is becasue I'm used to seeing addresses being in form of Little Endian when I do one byte overwrite i.e `0x56565541`
+And the reason is becasue I'm used to seeing addresses being in form of Little Endian when I do one byte overflow i.e `0x56565541`
+
+Note: The way I solved this is based on logic I don't really know `why` it works like that 🥲
+
+So if we take a look at the current address of the win function we will see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b42d7c56-b2a8-43ea-9e58-0e5b095544f1)
+
+Because PIE is enabled it will always change during the program execution
+
+And from our one byte overflow the address is giving `0x41565562` instead of `0x56565541`
+
+That means our one byte overflow is just overwriting the first byte of the address and not the last
+
+This is bad because how would we want to change the EIP to point to the win function when we can just only overwrite the first byte and not the last
+
