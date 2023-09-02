@@ -47,7 +47,28 @@ The vulnerability lies in the read call because:
 
 That gives us a one byte buffer overflow
 
-At first I was like this is too easy and what the hell is the leak for 
+At first I was like this is too easy cause there's a win function and what the hell is the leak for?
 
 Trust me it's easy but I spent about an hour solving it lol
+
+From this vuln we know the idea is exploiting one byte overflow to a jump to the win function which would spawn a shell
+
+Checking the file type and protection enabled showed this:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/84c35a71-5921-4dae-88e2-60fa70f9c9b0)
+
+We are working with a 32bit binary which is dynamically linked and not stripped
+
+The only protection not enabled is `Stack Canary`
+
+Let us run the binary to see how it behaves
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3ee4ad9-6593-464f-a76a-a3c7784bb8f8)
+
+It is as we saw from the source code! 
+
+I was still wondering why they gave us a elf section leak 🤔
+
+Don't mind that I have lot of skill isses :(
+![skillissue-skill](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/050f0dcf-b2e7-4ede-a2e7-426ffa0f6630)
+
+
 
