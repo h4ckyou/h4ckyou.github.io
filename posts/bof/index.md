@@ -55,3 +55,4 @@ Binary exploitation involves taking advantage of a bug or vulnerability in order
 - [[Mar 25 2023]] [AccessDenied](https://h4ckyou.github.io/posts/bof/posts/accessdenied.html) `ROP (Ret2Libc)`
 - [[May 26 2023]] [StoryTime](https://h4ckyou.github.io/posts/bof/posts/storytime.html) `ROP (Ret2Libc @Write)`
 - [[June 11 2023]] [RopTilUDrop](https://h4ckyou.github.io/posts/bof/posts/roptiludrop.html) `ROP `
+- [[September 02 2023]] [One Byte](https://h4ckyou.github.io/posts/bof/posts/onebyte.html) `One Byte Overflow, Ret2Win`
