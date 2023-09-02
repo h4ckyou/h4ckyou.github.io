@@ -98,3 +98,44 @@ That means our one byte overflow is just overwriting the first byte of the addre
 
 This is bad because how would we want to change the EIP to point to the win function when we can just only overwrite the first byte and not the last
 
+I spent time figuring what to do but couldn't think of anything so I decided to look at what each character does when I overflow with it
+
+That kinda sounds dumb like why is that important? To be honest I don't know 😂
+
+So using this input I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f3dd4b2-3155-44dc-83ac-d4c5eeff0bc1)
+
+```python
+'A'*16 + 'B'
+```
+
+Hmm interesting! Notice that the EIP has been overwritten with two bytes
+
+I followed that pattern using another set of character
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/16485df6-7848-427d-b88c-87657202f028)
+
+```python3
+'A'*16 + 'C'
+```
+
+Wow again? We have overwritten 3 bytes just by using the third alphabet `C`
+
+I did it for letter `D` and boom we have full control over the EIP
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2421948c-4eac-4fbd-a28f-9a9c09217d39)
+
+This is cool because we having total control over the EIP therefore can make us change the program execution to call any function and in this case we would want to call the `win` function
+
+But we need two things:
+- The exact location of where our input which is overwriting the EIP is
+- A way to get the win function address because PIE is enabled it will always change
+
+The first and second case are easy to get:
+
+For the first case since we know that in x86 binaries the memory address are 4 bytes alligned meaning we can therefore split our payload into fours i.e 'A'*4 + 'B'*4 etc.. 
+
+Doing that I got the position to be the first 4 bytes of our input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bf4e3e80-c3ed-4ec9-900a-90b73e1a33a2)
+
+```python
+'A'*4 + 'B'*4 + 'C'*4 + 'D'*4 + 'D'
+```
