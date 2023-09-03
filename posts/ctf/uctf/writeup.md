@@ -156,7 +156,7 @@ This is my approach in solving this challenge:
 
 That sounds easy writing **that** but the script took me some good amount of time debugging 😂
 
-Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 12minutes
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 12minutes (I should learn to optimize my coding ikr)
 
 But after running the script I got this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0bcca4c7-5e8d-47b7-97ac-14130aadc5be)
@@ -241,4 +241,66 @@ So basically this:
 {"username":{"$regex":"^"},"password":{"$ne":"uche"}}
 ```
 
-That will return True and get us logged in because `^` is a wildcard which 
+That will return True and get us logged in because `^` is a wildcard which basically checks if any of the users in the column first character is any value
+
+Next we can try:
+
+```r
+{"username":{"$regex":"^a"},"password":{"$ne":"uche"}}
+```
+
+This will check is any of the user in the column is starting from `a` if that returns True i.e gets us logged in
+
+Then we can check for the second character
+
+```r
+{"username":{"$regex":"^ab"},"password":{"$ne":"uche"}}
+```
+
+Basically we will keep doing that and eventually end up dumping the users
+
+So now that we know that we can go ahead doing it manually but scripting it saves time
+
+Here's the dump [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/NoSQL/solve.py) 
+
+If you check the script you will see commentated section of the code that's so because while I was trying to solve this I was over complicating things lol
+
+Anyways basically the script will dump the users
+![1](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0abeee0b-3c8a-4b11-b198-719d8ee02b79)
+![2](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7f823cb0-0850-426f-a462-a193556bb5f5)
+
+Now that we have the list of users this is where I started over complication things
+
+I assumed the flag would be any of the users password
+
+So I made a function to get the password length of each users
+
+It's just doing this regex
+
+```
+{"username":{each_users},"password":{"$regex":"[a-zA-Z0-9]{1}"}}
+```
+
+Basically that will check is the length of the user password is 1 if it is then it will return True and get us logged in
+
+We can keep incrementing the values till we get a False return
+
+But when I ran it I noticed the password length are all the same for the users
+![3](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6134f03c-cee1-4c42-aa43-e3ce3c179109)
+
+So it's likely the password are hashes that's why it's the same
+
+Therefore it's of no use (i spent so many hours on this lool)
+
+After this I decided to check the web out and saw the search user function which I had forgotten about
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8ff9caf3-258f-48ee-9af0-86007e8c4957)
+
+I searched for the users I have and got their individual role
+
+Right now it doesn't work I guess the server is overloaded
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ac8e29a8-13f8-4ccb-9fe9-3b96290c51be)
+
+But user `decre127` profile has the flag in his `ID` column
+
+
+
