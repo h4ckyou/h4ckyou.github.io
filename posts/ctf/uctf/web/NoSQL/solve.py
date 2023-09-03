@@ -62,8 +62,8 @@ def main():
     url = 'https://cp.uctf.ir/login'
     charset = list(string.ascii_letters + string.digits + '.-@_{}')
 
-    # usernames = get_usernames(url, charset)
-    # print(usernames)
+    usernames = get_usernames(url, charset)
+    print(usernames)
     # ['accep', 'baffling', 'decre127', 'entertainin', 'globa', 'hashishcount', 'ill', 'operaticd', 'real', 'spiralvo', 'transcendent', 'wantingconce']
     #for users in usernames:
         #get_password_length(url, users)
