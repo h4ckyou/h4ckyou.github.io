@@ -40,3 +40,10 @@ With this we can basically read local file off disk
 ```r
 curl -s -X POST "https://ecorpblog.uctf.ir/api/view.php" -H "Content-Type: application/json" -d '{"post":"file:///etc/passwd"}' | jq .post -r
 ```
+
+But would that help us in accessing the internal domain
+
+Well since it uses `file` wrapper it's safe to assume we can also make use of other wrappers in this case it will be `http`
+
+With that said we should be able to access the internal domain `http://admin-panel.local`
+
