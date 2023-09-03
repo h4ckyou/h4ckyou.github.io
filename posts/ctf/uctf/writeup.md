@@ -88,6 +88,10 @@ This is what happens if we fail to bypass and try to read the flag
 Cool so let's bypass that
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a03e6ab-ca72-4b56-8d2a-9467161a1a40)
 
+```r
+curl -H "Host: localhost" http://htaccess.uctf.ir/one/flag.txt
+```
+
 We get the first portion of the flag
 
 ```
