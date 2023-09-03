@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/21116ffa-18f3-421b-bb9d-85a0c8bb3fd4)<h3> UCTF 2023 </h3>
+<h3> UCTF 2023 </h3>
 
 I played this ctf with my friends
 
