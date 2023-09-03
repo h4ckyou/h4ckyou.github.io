@@ -156,11 +156,12 @@ This is my approach in solving this challenge:
 
 That sounds easy writing **that** but the script took me some good amount of time debugging 😂
 
-Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 10minutes
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 12minutes
 
-But after running it I got this
+But after running the script
 
 And back on the web page I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a7edada-b61b-4fab-b4c0-34b8d2c9a07c)
 
 #### Captcha2 | the Missing Lake
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/219d75b7-644d-434b-92ac-186076d9e535)
@@ -186,5 +187,53 @@ Going over to the url shows this
 
 We have a login page but since no credential was giving let us try bypass it using NoSQL Injection
 
-I used burp to intercept the request
+I used burp to intercept the login request
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/15a311ff-124d-446b-89b0-3cb5ade06d90)
 
+Failed login request just redirects to `/login`
+
+Notice the header
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7b7848bf-df6e-4bc2-b54e-43909cf8e081)
+
+It's running Express server which is like NodeJS and usually the database that runs on NodeJS is MongoDB
+
+Also because of this we can pass the parameters in form of json
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/19231513-689d-45b3-8f74-fe503e1102e2)
+
+We can see that on forwarding the request it works 
+
+To check for NoSQL Injection I used the not equal `$ne` parameter 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b1d8f98f-ccd9-4d1d-8fd8-cdec64d86ea4)
+
+```r
+{"username":{"$ne":"uche"},"password":{"$ne":"uche"}}
+```
+
+What that does is to tell the MongoDB that the value of `username` is not equal to `uche` which is True because the database doesn't have any username as `uche` also the same applies to the password
+
+With that the login will be successfull
+
+By intercepting the login request and modifying it to that payload I was able to bypass the login page
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0dc5ac97-3fd6-458a-bfa6-27a9d4381b96)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/86bda8f4-1e90-4c28-8b25-c7b6ff6089f6)
+
+In the home page we can search for a user
+
+But when I tried searching for some names it didn't return any result
+
+There's a `/users` endpoint but that gives this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e6fd12f6-87fc-4713-a03a-e506477237d5)
+
+So we need to find a way to get the users
+
+We can take advantage of the NoSQL injection to dump the users from the username column
+
+The way to do it is by using regular expression
+
+So basically this:
+
+```r
+{"username":{"$regex":"^"},"password":{"$ne":"uche"}}
+```
+
+That will return True and get us logged in because `^` is a wildcard which 
