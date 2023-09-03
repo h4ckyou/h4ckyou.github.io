@@ -2,7 +2,7 @@
 
 I played this ctf with my friends
 
-Here's the writeup to the challengs solved:
+Here's the writeup to the challengs I tried solving:
 
 ### Web
 -  E Corp.
