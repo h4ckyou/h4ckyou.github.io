@@ -300,7 +300,8 @@ I searched for the users I have and got their individual role
 Right now it doesn't work I guess the server is overloaded
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ac8e29a8-13f8-4ccb-9fe9-3b96290c51be)
 
-But user `decre127` profile has the flag in his `ID` column
+But user `decre127` profile had the flag in his `ID` column
 
+Just to confirm I ran the script again and saw that the users changed so that's why it didn't return any value
 
 
