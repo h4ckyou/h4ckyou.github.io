@@ -126,3 +126,9 @@ First I urlencoded `flag` then used it as the file name in the url
 ```
 curl htaccess.uctf.ir/two/%66%6c%61%67.txt;echo
 ```
+
+We can now join the two portion of the flag 
+
+```
+Flag: uctf{Sule_Dukol_waterfall}
+```
