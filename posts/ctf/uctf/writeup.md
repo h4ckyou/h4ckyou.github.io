@@ -156,4 +156,35 @@ This is my approach in solving this challenge:
 
 That sounds easy writing **that** but the script took me some good amount of time debugging 😂
 
-Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 10minutes
+
+But after running it I got this
+
+And back on the web page I got the flag
+
+#### Captcha2 | the Missing Lake
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/219d75b7-644d-434b-92ac-186076d9e535)
+
+No link is given but we can just guess the url since the first one was `https://captcha1.uctf.ir/` then the second should be `https://captcha2.uctf.ir/`
+
+Going over the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1441d150-86d4-48a4-8a32-24d46cafb8f8)
+
+This one is actually slight difficult than the first one because it deals with animal images and not text in an image
+
+But we can do it manually since it's just 100 captchas
+
+----- Will try solve it by automating -------
+
+#### MongoDB NoSQL Injection
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b772a480-0009-4b97-8133-7299c55c2bf7)
+
+From the challenge name we can tell we will be doing NoSQL Injection
+
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3593ab49-4297-403d-86c0-9243e8442ff3)
+
+We have a login page but since no credential was giving let us try bypass it using NoSQL Injection
+
+I used burp to intercept the request
+
