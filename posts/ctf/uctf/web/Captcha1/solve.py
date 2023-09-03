@@ -25,6 +25,7 @@ def solveCaptcha(url, cookie, proxy, captcha):
     while 'more to go' in req.text:
         r = requests.post(url, cookies=cookie, data=data)
         response = r.text
+        print(r.text)
         data["captcha"] = extractCaptcha(response)
     
     return True
