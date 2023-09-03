@@ -150,9 +150,10 @@ On each page refresh the value of the image changes
 We can submit those words from the image manually but what's the fun there 🙂
 
 This is my approach in solving this challenge:
-- First I'll need to get the current captcha from the image so that I can send it
+- First I'll need to get the current captcha from the image so that I can send the first captcah request with it's value
 - Using tesseract which is an OCR tool I can extract the text from the image
-- Then do a while loop till the capcha check is completed
+- Then do a while loop to repeat the process till the capcha check is completed
 
-That sounds easy writing that but the script took me some good time debugging 😂
+That sounds easy writing **that** but the script took me some good amount of time debugging 😂
 
+Here's my solve script and I must admit it takes about 
