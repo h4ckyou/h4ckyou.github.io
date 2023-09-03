@@ -54,3 +54,64 @@ Doing that works!
 curl -s -X POST "https://ecorpblog.uctf.ir/api/view.php" -H "Content-Type: application/json" -d '{"post":"http://admin-panel.local"}' | jq .post -r
 ```
 
+Here's the flag
+
+```
+Flag: uctf{4z174_1n_urm14}
+```
+
+#### Htaccess
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56adf216-bb38-4497-a090-38d51feab049)
+
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7e3b3c26-d017-4374-8d61-c8138fe0a285)
+
+So there are two htaccess rules placed on two portions of the flag
+
+We need to bypass them inorder to get the flag
+
+The first one is this:
+
+```
+RewriteEngine On
+RewriteCond %{HTTP_HOST} !^localhost$
+RewriteRule ".*" "-" [F]
+```
+
+What this rule enforce is basically that if the `Host` header isn't `localhost` we won't be able to access the file
+
+So to bypass this we can just change the `Host` header to `localhost`
+
+This is what happens if we fail to bypass and try to read the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b9cb159e-7257-4d18-a687-1327a9289eb2)
+
+Cool so let's bypass that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a03e6ab-ca72-4b56-8d2a-9467161a1a40)
+
+We get the first portion of the flag
+
+```
+uctf{Sule_
+```
+
+For the second rule:
+
+```
+RewriteEngine On
+RewriteCond %{THE_REQUEST} flag
+RewriteRule ".*" "-" [F]
+```
+
+It checks if the request body contains the string `flag` 
+
+If it does then we will get 403 error
+
+Here's a sample
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/18ca5089-ef40-4032-87cb-b89d01a06d39)
+
+So to bypass this we can just url encode the string `flag` in the url search bar 
+
+And what will happen is that the htaccess check will return False but where as on the server side it will get decoded to `flag` and we get access to it
+
+This solution was given to me by @0xvenus
+
