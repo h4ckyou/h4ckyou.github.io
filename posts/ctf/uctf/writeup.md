@@ -132,3 +132,22 @@ We can now join the two portion of the flag
 ```
 Flag: uctf{Sule_Dukol_waterfall}
 ```
+
+#### Captcha1 | the Missing Lake 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e89c51b0-3c8c-45c6-968c-5251a3ee51a9)
+
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/84eeb99d-7440-44c3-88a7-bce6647b9352)
+
+So we are to provide the captcha 300 times before we get the flag
+
+The session cookie is provided
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/074ca712-6663-4cae-95fc-a2e8052ad184)
+
+On each page refresh the value of the image changes
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/011c164f-7bb5-47ad-85ba-054f26382a1a)
+
+We can submit those words from the image manually but what's the fun there 🙂
+
+This is my approach in solving this challenge:
+- First I'll need to get the current captcha from the image 
