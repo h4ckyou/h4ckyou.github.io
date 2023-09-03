@@ -303,9 +303,12 @@ Right now it doesn't work I guess the server is overloaded
 But user `decre127` profile had the flag in his `ID` column
 
 Just to confirm I ran the script again and saw that the users changed so that's why it didn't return any value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e757bbd9-5d05-462d-ad41-399ba83275a3)
 
 Searching the first user returned it's value
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f00d22eb-1afa-491a-8f81-f25f6a51836e)
+
+So just search for all the users the one that is admin holds the flag
 
 
 
