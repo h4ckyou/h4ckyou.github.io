@@ -158,10 +158,15 @@ That sounds easy writing **that** but the script took me some good amount of tim
 
 Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 12minutes
 
-But after running the script
+But after running the script I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0bcca4c7-5e8d-47b7-97ac-14130aadc5be)
 
 And back on the web page I got the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a7edada-b61b-4fab-b4c0-34b8d2c9a07c)
+
+```
+Flag: UCTF{7h3_m1551n6_l4k3}
+```
 
 #### Captcha2 | the Missing Lake
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/219d75b7-644d-434b-92ac-186076d9e535)
