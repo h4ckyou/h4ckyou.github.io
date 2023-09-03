@@ -304,4 +304,8 @@ But user `decre127` profile had the flag in his `ID` column
 
 Just to confirm I ran the script again and saw that the users changed so that's why it didn't return any value
 
+Searching the first user returned it's value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f00d22eb-1afa-491a-8f81-f25f6a51836e)
+
+
 
