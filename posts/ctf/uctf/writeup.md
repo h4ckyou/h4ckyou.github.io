@@ -156,4 +156,4 @@ This is my approach in solving this challenge:
 
 That sounds easy writing **that** but the script took me some good amount of time debugging 😂
 
-Here's my solve script and I must admit it takes about 
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/web/Captcha1/solve.py) and I must admit it takes about 
