@@ -434,7 +434,18 @@ Or just check ghidra stack layout
 
 The offset is `0x2e - 0x14 = 26`
 
+So with 26 bytes we will get the moeness variable and on more input we would overwrite it's content
 
+Let's check it out
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b8982e4c-bd2a-499d-ad19-1c243e83e616)
+
+Cool it works
+
+Now we just need to overwrite it to the expected moeness value which is `0x30e`
+
+```c
+#define MOE_ENOUGH 0x30e
+```
 
 
 
