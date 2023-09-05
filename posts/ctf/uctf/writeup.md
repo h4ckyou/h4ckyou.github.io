@@ -387,15 +387,52 @@ char chant[] = "Moe Moe Kyun!";
 ```
 
 The use of `strcpy` cause a buffer overflow 
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bab46dfa-bc85-470f-a813-870886ea197b)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a4819641-03ce-4c4d-8ac4-a8858486ad51)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bab46dfa-bc85-470f-a813-870886ea197b)
 
 Let us test this out
 
+First I compiled it because no binary was provided just the source code :P
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4a499ad6-0ad3-4c88-94a2-a00514b55aa7)
 
+```
+➜  Moedo gcc src.c -no-pie -o src
+```
 
+Now I can cause a segfault
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c5c234b4-d38a-4712-9e57-1478a797483f)
 
+```
+➜  Moedo export MOE_CHANT=$(python2 -c print" 'A'*1000")
+➜  Moedo ./src lol
+UID: 1094795585 - GID: 1094795585 - Moe: 41414141
+You're not moe enough!
+[2]    125693 segmentation fault  ./src lol
+➜  Moedo
+```
 
+Cool now we have confirmed the buffer overflow
+
+What we should think of now is on how to exploit this?
+
+Well we basically just need to meet the if condition done on the value of `moeness`
+
+Since this will turn to be variables on the stack
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58b6af1b-1044-4728-8500-195f4df67015)
+
+We can calculate the offset between the `chant` and `moeness` variables
+
+With that we will be able to overwrite the value stored in `moeness`
+
+To get the offset we can maybe look it up in gdb
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4a26a145-4f1f-45eb-b700-9cf483907e00)
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2e80dc1a-1c50-4052-b04a-75a7beade69f)
+
+Or just check ghidra stack layout
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/648d5671-bef6-4548-84d1-663107599fbf)
+
+The offset is `0x2e - 0x14 = 26`
 
 
 
