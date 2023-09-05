@@ -301,7 +301,7 @@ Just to confirm I ran the script again and saw that the users changed so that's 
 Searching the first user returned it's value
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f00d22eb-1afa-491a-8f81-f25f6a51836e)
 
-So just search for all the users the one that is admin holds the flag :P
+So just search for all the users the one whose role is `admin` holds the flag :P
 
 ### Cryptography
 
@@ -341,3 +341,7 @@ Flag: ucf{urum_noql}
 ### Pwn
 
 #### Moedo
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6387b487-e9f0-4e3e-86b0-834f0f817e52)
+
+This was a begineer pwn challenge and the source code was provided
+
