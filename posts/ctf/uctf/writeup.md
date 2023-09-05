@@ -2,7 +2,7 @@
 
 I played this ctf with my friends
 
-Here's the writeup to the challengs I tried solving:
+Here's the writeup to the challengs I solved:
 
 ### Web
 -  E Corp
@@ -349,9 +349,21 @@ Flag: ucf{urum_noql}
 
 This was a begineer pwn challenge and the source code was provided
 
-Here's the source [code]()
+Here's the source [code](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/uctf/pwn/moedo/src.c)
 
+Reading the source code we can see the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e288aa81-e7ad-45ab-a48c-b9afa076ce68)
 
+What it does is this:
+- It sets the user and group id to two corresponding variables
+- Then the value stored in variable `moeness` is the value returned when the `check_moe` function is called passing the user id as the argument
+- A pointer `custom_chant` stores the value of the environment variable `MOE_CHANT`
+- The array `chant` holds a set of characters
+- It checks if the argument count is less than 2 and errors out this means this program will require an argument
+- If a value is in the `custom_chant` variable it will then use `strcpy` to copy the value to the array chant
+- Then it will print out the uid, gid and the moeness (this in hex)
+- It compares the value stored in `moeness` with the expected `moeness` value which is `0x30e`
+  ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3c48feb-8b89-4c31-91f3-06b63cbabb20)
 
 
 
