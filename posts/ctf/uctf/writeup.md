@@ -364,14 +364,20 @@ What it does is this:
 - Then it will print out the uid, gid and the moeness (this in hex)
 - It compares the value stored in `moeness` with the expected `moeness` value which is `0x30e`
   ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3c48feb-8b89-4c31-91f3-06b63cbabb20)
+- If that checks returns false it returns error else it sets our `userid` and `groupid` to `0` calls `execve` on our input which is basically command execution
 
 
+Here's the `check_moe` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4088dbad-a56e-48e5-ba2e-8c397ccf7bc3)
 
+What that basically does is to like convert our user id to a moe value 
 
+So what's the vulnerability with the code?
 
+Well this:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8bb18a40-6353-448f-9f75-707754274574)
 
-
-
+It uses `strcpy` to copy the value of the `MOE_CHANT` environment variable to the `custom_chant` array
 
 
 
