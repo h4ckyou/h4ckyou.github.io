@@ -28,3 +28,4 @@ Capture the Flag (CTF) in computer security is an exercise in which "flags" are 
 - [[August 13 2023]] [BIC Defcon 2023](https://h4ckyou.github.io/posts/ctf/bicdefcon23/index.html) `Pwn, Crypto, Forensics`
 - [[August 21 2023]] [Imaginary CTF](https://h4ckyou.github.io/posts/ctf/imaginaryctf/challenges/index.html) `Misc`
 - [[Auguest 31 2023]] [Ecowas CTF Prequal](https://h4ckyou.github.io/posts/ctf/ecowas23/prequal/writeup.html) `Web, RE, Forensics, Crypto, Networking, Misc`
+- [[September 05 2023]] [UCTF](https://h4ckyou.github.io/posts/ctf/uctf/writeup.html) `Web, Pwn, Crypto, Misc`
