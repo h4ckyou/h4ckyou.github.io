@@ -375,9 +375,23 @@ What that basically does is to like convert our user id to a moe value
 So what's the vulnerability with the code?
 
 Well this:
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8bb18a40-6353-448f-9f75-707754274574)
 
-It uses `strcpy` to copy the value of the `MOE_CHANT` environment variable to the `custom_chant` array
+It uses `strcpy` to copy the value of the `MOE_CHANT` environment variable to the `chant` array
+
+And the chant array can only hold some amount of bytes since it already has some value stored in it
+
+```c
+char chant[] = "Moe Moe Kyun!";
+```
+
+The use of `strcpy` cause a buffer overflow 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bab46dfa-bc85-470f-a813-870886ea197b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a4819641-03ce-4c4d-8ac4-a8858486ad51)
+
+Let us test this out
+
 
 
 
