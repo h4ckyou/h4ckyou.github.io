@@ -460,6 +460,7 @@ And now if we run it again we should have command execution as root
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1613fece-64e7-4767-8a1f-aa5df2417b52)
 
 All we need now is to do the same thing on the server but unfortunately there's no python on the server :(
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8b12d266-fdc5-4d7e-8628-6f5981632380)
 
 I then used `printf` since it was available on the remote server
