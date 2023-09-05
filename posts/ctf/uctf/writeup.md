@@ -474,3 +474,34 @@ Here's the flag
 ```
 Flag: uctf{m45h1r0_d1dn7_61v3_up}
 ```
+
+### Misc
+
+####  OTP (Onion Transfer Protocol) 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/80d2167f-0b97-4e9d-a921-1637a15e4098)
+
+I was writing on this challenge and was almost done but suddenly my firefox crashed (it's been happening recently I have just few tabs open 😕) and I didn't save this github edit progress 😭
+
+Starting afresh is a bit of pain so I will just give the TDLR of it
+
+We are given a host running ftp via the tor network proxy
+
+Connecting to it normally won't work so we need to setup a proxy where when we use ftp it will be passed via the tor network proxy
+
+It can be configured by using starting tor service and using tor network which by default runs on port 9050 i think then add that in our proxychain config file as socks5 proxy
+
+Then we should be able to connect to ftp!
+
+The ftp contained 5000 directories all having different names and the same file in each directory
+
+The file name was `flag.txt` but it contained a fake flag
+
+Each of the directory had the same size so if you thought of just filtering the one of different size that won't work (but congrats on thinking of that xD)
+
+You might also maybe think of downloading all the files and grepping for the flag but that's a hassle :)
+
+There was a hidden file which had the keyword: `Think of IFUM!!!` 
+
+At first that seemed weird but after few minutes I figured that a directory started with `IFUM` and on downloading the file in that directory lead to another hint 
+
+I have forgotten the word :( but it was also among a directory then that one contained the flag
