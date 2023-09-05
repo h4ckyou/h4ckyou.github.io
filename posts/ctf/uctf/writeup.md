@@ -5,7 +5,7 @@ I played this ctf with my friends
 Here's the writeup to the challengs I tried solving:
 
 ### Web
--  E Corp.
+-  E Corp
 -  htaccess
 -  Captcha1 The Missing Lake
 -  MongoDB NoSQL Injection
@@ -15,6 +15,10 @@ Here's the writeup to the challengs I tried solving:
 
 ### Pwn
 - Moedo
+
+### Misc
+- OTP (Onion Transfer Protocol)
+
 
 ### Web
 
@@ -344,4 +348,23 @@ Flag: ucf{urum_noql}
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6387b487-e9f0-4e3e-86b0-834f0f817e52)
 
 This was a begineer pwn challenge and the source code was provided
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
