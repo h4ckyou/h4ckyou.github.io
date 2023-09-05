@@ -7,9 +7,16 @@ Here's the writeup to the challengs I tried solving:
 ### Web
 -  E Corp.
 -  htaccess
--  Captcha1 | the Missing Lake
--  Captcha2 | the Missing Lake 2
+-  Captcha1 The Missing Lake
 -  MongoDB NoSQL Injection
+
+### Cryptography
+- Noql
+
+### Pwn
+- Moedo
+
+### Web
 
 #### E Corp
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e71ca47b-2df7-48be-9a92-52dbbbedd6aa)
@@ -168,20 +175,6 @@ And back on the web page I got the flag
 Flag: UCTF{7h3_m1551n6_l4k3}
 ```
 
-#### Captcha2 | the Missing Lake
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/219d75b7-644d-434b-92ac-186076d9e535)
-
-No link is given but we can just guess the url since the first one was `https://captcha1.uctf.ir/` then the second should be `https://captcha2.uctf.ir/`
-
-Going over the url shows this
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1441d150-86d4-48a4-8a32-24d46cafb8f8)
-
-This one is actually slight difficult than the first one because it deals with animal images and not text in an image
-
-But we can do it manually since it's just 100 captchas
-
------ Will try solve it by automating -------
-
 #### MongoDB NoSQL Injection
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b772a480-0009-4b97-8133-7299c55c2bf7)
 
@@ -308,7 +301,43 @@ Just to confirm I ran the script again and saw that the users changed so that's 
 Searching the first user returned it's value
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f00d22eb-1afa-491a-8f81-f25f6a51836e)
 
-So just search for all the users the one that is admin holds the flag
+So just search for all the users the one that is admin holds the flag :P
 
+### Cryptography
 
+#### Noql
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/82f14208-4242-4832-8d08-4cb3a529d8a6)
 
+We are given an attached file to download with the key which is base64 encoded
+
+Checking the attached file showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/49c10754-9fc1-495e-9536-ff6874a9de63)
+
+The first thing I noticed was the first 6 bytes `gAAAAA` 
+
+That's Fernet encryption and I knew cause I did something similar before and when ever something is encrypted using Fernet Cipher the first 6 bytes are `gAAAAA`
+
+I wrote a script to decrypt it
+
+```python
+from cryptography.fernet import Fernet
+
+key = b"CT0cgUTU7gBBvA3DOk4H30JMQSFwNm-viqZm9eDwPK8="
+token = open('noql.txt', 'r').read()
+
+f = Fernet(key)
+d = f.decrypt(token)
+
+print(d.decode())
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b0709d9f-264b-4b53-9d37-aa7c92969044)
+
+```
+Flag: ucf{urum_noql}
+```
+
+### Pwn
+
+#### Moedo
