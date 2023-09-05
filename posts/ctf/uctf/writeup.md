@@ -498,10 +498,22 @@ The file name was `flag.txt` but it contained a fake flag
 
 Each of the directory had the same size so if you thought of just filtering the one of different size that won't work (but congrats on thinking of that xD)
 
-You might also maybe think of downloading all the files and grepping for the flag but that's a hassle :)
+You might also maybe think of downloading all the files and grepping for the flag but that's stressfull considering network speed and the amount of time it will take before it downloads :)
 
 There was a hidden file which had the keyword: `Think of IFUM!!!` 
 
 At first that seemed weird but after few minutes I figured that a directory started with `IFUM` and on downloading the file in that directory lead to another hint 
 
 I have forgotten the word :( but it was also among a directory then that one contained the flag
+
+That's all for this ctf and the challenge I did 😜
+
+Here's the writeup to other challs solved by some of the team mates I played with:
+
+[Sensei](https://github.com/SENSEIXENUS2/Ctf-writeupsScripts/blob/main/UctfWriteups/Writeup.md) [gr33p](https://gr33pp.github.io/posts/urmia-ctf-2023/writeup)
+
+Btw `Captcha2` was among the web challenge though it was solved, Sensei beat me in writing an auto solve script 😭
+
+Do so to check the two writeups 
+
+Thanks for reading (　-_･)σ - - - - - - - 
