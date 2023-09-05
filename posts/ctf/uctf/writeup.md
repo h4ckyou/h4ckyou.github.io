@@ -417,7 +417,8 @@ What we should think of now is on how to exploit this?
 
 Well we basically just need to meet the if condition done on the value of `moeness`
 
-Since this will turn to be variables on the stack
+Since this will turn to be variables on the stack,
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58b6af1b-1044-4728-8500-195f4df67015)
 
 We can calculate the offset between the `chant` and `moeness` variables
@@ -458,6 +459,18 @@ We can just change permission and set the binary to have the suid perm
 And now if we run it again we should have command execution as root
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1613fece-64e7-4767-8a1f-aa5df2417b52)
 
-All we need now is to do the same thing on the server
+All we need now is to do the same thing on the server but unfortunately there's no python on the server :(
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8b12d266-fdc5-4d7e-8628-6f5981632380)
 
+I then used `printf` since it was available on the remote server
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a8779a0-0be6-4c07-9b89-22c71c19fce4)
 
+```
+export MOE_CHANT="AAAAAAAAAAAAAAAAAAAAAAAAAA$(printf '\x0e\x03')"
+```
+
+Here's the flag
+
+```
+Flag: uctf{m45h1r0_d1dn7_61v3_up}
+```
