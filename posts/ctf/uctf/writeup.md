@@ -447,5 +447,17 @@ Now we just need to overwrite it to the expected moeness value which is `0x30e`
 #define MOE_ENOUGH 0x30e
 ```
 
+The hex form will be `\x0e\x03` doing that worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5da43065-6203-4b82-9f85-2b30b2f422fc)
+
+But we get an issue returned from `setuid` and that's because it's trying to set the user id to `0` which is for the root user and we are not root
+
+We can just change permission and set the binary to have the suid perm
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5da4ceac-198f-44a9-9e9c-88e5ebec3d6a)
+
+And now if we run it again we should have command execution as root
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1613fece-64e7-4767-8a1f-aa5df2417b52)
+
+All we need now is to do the same thing on the server
 
 
