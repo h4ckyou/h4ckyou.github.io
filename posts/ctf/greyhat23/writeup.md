@@ -279,3 +279,10 @@ patchelf --set-interpreter /usr/riscv64-linux-gnu/lib/ld-linux-riscv64-lp64d.so.
 Now I should be able to run the binary
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2c153e2-83fc-4cc8-b1d5-bbd789331b32)
 
+Back to the exploitation, since there's no stack canary that means we don't need to leak any canary address
+
+And therefore we can just overwrite the instruction pointer and jump to the win function
+
+We can't use normal gdb-gef (well I wasn't able to do so) since the binary isn't what gdb can debug
+
+So I googled on how to debug riscv binary
