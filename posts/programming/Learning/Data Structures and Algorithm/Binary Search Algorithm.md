@@ -53,7 +53,7 @@ Applications of Binary Search:
 
 SOURCE: [GeeksForGeeks](https://www.geeksforgeeks.org/binary-search/)
 
-#### Example
+#### Example 1:
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bbd3097-bbce-42fb-930f-55072f8ef15f)
 
 Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.
@@ -245,3 +245,19 @@ So after making that edit it worked
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/534bb318-b4f8-48cb-b75e-ac4d2ac26bca)
 
 But still C++ is pretty much faster 🙂
+
+#### Example 2
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5ccb974f-9391-4ff1-b640-228d72a8b6c5)
+
+Given a non-negative integer x, return the square root of x rounded down to the nearest integer. The returned integer should be non-negative as well.
+
+You must not use any built-in exponent function or operator.
+
+For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
+
+Ok so the question is pretty understandable!
+
+We are going to be given a non-negative integer `x` and we are to provide the square root without using any builtins function like pow()
+
+This seemed intimidating to me at first when I tried it but after few minutes of thinking I got a breakthrough
+
