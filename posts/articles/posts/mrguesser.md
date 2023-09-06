@@ -42,4 +42,14 @@ Of cause we can't know that because each time we connect to the server the numbe
 
 And approaching brute force won't work but if there is a chance that the number generated would be within the range of our guess iimit then we can maybe try brute force?
 
-Anyways that's not an efficient way to solving this because geenrally
+Anyways that's not an efficient way to solving this because brute forcing this high dataset would take a lot of time even if we had unlimited guess
+
+So let's apply an Algorithm here
+
+From the challenge description we can tell this is some sort of Algorithm question and `yes` I made it cause I'm learning DSA so just to test what I know I made the chall 🙂
+
+The best algorithm to use here is Binary Search Algorithm
+
+Incase you don't know what that is I made a note when learning it.
+
+You can check it out [here]()
