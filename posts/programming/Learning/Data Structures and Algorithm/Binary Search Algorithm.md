@@ -257,7 +257,70 @@ For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
 
 Ok so the question is pretty understandable!
 
-We are going to be given a non-negative integer `x` and we are to provide the square root without using any builtins function like pow()
+We are going to be given a non-negative integer `x` and we are to provide it's square root without using any builtins function like pow()
 
 This seemed intimidating to me at first when I tried it but after few minutes of thinking I got a breakthrough
+
+First let's take a case sample from the challenge
+
+```
+Input: x = 4
+Output: 2
+Explanation: The square root of 4 is 2, so we return 2.
+```
+
+Given the number `4` what's the square root?
+
+Here's my approach:
+
+Of cause we should know that the square root of a number is a factor of a number that, when multiplied by itself, gives the original number
+
+With that we just need to find an integer whereby if we take the square of it i.e multiply it with itself we will get the number 4
+
+We can do that with like brute force approach i.e
+
+```
+1 * 1 == 4 False
+2 * 2 == 4 True
+```
+
+That works! But let's say the number is large?
+
+Well then this method will take some significant amount of time 
+
+And we should know that when we submit a working solution it will check it based on time complexity
+
+So it's best we make our program more optimized and time efficient
+
+Now how do we achieve that?
+
+This is what I thought 🤔
+
+If we can create an array in the range of the target number we can then use binary search algorithm to get the number we are looking for
+
+Let's take two logical examples of what I'll do:
+
+```
+Input: x = 16
+Output: 4
+Explanation: The square root of 16 is 4, so we return 4.
+```
+
+First we create an array in the range of the input value:
+
+```
+➜  Learn python3
+Python 3.11.2 (main, Feb 12 2023, 00:48:52) [GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> num = 16
+>>> array = [i for i in range(1, num)]
+>>> 
+>>> array
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+>>>
+```
+
+Notice that I started my range from `1 to num` and not `0 to num` 
+
+Having 0 is not really an issue but for case where 0 will be the answer is when the input is 0
 
