@@ -54,7 +54,9 @@ That way we will check if:
 1 == 5
 ```
 
-The logic is now this (I'll take the failed case sample as an example):
+Or vice versa i.e starting compare from left to middle and right to middle
+
+The logic is now this (I'll take the failed test case sample as an example):
 
 ```
 x = 1000021
@@ -79,6 +81,37 @@ is str(x)[left] == str(x)[right] ?
 
 If it isn't true we will return False
 
+Else we'll move the index towards the middle this is achieved by doing:
+
+```
+left = left + 1
+right = right - 1
+```
+
+With that said here's my final script
+
+```python
+def isPalindrome(number):
+    input = str(number)
+    left, right = 0, len(input) - 1
+
+    while left <= right:
+        if input[left] != input[right]:
+            return False
+
+        left += 1
+        right -= 1    
+
+    return True
+
+x = int(input())
+r = isPalindrome(x)
+
+print(r)
+```
+
+Submitting it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0f551db4-066e-4f93-a86e-24ed1f17e551)
 
 
 
