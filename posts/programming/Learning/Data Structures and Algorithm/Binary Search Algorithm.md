@@ -563,3 +563,37 @@ Then on running it again I got this error
 The program actually uses a lot of memory due the fact I'm saving the range in a loop and if a very large number is given it would take lot of memory maybe even crashing your laptop if you dont have high ram :(
 
 So I decided to figure a way to optimize the code
+
+After research I figured that the use of creating that array is not memory efficient as we can directly work on the number even without it being in an array (cool right?)
+
+Modification to the script lead me to this:
+
+```python
+def sqrt(num):
+    left, right = 0, num
+    ans = 0
+
+    while left <= right:
+        middle = left + (right - left) // 2
+        square = middle * middle
+
+        if square == num:
+            ans = middle
+            break
+
+        elif square > num:
+            right = middle - 1
+
+        else:
+            left = middle + 1
+            ans = middle  
+
+    return ans
+
+num = int(input())
+result = sqrt(num)
+print(result)
+```
+
+I used it on the template and it worked ^^
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a2d7eef-e756-4d85-95ab-1017ddd55636)
