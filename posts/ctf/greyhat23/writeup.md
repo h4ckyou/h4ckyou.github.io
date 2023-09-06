@@ -92,3 +92,66 @@ LAB_00101344:
 }
 ```
 
+I won't explain what that all does. But basically.
+- While our current account balance is less than 1000
+- We have the choice to choose any of the 3 options in the menu
+- The first option shows us our account balance
+- The second option allows us to make withdrawal
+- The third option is still in progress
+- The fourth option exits the program
+
+The aim of this program is to earn $1000 to get the flag
+
+```c
+puts("Welcome to the banking system.\nEarn $1000 to get the flag!\n")
+```
+
+How can we achieve that?
+
+Take a look at the withdrawal option
+
+```c
+if (option == 2) {
+  printf("Enter the amount to withdraw: ");
+  __isoc99_scanf("%ld",&withdrawalAmount);
+  tmp = accountBalance - (int)withdrawalAmount;
+  if ((int)tmp < 0) {
+    puts("You cannot withdraw more than your account balance.");
+  }
+  else {
+    accountBalance = tmp;
+    printf("Withdrawal successful. New account balance: $%d\n",(ulong)tmp);
+  }
+```
+
+After it receives the amount we want to withdraw, It will set a temp variable holding the difference between our current account balance and the withdrawalamount
+
+If the temp variable is less than 0 we get the error message that basically means we can't withdraw an amount greater than our current account balance
+
+Else it sets our current account balance to the temp variable and prints out the current balance
+
+The vulnerability in this program is that it doesn't check if the amount to be withdrawed is a negative number
+
+With that if we give it a number less than our balance it will sum up to a positive number greater than our current balance
+
+```
+accountBalance = 100
+withdrawalAmount = -10000
+tmp = accountBalance - withdrawalAmount
+# tmp = 100 - (-10000) --> 100 + 10000
+```
+
+That logic is one of the vulnerability of this program and with that we can get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3b16142b-3015-4599-b05e-d3a6c71e4342)
+
+Another way we can exploit this is via Integer Overflow
+
+I won't explain that but here's a good sample payload: `0xffffffff - 10000`
+
+That will sum our account balance to `0` then `10000` will be added since the negative sign will turn to positive
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b677d4f-f318-4bef-a691-44e5cfe6402f)
+
+
+
+
+
