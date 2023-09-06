@@ -56,7 +56,52 @@ SOURCE: [GeeksForGeeks](https://www.geeksforgeeks.org/binary-search/)
 #### Example
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bbd3097-bbce-42fb-930f-55072f8ef15f)
 
+Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.
 
+Let us look at the first example case they gave us:
 
+```
+Input: nums = [-1,0,3,5,9,12], target = 9
+Output: 4
+Explanation: 9 exists in nums and its index is 4
+```
+
+So we are to find the index position of a target value in an array
+
+The best algorithm to use here of cause is Binary Search because the list is sorted 
+
+First thing we need is this:
+
+```
+L = 0
+R = len(nums) - 1
+mid = L + (R - L) // 2
+target = 9
+```
+
+Now we will start from the center of the array:
+
+```
+[-1,0,3,5,9,12]
+```
+
+The center is 3
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fcaf2ea3-6b98-4b2c-ac31-1d454744b436)
+
+```
+>>> nums = [-1,0,3,5,9,12]
+>>> L = 0
+>>> R = len(nums) - 1
+>>> mid = L + (R - L) // 2
+>>> target = 9
+>>> 
+>>> nums[mid]
+3
+>>>
+```
+
+Now we check the condition:
+- Is the middle number equal to the target value? If it is return it
+- Is the middle number less than the target value? If it is set 
 
 
