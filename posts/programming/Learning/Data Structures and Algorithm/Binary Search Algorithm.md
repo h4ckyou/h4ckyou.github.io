@@ -229,4 +229,9 @@ public:
 };
 ```
 
+Running it I passed the custom testcase with a program runtime of 0ms 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c814ee4e-26a2-471c-85e6-797172edab41)
+
+Now I can submit the code and boom it worked!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/33e41211-36d7-4383-a9f8-27e11fbcea04)
 
