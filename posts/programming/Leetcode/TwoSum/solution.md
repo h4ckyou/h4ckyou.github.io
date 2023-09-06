@@ -43,13 +43,12 @@ nums[i] + num[j] == target True | False
 
 That would be in a loop of range `array.length()`
 
-But you can tell that if the length is large then that increases the time complexity since it will perform multiple loops over a long value in an array
+But you can tell that if the length is large then that increases the time complexity since it will perform multiple loops 
 
 Here's a sample script to solve this:
 
 ```python
 def brute(nums, target):
-
     for i in range(len(nums)):
         for j in range(len(nums)):
             if nums[i] + nums[j] == target:
@@ -64,5 +63,14 @@ target = 9
 result = brute(nums, target)
 print(result)
 ```
+
+Running that works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/15c5cf95-eca2-4820-b21c-865e0b739211)
+
+We can submit that on the platform too
+
+But I noticed this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/88420a78-0787-4e64-84e9-e86e29b43d19)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f72772d1-ce58-4152-b65d-b9ba5ef6bb2d)
 
 
