@@ -560,4 +560,6 @@ print(result)
 Then on running it again I got this error
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7414a9f9-39c2-4146-adaa-5c08566ffeef)
 
-The program actually uses a lot of memory due the fact I'm saving the range in a loop and if a very large number is given it would take lot of memory
+The program actually uses a lot of memory due the fact I'm saving the range in a loop and if a very large number is given it would take lot of memory maybe even crashing your laptop if you dont have high ram :(
+
+So I decided to figure a way to optimize the code
