@@ -6,9 +6,8 @@ def twoSum(nums, target):
 
         if complement in hashtable:
             return [hashtable[complement], i]
-        
-        else:
-            hashtable[j] = i
+
+        hashtable[j] = i
     
     return None
             
