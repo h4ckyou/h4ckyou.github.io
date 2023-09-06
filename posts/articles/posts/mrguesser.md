@@ -98,4 +98,12 @@ result = binarySearch(N)
 print(result)
 ```
 
+After running the script I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dd61587e-5279-4291-af1a-9e83b8216e33)
 
+It took just `16.032` seconds
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61a97445-ebbb-405f-aafe-f9eb1b5f79b2)
+
+Imagining brute forcing how long it would take??
+
+Anyways that's all for today!
