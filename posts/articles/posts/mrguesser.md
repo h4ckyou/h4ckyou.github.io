@@ -52,4 +52,48 @@ The best algorithm to use here is Binary Search Algorithm
 
 Incase you don't know what that is I made a note when learning it.
 
-You can check it out [here]()
+You can check it out [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Learning/Data%20Structures%20and%20Algorithm/Binary%20Search%20Algorithm.md)
+
+I won't explain what the algorithm does cause I did already in the above link
+
+So here's my solve script
+
+```python
+from pwn import *
+context.log_level = 'info'
+from warnings import filterwarnings
+filterwarnings("ignore")
+
+host, port = "localhost", 1337
+
+io = remote(host, port)
+
+def binarySearch(N):
+    left, right = 0, N
+
+    for i in range(30):
+        try:
+            while left <= right:
+                middle = left + (right - left) // 2
+
+                io.recvuntil("Secret Number:")
+                io.sendline(str(middle))
+                recv = io.recvline().decode().strip()
+
+                if recv == "Lower":
+                    right = middle - 1
+
+                elif recv == "Higher":
+                    left = middle + 1
+
+                else:
+                    recv = io.recvline()
+                    return recv.decode()
+        except Exception as e:
+            return "Error"
+
+N = 500_000_000_000
+
+result = binarySearch(N)
+print(result)
+```
