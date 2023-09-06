@@ -239,5 +239,15 @@ print(result)
 
 It works but then I saw an issue
 
+If I run it against this test case it doesn't return the right value
+
+```
+Input: nums = [3,3], target = 6
+Output: [0,1]
+```
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/26e71023-7f7a-4559-adad-08fb05ed30d4)
+
+I spent some time trying to fix that but failed 😢
 
 
