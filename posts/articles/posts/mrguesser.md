@@ -64,7 +64,7 @@ context.log_level = 'info'
 from warnings import filterwarnings
 filterwarnings("ignore")
 
-host, port = "localhost", 1337
+host, port = "0.tcp.eu.ngrok.io", 19972
 
 io = remote(host, port)
 
@@ -97,3 +97,5 @@ N = 500_000_000_000
 result = binarySearch(N)
 print(result)
 ```
+
+
