@@ -383,3 +383,68 @@ With that we've optimized the search
 
 How about case two?
 
+```
+Input: x = 8
+Output: 2
+Explanation: The square root of 8 is 2.82842..., and since we round it down to the nearest integer, 2 is returned.
+```
+
+With just looking at the input number we can tell that it isn't a perfect square
+
+Perfect squares are numbers whose square roots are whole numbers
+
+In this case we are asked to return the approximated value of the nearest integer
+
+So if we are suppose to have a float number i.e 4.123105625617661 the approximate value will be 4
+
+With that said let's get to it
+
+First I'll get the array of numbers within the input range
+
+```
+>>> num = 8
+>>> array = [i for i in range(1, num)]
+>>> 
+>>> array
+[1, 2, 3, 4, 5, 6, 7]
+>>>
+```
+
+Then I'll store the required parameters and start the logic
+
+```
+>>> left = 0
+>>> right = len(array) - 1
+>>> middle = left + (right - left) // 2
+>>> 
+>>> square = array[middle]*array[middle]
+>>> 
+>>> square == num
+False
+>>> 
+>>> square
+16
+>>>
+```
+
+So we see that the square is greater than input value 
+
+We can shift our search space to the right
+
+```
+>>> right = middle - 1
+>>> middle = left + (right - left) // 2
+>>> square = array[middle]*array[middle]
+>>> 
+>>> square
+4
+>>> 
+>>> square == num
+False
+>>>
+```
+
+Ok now the comparison returned False and that's True since the value of square is 4 and the input number is 8
+
+Basically we can tell that all the numbers below that will not also be the square root
+
