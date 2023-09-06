@@ -15,4 +15,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 <hr>
 
 - [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/Leetcode/TwoSum/solution.html) `Programming, Algorithm`
-- [[September 06 2023]] [Leetcode: Palindrome Number](https://h4ckyou.github.io/posts/programming/Leetcode/Palindrom%2fNumber/solution.html) `Programming, Algorithm`
+- [[September 06 2023]] [Leetcode: Palindrome Number](https://h4ckyou.github.io/posts/programming/Leetcode/Palindrom%20Number/solution.html) `Programming, Algorithm`
