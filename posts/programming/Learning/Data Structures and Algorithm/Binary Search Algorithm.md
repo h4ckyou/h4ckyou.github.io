@@ -499,3 +499,9 @@ result = sqrt(num)
 print(result)
 ```
 
+Brief explanation of the conditional checks happening there:
+- If square is equal to `num`, it means we have found the square root, and I update `ans` with the current value because it is indeed the square root.
+- If square is less than `num`, we need to move the search range to the right, so you update `left` to `middle + 1`. However, we do not update `ans` in this case because the current value of `array[middle]` is not the square root; it's smaller.
+- If square is greater than `num`, we need to move the search range to the left, so I update `right` to `middle - 1`. In this case, we do not update `ans` either because, again, the current value of `array[middle]` is not the square root; it's larger.
+
+
