@@ -235,3 +235,13 @@ Running it I passed the custom testcase with a program runtime of 0ms
 Now I can submit the code and boom it worked!
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/33e41211-36d7-4383-a9f8-27e11fbcea04)
 
+I was wondering why python didn't work so I checked the script and found a bug :(
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/90ad4f96-90f6-4ab1-9758-8575e6eaf9bc)
+
+The middle variable is supposed to be inside the while loop
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c3c1abd6-fbc5-4421-9cf1-1f355cb608b1)
+
+So after making that edit it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/534bb318-b4f8-48cb-b75e-ac4d2ac26bca)
+
+
