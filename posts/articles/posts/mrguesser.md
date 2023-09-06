@@ -30,3 +30,16 @@ except Exception as e:
     print(f"Got '{e}'. \nPlease enter a valid number.")
 ```
 
+The idea is that you need to guess a random number generated within the range of 1 to 500,000,000,000
+
+And we have just 40 chances i.e the amount of guess we can make
+
+If our input number is greater than the random number the server tells us "Lower" else if our input number is lower the server tells us "Higher"
+
+We can approach brute force if we have unlimited amount of trials or if the number generated will likely return a smaller number within the range of our guess
+
+Of cause we can't know that because each time we connect to the server the number is randomly generated
+
+And approaching brute force won't work but if there is a chance that the number generated would be within the range of our guess iimit then we can maybe try brute force?
+
+Anyways that's not an efficient way to solving this because geenrally
