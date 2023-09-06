@@ -53,4 +53,10 @@ Applications of Binary Search:
 
 SOURCE: [GeeksForGeeks](https://www.geeksforgeeks.org/binary-search/)
 
-#### Let me now explain it in my own terms :P
+#### Example
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bbd3097-bbce-42fb-930f-55072f8ef15f)
+
+
+
+
+
