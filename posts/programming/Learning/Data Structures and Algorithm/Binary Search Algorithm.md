@@ -85,7 +85,8 @@ Now we will start from the center of the array:
 [-1,0,3,5,9,12]
 ```
 
-The center is 3
+The center index of the array is 3
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fcaf2ea3-6b98-4b2c-ac31-1d454744b436)
 
 ```
@@ -101,7 +102,90 @@ The center is 3
 ```
 
 Now we check the condition:
-- Is the middle number equal to the target value? If it is return it
-- Is the middle number less than the target value? If it is set 
+- Is the array index of the middle number equal to the target value? If it is return the middle number!
+- Is the array index of the middle number less than the target value? If it is shift the search space to the right by setting `L` to `mid + 1` and repeating the process!
+- Is the array index of the middle number greater than the target value? If it is shift the search space to the left by setting `R` to `mid - 1` and repeating the process!
+
+That's the logic of `Iterative Binary Search Algorithm` since we will be doing this in a loop and not recursively
+
+Doing that manually wouldn't take time since this array is small in terms of the length
+
+But it's best to put your coding skill in practice
+
+So I wrote a script to solve that!
+
+Here's the script:
+
+```python
+# Iterative Binary Search Algorithm
+
+def binarySearch(arr, x):
+    l = 0
+    r = len(arr)-1
+
+    while l <= r:
+        
+        mid = l + (r - l) // 2
+
+        if arr[mid] == x:
+            return mid
+
+        elif arr[mid] < x:
+            l = mid + 1
+
+        else:
+            r = mid - 1
+        
+    return -1
+
+
+arr = [-1,0,3,5,9,12]
+x = 9
+
+result = binarySearch(arr, x)
+print(result)
+```
+
+Using it I got the value of the target which is 4
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f39e2cf-9663-4fc5-a1da-056411bb65c2)
+
+
+We can run the script and use the other case sample
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66192e51-2fd3-4812-9caf-ae66dba0112d)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/49dd9e6e-b346-446f-bbae-b101c31cefca)
+
+It returned `-1` because the target value we are searching for isn't among the array
+
+Here's a sample script using Recursive Binary Search
+
+```python
+# Recursive Binary Search Algorithm
+
+def binarySearch(arr, x, l, r):
+    mid = l + (r-l)//2
+
+    while r >= 0:
+
+        if arr[mid] == x:
+            return mid
+        
+        elif arr[mid] < x:
+            return binarySearch(arr, x, l+1, r)
+        
+        else:
+            return binarySearch(arr, x, l, mid-1)
+
+
+arr = [-1,0,3,5,9,12]
+x = 9
+l = 0
+r = len(arr)-1
+
+result = binarySearch(arr, x, l, r)
+print(result)
+```
+
+Now that we have a working solution we can now use the submission template and write the code there
+
 
 
