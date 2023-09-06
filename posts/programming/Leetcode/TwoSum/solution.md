@@ -16,8 +16,6 @@ We'll be given an array of numbers and a target value
 
 We are asked to return the index of two numbers from the array whose sum is the target value
 
-i.e
-
 ```
 Input: nums = [2,7,11,15], target = 9
 Output: [0,1]
