@@ -244,4 +244,4 @@ The middle variable is supposed to be inside the while loop
 So after making that edit it worked
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/534bb318-b4f8-48cb-b75e-ac4d2ac26bca)
 
-
+But still C++ is pretty much faster 🙂
