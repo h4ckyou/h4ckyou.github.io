@@ -255,3 +255,16 @@ So after looking through the Editorial I saw they used a more faster algorithm `
 Algorithm: 
 
 A simple implementation uses two iterations. In the first iteration, we add each element's value as a key and its index as a value to the hash table. Then, in the second iteration, we check if each element's complement `target - nums[i]` exists in the hash table. If it does exist, we return current element's index and its complement's index. Beware that the complement must not be `nums[i]` itself!
+
+Let me explain it:
+
+Consider this array of numbers:
+
+```
+nums = [9,3,1,4,5,2,8,6,10,7]
+target = 11
+```
+
+First we'll iterate throught the values in the nums and keep the progress in a dictionary defined as this: `{integer: index}`
+
+
