@@ -288,7 +288,7 @@ That works! But let's say the number is large?
 
 Well then this method will take some significant amount of time 
 
-And we should know that when we submit a working solution it will check it based on time complexity
+And we should know that when we submit a working solution it will also check it based on time complexity i.e there's a time limit expected for a program to run
 
 So it's best we make our program more optimized and time efficient
 
@@ -323,4 +323,63 @@ Type "help", "copyright", "credits" or "license" for more information.
 Notice that I started my range from `1 to num` and not `0 to num` 
 
 Having 0 is not really an issue but for case where 0 will be the answer is when the input is 0
+
+Now that we have the array and since it's sorted we can apply binary search algorithm here
+
+Basically we'll check if the `array[middle] * array[middle] == target`
+
+```
+➜  Learn python3
+Python 3.11.2 (main, Feb 12 2023, 00:48:52) [GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> num = 16
+>>> array = [i for i in range(1, num)]
+>>> 
+>>> array
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+>>> 
+>>> left = 0
+>>> right = len(array)-1
+>>> middle = left + (right - left) // 2
+>>> 
+>>> square = array[middle]*array[middle]
+>>> 
+>>> square
+64
+>>> 
+>>> square == num
+False
+>>> 
+```
+
+Well we can see that the comparison returned False and that's true because the statement is False
+
+Next we can shift the search space to the left since the value compared with is greater than the input value
+
+```
+>>> right = middle - 1
+>>> middle = left + (right - left) // 2
+>>> square = array[middle]*array[middle]
+>>>                                                                                                                                                                                          
+>>> square
+16                                                                                                                                                                                           
+>>>                                                                                                                                                                                          
+>>> square == num                                                                                                                                                                            
+True                                                                                                                                                                                         
+>>>
+```
+
+Now that returns True because 16 is indeed equal to 16
+
+So the square root of the number 16 will be the `array[middle]` and that's 4
+
+```
+>>> array[middle]                                                                                                                                                                            
+4                                                                                                                                                                                            
+>>>
+```
+
+With that we've optimized the search
+
+How about case two?
 
