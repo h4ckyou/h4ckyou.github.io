@@ -109,4 +109,135 @@ But looking at the Runtime and Memory it used we can see that this isn't a good 
 
 So I decided to try a better way of solving this
 
+I tried to implement using Binary Search
+
+And here's the explanation
+
+Consider this array and target value:
+
+```
+nums = [9,3,1,4,5,2,8,6,10,7]
+target = 6
+```
+
+For we to work with Binary Search the array needs to be sorted
+
+So I'll sort it out, get the left & right value and take the sum of the value in the left sorted array with the right last value
+
+```
+>>> nums = [9,3,1,4,5,2,8,6,10,7]
+>>> target = 6
+>>> 
+>>> array = sorted(nums)
+>>> left = 0
+>>> right = len(array) - 1
+>>> sum = array[left] + array[right]
+>>> sum
+11
+>>>
+```
+
+We can see that the sum is greater than the target value, so we'll move the search space to the left by 1
+
+```
+>>> right -= 1
+>>> sum = array[left] + array[right]
+>>> 
+>>> sum
+10
+>>>
+```
+
+The sum is greater than the target so I'll move the search space to the left by 1
+
+```
+>>> right -= 1
+>>> sum = array[left] + array[right]
+>>> 
+>>> sum
+9
+>>>
+```
+
+Basically we'll keep on going till we get this
+
+```
+>>> right -= 1
+>>> sum = array[left] + array[right]
+>>> 
+>>> sum
+6
+>>>
+```
+
+At this point the sum is equal to the target value
+
+Now we'll get the value of `array[left] & array[right]`
+
+```
+>>> array[left]
+1
+>>> array[right]
+5
+>>>
+```
+
+Because the array has been sorted we'll need to get it's corresponding index from the original array
+
+We can just use python `index()` function to do this
+
+```
+>>> nums.index(1)
+2
+>>> nums.index(5)
+4
+>>>
+```
+
+Cool the index is `[2, 4]` and that will be our answer
+
+To confirm we can sum the values of `nums[2]` and `nums[4]` and we know it will return `6` becasue it's value is `2 & 4`
+
+```
+>>> nums[2] + nums[4]
+6
+>>>
+```
+
+That's the solution!
+
+So I wrote a script to implement this
+
+```python
+def twoSum(nums, target):
+    array = sorted(nums)
+    left, right = 0, len(array) - 1
+    result = []
+
+    while left <= right:
+        sum = array[left] + array[right]
+
+        if sum == target:
+            result.append(nums.index(array[left]))
+            result.append(nums.index(array[right]))
+            return result
+
+        elif sum > target:
+            right -= 1
+        
+        else:
+            left += 1
+
+    return None
+            
+nums = [9,3,1,4,5,2,8,6,10,7]
+target = 6
+
+result = twoSum(nums, target)
+print(result)
+```
+
+It works but then I saw an issue
+
+
 
