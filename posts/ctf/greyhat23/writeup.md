@@ -2,7 +2,7 @@
 
 Here are the writeups to the pwn challenges I solved:
 - Babypwn
-
+- Easypwn
 
 #### Babypwn
 
@@ -158,6 +158,86 @@ We can try that on the remote server
 Flag: grey{b4by_pwn_df831aa280e25ed6c3d70653b8f165b7}
 ```
 
+#### Easypwn
 
+We are provided with the binary and the source code
 
+```
+➜  easypwn ls -l  
+-rwxr-xr-x 1 mark mark 8696 Sep  6 23:01 easypwn
+-rw-r--r-- 1 mark mark  309 Sep  6 22:35 easypwn.c
+➜  easypwn
+```
+
+First thing I'll check is the source code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0efcc171-a27c-4537-81a8-4c1b3fc2d31c)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void win() {
+    system("cat flag.txt");
+    exit(0);
+}
+
+int main() {
+    setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+    setbuf(stderr, NULL);
+    char str[8];
+    printf("Type your string: ");
+    read(0, str, 1024);
+    printf(str);
+    puts("");
+    return 0;
+}
+```
+
+The program doesn't have much function in it
+
+Here's what it does:
+- There's a win function which will cat the flag when called!
+- The main function does some buffering and assigns 8 bytes to the str buffer
+- It will receive our input and store in the str buffer
+- It will then print our input back
+
+That's all what the program does
+
+But where's the vulnerability?
+
+Well there are two vulns which are:
+- Buffer Overflow
+- Format String Vuln
+
+The buffer overflow occurs here:
+
+```c
+read(0, str, 1024);
+```
+
+We are reading 1024 bytes into a buffer that can only hold up 8 bytes
+
+The second vulnerability is format string vuln which occurs here:
+
+```c
+printf(str);
+```
+
+After receiving our input it will use printf to to prints it's content and it doesn't use a format specifier while doing so
+
+How do we exploit??
+
+We can't know now until we check the binary
+
+Here's the binary file type and mitigations present
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c1eca3a7-e127-4ef0-876d-9473ff6a29d6)
+
+So this isn't the normal x86/x64 binaries this is a binary whose architecture is `RISC-V`
+
+I haven't worked with other archicture before so this my first time
+
+First I'll try to run it
+
+Normally it wont' work but I have qemu installed which basically allows us run other archicture binary on our device
 
