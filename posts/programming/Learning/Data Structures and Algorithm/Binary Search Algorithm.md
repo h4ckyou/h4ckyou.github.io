@@ -446,5 +446,21 @@ False
 
 Ok now the comparison returned False and that's True since the value of square is 4 and the input number is 8
 
-Basically we can tell that all the numbers below that will not also be the square root
+In this case this condition of the program comes in:
+
+```python
+if square < num:
+  left = middle + 1
+```
+
+So there isn't really any more range again for this because if we move the search space to the right then the condition which shifts the search space to the left triggers 
+
+Therefore since no more range for this the answer returned would be `array[middle]` which is `2`
+
+```
+>>> array[middle]
+2
+>>>
+```
+
 
