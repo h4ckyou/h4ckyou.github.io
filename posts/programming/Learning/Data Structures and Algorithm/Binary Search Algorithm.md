@@ -463,4 +463,39 @@ Therefore since no more range for this the answer returned would be `array[middl
 >>>
 ```
 
+With that said we now understand how to implement this algorithm in solving this task
+
+Here's my solve script
+
+```python
+def sqrt(num):
+    array = [i for i in range(1, num)]
+    left = 0
+    right = len(array) - 1
+    ans = -1
+    
+    if num == 0:
+        return -1
+
+    while left <= right:
+        middle = left + (right - left) // 2
+        square = array[middle] * array[middle]
+
+        if square == num:
+            ans = array[middle]
+            break
+
+        elif square > num:
+            right = middle - 1
+
+        else:
+            left = middle + 1
+            ans = array[middle]  
+
+    return ans
+
+num = 16
+result = sqrt(num)
+print(result)
+```
 
