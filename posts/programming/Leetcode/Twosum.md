@@ -23,3 +23,27 @@ Input: nums = [2,7,11,15], target = 9
 Output: [0,1]
 Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
 ```
+
+At first my thought was that this can be easily solved if the array length is small
+
+Since it would be a brute force sort of solve
+
+And what that will basically do is this!
+
+Consider this array:
+
+```
+nums = [2,7,11,15]
+```
+
+In two loops I'll compare the sum of each values of the array with the target value:
+
+```
+nums[i] + num[j] == target True | False
+```
+
+That would be in a loop of range `array.length()`
+
+But you can tell that if the length is large then that increases the time complexity since it will perform multiple loops over a long value in an array
+
+Here's a sample script to solve this
