@@ -670,6 +670,9 @@ class Solution(object):
                 lower = middle + 1
 ```
 
+Submitting it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/60db0e09-e52d-41b2-9df0-fa0fe1e9d0ae)
+
 
 
 
