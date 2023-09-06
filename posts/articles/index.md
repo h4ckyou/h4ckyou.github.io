@@ -18,3 +18,4 @@ Hacking cheatsheet....
 - [[Mar 13 2023]] [File Upload Vulnerability](https://h4ckyou.github.io/posts/articles/posts/fileupload.html) `File Upload Vuln`
 - [[Mar 13 2023]] [SSRF](https://h4ckyou.github.io/posts/articles/posts/ssrf.html) `Server Side Request Forgery`
 - [[Mar 13 2023]] [SSTI](https://h4ckyou.github.io/posts/articles/posts/ssti.html) `Server Side Template Injection`
+- [[September 06 2023]] [MrGuesser](https://h4ckyou.github.io/posts/articles/posts/mrguesser.html) `Author's Writeup, DSA`
