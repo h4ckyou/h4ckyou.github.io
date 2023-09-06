@@ -241,3 +241,41 @@ First I'll try to run it
 
 Normally it wont' work but I have qemu installed which basically allows us run other archicture binary on our device
 
+When I tried running it I got this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/579819f9-2f06-42bd-8878-144d0e604326)
+
+It seems I don't have the library for this binary to run available
+
+To download it I searched it first
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a6054112-e9cc-4ca5-b5f9-fa5b20362e90)
+
+```
+libc6-riscv64-cross: /usr/riscv64-linux-gnu/lib/ld-linux-riscv64-lp64d.so.1
+```
+
+Now to install it we can just run this:
+
+```
+sudo apt-get install libc6-riscv64-cross
+```
+
+After that we will see the file is on our device
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/443aedd6-f37e-47f8-abc2-722b0aa82380)
+
+Next thing to do is to patch the binary to use the library required and the tool used is `patchelf`
+
+Why I'm patching it is because the directory where it wants to get the library isn't on my laptop
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ba81f219-5e6d-4258-abd2-bfb0b68fbd5b)
+
+I can maybe just copy the the library or make a symbolic link to that directory but I prefer patching it
+
+Here's the way to do it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/18402793-9bfb-4666-8964-bf7506d0d151)
+
+```
+patchelf --set-interpreter /usr/riscv64-linux-gnu/lib/ld-linux-riscv64-lp64d.so.1 --set-rpath /usr/riscv64-linux-gnu/lib easypwn 
+```
+
+Now I should be able to run the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2c153e2-83fc-4cc8-b1d5-bbd789331b32)
+
