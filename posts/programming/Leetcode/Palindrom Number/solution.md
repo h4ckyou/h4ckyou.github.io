@@ -54,4 +54,32 @@ That way we will check if:
 1 == 5
 ```
 
+The logic is now this (I'll take the failed case sample as an example):
+
+```
+x = 1000021
+
+1 -> 0 -> 0 -> 0 -> 0 -> 2 -> 1
+```
+
+Now I'll get the left and right index which can be calculated as this:
+
+```
+left = 0
+right = len(str(x)) - 1
+```
+
+In a while loop checking the condition while left is less than right
+
+We will check:
+
+```
+is str(x)[left] == str(x)[right] ?
+```
+
+If it isn't true we will return False
+
+
+
+
 
