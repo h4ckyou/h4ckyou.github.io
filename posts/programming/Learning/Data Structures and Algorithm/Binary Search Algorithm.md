@@ -192,5 +192,41 @@ Wait what `Time Limit Exceeded`!!
 
 Is python this slow for their time complexity?
 
+But it takes very less seconds when I run it on my laptop
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/791d13c8-b37a-4f28-a3f1-f429788ea3b8)
+
+Well since it's their custom Class they maybe will add some time complexity which my program didn't succeed in passing it
+
+Now what?
+
+Well I moved to C++ since it's more faster 
+
+Here's the code
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int n = nums.size();
+        int r = n - 1;
+        int l = 0;
+        
+        while (l <= r) {
+            int m = l + (r - l) / 2; 
+            
+            if (nums[m] == target)
+                return m;
+            
+            if (nums[m] < target)
+                l = m + 1;
+            
+            else
+                r = m - 1;
+        }
+        
+        return -1; 
+    }
+};
+```
 
 
