@@ -73,4 +73,33 @@ But I noticed this error
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/88420a78-0787-4e64-84e9-e86e29b43d19)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f72772d1-ce58-4152-b65d-b9ba5ef6bb2d)
 
+Well looking at that we can see it failed and that's True because I forgot the condition:
+
+```
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+```
+
+We can't use the same element twice
+
+To solve that part I just add a check in my script to not use the same element and that can be done by starting the second nested loop from `i+1`
+
+Here's it
+
+```python
+def brute(nums, target):
+    for i in range(len(nums)):
+        for j in range(i+1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+        
+    return None
+
+
+nums = [3,2,4]
+target = 6
+
+result = brute(nums, target)
+print(result)
+```
+
 
