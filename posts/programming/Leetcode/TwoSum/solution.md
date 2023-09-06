@@ -317,12 +317,20 @@ def twoSum(nums, target):
         
         else:
             hashtable[j] = i
-            
+
+    return None
+
 nums = [2,7,11,15]
 target = 17
 
 result = twoSum(nums, target)
 print(result)
 ```
+
+Submitting it we can see it works pretty good
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4b0136e-0b16-44a7-8b23-1539b3369d2c)
+
+In terms of speed it was way faster but in memory it is consumes some amount of memory and that's because each iterate is stored in the dictionary
+
 
 We can submit this
