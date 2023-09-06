@@ -186,6 +186,11 @@ print(result)
 ```
 
 Now that we have a working solution we can now use the submission template and write the code there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a80459c-b491-4db8-93e9-1e72f97ec148)
+
+Wait what `Time Limit Exceeded`!!
+
+Is python this slow for their time complexity?
 
 
 
