@@ -151,6 +151,12 @@ I won't explain that but here's a good sample payload: `0xffffffff - 10000`
 That will sum our account balance to `0` then `10000` will be added since the negative sign will turn to positive
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b677d4f-f318-4bef-a691-44e5cfe6402f)
 
+We can try that on the remote server
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/68063319-70b9-4bd3-8fc0-f1958f0a76d2)
+
+```
+Flag: grey{b4by_pwn_df831aa280e25ed6c3d70653b8f165b7}
+```
 
 
 
