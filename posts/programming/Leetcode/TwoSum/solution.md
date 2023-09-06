@@ -265,7 +265,7 @@ nums = [9,3,1,4,5,2,8,6,10,7]
 target = 11
 ```
 
-First we'll iterate through the values in the nums taking it's complement and keeping the progress in a dictionary defined as this: `{integer: index}`
+First we'll iterate through the values in the nums array taking it's complement and keeping the progress in a dictionary defined as this: `{integer: index}`
 
 ```
 11 - 9 = 2
@@ -286,5 +286,9 @@ We go over the second index
 Hashmap dictionary
 
 ```
-{3: 1
+{3: 1}
 ```
+
+During this iteration we'll check if the current complement is in the hashmap dictionary 
+
+If that returns True that means there's a number that 
