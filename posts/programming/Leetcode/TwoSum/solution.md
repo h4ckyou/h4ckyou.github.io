@@ -314,9 +314,8 @@ def twoSum(nums, target):
 
         if complement in hashtable:
             return [hashtable[complement], i]
-        
-        else:
-            hashtable[j] = i
+
+        hashtable[j] = i
 
     return None
 
@@ -332,5 +331,4 @@ Submitting it we can see it works pretty good
 
 In terms of speed it was way faster but in memory it is consumes some amount of memory and that's because each iterate is stored in the dictionary
 
-
-We can submit this
+That's all!
