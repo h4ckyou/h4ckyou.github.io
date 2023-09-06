@@ -14,4 +14,4 @@ title:  LeetCode.
 LeetCode is the best platform to help you enhance your skills, expand your knowledge and prepare for technical interviews.
 <hr>
 
-- [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/cses/Weird%20Algorithm/solution.html) `Programming, Algorithm`
+- [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/Leetcode/TwoSum/solution.html) `Programming, Algorithm`
