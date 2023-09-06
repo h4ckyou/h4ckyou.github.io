@@ -601,4 +601,5 @@ I used it on the template and it worked ^^
 Compared to when I used the array methd :( and this which directly works on the number, using a large number didn't crash my laptop but instead gave me it's square root in `0.09s`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05104508-6b4e-4669-942e-5175ec44ac18)
 
+#### Example 3
 
