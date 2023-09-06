@@ -602,4 +602,74 @@ Compared to when I used the array methd :( and this which directly works on the 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05104508-6b4e-4669-942e-5175ec44ac18)
 
 #### Example 3
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/25d91b44-409c-43a3-998f-621d572d3428)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/27685c98-0273-4ea8-af33-f3d4dcae277d)
+
+We are playing the Guess Game. The game is as follows:
+
+I pick a number from 1 to n. You have to guess which number I picked.
+
+Every time you guess wrong, I will tell you whether the number I picked is higher or lower than your guess.
+
+You call a pre-defined API int guess(int num), which returns three possible results:
+
+    -1: Your guess is higher than the number I picked (i.e. num > pick).
+    1: Your guess is lower than the number I picked (i.e. num < pick).
+    0: your guess is equal to the number I picked (i.e. num == pick).
+
+Return the number that I picked.
+
+So basically we are going to be given `n` whose range is between `1 <= n <= 231 - 1`
+
+Our goal is to call the `guess` function which is already predefined in the code
+
+The function requires an argument to be passed into it which is the number to be guessed
+
+The goal of this task is to guess the right number
+
+We can easily just brute force it depending on the value of `n` since the number to be guessed is in the range of `n` i.e `1 <= pick <= n`
+
+But I won't do that because of it will take time and our code needs to be as fast as possible
+
+Looking at the description they also gave us a good return result value needed to solve this
+
+```
+-1: Your guess is higher than the number I picked (i.e. num > pick).
+1: Your guess is lower than the number I picked (i.e. num < pick).
+0: your guess is equal to the number I picked (i.e. num == pick).
+```
+
+From that we can basically determine if our number is greater than the picked number or less or equal
+
+This gives us a good chance to use Binary Search Algorithm
+
+Just the standard logic 
+
+Here's my solve script which is in it's template form
+
+```python
+class Solution(object):
+    def guessNumber(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        lower, higher = 1, n
+        
+        while lower <= higher:
+            middle = lower + (higher - lower) // 2
+            result = guess(middle)
+            
+            if result == 0:
+                return middle
+        
+            elif result == -1:
+                higher = middle - 1
+            
+            else:
+                lower = middle + 1
+```
+
+
+
 
