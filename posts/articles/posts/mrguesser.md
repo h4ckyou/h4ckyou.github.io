@@ -107,3 +107,7 @@ It took just `16.032` seconds
 Imagining brute forcing how long it would take??
 
 Anyways that's all for today!
+
+Btw the person who I gave to solve this solved it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ee147702-71db-4fcb-a701-b8eb7d8f60f0)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cfc68b53-467a-4d08-9636-58d4021ee590)
