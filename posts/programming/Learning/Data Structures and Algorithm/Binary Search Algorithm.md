@@ -521,11 +521,12 @@ I submitted it and got a wrong answer
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/262e9bf8-5d19-4a05-8f71-1cf5dbfd746c)
 
 I then remember I didn't check constraint 
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1390a404-46c3-4b13-96a9-d761da1964a3)
 
-So the input number is with range 0 
+So the input number can be within range 0 
 
-Editing my script to use the right range (also off by one error), removing the if check comparing the number with 0 & changin the `ans` variable from `-1` to `0`
+Editing my script to use the right range, removing the if check comparing the number with 0 & changin the `ans` variable from `-1` to `0`
 
 ```python
 def sqrt(num):
