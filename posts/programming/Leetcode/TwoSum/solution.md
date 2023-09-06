@@ -265,6 +265,26 @@ nums = [9,3,1,4,5,2,8,6,10,7]
 target = 11
 ```
 
-First we'll iterate throught the values in the nums and keep the progress in a dictionary defined as this: `{integer: index}`
+First we'll iterate through the values in the nums taking it's complement and keeping the progress in a dictionary defined as this: `{integer: index}`
 
+```
+11 - 9 = 2
+```
 
+Our hashmap dictionary will be this:
+
+```
+{9: 0}
+```
+
+We go over the second index
+
+```
+11 - 3 = 8
+```
+
+Hashmap dictionary
+
+```
+{3: 1
+```
