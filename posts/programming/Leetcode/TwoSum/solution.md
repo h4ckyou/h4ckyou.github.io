@@ -102,4 +102,11 @@ result = brute(nums, target)
 print(result)
 ```
 
+Submitting it finally worked!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ec2a0c85-9f9f-4574-8493-c81f5d45bede)
+
+But looking at the Runtime and Memory it used we can see that this isn't a good approach
+
+So I decided to try a better way of solving this
+
 
