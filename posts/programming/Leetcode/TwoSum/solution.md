@@ -271,7 +271,7 @@ First we'll iterate through the values in the nums array taking it's complement 
 11 - 9 = 2
 ```
 
-Our hashmap dictionary will be this:
+Our hash table dictionary will be this:
 
 ```
 {9: 0}
@@ -283,12 +283,46 @@ We go over the second index
 11 - 3 = 8
 ```
 
-Hashmap dictionary
+Hash table dictionary
 
 ```
 {3: 1}
 ```
 
-During this iteration we'll check if the current complement is in the hashmap dictionary 
+During this iteration we'll check if the current complement is in the hash table dictionary 
 
-If that returns True that means there's a number that 
+```python3
+if complement in hashtable:
+```
+
+If that returns True that means we've found a number that meets the condition required for this task
+
+And we'll return the index of the position of the current complement with the iterate
+
+```
+[hashtable[complement], i]
+```
+
+With that said I made a script to do that
+
+```python
+def twoSum(nums, target):
+    hashtable = {}
+
+    for i, j in enumerate(nums):
+        complement = target - j
+
+        if complement in hashtable:
+            return [hashtable[complement], i]
+        
+        else:
+            hashtable[j] = i
+            
+nums = [2,7,11,15]
+target = 17
+
+result = twoSum(nums, target)
+print(result)
+```
+
+We can submit this
