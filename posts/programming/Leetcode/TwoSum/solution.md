@@ -34,6 +34,7 @@ Consider this array:
 
 ```
 nums = [2,7,11,15]
+target = 9
 ```
 
 In two loops I'll compare the sum of each values of the array with the target value:
@@ -46,4 +47,24 @@ That would be in a loop of range `array.length()`
 
 But you can tell that if the length is large then that increases the time complexity since it will perform multiple loops over a long value in an array
 
-Here's a sample script to solve this
+Here's a sample script to solve this:
+
+```python
+def brute(nums, target):
+
+    for i in range(len(nums)):
+        for j in range(len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+    
+    return None
+
+
+nums = [2,7,11,15]
+target = 9
+
+result = brute(nums, target)
+print(result)
+```
+
+
