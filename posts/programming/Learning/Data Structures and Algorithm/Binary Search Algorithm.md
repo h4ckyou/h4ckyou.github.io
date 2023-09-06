@@ -505,3 +505,58 @@ Brief explanation of the conditional checks happening there:
 - If square is greater than `num`, we need to move the search range to the left, so I update `right` to `middle - 1`. In this case, we do not update `ans` either because, again, the current value of `array[middle]` is not the square root; it's larger.
 
 
+We can check for it's authenticity by running it with various testcases
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f7d8d451-10fd-41b3-9eb2-ccae7553015f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b2ef420-bc55-484c-912f-1cf9faca15c3)
+
+Now imagine using large number?
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a0711e53-09db-478a-85d6-0db880c2f538)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/792a8dc8-a436-4cec-812f-73057abf328d)
+
+The time it took was just `0.14s` if you compare this with the brute force approach you will notice significant difference in time
+
+Now that we're done let's paste it in the template given to this
+
+I submitted it and got a wrong answer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/262e9bf8-5d19-4a05-8f71-1cf5dbfd746c)
+
+I then remember I didn't check constraint 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1390a404-46c3-4b13-96a9-d761da1964a3)
+
+So the input number is with range 0 
+
+Editing my script to use the right range (also off by one error), removing the if check comparing the number with 0 & changin the `ans` variable from `-1` to `0`
+
+```python
+def sqrt(num):
+    array = [i for i in range(num+1)]
+    left = 0
+    right = len(array) - 1
+    ans = 0
+
+    while left <= right:
+        middle = left + (right - left) // 2
+        square = array[middle] * array[middle]
+
+        if square == num:
+            ans = array[middle]
+            break
+
+        elif square > num:
+            right = middle - 1
+
+        else:
+            left = middle + 1
+            ans = array[middle]  
+
+    return ans
+
+num = int(input())
+result = sqrt(num)
+print(result)
+```
+
+Then on running it again I got this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7414a9f9-39c2-4146-adaa-5c08566ffeef)
+
+The program actually uses a lot of memory due the fact I'm saving the range in a loop and if a very large number is given it would take lot of memory
