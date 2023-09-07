@@ -287,18 +287,4 @@ I tried debugging with gdb-multiarch and gef, but couldn't completely disassembl
 
 Therefore, I made the Exploit code by referring to the C code.
 
-But another issue! the binary is pie enabled
-
-I could tell that from the memory address in ghidra
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7daded95-5ad5-4d0b-9228-7170685ec542)
-
-So this is the reason they give us format string vuln?
-
-With that said we need to leak the pie base address so that we can perform ret2win
-
-But if you look at it we'll see that we need to ROP thrice:
-- First chain to make the program be in a loop to call main()
-- Second chain for 
-
-
 
