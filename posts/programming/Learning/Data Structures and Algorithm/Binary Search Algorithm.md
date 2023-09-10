@@ -1,4 +1,4 @@
-<h3> Binary Search Algorithm </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1c1b5a49-f801-419a-824e-0f61f8221921)<h3> Binary Search Algorithm </h3>
 
 Binary Search is defined as a searching algorithm used in a sorted array by repeatedly dividing the search interval in half. The idea of binary search is to use the information that the array is sorted and reduce the time complexity to O(log N). 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fd62102c-2206-4b4c-ad3b-317bf6f99425)
@@ -674,5 +674,80 @@ Submitting it works
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/60db0e09-e52d-41b2-9df0-fa0fe1e9d0ae)
 
 
+#### Example4
+
+Description: Alice has some cards with numbers written on them. She arranges the cards in decreasing order, and lays them out face down in a sequence on a table. She challenges Bob to pick out the card containing a given number by turning over as few cards as possible. Can you help Bob locate the card:
+
+```
+cards = [8, 8, 6, 6, 6, 6, 6, 6, 3, 2, 2, 2, 0, 0, 0]
+query = 6
+```
+
+The key note is that the card list is arranged in decreasing sequence which makes Binary Search Algorithm a gateway to solve this
+
+Well since the query of the expected card is `6` that's an issue
+
+Cause looking at the numbers in the card we can see there are quite retition of `6`s
+
+And if we apply Binary Search it will return the middle number which in this case is `6`
+
+So that's a false result because there are other 6's before it making it not the first occurrence
+
+To solve this I'll basically do this:
+- Make a function to get right index value that does this:
+  - Check if `cards[mid]` is equal to query if it is then I do this:  
+    - Check if `mid-1` is greater than or equal to `0` this is to avoid going out of bound of the `cards` array and then checking if `cards[mid-1] == query` this is to check if there are other poccurrence        of the query value aside the current one we have in the left hand side
+    - If that check return True then we return `left` else we return "found"
+    - Else we check if the `cards[mid]` is less than query if it is then we return "left"
+    - Else we return "right" because that is when `cards[mid]` is greater than query
+   
+Then using the normal standard Binary Search Algorithm I'll get the right value
+
+Here's my solve script
+
+```python
+def getRightIndex(cards, query, mid):
+    mid_number = cards[mid]
+
+    if mid_number == query:
+        if mid-1 >= 0 and cards[mid-1] == query:
+            return "left"
+        else:
+            return "found"
+
+    elif mid_number < query:
+        return "left"
+
+    else:
+        return "right"
+
+def binarySeach(cards, query):
+    left, right = 0, len(cards) -1 
+
+    while left <= right:
+        mid = left + (right - left) // 2
+        r = getRightIndex(cards, query, mid)
+
+        if r == "found":
+            return mid
+
+        elif r == "left":
+            right = mid + 1
+        
+        else:
+            left = mid - 1
+    
+    return -1
 
 
+cards = [8, 8, 6, 6, 6, 6, 6, 6, 3, 2, 2, 2, 0, 0, 0]
+query = 6
+
+r = binarySeach(cards, query)
+print(r)
+```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8049d8d2-2f56-477c-ad1f-f1d63f3c9575)
+
+We can confirm it is indeed right because it's the first occurrence of `6` in it's respective index value
