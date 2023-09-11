@@ -16,3 +16,9 @@ class Solution:
 
 But I will implement Binary Search to solve this
 
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays/solve.py)
+
+My script is quite a bit of an overkill and you can tell that the time it takes is pretty not efficient
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f8e16d0a-7196-48b5-9f19-44bb850bf48d)
+
+Also I was doing lots of debugging hehe :P
