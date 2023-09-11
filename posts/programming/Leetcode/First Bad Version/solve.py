@@ -2,18 +2,18 @@ def isBadVersion(n):
     bad = list(range(50000, 30000, -1))
 
     if n in bad:
-        return "true"
+        return True
     else:
-        return "false"
+        return False
 
 def check(mid):
-    if isBadVersion(mid) == "true":
-        if mid-1 >= 0 and isBadVersion(mid-1) == "true":
+    if isBadVersion(mid) == True:
+        if mid-1 >= 0 and isBadVersion(mid-1) == True:
             return "left"
         else:
             return "found"
     
-    elif isBadVersion(mid) == "false":
+    elif isBadVersion(mid) == False:
         return "right"
 
 def firstBadVersion(number):
