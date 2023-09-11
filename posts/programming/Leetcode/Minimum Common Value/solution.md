@@ -21,12 +21,15 @@ Another way I found is to use Two Pointers approach:
 
 Here's what that does:
 - Iterate through array1 and array2:
-  - If array1[i] < array2[j] then it will increment i by 1
-  - Else it will increment j by 1
-  - Else return array1[i]
+  - If `array1[i]` < `array2[j]` then it will increment `i` by 1
+  - Else it will increment `j` by 1
+  - Else return `array1[i]`
 
 The idea behind that is that it will get a number from the first array whereby no elements in the second array will be less than or greater than the chosen number in array1
 
 That works because both arrays are sorted
 
 Here's the script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Minimum%20Common%20Value/solve2.py)
+
+Running it shows it is more effective than my previous solve script
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2aa89360-cbb6-47a1-919b-0e11f385cfbe)
