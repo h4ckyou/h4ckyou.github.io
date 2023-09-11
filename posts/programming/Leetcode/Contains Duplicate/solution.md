@@ -56,3 +56,6 @@ Since I will sort the `counter.values()` values therefore any number that's grea
 
 Here's my final script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Contains%20Duplicate/solve.py)
 
+It's not too good in terms of speed and memory but it does the job
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5e96b452-1af0-421d-a831-474e7e912176)
+
