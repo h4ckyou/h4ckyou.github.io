@@ -6,7 +6,7 @@ Here is my thought process:
 
 ```
 1. We are given an integer array and we're to return "true" if any of the number in the array appears at least twice and "false" if the numbers in the array are distinct
-2. First I will sort the array then I will create a hash table containing each elements in the array and it's corresponding occurrence, then I'll iterate through the hash table values and see if any is greater than 2 or not
+2. First I will create a hash table containing each elements in the array and it's corresponding occurrence, then I'll iterate through the hash table values and see if any is greater than 2 or not
 If it is then I'll return "true" else "false"
 ```
 
@@ -14,7 +14,7 @@ And my solve script:
 
 ```python
 def containsDuplicate(nums):
-    array = sorted(nums)
+    array = nums
     counter = {}
 
     for i in array:
@@ -49,4 +49,9 @@ In a case where that element occurs first then I'll program runs quickly but in 
 And the maximum length that can be our input is `100,000` while the element in the array maxiumum value can be `1,000,000,000`
 
 We should always consider the worst case scenerio as it helps us optimize our code
+
+After few minutes of thinking I figured I could optimize the second loop using Binary Search
+
+Since I will sort the `counter.values()` values therefore any number that's greater than or equal to our target value which is `2` then the function should return `True` as we are not exactly looking for number `2` but we are looking for any number which is at least `2`
+
 
