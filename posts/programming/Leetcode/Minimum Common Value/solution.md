@@ -8,7 +8,7 @@ My thought process!
 2. Iterate through the list of lower size and binary search each element in the other array
 3. If found i'll return the value since it's the first mininmum common value
 
-Solution Script: [link]()
+Solution Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Minimum%20Common%20Value/solve.py)
 
 Well my script in terms of speed takes quite some time since I'm literally going over each elements in the first array.
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9d703cfc-4158-4180-af4b-2ac8ada13a52)
