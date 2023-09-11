@@ -46,4 +46,7 @@ Then I'm looping over the hash table values to find any value that's greater tha
 
 In a case where that element occurs first then I'll program runs quickly but in some case the value might be as the last value in the hash table or array
 
-And the maximum 
+And the maximum length that can be our input is `100,000` while the element in the array maxiumum value can be `1,000,000,000`
+
+We should always consider the worst case scenerio as it helps us optimize our code
+
