@@ -16,3 +16,17 @@ Well my script in terms of speed takes quite some time since I'm literally going
 If I'm to take the worst case scenerio I'll have to loop through at least `100,000` elements in the array
 
 Or performing binary search for a number as large as `1000000000` but that isn't a big deal cause the time complexity of binary search is `0(log N)` while the other is more of like linear search whose complexity is `O(N)`
+
+Another way I found is to use Two Pointers approach:
+
+Here's what that does:
+- Iterate through array1 and array2:
+  - If array1[i] < array2[j] then it will increment i by 1
+  - Else it will increment j by 1
+  - Else return array1[i]
+
+The idea behind that is that it will get a number from the first array whereby no elements in the second array will be less than or greater than the chosen number in array1
+
+That works because both arrays are sorted
+
+Here's the script: [link]()
