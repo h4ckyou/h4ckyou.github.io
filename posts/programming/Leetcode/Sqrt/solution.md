@@ -4,4 +4,4 @@
 
 Solution Link: [solution](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Learning/Data%20Structures%20and%20Algorithm/Binary%20Search%20Algorithm.md#example-2)
 
-Solve Script: 
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Sqrt/solve.py)
