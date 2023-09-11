@@ -59,3 +59,27 @@ Here's my final script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob
 It's not too good in terms of speed and memory but it does the job
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5e96b452-1af0-421d-a831-474e7e912176)
 
+After looking at other people approach I saw that my script efficiency was too low as there are way more easier ways of solving this :D
+
+I don't know why I over think things :P
+
+Anyways the idea behind this one I found interesting is this:
+
+Approach solving using sorting:
+
+```
+The sorting approach sorts the array in ascending order and then checks for adjacent elements that are the same. If any duplicates are found, it returns true. Sorting helps in bringing duplicates together, simplifying the check. However, sorting has a time complexity of O(n log n).
+```
+
+Here's the code snippet
+
+```python
+    def containsDuplicate(nums):
+        nums.sort()
+        n = len(nums)
+        for i in range(1, n):
+            if nums[i] == nums[i - 1]:
+                return True
+        return False
+```
+
