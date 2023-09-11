@@ -54,4 +54,5 @@ After few minutes of thinking I figured I could optimize the second loop using B
 
 Since I will sort the `counter.values()` values therefore any number that's greater than or equal to our target value which is `2` then the function should return `True` as we are not exactly looking for number `2` but we are looking for any number which is at least `2`
 
+Here's my final script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Contains%20Duplicate/solve.py)
 
