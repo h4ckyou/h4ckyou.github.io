@@ -16,4 +16,3 @@ class Solution:
 
 But I will implement Binary Search to solve this
 
-Solve Script: [link]()
