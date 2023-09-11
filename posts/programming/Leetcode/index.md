@@ -21,5 +21,5 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 07 2023]] [Leetcode: Palindrome Number](https://h4ckyou.github.io/posts/programming/Leetcode/Palindrom%20Number/solution.html)
 - [[September 11 2023]] [Leetcode: Missing Number](https://h4ckyou.github.io/posts/programming/Leetcode/Missing%20Number/solution.html)
 - [[September 11 2023]] [Leetcode: Find First and Last Position In Sorted Array](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20First%20and%20Last%20Position%20of%20Element%20in%20Sorted%20Array/solution.html)
-- [[September 11 2023]] [Leetcode: Search Insert Position](https://h4ckyou.github.io/posts/programming/Leetcode/Search%20Insert%20Position/solve.py)
+- [[September 11 2023]] [Leetcode: Search Insert Position](https://h4ckyou.github.io/posts/programming/Leetcode/Search%20Insert%20Position/solution.html)
 
