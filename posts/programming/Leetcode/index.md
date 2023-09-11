@@ -24,5 +24,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 11 2023]] [Leetcode: Search Insert Position](https://h4ckyou.github.io/posts/programming/Leetcode/Search%20Insert%20Position/solution.html)
 - [[September 11 2023]] [Leetcode: First Bad Version](https://h4ckyou.github.io/posts/programming/Leetcode/First%20Bad%20Version/solution.html)
 - [[September 11 2023]] [Leetcode: Intersection of Two Arrays](https://h4ckyou.github.io/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays/solution.html)
-- 
-[[September 11 2023]] [Leetcode: Intersection of Two Arrays II](https://h4ckyou.github.io/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays%20II/solution.html)
+- [[September 11 2023]] [Leetcode: Intersection of Two Arrays II](https://h4ckyou.github.io/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays%20II/solution.html)
