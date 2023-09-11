@@ -34,4 +34,4 @@ With that this program is way more optimized than before :P
 
 But in terms of Space Complexity the Big O is `O(min(N, M)), where N is the length of nums1 and M is the length of nums2.`
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays%20II/solve.py)
