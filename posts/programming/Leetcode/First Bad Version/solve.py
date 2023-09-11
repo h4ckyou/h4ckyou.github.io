@@ -1,5 +1,5 @@
 def isBadVersion(n):
-    bad = [4, 5, 6, 7, 8, 9 , 10]
+    bad = list(range(50000, 30000, -1))
 
     if n in bad:
         return "true"
@@ -23,7 +23,7 @@ def firstBadVersion(number):
         mid = left + (right-left) // 2
         
         r = check(mid)
-
+        
         if r == "found":
             return mid
 
@@ -33,9 +33,9 @@ def firstBadVersion(number):
         elif r == "left":
             right = mid - 1
 
-    return -1
+    return None
 
-number = 10
+number = 100000
 res = firstBadVersion(number)
 
 print(res)
