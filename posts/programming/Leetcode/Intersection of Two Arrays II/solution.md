@@ -34,3 +34,4 @@ With that this program is way more optimized than before :P
 
 But in terms of Space Complexity the Big O is `O(min(N, M)), where N is the length of nums1 and M is the length of nums2.`
 
+Solve Script: [link]()
