@@ -16,6 +16,6 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 
 - [[September 06 2023]] [Leetcode: GuessNumber](https://h4ckyou.github.io/posts/programming/Leetcode/Guess%20Number%20Higher%20or%20Lower/solution.html) `Binary Search Algorithm`
 - [[September 06 2023]] [Leetcode: Sqrt(x)](https://h4ckyou.github.io/posts/programming/Leetcode/Sqrt/solution.html) `Binary Search Algorithm`
-- [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/Leetcode/TwoSum/solution.html) ` Algorithm`
+- [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/Leetcode/TwoSum/solution.html) `Linear Search, Binary Search, Hashtable`
 - [[September 06 2023]] [Leetcode: Palindrome Number](https://h4ckyou.github.io/posts/programming/Leetcode/Palindrom%20Number/solution.html) `Programming, Algorithm`
 - [[September 07 2023]] [Leetcode: Missing Number](https://h4ckyou.github.io/posts/programming/Leetcode/Missing%20Number/solution.html) `Programming, Algorithm`
