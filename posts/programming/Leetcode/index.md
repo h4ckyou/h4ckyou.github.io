@@ -14,6 +14,7 @@ title:  LeetCode.
 LeetCode is the best platform to help you enhance your skills, expand your knowledge and prepare for technical interviews.
 <hr>
 
+- [[September 06 2023]] [Leetcode: GuessNumber](https://h4ckyou.github.io/posts/programming/Leetcode/Guess%20Number%20Higher%20or%20Lower/solution.html)
 - [[September 06 2023]] [Leetcode: Sqrt(x)](https://h4ckyou.github.io/posts/programming/Leetcode/Sqrt/solution.html) `Programming, Algorithm`
 - [[September 06 2023]] [Leetcode: Two Sum](https://h4ckyou.github.io/posts/programming/Leetcode/TwoSum/solution.html) `Programming, Algorithm`
 - [[September 06 2023]] [Leetcode: Palindrome Number](https://h4ckyou.github.io/posts/programming/Leetcode/Palindrom%20Number/solution.html) `Programming, Algorithm`
