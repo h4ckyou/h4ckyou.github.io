@@ -29,4 +29,4 @@ The idea behind that is that it will get a number from the first array whereby n
 
 That works because both arrays are sorted
 
-Here's the script: [link]()
+Here's the script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Minimum%20Common%20Value/solve2.py)
