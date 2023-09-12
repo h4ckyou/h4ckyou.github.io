@@ -31,7 +31,7 @@ If we happen to get a complement which resides in the hashtable we'll then retur
 
 I'm incrementing by `1` because in my program I made use of `enumerate()` making it start from index `0` instead of `1`
 
-
+P.S I would have been giving screenshots of the drawing but the issue is I use Linux so I don't have any tool where I can freely draw stuffs so therefore, my drawings and thought process are like on my book :P
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/31eba667-ef32-4c64-956f-999bc0455c63)
