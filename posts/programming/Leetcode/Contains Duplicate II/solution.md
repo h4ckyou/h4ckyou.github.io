@@ -21,3 +21,12 @@ Running it works meeting a very low time complexity compared to other python scr
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/260ee4ce-db35-409c-9860-bf6e05b85fa3)
 
 So here's the explanation to my solve script
+
+- I create a hash table which would hold up the elements of the array with it's corresponding index
+- While I'm on that loop of creation I'll check if there has been any occurrence of the current element
+  - If that is True then I'll calculate the absolute value of the current iterate with the index value of the element already in the hash table
+  - If the value is less than or equal to `k` then I'll return True
+- But if that's not the case then I'll keep on adding elements and it's index to the hashtable till I exhaust the whole elements in the array
+
+
+  
