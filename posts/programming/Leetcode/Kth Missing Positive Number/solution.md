@@ -45,6 +45,33 @@ Here's how it's done:
 - We know that there are `missing_before_mid` missing numbers before `arr[mid]`, so the `Kth` missing number would be `arr[mid] + (k - missing_before_mid)`.
 - Then we return `left + k`
 
+Script:
+
+```python
+def findKthPositive(arr, k):
+    left, right = 0, len(arr)-1
+
+    while left <= right:
+        mid = left + (right - left) // 2
+
+        missing = arr[mid] - (mid + 1)
+
+        if missing < k:
+            left = mid + 1
+        
+        else:
+            right = mid - 1
+        
+    # arr[mid] + (k - missing) == kth missing number
+    return left + k
+
+arr = [2,3,4,7,11]
+k = 5
+
+r = findKthPositive(arr, k)
+print(r)
+```
+
 Running it works and it's fast since the time complexity is `O(log N)`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4552bd05-d90f-4313-96ff-381a7a3cc69c)
 
