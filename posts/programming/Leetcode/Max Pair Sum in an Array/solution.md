@@ -86,3 +86,42 @@ Here's my final solve script: [link]()
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6400b80a-f9c1-4666-aec4-ddd7d960216f)
 
 It isn't too efficient :(
+
+Here's a better approach I read from other people solution
+
+Approach:
+
+- Find max digit for each number in the array `nums`
+- Store them in a hash map, group them with same `max_digit` into a list
+- Sort and find the max two numbers for each `max_digit`
+
+Complexity:
+
+```
+Time complexity: O(nlogn)
+Space complexity: O(n)
+```
+
+Code:
+
+```python
+class Solution:
+    def maxSum(self, nums: List[int]) -> int:
+        d = defaultdict(list)
+        ans = -1
+
+        for each in nums:
+            max_digit = int(max(str(each)))
+            d[max_digit].append(each)
+
+        for each in d:
+            if len(d[each]) > 1:
+                d[each].sort()
+                ans = max(ans, d[each][-1] + d[each][-2])    
+                
+        return ans
+```
+
+You can see it's way faster 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/deb4520c-3fb7-4880-8791-4309af829d40)
+
