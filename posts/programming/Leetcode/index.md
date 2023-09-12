@@ -33,4 +33,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 12 2023]] [Leetcode: Valid Perfect Square](https://h4ckyou.github.io/posts/programming/Leetcode/Valid%20Perfect%20Square/solution.html)
 - [[September 12 2023]] [Leetcode: Arranging Coins](https://h4ckyou.github.io/posts/programming/Leetcode/Arranging%20Coins/solution.html)
 - [[September 12 2023]] [Leetcode: Plus One](https://h4ckyou.github.io/posts/programming/Leetcode/Plus%20One/solution.html)
-- [[September 12 2023]] [Leetcode: Length of Last Word](https://h4ckyou.github.io/posts/programming/Leetcode/Length20of20Last20Word/solution.html)
+- [[September 12 2023]] [Leetcode: Length of Last Word](https://h4ckyou.github.io/posts/programming/Leetcode/Length%20of%20Last%20Word/solution.html)
