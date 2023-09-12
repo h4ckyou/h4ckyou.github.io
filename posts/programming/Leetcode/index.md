@@ -27,3 +27,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 11 2023]] [Leetcode: Intersection of Two Arrays II](https://h4ckyou.github.io/posts/programming/Leetcode/Intersection%20of%20Two%20Arrays%20II/solution.html)
 - [[September 11 2023]] [Leetcode: Minimum Common Values](https://h4ckyou.github.io/posts/programming/Leetcode/Minimum%20Common%20Value/solution.html)
 - [[September 12 2023]] [Leetcode: Contains Duplicate](https://h4ckyou.github.io/posts/programming/Leetcode/Contains%20Duplicate/solution.html)
+- [[September 12 2023]] [Leetcode: Contains Duplicate II](https://h4ckyou.github.io/posts/programming/Leetcode/Contains%20Duplicate%20II/solution.html)
