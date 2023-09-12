@@ -27,6 +27,11 @@ The idea is that I'll have a hashtable which would hold each element and it's in
 
 I defined the `complement` as the difference between the `target` value and `array[i]`
 
+If we happen to get a complement which resides in the hashtable we'll then return `[hastable[complement]+1, i+1]`
+
+I'm incrementing by `1` because in my program I made use of `enumerate()` making it start from index `0` instead of `1`
+
+
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/31eba667-ef32-4c64-956f-999bc0455c63)
