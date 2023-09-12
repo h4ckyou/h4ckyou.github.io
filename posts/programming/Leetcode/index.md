@@ -30,3 +30,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 12 2023]] [Leetcode: Contains Duplicate II](https://h4ckyou.github.io/posts/programming/Leetcode/Contains%20Duplicate%20II/solution.html)
 - [[September 12 2023]] [Leetcode: Majority Element](https://h4ckyou.github.io/posts/programming/Leetcode/Majority%20Element/solution.html)
 - [[September 12 2023]] [Leetcode: Majority Element II](https://h4ckyou.github.io/posts/programming/Leetcode/Majority%20Element%20II/solution.html)
+- [[September 12 2023]] [Leetcode: Valid Perfect Square](https://h4ckyou.github.io/posts/programming/Leetcode/Valid%20Perfect%20Square/solution.html)
