@@ -11,7 +11,7 @@ Here's my thought process:
 2. To solve this I'll create a hashtable which holds each element and it's corresponding number of occurrence, then I'll check if the condition is meet for each element in the hashtable
 ```
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Majority%20Element%20II/solve.py)
 
 It works pretty well!
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a8d7ab83-5180-4bcc-885e-bf75788f4739)
