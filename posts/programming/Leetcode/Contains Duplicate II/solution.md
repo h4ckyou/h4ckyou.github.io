@@ -15,7 +15,7 @@ Here is my thought process:
 4. Then use the condition required by the program
 ```
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Contains%20Duplicate%20II/solve.py)
 
 Running it works meeting a very low time complexity compared to other python scripters
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/260ee4ce-db35-409c-9860-bf6e05b85fa3)
