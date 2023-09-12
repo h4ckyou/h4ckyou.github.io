@@ -118,6 +118,70 @@ r = arrangeCoins(n)
 print(r)
 ```
 
+After running it I saw that the efficiency isn't that good so on looking at other solution I found this:
+
+###### Approach
+
+Suppose we have the input value n = 8.
+
+    Initialize num as 8 and count as 0.
+    Start the outer loop with i = 1:
+        On the first iteration:
+            Start the inner loop with j = 0.
+                Since j is less than i and num (8) is greater than 0, enter the loop.
+                Decrement num by 1. Now num = 7.
+                Increment j to 1.
+            Continue the inner loop:
+                Since j is less than i and num (7) is greater than 0, enter the loop.
+                Decrement num by 1. Now num = 6.
+                Increment j to 2.
+            Continue the inner loop:
+                Since j is equal to i (2) and num (6) is greater than 0, increment count by 1. Now count = 1.
+        On the second iteration:
+            Start the inner loop with j = 0.
+                Since j is less than i and num (6) is greater than 0, enter the loop.
+                Decrement num by 1. Now num = 5.
+                Increment j to 1.
+            Continue the inner loop:
+                Since j is equal to i (1) and num (5) is greater than 0, increment count by 1. Now count = 2.
+        On the third iteration:
+            Start the inner loop with j = 0.
+                Since j is less than i and num (5) is greater than 0, enter the loop.
+                Decrement num by 1. Now num = 4.
+                Increment j to 1.
+            Continue the inner loop:
+                Since j is less than i (2) and num (4) is greater than 0, enter the loop.
+                Decrement num by 1. Now num = 3.
+                Increment j to 2.
+            Continue the inner loop:
+                Since j is equal to i (2) and num (3) is greater than 0, increment count by 1. Now count = 3.
+        The outer loop continues until num is no longer greater than 0.
+    Exit the outer loop.
+    The function returns count, which is 3.
+
+In this example, the function arrangeCoins determines the number of complete rows of coins that can be arranged based on the input value n = 8. The result is 3, indicating that 3 complete rows of coins can be arranged.
+Complexity
+
+    Time complexity:O(n2)O(n^2)O(n2)
+
+    Space complexity:O(1)O(1)O(1)
+
+
+Code Implementation:
+
+```python
+class Solution:
+    def arrangeCoins(self, n: int) -> int:
+        if n == 1:
+            return 1
+        
+        for i in range(1, n + 1):
+            n -= i
+            if (n < 0):
+                return i - 1
+```
+
+It's pretty neat compared to mine which takes more time and space than this code snippet does
 
 
 
