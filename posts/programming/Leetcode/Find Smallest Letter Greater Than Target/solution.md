@@ -10,4 +10,4 @@ So I moved to solving it using Linear Search
 
 It works but the time and space complexity is low also you can see I was trying to solve it 2 hours ago but the last test case was not working 🥲 
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Find%20Smallest%20Letter%20Greater%20Than%20Target/solve.py)
