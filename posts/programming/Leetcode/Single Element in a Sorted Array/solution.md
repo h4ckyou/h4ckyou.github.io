@@ -47,6 +47,13 @@ So now we can optimize the program
 
 The way I'll do it is using Binary Search
 
+Here's the explanation:
+- I initialized two pointers, `left` and `right`, to the first and last index of the array, respectively.
+- I'll use a while loop which will keep on running as long as `left` is less than `right`.
+- I then calculate the middl
+- 
+
+
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Single%20Element%20in%20a%20Sorted%20Array/solve.py)
 
 It works!
