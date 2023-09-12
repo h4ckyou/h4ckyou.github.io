@@ -83,3 +83,25 @@ Here's the code snippet
         return False
 ```
 
+And here's a more efficent one:
+
+```python
+def containsNearbyDuplicate(nums):
+    hashtable = {}
+
+    for num in nums:
+        if num in hashtable:
+            return True
+        hashtable[num] = num
+
+    return False
+
+nums = [1,2,3,1]
+result = containsNearbyDuplicate(nums)
+print(result) 
+```
+
+The idea is to create a hash table which stores each element of the array and then if it appears again then there's a duplicate and it returns True else if there's no occurrence of two elements in the hash table we return False
+![wow](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d772ec51-f83d-4818-a38f-9348282b3df3)
+
+
