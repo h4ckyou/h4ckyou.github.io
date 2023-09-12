@@ -10,7 +10,8 @@ A good way to start is to try solve this using a brute force approach as it help
 
 And basically my brute force approach would use Linear Search which basically does this:
 - Iterate through the array and if `array[i] != array[i-1]` and `array[i] != array[i+1]` that means the non duplicate value is `array[i]`
-- There are cases we should check like if `len(array) == 1` then we return `array[0]` because there's only one element in the array
+- There are cases we should check like if `len(array) == 1` then we return `array[0]` because there's only one element in the array or if the first element isn't equal to the second i.e `array[0] != array[1]` 
+- If we have exhaused our loop then the result is the last element of the array
 
 Here's the implementation:
 
@@ -20,10 +21,14 @@ def singleNonDuplicate(array):
     if len(array) == 1:
         return array[0]
 
+    if array[0] != array[1]:
+        return array[0]
+
     for i in range(1, len(array)-1):
         if array[i] != array[i-1] and array[i] != array[i+1]:
             return array[i]
 
+    return array[-1]
 
 nums = [1,1,2,3,3,4,4,8,8]
 r = singleNonDuplicate(nums)
