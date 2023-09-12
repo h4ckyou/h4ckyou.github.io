@@ -81,3 +81,8 @@ max(25) == 5
 And the sum of the pair is `40`
 
 Since there are no other numbers in the array that meets the condition therefore the result is `40`
+
+Here's my final solve script: [link]()
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6400b80a-f9c1-4666-aec4-ddd7d960216f)
+
+It isn't too efficient :(
