@@ -11,6 +11,6 @@ Here's my thought process:
 4. To solve this I'll make a hash table which holds all the occurrence of elements in the array, then I'll check if it meets that condition and I will be expecting it to reach because the description of the challenge says we may assume that the majority element always exists in the array
 ```
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Majority%20Element/solve.py)
 
 ![hashtable](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a19e51a3-e8d1-40a4-8c15-c93d9df0140b)
