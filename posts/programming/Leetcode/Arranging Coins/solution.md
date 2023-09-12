@@ -41,7 +41,7 @@ We can also draw the block form of it
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6e5e32ab-922e-4478-809b-9fa14639f7db)
 
-So basically we can form 5 blocks out of 6
+So basically we can form 2 coin staircase out of 5
 
 That will sound confusing but here's what I mean:
 
@@ -53,7 +53,7 @@ That will sound confusing but here's what I mean:
 
 So let's say we're counting from 0 and our current coin is 5
 
-That means when we reach 1 the coin will reduce by 1 
+That means when we reach `i` the coin will reduce by `coin-i`
 
 We reach 2 the coin will reduce by 2 i.e `current_coin - count`
 
@@ -61,10 +61,64 @@ We reach 3 the coin will reduce by 2 but now the problem is there's one left i.e
 
 That makes it incomplete
 
-And the task here is saying we should find the number of rows of `n` which means that we should find how many rows can `n` make excluding the incomplete coin
+And the task here is saying we should find the number of rows of `n` which means that we should find how many rows can `n` make  to form a staircase excluding the incomplete coin
 
 That might not also sound too good I'm sorry for that I don't know how to visualize it for you :(
 
 But this is what I discovered:
+
+We can determine when the value has become imcomplete when the next counter is greater than the previous coin value
+
+Let us take our case sample as example
+
+```
+counter = 0
+coins = 5
+
+1 --> 2 --> 3
+4 --> 2 --> ?
+```
+
+We can see that if the next counter value which in this case is `3` is greater than the previous coin value which is `2` therefore the next coin value will be incomplete
+
+To confirm that I tried it over various test cases and it returned True 
+
+So now we just need to find a way to get the rows and that part is pretty easy if you figure it out
+
+Here's what I did:
+- Initialize an array to hold the current coin value
+- In a for loop iterate through the range(1, coins)
+  - On each iterate append the difference of the last value of the array with the iterate value
+- To check is we have meet the incomplete coin case I'll check if `i+1` is greater than `array[-1]`, if it is then I'll break out of the loop
+- The return value should exclude the initial coin value at the 0th index since it isn't needed, therefore the return value would be `array[1::]`
+
+That's basically what my script does:
+
+Solve Script: [link]()
+
+```python
+def arrangeCoins(coins):
+    rows = [coins]
+
+    if coins == 1:
+        return 1
+
+    for i in range(1, coins):
+        rows.append(rows[-1] - i)
+        
+        if i+1 > rows[-1]:
+            break
+    
+    return len(rows[1::])
+
+
+n = 10
+r = arrangeCoins(n)
+
+print(r)
+```
+
+
+
 
 
