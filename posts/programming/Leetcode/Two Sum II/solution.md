@@ -19,6 +19,13 @@ Our goal is to find two numbers such that they add up to the `target` value and 
 - The tests are generated such that there is exactly one solution.
 ```
 
+Since the array is already sorted I can actually implement Binary Search to solve it
+
+But I took another approach which makes use of a hash table
+
+The idea is that I'll have a hashtable which would hold each element complement and it's index
+
+I defined the `complement` as the difference between the `target` value and `array[i]`
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/31eba667-ef32-4c64-956f-999bc0455c63)
