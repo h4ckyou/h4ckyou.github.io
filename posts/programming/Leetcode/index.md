@@ -34,3 +34,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 12 2023]] [Leetcode: Arranging Coins](https://h4ckyou.github.io/posts/programming/Leetcode/Arranging%20Coins/solution.html)
 - [[September 12 2023]] [Leetcode: Plus One](https://h4ckyou.github.io/posts/programming/Leetcode/Plus%20One/solution.html)
 - [[September 12 2023]] [Leetcode: Length of Last Word](https://h4ckyou.github.io/posts/programming/Leetcode/Length%20of%20Last%20Word/solution.html)
+- [[September 12 2023]] [Leetcode: Check if Strings Can be Made Equal With Operations I](https://h4ckyou.github.io/posts/programming/Leetcode/Check%20if%20Strings%20Can%20be%20Made%20Equal%20With%20Operations%20I/solution.html)
