@@ -45,4 +45,7 @@ Here's how it's done:
 - We know that there are `missing_before_mid` missing numbers before `arr[mid]`, so the `Kth` missing number would be `arr[mid] + (k - missing_before_mid)`.
 - Then we return `left + k`
 
+Running it works and it's fast since the time complexity is `O(log N)`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4552bd05-d90f-4313-96ff-381a7a3cc69c)
+
 
