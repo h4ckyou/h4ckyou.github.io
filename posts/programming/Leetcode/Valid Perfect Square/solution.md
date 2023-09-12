@@ -6,6 +6,6 @@ The way I solved this is to binary search the giving number to get it's square r
 
 Then I checked if the square root is indeed a perfect square
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Valid%20Perfect%20Square/solve.py)
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c85f916e-35ac-436f-9d6d-dfda074c5865)
