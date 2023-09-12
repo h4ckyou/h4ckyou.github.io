@@ -5,5 +5,5 @@
 
 
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/31eba667-ef32-4c64-956f-999bc0455c63)
