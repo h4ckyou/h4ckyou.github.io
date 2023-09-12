@@ -50,9 +50,23 @@ The way I'll do it is using Binary Search
 Here's the explanation:
 - I initialized two pointers, `left` and `right`, to the first and last index of the array, respectively.
 - I'll use a while loop which will keep on running as long as `left` is less than `right`.
-- I then calculate the middl
-- 
+- I then will calculate the middle index `mid` using the formular for binary search. I will need to make sure that the value of `mid` is always an even number so as to keep it consistent with the pairs of elements we want to compare with
+- Now I compare the element at `mid` with `mid+1`. If they are not equal it means the non-duplicate element is to the left side of the array. So I update the `right` value to the mid so as to narrow the search range to half left of the array
+- If the element at `mid` and `mid+1` is equal that means the non-duplicate value is at the right side of the array. If so I'll update `left` to `mid+2` instead of `mid+1` because I have already checked the pair of elements at `mid` and `mid+1` and we would want to move to the next pair of element
+- I''ll continue this loop till `left` is no longer less than `right`. At this point the value of `left` will be pointing to the single non-duplicate value which we can then return 
 
+# Complexity
+- Time complexity:
+
+```
+O(log n)
+```
+
+- Space complexity:
+
+```
+O(1)
+```
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Single%20Element%20in%20a%20Sorted%20Array/solve.py)
 
