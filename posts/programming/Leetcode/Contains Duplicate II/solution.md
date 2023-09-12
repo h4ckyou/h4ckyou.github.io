@@ -2,7 +2,7 @@
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4422d344-3dfa-458c-8e08-02335c965cf8)
 
-From the first one I learnt a more efficient way of getting duplicates in an array so I just implemented it here and of cause made sure it meet the conditions
+From the first one of this series `Contains Duplicate` I learnt a more efficient way of getting duplicates in an array so I just implemented it here and of cause made sure it meet the conditions
 
 Here is my thought process:
 
