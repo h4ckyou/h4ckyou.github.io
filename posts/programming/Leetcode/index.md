@@ -36,3 +36,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 12 2023]] [Leetcode: Length of Last Word](https://h4ckyou.github.io/posts/programming/Leetcode/Length%20of%20Last%20Word/solution.html)
 - [[September 12 2023]] [Leetcode: Check if Strings Can be Made Equal With Operations I](https://h4ckyou.github.io/posts/programming/Leetcode/Check%20if%20Strings%20Can%20be%20Made%20Equal%20With%20Operations%20I/solution.html)
 - [[September 12 2023]] [Leetcode: Maximum Pair Sum in an Array](https://h4ckyou.github.io/posts/programming/Leetcode/Max%20Pair%20Sum%20in%20an%20Array/solution.html)
+- [[September 12 2023]] [Leetcode: Find Smallest Letter Greater Than Target](https://h4ckyou.github.io/posts/pprogramming/Leetcode/Find%20Smallest%20Letter%20Greater%20Than%20Target/solution.html)
