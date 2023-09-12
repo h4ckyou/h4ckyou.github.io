@@ -28,3 +28,8 @@ So let's optmize that!
 Instead of using lot of memory we can optimize that 
 
 I'll keep the current number not in the array in a variable and keep track of when we get the `k` which would be possible if I make a variable `count` that increments on each check of `currentNumber`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9b854c11-952a-48a7-af69-048012c3c34a)
+
+In terms of space complexity I improved it but in terms of time I didn't :(
+
+Solve Script: [link]()
