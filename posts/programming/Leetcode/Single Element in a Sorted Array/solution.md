@@ -2,7 +2,7 @@
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3102f722-59e9-4b13-b6f5-36de965430e5)
 
-# Intuition
+# Approach
 
 Looking at the problem we can tell we'll be given an array `nums` and we're too basically find that element in the array which only appears once
 
