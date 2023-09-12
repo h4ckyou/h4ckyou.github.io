@@ -32,4 +32,17 @@ I'll keep the current number not in the array in a variable and keep track of wh
 
 In terms of space complexity I improved it but in terms of time I didn't :(
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Kth%20Missing%20Positive%20Number/solve.py)
+
+After looking at other people solution I found this one which implemented Binary Search
+
+Here's how it's done: 
+- We initialize the two pointers `left` and `right` to narrow down the search range then we get the middle element `mid`
+- Now we need to calculate the number of missing elements before `arr[mid]` which can be gotten using this equation `arr[mid] - (mid + 1)`
+- If the value is less than `k` that means the `Kth` missing number is on the right hand side which we'll then increment `left` to `mid + 1`
+- Else that means the `Kth` missing number is on the left hand side and we can then shift our search space to the left using `right = mid - 1`
+- At the end of the loop, `left` will be pointing to the index where the `Kth` missing number would be inserted.
+- We know that there are `missing_before_mid` missing numbers before `arr[mid]`, so the `Kth` missing number would be `arr[mid] + (k - missing_before_mid)`.
+- Then we return `left + k`
+
+
