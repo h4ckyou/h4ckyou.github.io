@@ -64,3 +64,20 @@ The expected output is `146` but my program is returning `-1`
 If you look at it based on my assumption made the return value is right but what's the issue?
 
 Then I had to understand what the statement meant exactly and came up with another solution
+
+So it means that we're to find the maximum sum of pair of numbers from the array `nums` such that the maximum digit in pair are equal
+
+What that means is this:
+
+Let's take this array for example `[15, 25, 1, 2]`
+
+The maximum digit in the number is:
+
+```
+max(15) = 5
+max(25) == 5
+```
+
+And the sum of the pair is `40`
+
+Since there are no other numbers in the array that meets the condition therefore the result is `40`
