@@ -94,7 +94,7 @@ Here's what I did:
 
 That's basically what my script does:
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Arranging%20Coins/solve.py)
 
 ```python
 def arrangeCoins(coins):
@@ -120,7 +120,7 @@ print(r)
 
 After running it I saw that the efficiency isn't that good so on looking at other solution I found this:
 
-###### Approach
+##### Approach
 
 Suppose we have the input value n = 8.
 
