@@ -23,9 +23,10 @@ Since the array is already sorted I can actually implement Binary Search to solv
 
 But I took another approach which makes use of a hash table
 
-The idea is that I'll have a hashtable which would hold each element complement and it's index
+The idea is that I'll have a hashtable which would hold each element and it's index and during the iteration I'll check if the `complement` resides in the hashtable
 
 I defined the `complement` as the difference between the `target` value and `array[i]`
+
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/31eba667-ef32-4c64-956f-999bc0455c63)
