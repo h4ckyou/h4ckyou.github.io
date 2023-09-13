@@ -104,5 +104,12 @@ This lead to the second approach
 
 ##### Approach 2
 
+First I'll store the sum of each elements in the `nums1` and `nums2` array with it's occurrence 
+
+Then I'll calculate the number of quadruplets in `nums3` and `nums4` that sum to the negation of a `sum` from `nums1` and `nums2`
+
+The approach idea is what I got from researching so I just wrote the script to implement that
+
+Here's the solve script: [link]()
 
 
