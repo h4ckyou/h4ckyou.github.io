@@ -76,3 +76,42 @@ After I understood that I was able to come up with an idea I can use to implemen
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Special%20Array%20With%20X%20Elements%20Greater%20Than%20or%20Equal%20X/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/64142ec0-6126-4241-8a17-5113a491aa29)
+
+My approach is Ok but not well optimized 
+
+Anyways after looking at others solution I found this approach which made use of Binary Search
+
+Here's the way it was used:
+- It initialized `left`, `right` to it's corresonding value (the standard stuff xD)
+- In a while loop, we calculates the mid value
+- Inside the loop, we use a list comprehension and the sum function to count the number of elements in `nums` that are greater than or equal to `mid`. This count is stored in the variable count.
+- We then shift the search range depending on the value of `count`
+
+Here's the script implementation:
+
+```python
+def specialArray(nums):
+    left, right = 0, len(nums) - 1
+
+    while left <= right:
+        mid = left + (right - left) // 2
+        count = sum(1 for num in nums if num >= mid)
+
+        if count == mid:
+            return mid
+        elif count > mid:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    return -1
+
+nums = [0,4,3,0,4]
+r = specialArray(nums)
+
+print(r)
+```
+
+It works pretty well
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8145e109-87ce-4ec5-9858-87164c75ca2a)
+
