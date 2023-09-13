@@ -91,7 +91,7 @@ Remember the constaint is this:
 
 Basically the length of the array can be up to `200` and each elements in the array is in range `-228 to 228`
 
-If we are to take the worst case scenerio i.e the array has length of 228 and each element is 228
+If we are to take the worst case scenerio i.e the array has length of `200` and each element is `228`
 
 Because the time complexity is `O(n^4)` because we have four nested loops, each of which iterates `n` times. This means that the time it takes to run the code will increase significantly as the size of the input array `(nums1, nums2, nums3, nums4)` increases
 
