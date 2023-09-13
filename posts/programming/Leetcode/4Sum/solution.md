@@ -58,6 +58,44 @@ The script is not so efficient but it does the job
 
 Here's another way to solve this:
 
-- The idea is to use HashSet to track past elements.
+- The idea is to use hashset to track past elements.
 - We iterate the combinations of `nums[i], nums[j], nums[k]`, and calculate the `complement` by `complement = target - nums[i] - nums[j] - nums[k]`.
 - We check if `complement` is in the HashSet. If it exist, then it form a quadruplets then add it to the answer.
+
+Solve Script:
+
+ ```python
+ def fourSum(nums, target):
+   length = len(nums)
+   seen = set()
+   r = set()
+ 
+   for i in range(length):
+       for j in range(i+1, length):
+           for k in range(j+1, length):
+               complement = target - nums[i] - nums[j] - nums[k]
+ 
+               if complement in seen:
+                   arr = sorted([nums[i], nums[j], nums[k], complement])
+                   r.add((arr[0], arr[1], arr[2], arr[3]))
+           
+       seen.add(nums[i])
+   
+   return r
+ 
+ nums = [1,0,-1,0,-2,2]
+ target = 0
+ 
+ r = fourSum(nums, target)
+ print(r)
+```
+
+In terms of speed my first approach is faster but in terms of memory it's better
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96d6e6af-b9a9-4db6-af9c-7862561ce5e5)
+
+Complexity:
+
+- Time: `O(N^3)`
+- Extra Space (Without count output as space): `O(N)`
+
+
