@@ -52,7 +52,7 @@ a + (b * (n - 1))
 
 With that we can then solve this task!
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Generate%20a%20String%20With%20Characters%20That%20Have%20Odd%20Counts/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e7abffd6-5300-477d-89b1-fc1518dc2b00)
 
 
