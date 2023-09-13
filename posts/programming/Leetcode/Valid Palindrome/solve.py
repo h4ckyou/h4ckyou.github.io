@@ -15,7 +15,6 @@ def isPalindrome(s):
     left, right = 0, len(charset)-1
 
     while left <= right:
-        mid = left + (right - left) // 2
 
         if charset[left] != charset[right]:
             return False
