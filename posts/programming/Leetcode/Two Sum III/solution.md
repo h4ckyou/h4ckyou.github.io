@@ -52,8 +52,7 @@ nums = [1, 2]
 
 Looking at this we should probably stop our loop because we can't find triplets if the values there are just two elements therefore our loop would be within range `len(array)-2`
 
-
-
+With that said my solve script is in the below link 🙂
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Two%20Sum%20III/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f5ffd97-4127-4c6d-9777-e5d6b4cdd2aa)
