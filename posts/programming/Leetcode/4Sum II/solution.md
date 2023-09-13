@@ -93,12 +93,12 @@ Basically the length of the array can be up to `200` and each elements in the ar
 
 If we are to take the worst case scenerio i.e the array has length of 228 and each element is 228
 
-Due to the nested loop being used it would take some time before we get the result 
+Because the time complexity is `O(n^4)` because we have four nested loops, each of which iterates `n` times. This means that the time it takes to run the code will increase significantly as the size of the input array `(nums1, nums2, nums3, nums4)` increases
 
 It can be confirmed from this test case when I submitted it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/29f1150d-f38a-4451-b82b-5b689357e9c6)
 
-So at least now I understand the logic of this question but need to create a more optmized solution
+So at least now I understand the logic of this problem but need to create a more optimized solution
 
 This lead to the second approach
 
