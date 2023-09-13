@@ -41,3 +41,5 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 12 2023]] [Leetcode: Single Element in a Sorted Array](https://h4ckyou.github.io/posts/programming/Leetcode/Single%20Element%20in%20a%20Sorted%20Array/solution.html)
 - [[September 12 2023]] [Leetcode: Two Sum II](https://h4ckyou.github.io/posts/programming/Leetcode/Two%20Sum%20II/solution.html)
 - [[September 13 2023]] [Leetcode: Kth Missing Positive Number](https://h4ckyou.github.io/posts/programming/Leetcode/Kth%20Missing%20Positive%20Number/solution.html)
+- [[September 13 2023]] [Leetcode: Special Array With X Elements Greater Than or Equal X
+](https://h4ckyou.github.io/posts/programming/Leetcode/Special%20Array%20With%20X%20Elements%20Greater%20Than%20or%20Equal%20X/solution.html)
