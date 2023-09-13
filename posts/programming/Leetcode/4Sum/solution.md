@@ -10,6 +10,7 @@ We are going to be given an array `nums` containing integers, our goal is to ret
 - nums[a] + nums[b] + nums[c] + nums[d] == target
 ```
 
+### Approach1 
 In order to solve this I implemented Binary Search and what it will do is to find the `triplets` and `two pairs` that when summed will equal the `target` value
 
 I won't bother about repeating values because I'll be using a hashset to store the result and hashset doesn't allow duplicates
@@ -48,6 +49,15 @@ array[j] + array[i] + array[left] + array[right] == target
 
 With that we're done and we can just return the values
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/4Sum/solve.py)
  
+The script is not so efficient but it does the job
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3e825a8a-9c90-4364-bb87-04d1954a0e9c)
+
+### Approach2
+
+Here's another way to solve this:
+
+- The idea is to use HashSet to track past elements.
+- We iterate the combinations of `nums[i], nums[j], nums[k]`, and calculate the `complement` by `complement = target - nums[i] - nums[j] - nums[k]`.
+- We check if `complement` is in the HashSet. If it exist, then it form a quadruplets then add it to the answer.
