@@ -53,7 +53,7 @@ nums1[1] + nums2[1] + nums3[1] + nums4[1] == 0
 
 After the loop finishes I'll return the value stored in my `count` variable
 
-Here's my script
+Here's my [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/4Sum%20II/brute.py)
 
 ```python
 def fourSumCount(nums1, nums2, nums3, nums4):
