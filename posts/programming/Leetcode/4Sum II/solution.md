@@ -104,11 +104,69 @@ This lead to the second approach
 
 ##### Approach 2
 
-First I'll store the sum of each elements in the `nums1` and `nums2` array with it's occurrence 
+The simple bruteforce solution would take `n^4` time complexity here.
 
-Then I'll calculate the number of quadruplets in `nums3` and `nums4` that sum to the negation of a `sum` from `nums1` and `nums2`
+We can do better by dividing given lists into two groups and precalculating all possible sums for the first group.
 
-The approach idea is what I got from researching so I just wrote the script to implement that
+Results go to a hash table where keys are sums and values are frequencies. It will take `n^2` time and space. After that, we iterate over elements of the second group, and for every pair check whether their sum can add up to zero with a sum from the first group using a hash table.
+
+In the script you would see this:
+
+```
+check = 0 - (nums3[k] + nums4[l])
+```
+
+Here's the explanation:
+
+The sum of four numbers must add up to zero. Taking one index from every number, it would look like
+
+```
+nums1[i] + nums2[j] + nums3[k] + nums4[l] = 0 
+
+Let's call this equation A.
+```
+
+We initially stored the sum of all possible sums of the first two arrays in a hashmap by doing:
+
+```python
+sum = nums1[i] + nums2[j]
+
+if sum in hashtable:
+    hashtable[sum] += 1
+else:
+    hashtable[sum] = 1
+```
+
+For example, let the first two arrays be `[1, 2]` and `[-2, -1]`. All possible sums are:
+
+```
+1 + (-2) = -1
+1 + (-1) =  0
+2 + (-2) = 0
+2 + (-1) = 1
+```
+
+So the hashmap will look like this for this case:
+
+```python
+{
+   0: 2
+  -1: 1
+   1: 1
+}
+```
+
+Now, we can re-write equation `A` as:
+
+```
+nums1[i] + nums2[j] = 0 - (nums3[k] + nums4[l])
+```
+
+What I'm I doing? Well I'm moving the numbers from `nums3 & nums4` to the right side of the equation, thus changing their sign.
+
+This translates that, if we find all cases where subtracting `(nums3[k] + nums4[l])` from `0` is equal to `(nums1[i] + nums2[j])`, we get the cases where the sum of the four numbers equals zero.
+
+With that said the solve script is below :P
 
 Complexity:
 - Time complexity: `O(N^2)`
