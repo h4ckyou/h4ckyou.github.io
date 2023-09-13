@@ -6,7 +6,7 @@
 2. The condition is that the uppercase letters should be converted to lowercase and all non-alphanumeric characters are removed. 
 3. For it to be palindrome means that when it reads the same forward and backward.
 4. To solve this I'll first need to take care of the conditions before checking if it's palindrome.
-5. To check if it's palindrome I will implement binary search sort of approach to compare each character from the left to the right `array[left] != array[right]` 
+5. To check if it's palindrome I will implement linear search sort of approach to compare each character from the left to the right `array[left] != array[right]` 
 
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Valid%20Palindrome/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5bf61bb6-176a-4b63-aca7-93db35d16032)
@@ -17,7 +17,7 @@ After submitting the solution and looking at other people solution I saw an inte
 
 Here's the approach:
 
-The person made use of `isalnum()` which I didn't know existed (this would have made my condition check a bit faster!) also instead of using like binary search approach he made use of Not `~` operator
+The person made use of `isalnum()` which I didn't know existed (this would have made my condition check a bit faster!) also instead of using like linear search approach he made use of Not `~` operator
 
 Operator `~` is the bitwise `NOT` operator `(~x == -x-1 => ~0 == -1 => ~1 == -2 and etc)`, which expects just one argument. It performs logical negation on a given number by flipping all of its bits:
 
