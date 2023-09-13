@@ -1,25 +1,21 @@
 def fourSumCount(nums1, nums2, nums3, nums4):
-    n = len(nums1)
-    count = 0 
-
-    hashtable = {}
+    n, hashtable, count = len(nums1), {}, 0
 
     for i in range(n):
         for j in range(n):
-            sum1 = nums1[i] + nums2[j]
-           
-            if sum1 in hashtable:
-                hashtable[sum1] += 1
+            sum = nums1[i] + nums2[j]
+
+            if sum in hashtable:
+                hashtable[sum] += 1
             else:
-                hashtable[sum1] = 1
-
-    for i in range(n):
-        for j in range(n):
-            sum2 = nums3[i] + nums4[j]
-            target = -sum2
-
-            if target in hashtable:
-                count += hashtable[target]
+                hashtable[sum] = 1
+    
+    for k in range(n):
+        for l in range(n):
+            check = 0 - (nums3[k] + nums4[l])
+            
+            if check in hashtable:
+                count += hashtable[check]
 
     return count
 
