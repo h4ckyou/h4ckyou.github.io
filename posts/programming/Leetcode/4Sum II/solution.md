@@ -110,6 +110,12 @@ Then I'll calculate the number of quadruplets in `nums3` and `nums4` that sum to
 
 The approach idea is what I got from researching so I just wrote the script to implement that
 
-Here's the solve script: [link]()
+Complexity:
+- Time complexity: `O(N^2)`
+- Space complexity: `O(N^2)`
+
+Here's the solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/4Sum%20II/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa43b776-e901-4232-b78b-aef2a7e8f647)
+
 
 
