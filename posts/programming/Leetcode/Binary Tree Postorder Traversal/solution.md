@@ -20,7 +20,7 @@ The parent node which I'll refer as the key is `3` and it has two children nodes
 
 For us to Traverse using Postorder method I'll do this
 
-First I'll traverse the left subtree so that means I'll need to visit all the left nodes and add to my list
+First I'll traverse the left subtree so that means I'll need to visit all the left nodes from the left node connected to the key and add to my list
 
 In this case there just two left nodes in the left subtree
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f39ff41f-3725-4234-baee-a7807e1b3482)
