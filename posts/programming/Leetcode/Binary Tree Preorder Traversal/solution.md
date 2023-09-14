@@ -39,5 +39,18 @@ Since the current node has just one left node that means we've finished traversi
 
 So the final return value would be `[3, 2, 1, 4, 6, 5]`
 
-In order to implement this using python I'll use the generic TreeNode class then recursively call the `preorder` function which would return `([node.key] + 
-Here's my solve script: [link]()
+In order to implement this using python I'll use the generic `TreeNode` Class then recursively call the `preorder` function which would return `([node.key] + preorder(node.left) + preorder(node.right)`
+
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Binary%20Tree%20Preorder%20Traversal/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5e673a86-c8f6-490b-8776-15340241fcb9)
+
+### Leetcode Submission Script
+
+```python
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        if root is None:
+            return []
+        
+        return ([root.val] + Solution.preorderTraversal(self, root.left) + Solution.preorderTraversal(self, root.right))
+```
