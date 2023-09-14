@@ -64,10 +64,10 @@ class TreeNode:
         self.right = None
 ```
 
-The remaining portion which is to implement the Inorder Traversal is going to be a recursive call to it's function returning `(node.left + [node.key] + node.right)`
+The remaining portion which is to implement the Inorder Traversal is going to be a recursive call to it's inorder function returning `(inorder(node.left) + [node.key] + inorder(node.right))`
 
 ```
-Note: Generally Binary Tree or Binary Search Tree deals with lots of recursion and Classes as it's trivial
+Note: Generally Binary Tree or Binary Search Tree deals with lots of Recursion and Classes as it's trivial
 ```
 
 Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Binary%20Tree%20Inorder%20Traversal/solve.py)
