@@ -21,14 +21,15 @@ class TreeNode:
     def remove_none(nums):
         return [x for x in nums if x is not None]
 
-    def inorderTraverse(self):
+    def preorderTraversal(self):
         if self is None:
             return []
 
-        return TreeNode.remove_none([self.key] + TreeNode.inorderTraverse(self.left) + TreeNode.inorderTraverse(self.right))
+        return TreeNode.remove_none([self.key] + TreeNode.preorderTraversal(self.left) + TreeNode.preorderTraversal(self.right))
 
 
 data = ((None, None, None), 1, (3, 2, None))
 
 node = TreeNode.parseTuple(data)
-print(node.inorderTraverse())
+print(node.preorderTraversal())
+
