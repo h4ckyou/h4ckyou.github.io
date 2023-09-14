@@ -33,7 +33,7 @@ Now we move to the right subtree which is starting from `4`
 The node of value `4` has two children which are `6 and 5` 
 
 Since `6` is a left node we'll first visit it before moving to the right node that's because the rule says we should traverse the `left` before `right` then `current node`
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61c38835-94d1-4d84-bf04-011cd45c5a73)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83ffb400-dce0-4c47-900e-0d154c102477)
 
 At this point we've applied the first and second rule so our list should hold `[1, 2, 6, 5]` 
 
