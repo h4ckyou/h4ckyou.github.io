@@ -26,12 +26,12 @@ The key node is `3` which has two children `2 and 4` and the left and right node
 
 Let's take an example on what Inorder Traversal means:
 
-First we'll start from the left node `2` of the key `3` and visit the left subarray first
+First we'll start from the left node `2` of the key `3` and visit the left subtree first
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6d5ca74c-4848-4877-b47a-d651d2364220)
 
 Now we check if the left node has another left key value, in this case it does i.e the node `2` has another left node `1`
 
-We check again but in this case the node `1` does not have another node connected to it so we add that to our list and move to the current node `2` then check if it has any right subarray in this case it doesn't
+We check again but in this case the node `1` does not have another node connected to it so we add that to our list and move to the current node `2` then check if it has any right subtree in this case it doesn't
 
 Now we move up the from the current node to the key node
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa07c62e-1bdc-4502-b07e-4eba7408b90e)
@@ -45,7 +45,7 @@ We will then see that the right node has a left key value
 
 The key value `6` does not hold any other nodes so we'll add that to our list then move on to the current node `4`, the current node value will be added to the list also 
 
-Since we are the current node we then check the right subarray which in this case is the remaining node which is `5`
+Since we are the current node we then check the right subtree which in this case is the remaining node which is `5`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58718ed4-c3a5-40dd-8333-81dea0c08db9)
 
 At this point we've traversed the whole tree and the return value would be:
