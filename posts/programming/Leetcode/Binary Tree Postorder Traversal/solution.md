@@ -6,7 +6,7 @@
 We are going to be given a binary tree and our goal is to return the postorder traversal of its node's values
 
 I already solved the other ways of traversing binary trees [one](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Inorder%20Traversal/solution.html
-) and [two](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Preorder%20Traversal/solution.html) 
+) and [two](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Preorder%20Traversal/solution.html) you can check it out!
 
 So for this method the rule is:
 - Traverse the left subtree recurisvely postorder
@@ -20,7 +20,25 @@ The parent node which I'll refer as the key is `3` and it has two children nodes
 
 For us to Traverse using Postorder method I'll do this
 
-First I'll traverse the left subtree
+First I'll traverse the left subtree so that means I'll need to deal with all the left nodes value and add to my list
+
+In this case there just two left nodes in the left subtree
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f39ff41f-3725-4234-baee-a7807e1b3482)
+
+So the list result would be `[1, 2]`
+
+Now we move to the right subtree which is starting from `4`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bc7b5c18-e38a-4de4-ab44-ce4bc2954766)
+
+The node of value `4` has two children which are `6 and 5` 
+
+Since `6` is a left node we'll first visit it before moving to the right node that's because the rule says we should traverse the `left` before `right` then `current node`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61c38835-94d1-4d84-bf04-011cd45c5a73)
+
+At this point we've applied the first and second rule so our list should hold `[1, 2, 6, 5]` 
+
+To accomplish the last rule we'll visit the remaning current nodes
+
 
 
 Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Binary%20Tree%20Postorder%20Traversal/solve.py)
