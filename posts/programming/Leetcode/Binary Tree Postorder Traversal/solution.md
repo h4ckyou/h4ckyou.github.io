@@ -20,7 +20,7 @@ The parent node which I'll refer as the key is `3` and it has two children nodes
 
 For us to Traverse using Postorder method I'll do this
 
-First I'll traverse the left subtree so that means I'll need to deal with all the left nodes value and add to my list
+First I'll traverse the left subtree so that means I'll need to visit all the left nodes and add to my list
 
 In this case there just two left nodes in the left subtree
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f39ff41f-3725-4234-baee-a7807e1b3482)
@@ -37,9 +37,10 @@ Since `6` is a left node we'll first visit it before moving to the right node th
 
 At this point we've applied the first and second rule so our list should hold `[1, 2, 6, 5]` 
 
-To accomplish the last rule we'll visit the remaning current nodes
+To accomplish the last rule we'll visit the remaining current nodes
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/44e4081b-f956-4f95-9e58-391e8c3ed6fe)
 
-
+Therefore the final result will be `[1, 2, 6, 5, 4, 3]` 
 
 Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Binary%20Tree%20Postorder%20Traversal/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f30415dc-bc94-4085-a008-67ccec5d8021)
