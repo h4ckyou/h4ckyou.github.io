@@ -95,8 +95,29 @@ Then I filled another array containing the amount of zero from the resulting ope
 
 With that we would have two arrays containing the non zero elements and the zero element which we can just concatenate together
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Apply%20Operations%20to%20an%20Array/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0720cf5d-6542-4dce-b581-d467c459c62e)
 
 
+#### Leetcode Submission Script
+
+```python
+def shiftZeros(arr, n):
+    unique = [i for i in arr if i != 0]
+    zero = [0] * (n - len(unique))
+
+    return unique + zero
+
+class Solution:
+    def applyOperations(self, nums: List[int]) -> List[int]:
+        for i in range(1, len(nums)):
+            if nums[i-1] == nums[i]:
+                nums[i-1] *= 2
+                nums[i] = 0 
+        
+        r = shiftZeros(nums, len(nums))
+
+        return r
+```
 
 
