@@ -31,4 +31,6 @@ Yes we can by making `b` the subject of the formular:
 b = sqrt(c - a^2)
 ```
 
+Now that we have the value of `a` and `b` during each iteration 
+
 Solve Script: [link]()
