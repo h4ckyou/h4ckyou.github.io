@@ -26,4 +26,37 @@ So I wrote a script to do the same thing and here's what it does:
   - The point at which they exist two values where `s[left]` and `s[right]` is vowel I'll then swap them i.e set `s[left] = s[right], s[right] = s[left]`
   - Then I'll increment the `left` pointer by `1` and decrement the `right` pointer by `1` to keep the process going till I reach the condition where `left > right` then the loop finishes
  
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Reverse%20Vowels%20of%20a%20String/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/98a6937d-a343-473e-83d7-64e42ae902bd)
+
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def reverseVowels(self, s: str) -> str:
+        s = list(s)
+        vowels = {"a", "e", "i", "o", "u", "A", "E", "I", "O", "U"}
+
+        left, right = 0, len(s)-1
+
+        while left < right:
+
+            while left < right and s[left] not in vowels:
+                left += 1
+
+            while left < right and s[right] not in vowels:
+                right -= 1
+            
+            if s[left] in vowels and s[right] in vowels:
+                s[left], s[right] = s[right], s[left]
+
+
+            left += 1
+            right -= 1
+
+
+        r = "".join(s)
+        
+        return r
+```
