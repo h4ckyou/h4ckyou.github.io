@@ -64,4 +64,34 @@ Here's what my script does:
 - I convert the whole sublist in the result list to a single integer and return the sum of it.
 
 Here's my solve script: [link]()
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76670101-1f14-4042-8b15-9460b137f11a)
+
+It's really optimized xD
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        def explore(node, current_path, result):
+            if node is None:
+                return
+            
+            current_path.append(node.val)
+
+            if node.left is None and node.right is None:
+                result.append(list(current_path))
+            
+            explore(node.left, current_path, result)
+            explore(node.right, current_path, result)
+            
+            current_path.pop()
+
+        result = []
+        current_path = []
+        explore(root, current_path, result)
+        r = [int("".join(map(str, sublist))) for sublist in result]
+
+        return sum(r)
+```
 
