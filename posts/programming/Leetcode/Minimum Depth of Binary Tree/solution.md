@@ -47,4 +47,26 @@ So we need to handle a case where there's no left subtree or right subtree
 
 With that said here's my solve script is in the link below
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Minimum%20Depth%20of%20Binary%20Tree/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0b6339c-19f6-472f-85d8-85b31c1446e5)
+
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def minDepth(self, root: Optional[TreeNode]) -> int:
+        if root is None:
+            return 0
+
+        if root.left is None:
+            return 1 + self.minDepth(root.right)
+        
+        if root.right is None:
+            return 1 + self.minDepth(root.left)
+        
+        left_dept = self.minDepth(root.left)
+        right_dept = self.minDepth(root.right)
+
+        return 1 + min(left_dept, right_dept)
+```
