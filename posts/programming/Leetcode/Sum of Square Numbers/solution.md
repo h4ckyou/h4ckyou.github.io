@@ -8,28 +8,64 @@ First we know that we'll be given a positive integer and our goal is to determin
 
 Here's my thought process:
 
-We know that the range of both the two numbers would be less than the given integer
+We can try approach a brute force method and we can do that using two nested loops to represent `a` and `b` and check if it meets the condition
 
-So with that we know that our search range will be within the integer
+But that won't be well optimized
 
-For the brute force we can do two nested loops to represent `a` and `b`
-
-But that won't be well optimized as the time complexity would be `N^2`
-
-Let's take a look at the given equation:
+So let's take a look at the given equation:
 
 ```
 a^2 + b^2 = c
 ```
 
-If we happen to get the value of `a` can we get `b` ?
-
-Yes we can by making `b` the subject of the formular:
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4ec5852a-f7fc-4ba2-9669-0de532999b81)
+Express `a` as the subject of the formular:
 
 ```
-b = sqrt(c - a^2)
+a = sqrt(c - b^2)
 ```
+
+This concludes that:
+
+```
+a <= sqrt(c)
+```
+
+Now with that we can traverse for `a` in range `sqrt(c)` and do this operation:
+
+First we need to know the value of `b^2` let's call it `bSquare`:
+
+```
+bSquare = c - a^2
+```
+
+From here we calculate this:
+
+```
+b = int(sqrt(bSquare))
+```
+
+Then to know if the value of `a` and `b` satifies the condition `a^2 + b^2 = c` we can check if `b^2 == bSquare`
+
+Incase you don't get what that is here's it, remember from the intial equation we have:
+
+```
+a^2 + b^2 = c
+```
+
+At this point we have the value of `a` and `b` right?
+
+So we can basically just check if the condition holds true for `a` and `b`
+
+But at the same time we can check the condition if the equation is changed to this
+
+```
+b^2 = c - a^2
+```
+
+So that's what I did up there
+
+
+
 
 Now that we have the value of `a` and `b` during each iteration 
 
