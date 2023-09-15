@@ -37,7 +37,7 @@ class TreeNode:
         return 1 + min(left_depth, right_depth)
 
 
-data = ((None, None, None), 2, (None, 3, (None, 4, (None, 5, (None, 6, None)))))
+data = ((None, 9, None), 3, (15, 20, 7))
 
 node = TreeNode.parseTuple(data)
 print(node.minimumDepth())
