@@ -58,3 +58,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 14 2023]] [Leetcode: Candy](https://h4ckyou.github.io/posts/programming/Leetcode/Candy/solution.html)
 - [[September 14 2023]] [Leetcode:Binary Tree Level Order Traversal](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Level%20Order%20Traversal/solution.html)
 - [[September 14 2023]] [Leetcode: Sum Root to Leaf Numbers](https://h4ckyou.github.io/posts/programming/Leetcode/Sum%20Root%20to%20Leaf%20Numbers/solution.html)
+- [[September 14 2023]] [Leetcode: Remove Duplicates from Sorted Array](https://h4ckyou.github.io/posts/programming/Leetcode/Remove%20Duplicates%20from%20Sorted%20Array/solution.html)
