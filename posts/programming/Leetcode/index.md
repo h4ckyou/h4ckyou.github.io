@@ -61,3 +61,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 14 2023]] [Leetcode: Remove Duplicates from Sorted Array](https://h4ckyou.github.io/posts/programming/Leetcode/Remove%20Duplicates%20from%20Sorted%20Array/solution.html)
 - [[September 14 2023]] [Leetcode: Apply Operations to an Array](https://h4ckyou.github.io/posts/programming/Leetcode/Apply%20Operations%20to%20an%20Array/solution.html)
 - [[September 14 2023]] [Leetcode: Remove Elements](https://h4ckyou.github.io/posts/programming/Leetcode/Remove%20Elements/solution.html)
+- [[September 14 2023]] [Leetcode: Sum of Square Numbers](https://h4ckyou.github.io/posts/programming/Leetcode/Sum%20of%20Square%20Numbers/solution.html)
