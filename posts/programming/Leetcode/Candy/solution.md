@@ -39,3 +39,7 @@ The goal of the problem is to find the minimum total number of candies needed to
 In my solve script I basically iterate twice and one the first iteration I check for the children with higher ratings so as to give them more candies than their left neighbors, and the second iterate I check for the children with higher ratings so as to give them more candies than their right neighbors
 
 From there the minimum total number of candies needed is then calculated based on this distribution.
+
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Candy/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/214f686a-8aee-46de-979d-756bc309528f)
+
