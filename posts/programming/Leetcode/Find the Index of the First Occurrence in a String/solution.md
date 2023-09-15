@@ -13,3 +13,5 @@ class Solution:
             return -1
 
 ```
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/769b99f4-6248-4502-8013-318f05c22f2d)
