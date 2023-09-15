@@ -57,3 +57,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 14 2023]] [Leetcode: Minimum Depth of Binary Tree](https://h4ckyou.github.io/posts/programming/Leetcode/Minimum%20Depth%20of%20Binary%20Tree/solution.html)
 - [[September 14 2023]] [Leetcode: Candy](https://h4ckyou.github.io/posts/programming/Leetcode/Candy/solution.html)
 - [[September 14 2023]] [Leetcode:Binary Tree Level Order Traversal](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Level%20Order%20Traversal/solution.html)
+- [[September 14 2023]] [Leetcode: Sum Root to Leaf Numbers](https://h4ckyou.github.io/posts/programming/Leetcode/Sum%20Root%20to%20Leaf%20Numbers/solution.html)
