@@ -22,7 +22,7 @@ The idea basically is this:
 - If after traversing we check if there's value on the stack and if the string is a valid parenthesis they won't be any value on the stack because it would have been popped out already
 - So that's going to be our return boolean value
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Valid%20Parentheses/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/642a26d9-26ae-454a-a394-d90494e54ff7)
 
 
