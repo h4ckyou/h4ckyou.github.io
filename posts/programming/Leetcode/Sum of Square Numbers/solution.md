@@ -64,9 +64,7 @@ b^2 = c - a^2
 
 So that's what I did up there
 
+For the square root part we can binary search it or just use python math package
 
-
-
-Now that we have the value of `a` and `b` during each iteration 
-
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Sum%20of%20Square%20Numbers/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/712b7c35-3d8e-455e-94f4-4818b01cf4f5)
