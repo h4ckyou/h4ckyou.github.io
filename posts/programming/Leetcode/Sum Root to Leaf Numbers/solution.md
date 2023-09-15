@@ -54,5 +54,14 @@ sum = 495 + 491 + 40
 sum = 1026
 ```
 
+To solve this I used Depth-First Search algorithm 
 
+Here's what my script does:
+
+- The root2leaf method correctly initializes an empty list result to store the root-to-leaf paths and an empty list current_path to keep track of the current path as we traverse the tree.
+- Inside the root2leaf method, we call a helper function root_to_leaf_helper that performs a depth-first traversal of the tree, keeping track of the current path and adding it to the result when a leaf node is reached.
+- The `explore` function appends the current node's key to the path, checks if it's a leaf node, explores the left and right subtrees, and backtracks by removing the current node from the path when necessary.
+- I convert the whole sublist in the result list to a single integer and return the sum of it.
+
+Here's my solve script: [link]()
 
