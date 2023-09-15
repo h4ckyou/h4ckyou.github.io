@@ -9,7 +9,7 @@ First let's know what `Traversing` means:
 
 Traversing refers to the process of visiting each node of a tree exactly once. Visiting a node generally refers to adding the node's key to a list.
 
-There are three ways to traverse a binary tree and return the list of visited keys
+There are various ways to traverse a binary tree and return the list of visited keys
 
 In this case I'll deal with the `Inorder Traversal` method:
 
