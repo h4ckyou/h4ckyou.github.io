@@ -54,3 +54,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 14 2023]] [Leetcode: Binary Tree Preorder Traversal](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Preorder%20Traversal/solution.html)
 - [[September 14 2023]] [Leetcode: Binary Tree Postorder Traversal](https://h4ckyou.github.io/posts/programming/Leetcode/Binary%20Tree%20Postorder%20Traversal/solution.html)
 - [[September 14 2023]] [Leetcode: Maximum Depth of Binary Tree](https://h4ckyou.github.io/posts/programming/Leetcode/Maximum%20Depth%20of%20Binary%20Tree/solve.html)
+- [[September 14 2023]] [Leetcode: Minimum Depth of Binary Tree](https://h4ckyou.github.io/posts/programming/Leetcode/Minimum%20Depth%20of%20Binary%20Tree/solution.html)
