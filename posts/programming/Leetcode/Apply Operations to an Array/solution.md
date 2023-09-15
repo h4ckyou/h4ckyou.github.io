@@ -86,6 +86,16 @@ So it's this:
 [1, 4, 2, 0, 0, 0]
 ```
 
+The first case which is to calculate if the operation can be done is easy to do as we can just iterate through each elements in the array and check for the condition
+
+
+As for the shifting of the zero the way I approached it is by creating an array containing all the elements of the resulting operation whose value is not zero
+
+Then I filled another array containing the amount of zero from the resulting operation and this is calculated from `(len(nums) - len(unique))`
+
+With that we would have two arrays containing the non zero elements and the zero element which we can just concatenate together
+
+Here's my solve script: [link]()
 
 
 
