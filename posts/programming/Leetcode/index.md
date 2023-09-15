@@ -65,3 +65,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 14 2023]] [Leetcode: Find the Index of the First Occurrence in a String](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20the%20Index%20of%20the%20First%20Occurrence%20in%20a%20String/solution.html)
 - [[September 14 2023]] [Leetcode: Add Binary](https://h4ckyou.github.io/posts/programming/Leetcode/Add%20Binary/solution.html)
 - [[September 14 2023]] [Leetcode: Reverse String](https://h4ckyou.github.io/posts/programming/Leetcode/Reverse%20String/solution.html)
+- [[September 14 2023]] [Leetcode: Valid Parentheses](https://h4ckyou.github.io/posts/programming/Leetcode/Valid%20Parentheses/solution.html)
