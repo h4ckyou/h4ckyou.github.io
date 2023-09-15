@@ -10,9 +10,20 @@ To rewrite that is stressfull so I'll just drop the solve script
 
 But basically this involves Removing Duplicate from a Sorted Array using In-Place Algorithm
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Remove%20Duplicates%20from%20Sorted%20Array/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f56cc9ee-41fb-4ae0-9f76-b21cf5cfc9bf)
 
 
 #### Leetcode Submission Script
 
 ```python
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        replace = 1
+        for i in range(1, len(nums)):
+            if nums[i] != nums[i-1]:
+                nums[replace] = nums[i]
+                replace +=1 
+        
+        return replace
+```
