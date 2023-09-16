@@ -81,3 +81,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 16 2023]] [Leetcode: Pow(x, n)](https://h4ckyou.github.io/posts/programming/Leetcode/Pow(x,%20n)/solution.html)
 - [[September 16 2023]] [Leetcode: Same Tree](https://h4ckyou.github.io/posts/programming/Leetcode/Same%20Tree/solution.html)
 - [[September 16 2023]] [Leetcode: Happy Number](https://h4ckyou.github.io/posts/programming/Leetcode/Happy%20Number/solution.html)
+- [[September 16 2023]] [Leetcode: Ugly Number](https://h4ckyou.github.io/posts/programming/Leetcode/Ugly%20Number/solution.html)
