@@ -19,7 +19,7 @@ If it's greater then i set the maximum number to the current sum
 
 After going through all the sentence from the array I return the value of maximum
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Maximum%20Number%20of%20Words%20Found%20in%20Sentences/solve.py)
 ![omo](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/089fe177-2180-4fff-a512-c53120ce45c8)
 
 The complexity is kinda horrible :(
