@@ -6,7 +6,7 @@ def findDuplicate(nums):
             count[i] += 1
         else:
             count[i] = 1
-    print(count)
+    #print(count)
     for key, value in count.items():
         if value >= 2:
             return key
