@@ -12,8 +12,7 @@ def finalString(s):
     r = "".join(rev)
 
     return r
-
-
+    
 
 s = "string"
 r = finalString(s)
