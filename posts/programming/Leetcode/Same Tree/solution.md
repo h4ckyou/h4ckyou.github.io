@@ -22,4 +22,20 @@ If that is the case then they are not of the same structure
 
 At the point of each recursion we can check if the key value of `p` and `q` are the same
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Same%20Tree/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/49afe9f1-745d-4294-8790-0309eee24eec)
+
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        if p is None and q is None:
+            return True
+        
+        if p is None or q is None:
+            return False
+            
+        return (p.val == q.val) and self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+```
