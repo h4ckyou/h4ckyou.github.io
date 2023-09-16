@@ -10,7 +10,7 @@ Return `s` after reversing it.
 
 My approach is to use two pointers `left` and `right` and check for those condition then swap the characters at the position of the two pointers if `s[left]` and `s[right]` are English letters
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Reverse%20Only%20Letters/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/697658ca-919d-41ca-a8c4-cf9db9db9dc8)
 
 
