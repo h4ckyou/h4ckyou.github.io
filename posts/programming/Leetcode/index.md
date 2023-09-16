@@ -74,3 +74,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 16 2023]] [Leetcode: Longest Common Prefix](https://h4ckyou.github.io/posts/programming/Leetcode/Longest%20Common%20Prefix/solution.html)
 - [[September 16 2023]] [Leetcode: Ransom Note](https://h4ckyou.github.io/posts/programming/Leetcode/Ransom%20Note/solution.html)
 - [[September 16 2023]] [Leetcode: Counting Words With a Given Prefix](https://h4ckyou.github.io/posts/programming/Leetcode/Counting%20Words%20With%20a%20Given%20Prefix/solution.html)
+- [[September 16 2023]] [Leetcode: Maximum Number of Words Found in Sentences](https://h4ckyou.github.io/posts/programming/Leetcode/Maximum%20Number%20of%20Words%20Found%20in%20Sentences/solution.html)
