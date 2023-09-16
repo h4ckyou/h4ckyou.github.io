@@ -19,4 +19,5 @@ With that algorithm **Sieve of Eratosthenes** we can get the list of prime numbe
 
 Then from that the remaining part is easy as we can just iterate through the prime numbers list and check for the condition 
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Count%20Primes/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/78e8e12f-1f39-4e83-925a-fb73f6b7ba7f)
