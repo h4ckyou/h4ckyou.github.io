@@ -34,7 +34,7 @@ Instead of us searching the whole elements now we know that since it's sorted we
 So our comparison would be within the first and last element
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ab379849-b1d4-4644-8321-03ee459004dc)
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Longest%20Common%20Prefix/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc0f8509-9a95-4766-bf6d-d7aff8dacfc0)
 
 
