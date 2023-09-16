@@ -1,14 +1,13 @@
 ## About
 
 
-- 👋 Hi, I’m @mark
+- 👋 Hi, I’m @Mark
 
-- 👀 I’m interested in Cyber Security
+- 👀 I’m interested in Cyber Security and Programming
 
-- 🌱 I’m currently learning Ethical Hacking
+- 🌱 I’m currently improving my knowledge in Ethical Hacking and Programming
 
 - 💞️ I’m looking to collaborate on Projects
 
-- 📫 How to reach me on Discord @Hack.You#9120 Twitter @0xMarkUche
+- 📫 How to reach me? on Discord @Hack.You#9120 Twitter @0xMarkUche
 
-[![asciicast](https://asciinema.org/a/dIvud7qrF5nTORsmi7g06Jr9M.svg)](https://asciinema.org/a/dIvud7qrF5nTORsmi7g06Jr9M)
