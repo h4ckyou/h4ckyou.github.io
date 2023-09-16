@@ -4,7 +4,7 @@
 
 We can easily solve this using python builtins `pow()` function
 
-But let's implement binary search
+But I'll implement binary search
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Pow(x%2C%20n)/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/317e0f3b-4d0f-4d0f-bf52-c88befeba331)
