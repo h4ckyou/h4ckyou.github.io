@@ -8,8 +8,15 @@ Given a string `s`, reverse the string according to the following rules:
 
 Return `s` after reversing it.
 
-My approach is to use two pointers `left` and `right` and check for those condition then swap the characters at the position of the two pointers if `s[left]` and `s[right]` are English letters
+My approach is this:
 
+- Initialize two pointers `left` and `right` which would hold the `0th` and last index `len(s)-1` value
+- In a while loop I'll check:
+    - To check for if the value of `s[left]` of the string is not `alpha()` I'll make a while loop that checks for that and I'll increment the left pointer by 1
+    - To check for if the value of `s[right]` of the string is not `alpha()` I'll make a while loop that checks for that and I'll decrement the right pointer by 1
+    - The point at which they exist two values where `s[left]` and `s[right]` is `alpha()` I'll then swap them i.e I'll set ``s[left], s[right] =  s[right], s[left]``
+- Then I'll increment the left pointer by 1 and decrement the right pointer by 1 to keep the process going till I reach the condition where left > right then the loop finishes and I get a reversed string that meets the condition
+   
 Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Reverse%20Only%20Letters/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/697658ca-919d-41ca-a8c4-cf9db9db9dc8)
 
