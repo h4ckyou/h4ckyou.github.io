@@ -34,5 +34,6 @@ If the composite integer has more than two prime factors, we may need to apply t
 
 That process itself is dependent of the size of the integer so I'm going with the normal process
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Ugly%20Number/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7db98592-49d4-40ce-8782-ef4768c67883)
+
