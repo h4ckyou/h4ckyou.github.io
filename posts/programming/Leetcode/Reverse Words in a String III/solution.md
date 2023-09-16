@@ -6,7 +6,7 @@ Given a string `s`, reverse the order of characters in each word within a senten
 
 To solve this I just converted the words in the string to a list and then iterate through the list and reverse the characters, then returned it's reformed value
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Reverse%20Words%20in%20a%20String%20III/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/014a088b-9f47-4599-9ee8-e3b738f87fe0)
 
 
