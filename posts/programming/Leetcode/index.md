@@ -78,3 +78,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 16 2023]] [Leetcode: Find Greatest Common Divisor of Array](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Greatest%20Common%20Divisor%20of%20Array/solution.html)
 - [[September 16 2023]] [Leetcode: Find Peak Element](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Peak%20Element/solution.html)
 - [[September 16 2023]] [Leetcode: Find the Duplicate Number](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20the%20Duplicate%20Number/solution.html)
+- [[September 16 2023]] [Leetcode: Pow(x, n)](https://h4ckyou.github.io/posts/programming/Leetcode/Pow(x,%20n)/solution.html)
