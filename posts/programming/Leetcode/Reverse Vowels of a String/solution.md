@@ -23,7 +23,7 @@ So I wrote a script to do the same thing and here's what it does:
 - In a while loop I'll check the conditions:
   - To check for if the value of `s[left]` of the string is not a vowel I'll make a while loop that checks for that and I'll increment the `left` pointer by `1`
   - To check for if the value of `s[right]` of the string is not a vowel I'll make a while loop that checks for that and I'll decrement the `right` pointer by `1`
-  - The point at which they exist two values where `s[left]` and `s[right]` is vowel I'll then swap them i.e set `s[left] = s[right], s[right] = s[left]`
+  - The point at which they exist two values where `s[left]` and `s[right]` is vowel I'll then swap them i.e set `s[left], s[right] =  s[right], s[left]`
   - Then I'll increment the `left` pointer by `1` and decrement the `right` pointer by `1` to keep the process going till I reach the condition where `left > right` then the loop finishes
  
 Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Reverse%20Vowels%20of%20a%20String/solve.py)
