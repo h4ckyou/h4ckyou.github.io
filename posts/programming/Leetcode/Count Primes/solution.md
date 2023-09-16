@@ -11,6 +11,7 @@ First my approach was I needed to find a way to get all the numbers within `n-1`
 And then iterating over the list and comparing if it's less than `n` which I'll increase the counter is the statement if True
 
 But I had problem with generating the list of prime numbers **I suck at math which is bad :(**  so I looked at the hint and it gave the algorithm to use
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/37c9b22a-6cf1-42a7-86d6-3c37213cc526)
 
 Cool upon checking google on that I got [this](https://www.geeksforgeeks.org/sieve-of-eratosthenes/)
