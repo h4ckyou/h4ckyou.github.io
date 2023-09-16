@@ -33,4 +33,41 @@ If that returns True I'll append it to a list `tt` else I'll append False to the
 
 At the end of the iteration I'll check if `False` exists in `tt` and if it does then I return False or True
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Ransom%20Note/solve.py)
+![win](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c4e2ede-5402-4976-81f0-bce98f135016)
+
+I spent some amount of minutes coming up with various approach since the test cases where messing with my program 😭🥲
+
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        magazine_table = {}
+        ransom_table = {}
+        tt = []
+
+        for i in ransomNote:
+            if i in ransom_table:
+                ransom_table[i] += 1
+            else:
+                ransom_table[i] = 1
+        
+        for i in magazine:
+            if i in magazine_table:
+                magazine_table[i] += 1
+            else:
+                magazine_table[i] = 1
+
+        for keyR, valueR in ransom_table.items():
+            if keyR in magazine_table and magazine_table[keyR] >= valueR:
+                tt.append(True)
+            else:
+                tt.append(False)
+        
+        if False in tt:
+            return False
+        else:
+            return True
+```
