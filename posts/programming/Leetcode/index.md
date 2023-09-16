@@ -69,4 +69,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 15 2023]] [Leetcode: Reverse Vowels of a String](https://h4ckyou.github.io/posts/programming/Leetcode/Reverse%20Vowels%20of%20a%20String/solution.html)
 - [[September 16 2023]] [Leetcode: Faulty Keyboard](https://h4ckyou.github.io/posts/programming/Leetcode/Faulty%20Keyboard/solution.html)
 - [[September 16 2023]] [Leetcode: Reverse Only Letters](https://h4ckyou.github.io/posts/programming/Leetcode/Reverse%20Only%20Letters/solution.html)
-- [[September 16 2023]] [Leetcode: Reverse String II](posts/programming/Leetcode/Reverse%20String%20II/solution.html)
+- [[September 16 2023]] [Leetcode: Reverse String II](https://h4ckyou.github.io/posts/programming/Leetcode/Reverse%20String%20II/solution.html)
