@@ -76,3 +76,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 16 2023]] [Leetcode: Counting Words With a Given Prefix](https://h4ckyou.github.io/posts/programming/Leetcode/Counting%20Words%20With%20a%20Given%20Prefix/solution.html)
 - [[September 16 2023]] [Leetcode: Maximum Number of Words Found in Sentences](https://h4ckyou.github.io/posts/programming/Leetcode/Maximum%20Number%20of%20Words%20Found%20in%20Sentences/solution.html)
 - [[September 16 2023]] [Leetcode: Find Greatest Common Divisor of Array](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Greatest%20Common%20Divisor%20of%20Array/solution.html)
+- [[September 16 2023]] [Leetcode: Find Peak Element](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Peak%20Element/solution.html)
