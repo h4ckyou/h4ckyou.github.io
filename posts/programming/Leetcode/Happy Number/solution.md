@@ -11,5 +11,29 @@ A happy number is a number defined by the following process:
 
 Return true if `n` is a happy number, and false if not.
 
-Solve Script: 
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Happy%20Number/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/72865484-fde4-4e53-99ba-a71f1ceac00c)
+
+
+#### Leetcode Submission Script
+
+```python
+class Solution:
+    def isHappy(self, n: int) -> bool:
+        n=str(n)
+        ch=False
+        if n=='1':
+            ch=True
+        else:
+            while n not in ('2', '3', '4', '5', '6', '8','9'):
+                print(n,1)
+                s=0
+                for i in n:
+                    s+=int(i)**2
+                if s==1:
+                    ch=True
+                    break
+                else:
+                    n=str(s)
+        return ch
+```
