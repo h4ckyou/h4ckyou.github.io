@@ -13,7 +13,7 @@ They are various ways we can solve this and one way is this:
 - And the last check is if the length of both string are not the same then I return False
 
 Here's the solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Valid%20Anagram/solve.py)
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6b8b0428-d144-45ff-821d-f4d1c68dc66f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/53d40d60-d923-46bc-bc68-64159ab233f5)
 
 Another way to easily solve this is to first sort both strings then check if they are the same or not
 
