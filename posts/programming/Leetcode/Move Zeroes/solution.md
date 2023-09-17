@@ -20,5 +20,5 @@ A very simple approach will be:
 
 This method will work `in-place` without taking any extra space.
 
-Solve Script: [link]()
+Solve Script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Move%20Zeroes/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f3248bd1-eb8b-4634-874e-de3f45f2ae7d)
