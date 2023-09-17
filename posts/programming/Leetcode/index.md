@@ -85,3 +85,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 16 2023]] [Leetcode: Count Primes](https://h4ckyou.github.io/posts/programming/Leetcode/Count%20Primes/solution.html)
 - [[September 17 2023]] [Leetcode: Add Digits](https://h4ckyou.github.io/posts/programming/Leetcode/Add%20Digits/solution.html)
 - [[September 17 2023]] [Leetcode: Ugly Number II](https://h4ckyou.github.io/posts/programming/Leetcode/Ugly%20Number%20II/solution.html)
+- [[September 17 2023]] [Leetcode: Move Zeroes](https://h4ckyou.github.io/posts/programming/Leetcode/Move%20Zeroes/solution.html)
