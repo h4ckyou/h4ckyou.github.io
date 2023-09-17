@@ -87,3 +87,5 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 17 2023]] [Leetcode: Ugly Number II](https://h4ckyou.github.io/posts/programming/Leetcode/Ugly%20Number%20II/solution.html)
 - [[September 17 2023]] [Leetcode: Move Zeroes](https://h4ckyou.github.io/posts/programming/Leetcode/Move%20Zeroes/solution.html)
 - [[September 17 2023]] [Leetcode: Valid Anagram](https://h4ckyou.github.io/posts/programming/Leetcode/Valid%20Anagram/solution.html)
+- [[September 18 2023]] [Leetcode: Sum of Digits of String After Convert
+](https://h4ckyou.github.io/posts/programming/Leetcode/Sum%20of%20Digits%20of%20String%20After%20Convert/solution.html)
