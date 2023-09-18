@@ -91,3 +91,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 18 2023]] [Leetcode: Max Consecutive Ones](https://h4ckyou.github.io/posts/programming/Leetcode/Max%20Consecutive%20Ones/solution.html)
 - [[September 18 2023]] [Leetcode: Group Anagrams](https://h4ckyou.github.io/posts/programming/Leetcode/Group%20Anagrams/solution.html)
 - [[September 18 2023]] [Leetcode: Word Pattern](https://h4ckyou.github.io/posts/programming/Leetcode/Word%20Pattern/solution.html)
+- [[September 18 2023]] [Leetcode: Merge Sorted Arrays](https://h4ckyou.github.io/posts/programming/Leetcode/Merge%20Sorted%20Array/solution.html)
