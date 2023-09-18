@@ -93,3 +93,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 18 2023]] [Leetcode: Word Pattern](https://h4ckyou.github.io/posts/programming/Leetcode/Word%20Pattern/solution.html)
 - [[September 18 2023]] [Leetcode: Merge Sorted Arrays](https://h4ckyou.github.io/posts/programming/Leetcode/Merge%20Sorted%20Array/solution.html)
 - [[September 18 2023]] [Leetcode: Count Integers With Even Digit Sum](https://h4ckyou.github.io/posts/programming/Leetcode/Count%20Integers%20With%20Even%20Digit%20Sum/solution.html)
+- [[September 18 2023]] [Leetcode: Find Closest Number to Zero](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Closest%20Number%20to%20Zero/solution.html)
