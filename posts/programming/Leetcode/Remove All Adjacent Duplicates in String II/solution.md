@@ -34,5 +34,5 @@ print(r)
 
 So I implemented another appraoch which made us of Stack Data Structure
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/programming/Leetcode/Remove%20All%20Adjacent%20Duplicates%20in%20String%20II/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00574063-bbde-451a-bc61-455298f2e425)
