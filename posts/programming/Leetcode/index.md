@@ -99,3 +99,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 18 2023]] [Leetcode: Backspace String Compare](https://h4ckyou.github.io/posts/programming/Leetcode/Backspace%20String%20Compare/solution.html)
 - [[September 18 2023]] [Leetcode: Removing Stars From a String](https://h4ckyou.github.io/posts/programming/Leetcode/Removing%20Stars%20From%20a%20String/solution.html)
 - [[September 18 2023]] [Leetcode: Remove All Adjacent Duplicates In String](https://h4ckyou.github.io/posts/programming/Leetcode/Remove%20All%20Adjacent%20Duplicates%20In%20String/solution.html)
+- [[September 18 2023]] [Leetcode: Remove All Adjacent Duplicates in String II](https://h4ckyou.github.io/posts/programming/Leetcode/Remove%20All%20Adjacent%20Duplicates%20in%20String%20II/solution.html)
