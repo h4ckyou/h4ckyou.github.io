@@ -97,3 +97,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 18 2023]] [Leetcode: Alternating Digit Sum](https://h4ckyou.github.io/posts/programming/Leetcode/Alternating%20Digit%20Sum/solution.html)
 - [[September 18 2023]] [Leetcode: Find Resultant Array After Removing Anagrams](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Resultant%20Array%20After%20Removing%20Anagrams/solution.html)
 - [[September 18 2023]] [Leetcode: Backspace String Compare](https://h4ckyou.github.io/posts/programming/Leetcode/Backspace%20String%20Compare/solution.html)
+- [[September 18 2023]] [Leetcode: Removing Stars From a String](https://h4ckyou.github.io/posts/programming/Leetcode/Removing%20Stars%20From%20a%20String/solution.html)
