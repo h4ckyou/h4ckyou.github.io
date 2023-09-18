@@ -95,3 +95,4 @@ LeetCode is the best platform to help you enhance your skills, expand your knowl
 - [[September 18 2023]] [Leetcode: Count Integers With Even Digit Sum](https://h4ckyou.github.io/posts/programming/Leetcode/Count%20Integers%20With%20Even%20Digit%20Sum/solution.html)
 - [[September 18 2023]] [Leetcode: Find Closest Number to Zero](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Closest%20Number%20to%20Zero/solution.html)
 - [[September 18 2023]] [Leetcode: Alternating Digit Sum](https://h4ckyou.github.io/posts/programming/Leetcode/Alternating%20Digit%20Sum/solution.html)
+- [[September 18 2023]] [Leetcode: Find Resultant Array After Removing Anagrams](https://h4ckyou.github.io/posts/programming/Leetcode/Find%20Resultant%20Array%20After%20Removing%20Anagrams/solution.html)
