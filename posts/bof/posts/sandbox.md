@@ -138,5 +138,36 @@ To calculate the PIE base address I'll need to leak any Binary Secton Address us
 The address leaked is the Canary and a binary section address
 
 To confirm that we can use GDB 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b68bab1-d1d0-47f5-87f2-5d4f8e238fd1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d922e73-fc9d-4c66-8a5a-402f23b4e5b8)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d4f5479a-9fd6-4c2e-bea9-151ebf56459b)
+
+So our canary is at offset `37` and we have a binary section leak at address 40 we know that it's a binary section because from the result of `vmmap` it is within the range `0x000055fa7b000000 0x000055fa7b001000`
+
+Ok what about libc leak well it's at offset `3` we can get any via fuzzing but luckily this one wasn't too far in range
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/35614d42-1cfa-4399-94aa-81d4a9aa5e3d)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/030dde92-3ea6-449d-90b9-0b1b643ce60b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bd42d1c0-6dc6-4e44-9bdb-078755b48eb5)
+
+With that set we can basically know the offset to the libc or elf base address 
+
+For the next step since it's a buffer overflow we'll need to overwrite the RIP
+
+But remember there's canary, since we have the canary leaked we can basically overwrite it with it's right value and pad the saved rbp with 8bytes (we can just fill in junks)
+
+For the ROP part basically since we'll be doing Open, Read and Write we need to know the syscall and the expected parameters
+
+That can be gotten from the chromium syscall link above
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b7281477-6aa7-4d25-bb43-52a339f7cf0c)
+
+- For Open we need the `rax` register to be `0x02`, the `rdi` register to be the file name, the `rsi` to be the mode.
+- For Read we need the `rax` register to be `0x00`, the `rdi` register to be the file descriptor returned by `Open` , `rsi` register to be the file buffer where to store the open flag, `rdx` to be the size of the file buffer
+- For Write we need the `rax` register to be `0x01`, the `rdi` register to be the file descriptor, the `rsi` register to be the buffer where the flag is stored in, `rdx` register to be the size to write out
+
+At this point the idea is clear but we need just few more things
+
+We can't pass `flag.txt` into `open('flag.txt', 0)` 
+
+So we to some how need to put `flag.txt` into memory and then use `open({memory}, 0)`
 
 
