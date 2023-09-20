@@ -120,5 +120,23 @@ This is basically `seccomp` which is a sandbox sort of thing
 
 And we can see that it doesn't allow any syscall number with `0x3b & 0x142`
 
-We can use [this]() to identify what syscall is that
+We can use [this](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit) to identify what syscall is that or we can also just `seccomp-tools`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a111717d-2003-482e-bc94-954fba76b5e4)
+
+The disallowed syscall is `execve and execveat` and that prevents us from popping a shell :(
+
+So we're going to ROP with another syscall which in this case I used `Open, Read and Write`
+
+This is how the exploit flow would go:
+- I'll first need to leak PIE, Libc base address
+- Leak Canary
+- Then I ROP
+
+To calculate the PIE base address I'll need to leak any Binary Secton Address using the format string vuln
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d734af16-3cbc-468f-a831-002aa6fb1c97)
+
+The address leaked is the Canary and a binary section address
+
+To confirm that we can use GDB 
+
 
