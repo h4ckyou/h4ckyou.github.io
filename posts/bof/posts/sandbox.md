@@ -182,6 +182,6 @@ But since we already leaked the libc base address we can also use gadgets from t
 
 That's all we need :P
 
-Here's my exploit [script]()
+Here's my exploit [script](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/practice/sandbox/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e72d45e9-f518-427b-9eb6-0756e3a3a14f)
 
