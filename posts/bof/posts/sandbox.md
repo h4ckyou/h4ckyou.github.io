@@ -88,4 +88,37 @@ Well I nearly skipped that lol but here's it
 It actually calls another function called `sandbox`
 
 Here's the decompiled code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bd01d611-20b1-4901-ab33-043c6bc14290)
+
+```c
+void sandbox(void)
+
+{
+  undefined8 rule;
+  long in_FS_OFFSET;
+  uint i;
+  undefined4 bad [2];
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  rule = seccomp_init(0x7fff0000);
+  bad[0] = 0x3b;
+  bad[1] = 0x142;
+  for (i = 0; i < 2; i = i + 1) {
+    seccomp_rule_add(rule,0,bad[(int)i],0);
+  }
+  seccomp_load(rule);
+  if (canary != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+```
+
+This is basically `seccomp` which is a sandbox sort of thing
+
+And we can see that it doesn't allow any syscall number with `0x3b & 0x142`
+
+We can use [this]() to identify what syscall is that
 
