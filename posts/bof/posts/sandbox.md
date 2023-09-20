@@ -161,8 +161,8 @@ That can be gotten from the chromium syscall link above
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b7281477-6aa7-4d25-bb43-52a339f7cf0c)
 
 - For Open we need the `rax` register to be `0x02`, the `rdi` register to be the file name, the `rsi` to be the mode.
-- For Read we need the `rax` register to be `0x00`, the `rdi` register to be the file descriptor returned by `Open` , `rsi` register to be the file buffer where to store the open flag, `rdx` to be the size of the file buffer
-- For Write we need the `rax` register to be `0x01`, the `rdi` register to be the file descriptor, the `rsi` register to be the buffer where the flag is stored in, `rdx` register to be the size to write out
+- For Read we need the `rax` register to be `0x00`, the `rdi` register to be the file descriptor returned by `Open` , `rsi` register to be the file buffer where to store the opened file, `rdx` to be the size of the file buffer
+- For Write we need the `rax` register to be `0x01`, the `rdi` register to be the file descriptor, the `rsi` register to be the char buffer, `rdx` register to be the size to write out
 
 At this point the idea is clear but we need just few more things
 
@@ -170,4 +170,16 @@ We can't pass `flag.txt` into `open('flag.txt', 0)`
 
 So we to some how need to put `flag.txt` into memory and then use `open({memory}, 0)`
 
+To do that I called `gets()` to receive our input then placed it in the `.data` section of the binary
 
+With that said the last stage is getting rop gadgets
+
+To do that I used `ropper` but unfortunately there was no `pop rdx` gadget in the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f296bc15-e44b-45f3-bea4-73c7c88c681b)
+
+But since we already leaked the libc base address we can also use gadgets from the libc file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9e9efeef-347a-4324-97dd-0f0684cf5730)
+
+That's all we need :P
+
+Here's my exploit [script]()
