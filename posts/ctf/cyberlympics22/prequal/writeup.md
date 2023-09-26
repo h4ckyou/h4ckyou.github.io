@@ -6,6 +6,8 @@ Hi! In this writeup I'll give the solution to all the binary exploitation challe
 
 Have fun reading!
 
+### Binary Exploitation
+
 #### Flag Bank [1st Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ddec6ed-e66a-4b66-b174-fdda9f272906)
 
@@ -416,6 +418,32 @@ Basically what that would do is this:
 Here's my solve [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberlympics22/prequal/Robin/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96af0a3c-dab2-4bf7-8ead-54c74c812c4d)
 
+### Reverse Engineering
+
+#### 34sy-r3v
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b5ce6ea-5369-4e1b-a00a-25b70aff3cf5)
+
+First I ran the binary to know what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c0e9f6cf-c6e6-46bb-9c04-830e057a16dd)
+
+It asks for a pin
+
+I used `ltrace` which is a library trace to know what's happening 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/805451fc-3192-46b6-be6c-21fe07c9bb6d)
+
+It uses `strcmp` of our input with the flag
+
+So I just ran the `strings` command and grep for the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/628abe2a-851c-45cd-85ad-f778e1a36309)
+
+```
+Flag: acdfCTF{5tr1ngs_b1n4ry_t0_g3t_fl4g}
+```
+
+#### CodeX 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/551a7607-f318-413a-8c22-88c20bd0536f)
+
+First thing I ran it to know what it does
 And that's all :P
 
 I played with team `sudoers` and we got `3rd`
