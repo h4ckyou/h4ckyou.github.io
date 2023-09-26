@@ -294,7 +294,7 @@ printf(local_98);
 
 So the vulnerability here is Format String Vuln
 
-And that happens because the binary uses `printf` to print out our input without specifying a format specifier
+And that happens because the binary uses `printf` to print out our input without using a format specifier
 
 With that we can leak address off the stack and also exploit the binary
 
@@ -324,3 +324,7 @@ For the second chain I'll perform a Global Offset Table (GOT) overwrite of `prin
 
 Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberlympics22/prequal/O%20Wise%20Traveler/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5652e76f-df14-4f53-9738-5014424094fd)
+
+
+#### Robin [1st Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/74a8f810-b90c-4016-9e50-09d9bff3e746)
