@@ -328,3 +328,74 @@ Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/
 
 #### Robin [1st Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/74a8f810-b90c-4016-9e50-09d9bff3e746)
+
+Doing the usual gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6076c36a-6fdb-42e9-b611-7b01551577ee)
+
+Note that I already patched the binary with the remote libc file
+
+So we're working with a x64 binary which is dynamically linked and not stripped
+
+The protection not enabled is PIE
+
+Using ghidra I decompiled the binary here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1ed944ba-4252-454e-9f27-f2aa2af25444)
+
+```c
+undefined8 main(void)
+
+{
+  undefined8 buffer;
+  undefined8 local_30;
+  undefined8 local_28;
+  undefined8 local_20;
+  code *idk;
+  undefined8 *mmap_;
+  
+  setup();
+  mmap_ = (undefined8 *)mmap((void *)0x999999000,0x20,3,0x21,-1,0);
+  idk = notcalled;
+  fwrite("Tell me, what\'s your strategy here: ",1,0x24,stdout);
+  read(0,&buffer,0x20);
+  printf("Riiiiight, %s",&buffer);
+  *mmap_ = buffer;
+  mmap_[1] = local_30;
+  mmap_[2] = local_28;
+  mmap_[3] = local_20;
+  fwrite("This might actually come to fruition. Try fire it up: ",1,0x36,stdout);
+  fgets((char *)&buffer,0x100,stdin);
+  return 0;
+}
+```
+
+The binary is fairly simple and here's what it does:
+-  It creates a new mapping in the virtual address space of the calling process using `mmap`
+-  Sets a global variable called `notcalled` and what it does is just a `ret` call
+-  Receives `0x20` bytes of our input and stores in the `buffer` variable
+-  Prints out our buffer
+-  Receives `0x100` bytes of our input and stores in the `buffer` variable
+-  Then returns
+
+So the buffer overflow is pretty obvious right? but the issue is because PIE is enabled this is going to look kinda hard
+
+But there's another issue with this binary
+
+And it's here:
+
+```c
+printf("Riiiiight, %s",&buffer);
+```
+
+It uses `printf` to print our input and this time it uses a format specifier `%s` but the issue is this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/92e5f2a3-d41e-460b-8139-85b6d86404bd)
+
+So when `printf` is used it would print our input till it meets a null byte this means that if we give it a specific amount of bytes let's say we full the buffer with characters it would leak values
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c09963b3-bbca-4029-b9b4-bd72602a7b45)
+
+In this case our buffer can hold up to `32` bytes of data so I did some trial and error and got the best leak to be at `31` bytes
+
+With that said the leak turned out to be a binary section address and I just calculated the offset to the elf base address 
+
+From here since the second `fgets` gives us a buffer overflow we can calculate the offset to overwrite the instruction pointer
+
+
