@@ -322,4 +322,4 @@ With that said the binary would be the same as the one in the remote instance
 
 For the second chain I'll perform a Global Offset Table (GOT) overwrite of `printf@got` to `system@libc`
 
-Here's my solve [script]()
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberlympics22/prequal/O%20Wise%20Traveler/solve.py)
