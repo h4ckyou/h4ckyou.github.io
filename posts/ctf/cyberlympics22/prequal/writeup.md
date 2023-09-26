@@ -155,5 +155,164 @@ So on each execution the binary memory address would change
 To understand what the binary does I loaded and decompiled it in ghidra
 
 Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4c8b0476-9bdb-438d-af68-a3b123034ade)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81be9daa-82db-4696-9672-7b566cfc60b5)
 
+```c
+undefined8 main(void)
 
+{
+  char local_98 [143];
+  char option;
+  
+  setup();
+  memset(local_98,0,0x82);
+  fwrite(&banner,1,0xbb,stdout);
+  __isoc99_scanf("%c",&option);
+  if (option == '1') {
+    puts("Go back to where you came!");
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+  if (option == '2') {
+    question();
+    fwrite("Would you like to tell me more about pointers? (y/n): ",1,0x36,stdout);
+    __isoc99_scanf("%c",&option);
+    if (option == 'y') {
+      question();
+      fwrite("Anything else? (y/n): ",1,0x16,stdout);
+      __isoc99_scanf("%c",&option);
+      if (option != 'y') {
+        if (option == 'n') {
+          puts("Cheers mate!");
+                    /* WARNING: Subroutine does not return */
+          exit(0);
+        }
+        puts("It\'s a y/n question :)");
+                    /* WARNING: Subroutine does not return */
+        exit(0);
+      }
+      fwrite("Shoot: ",1,7,stdout);
+      getchar();
+      fgets(local_98,0x82,stdin);
+      printf(local_98);
+    }
+    else {
+      if (option != 'n') {
+        puts("It\'s a y/n question :)");
+                    /* WARNING: Subroutine does not return */
+        exit(0);
+      }
+      getchar();
+      fwrite("Hate to see you leave. Were the challenges fun? (y/n): ",1,0x37,stdout);
+      __isoc99_scanf("%c",&option);
+      if (option == 'y') {
+        puts("Splendid!");
+      }
+      else if (option == 'n') {
+        puts("There\'s nooo waaay!");
+      }
+      else {
+        puts("It\'s a y/n question :)");
+      }
+    }
+    return 0;
+  }
+  puts("It\'s either 1 or 2 :)");
+                    /* WARNING: Subroutine does not return */
+  exit(0);
+}
+```
+
+I'll work through each of what this binary does:
+
+First it prints out some banner which is more of the option and receives our input option and if our option chosen is `1` it will exit 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/df22daa9-6bed-4753-a713-27800036e6ad)
+
+Option 2 tends to perform more things
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a0e50e0f-a861-4b00-8521-4a54ad2aec8f)
+
+So it will ask a question and if our answer is `y` it will call the `question` function
+
+Here's the decompiled function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9baea990-c03d-4a03-add3-ae70d551d508)
+
+```c
+void question(void)
+
+{
+  char buffer [144];
+  
+  memset(buffer,0,0x82);
+  fwrite("Educate me, what\'s so interesting about pointers: ",1,0x32,stdout);
+  getchar();
+  fgets(buffer,0x82,stdin);
+  printf(buffer);
+  return;
+}
+```
+
+So basically what all this does is to receive our input and print it our back using `printf`
+
+Back to the main function, we are asked the same question again if our answer is `y` it will call the `question` function again 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8c805f3e-5375-4c22-886b-68669f1fce98)
+
+And after that it would ask `Anything else` if our answer if `n` it will exit the program
+
+Else it receives our input and prints it out using `printf`
+
+But if the initial question is `n` it would do this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8b8689fb-d39a-456e-8d69-bf0620e89a1f)
+
+Nothing much going on there so I won't look explain that
+
+At this point the vulnerability is quite obvious and it's occurs here:
+
+```c
+void question(void)
+
+{
+  char buffer [144];
+  
+  memset(buffer,0,0x82);
+  fwrite("Educate me, what\'s so interesting about pointers: ",1,0x32,stdout);
+  getchar();
+  fgets(buffer,0x82,stdin);
+  printf(buffer);
+  return;
+}
+```
+
+And here:
+
+```c
+fwrite("Shoot: ",1,7,stdout);
+getchar();
+fgets(local_98,0x82,stdin);
+printf(local_98);
+```
+
+So the vulnerability here is Format String Vuln
+
+And that happens because the binary uses `printf` to print out our input without specifying a format specifier
+
+With that we can leak address off the stack and also exploit the binary
+
+Here's how my exploitation would go:
+- First I need to calculate the elf base address with the libc base address and that's neccessary because PIE is enabled and we need the libc base address
+- The second chain I'll overwrite the value of `printf@got` to `system` in libc so that on the third part where `printf` is called on our input it would be evaluated as `system` therefore giving us command execution
+
+Another thing to know if where the offset of our input is on the stack
+
+And we can easily calculate it using this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/07bf88e6-50fb-42ed-bc73-022ef1e29549)
+
+At offset `6` is where our input is on the stack
+
+We also need an offset where a binary address and libc address is on the stack so I made a simple fuzz script to get me that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5045a7fe-db76-42c2-9263-e248470cce83)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/23edff39-c146-4a32-bb76-9db4c57682ee)
+
+Ok but before we move forward one thing to note is that we would need the libc for solving this but since it wasn't provided I asked one of the mod if the docker instance is the same for all challenges and he said yes
+
+So I got rce on one of the web box (Demon Slayer) then transferred the libc for it to my device and patched the binary using [pwninit](https://github.com/io12/pwninit)
