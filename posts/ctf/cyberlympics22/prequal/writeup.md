@@ -6,7 +6,7 @@ Hi! In this writeup I'll give the solution to all the binary exploitation challe
 
 Have fun reading!
 
-#### Flag Bank (1st Blood 🥇)
+#### Flag Bank [1st Blood 🩸]
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ddec6ed-e66a-4b66-b174-fdda9f272906)
 
 I first connected to the remote instance but at the moment it is down 
@@ -132,4 +132,27 @@ Also this shellcode is basically called `execve` which requires three arguments 
 Modifying the shellcode to that worked
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/229acedd-72c9-4bc7-9dd6-285ad20727b6)
 
-Here's my solve [script]()
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberlympics22/prequal/simple/solve.py)
+
+
+#### O Wise Traveler [1st Blood 🩸]
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b6848ea7-1862-4fdd-a517-de1267ead6f6)
+
+After downloading the binary I checked the file type and the protection enabled on it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dad54b98-fde1-47b2-a6dc-eb4c7883e043)
+
+We can see that this is a x64 binary which is dynamically linked and not stripepd
+
+The only protection enabled on the binary is NX (No-Execute) and PIE (Position Independent Executable)
+
+So basically when NX is enabled this means that the stack is not executeable meaning we won't be able to execute shellcode that's placed on the stack
+
+While when PIE is enabled that means when ever we run the binary it will get loaded into random addresses
+
+So on each execution the binary memory address would change
+
+To understand what the binary does I loaded and decompiled it in ghidra
+
+Here's the main function
+
+
