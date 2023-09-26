@@ -73,6 +73,7 @@ We are working with a x64 binary which is dynamically linked and not stripped.
 The only protection not enabled is Stack Canary.
 
 Opening the binary in ghidra for decompilation shows this available functions
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fd43f249-f5e0-4fd0-b0cf-2be44e0165ef)
 
 Let us view the main function
