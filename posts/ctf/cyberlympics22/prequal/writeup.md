@@ -316,3 +316,10 @@ We also need an offset where a binary address and libc address is on the stack s
 Ok but before we move forward one thing to note is that we would need the libc for solving this but since it wasn't provided I asked one of the mod if the docker instance is the same for all challenges and he said yes
 
 So I got rce on one of the web box (Demon Slayer) then transferred the libc for it to my device and patched the binary using [pwninit](https://github.com/io12/pwninit)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1b04e3cb-aeb9-4044-bfcd-f4be80d9c3d4)
+
+With that said the binary would be the same as the one in the remote instance
+
+For the second chain I'll perform a Global Offset Table (GOT) overwrite of `printf@got` to `system@libc`
+
+Here's my solve [script]()
