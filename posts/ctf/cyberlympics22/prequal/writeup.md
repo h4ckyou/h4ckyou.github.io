@@ -397,5 +397,29 @@ In this case our buffer can hold up to `32` bytes of data so I did some trial an
 With that said the leak turned out to be a binary section address and I just calculated the offset to the elf base address 
 
 From here since the second `fgets` gives us a buffer overflow we can calculate the offset to overwrite the instruction pointer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9327b9b8-c1ee-43fe-b44d-3039b11cb4c3)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ea0bfcda-8752-4869-a344-8e2a8f605928)
+
+It is `56`.
+
+With this we can just perform a ROP technique called Ret2Libc
+
+But initially I was trying to call `execve()` since it had some available gadgets but it didn't work cause we need `/bin/bash` to be placed somewhere in the binary but that I couldn't do 
+
+So I just went with `Ret2Libc`
+
+Basically what that would do is this:
+- Leak the address of `printf@got` using `printf@plt`
+- Jump back to the `main address + 0x1231` to avoid stack allignment
+- At this point we have the libc base address then we can either jump to a `one_gadget` or do `system(/bin/sh)`
+
+Here's my solve [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberlympics22/prequal/Robin/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96af0a3c-dab2-4bf7-8ead-54c74c812c4d)
+
+And that's all :P
+
+I played with team `sudoers` and we got `3rd`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f4727fc1-1d37-4b5d-a357-624ead8cf1a4)
+
 
 
