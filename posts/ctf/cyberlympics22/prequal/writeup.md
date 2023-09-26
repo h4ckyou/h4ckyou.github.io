@@ -443,7 +443,32 @@ Flag: acdfCTF{5tr1ngs_b1n4ry_t0_g3t_fl4g}
 #### CodeX 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/551a7607-f318-413a-8c22-88c20bd0536f)
 
-First thing I ran it to know what it does
+First thing I did was to run it to know what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b5085ce0-1ee7-4595-b63c-0b8a72f426a8)
+
+We can use `ltrace` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b76673b1-9ddd-479a-bc6c-822320c4e78e)
+
+Ok it uses `strcmp` but this time around we can't use `strings` command cause it's likely not hardcoded in the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e1fdfd3b-230e-436f-bb45-9993dace4aa8)
+
+I opened it in gdb got the list of function available
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8f846451-4dbc-4819-8b74-585b46e44c5a)
+
+Since it uses `strcmp` therefore our input would be in the `rdi` register while the expected value would be in the `rsi` register
+
+So I set a breakpoint before the `strcmp` call
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/356e8d63-1a73-4aab-9f6c-dcf5473dd9db)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4b0c3779-f402-4f99-9e44-af7a848e5e82)
+
+Now when we run it we would get the flag in the `rsi` register
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0f53bdc1-a30b-40e2-83bd-226524c84251)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2e739593-b5c3-4e7b-8f77-f5eda01d6303)
+
+```
+Flag: acdfCTF{Th3_p3rf3ct_r3c1p3_for_3t3rn1ty_l1f3}
+```
+
 And that's all :P
 
 I played with team `sudoers` and we got `3rd`
