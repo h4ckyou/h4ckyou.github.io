@@ -42,3 +42,21 @@ So we can create a fake flag file and run the program again
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/573e14d9-1030-45f0-befb-5d42cba1af18)
 
 That works!
+
+If you want to know why that works you can decompile the binary in ghidra and view the functions used by the program
+
+I won't go through the whole source but I'll show you where the vuln lies
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c1d330bd-91c8-40fd-969d-c453de867d37)
+
+We can see that it will subtract the multiplication of the `number of flag to be bought` and `the fake flag price` with `our current balance`
+
+Since it doesn't check if the number of flag to be bought is negative therefore the whole arithmetic will be changed to:
+
+```python
+currentBalance = currentBalance + nFlag * fakeFlagPrice
+```
+
+With that our balance would be increased therefore bypassing this check making us get the real flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c4bb65d2-9fa0-4d3c-8968-523d2b0dbab0)
+
+
