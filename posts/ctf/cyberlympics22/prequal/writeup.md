@@ -60,3 +60,76 @@ With that our balance would be increased therefore bypassing this check making u
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c4bb65d2-9fa0-4d3c-8968-523d2b0dbab0)
 
 
+#### Simple
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b78c54bf-21aa-431a-a65b-5cfcd7e25e91)
+
+During the ctf I didn't manage to solve this for some silly reason anyways this is an upsolve.
+
+After downloading the binary I checked the file type and protections enabled on the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3b5df128-f533-4ddb-8167-987a556e2f2a)
+
+We are working with a x64 binary which is dynamically linked and not stripped.
+
+The only protection not enabled is Stack Canary.
+
+Opening the binary in ghidra for decompilation shows this available functions
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fd43f249-f5e0-4fd0-b0cf-2be44e0165ef)
+
+Let us view the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6d421ddc-91d1-4bf9-8faf-31cc6cbec838)
+
+```c
+undefined8 main(void)
+
+{
+  code *shellcode;
+  
+  setup();
+  shellcode = (code *)mmap((void *)0x0,0x1000,7,0x22,-1,0);
+  printf("%s","Easy! Fire it up: ");
+  fgets((char *)shellcode,23,stdin);
+  (*shellcode)();
+  return 0;
+}
+```
+
+It first calls the `setup` function which does some buffering and nothing much
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/baf40646-aa2c-4547-907f-9091115369fc)
+
+But the main function is pretty small and nothing much going on
+
+Here's what it does:
+- It creates a new mapping in the virtual address space of the calling process using `mmap`
+- Then it receives 23 bytes of input and cast it as shellcode
+
+Basically all this binary does is to receive our input then run it as shellcode
+
+But the catch here is that it has to be a 23 bytes shellcode
+
+Well we could just google `x64 23 bytes shellcode` doing that would lead [here](https://www.exploit-db.com/exploits/46907)
+
+If we try that it won't work
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/807f429e-dc49-43f7-b060-df8c59e95dd4)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/80e19f97-a355-48b0-a3e4-f307ce11c9fd)
+
+The shellcode looks good but the thing is here:
+
+```
+push 59
+pop rax
+```
+
+That part can be optimized using this assembly instruction
+
+```
+mov al, 59
+```
+
+Basically instead of push `59` to the stack and putting it in the rax register we can just directly put it in the lower byte register of the rax register
+
+Also this shellcode is basically called `execve` which requires three arguments `/bin/bash, 0, 0`
+
+Modifying the shellcode to that worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/229acedd-72c9-4bc7-9dd6-285ad20727b6)
+
+Here's my solve [script]()
