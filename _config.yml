@@ -11,6 +11,7 @@ plugins:
   - jekyll-coffeescript
   - jekyll-seo-tag
   - some-other-jekyll-plugin
+  - jekyll-remote-theme
   
 gems:
   - jekyll-sitemap
@@ -18,3 +19,4 @@ gems:
 whitelist:
   - jekyll-sitemap
 
+gem "github-pages", group: :jekyll_plugins
