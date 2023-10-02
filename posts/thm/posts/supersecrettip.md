@@ -357,7 +357,7 @@ Well this is what I did.
 There are various suids binaries and one which doesn't look important is this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a72a24e4-9b97-432c-8e86-7403756ec77e)
 
-So my goal is that I'll make a binary that will spawn a shell then overwrite it with `/usr/bin/chfn`
+So my goal is that I'll make a binary that will spawn a shell then overwrite `/usr/bin/chfn` with the binary
 
 Here's the C code
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/37e6a048-ed1d-4fcc-8496-6883329a0945)
@@ -381,4 +381,10 @@ So basically when curl runs it will get the `pwn` binary then overwrite the suid
 
 But the properties will still remain the same i.e it will still be suid but this time around it should spawn a shell
 
+Here's it in action
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/54952f36-a45d-4cd7-8734-2421d0e32eba)
 
+Now we should get root when we run `chfn`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ff4809e-e4b3-4756-b8d3-ccba54ded39e)
+
+That's all :P
