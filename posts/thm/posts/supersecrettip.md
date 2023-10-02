@@ -314,4 +314,10 @@ With a little modification i.e changing single quote to double quote due to the 
 ```
 
 Using that worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04d602f5-ffe0-4b4d-a52c-133059fc5b32)
+
+Time for privilege escalation.
+
+I uploaded linpeas to the box and after running it I got this
+
 
