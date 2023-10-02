@@ -1,6 +1,6 @@
 <h3> Super Secret Tip  </h3>
 
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/55a0c0a5-094e-4b26-af40-f516d78cba0f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a588a89-6503-42ef-8597-074546a35b6d)
 
 Link: [link](https://tryhackme.com/room/supersecrettip)
 
