@@ -1,4 +1,4 @@
-<h3> Super Secret Tip [THM](https://tryhackme.com/room/supersecrettip) </h3>
+<h3> Super Secret Tip ![THM](https://tryhackme.com/room/supersecrettip) </h3>
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/55a0c0a5-094e-4b26-af40-f516d78cba0f)
 
