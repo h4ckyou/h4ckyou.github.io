@@ -319,5 +319,66 @@ Using that worked
 Time for privilege escalation.
 
 I uploaded linpeas to the box and after running it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c6e62ac1-3675-4f2e-9732-ea19712c9804)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8754053b-dc52-4ca4-9229-b3eee95a4d4d)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4734e50f-f00c-49c6-b793-a9e2ebbfc3f7)
+
+We have write access over `.profile` which is just like `.bashrc` basically it runs whenever new terminal opens or a user logins
+
+And since there's a cron running as the user `F30s` to `cat` a file we can take advantage of the `.profile` file
+
+I just put a reverse shell there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58aab4c9-50a2-42c1-993e-6f3db459aa92)
+
+After few minutes I got the shell as the user
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f87da432-1166-4ffa-8efc-399f95ac7ffd)
+
+Now remember that was another cron job running `curl -K /home/F30s/site_check` as root
+
+If we check the content of `site_check` you'll see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c3e80e15-f6e8-4227-94f8-bf448d9d85d2)
+
+Looking at the manual page for curl on what `-K` means shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ded7ebc6-c36b-4a58-b4d9-ab2f91f690a4)
+
+So basically it's used a file where curl should read it's argument
+
+One way to do this is:
+
+```
+url = "example.com"
+output = "curlhere.html"
+```
+
+So how can we exploit this to gain root?
+
+Well this is what I did.
+
+There are various suids binaries and one which doesn't look important is this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a72a24e4-9b97-432c-8e86-7403756ec77e)
+
+So my goal is that I'll make a binary that will spawn a shell then overwrite it with `/usr/bin/chfn`
+
+Here's the C code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/37e6a048-ed1d-4fcc-8496-6883329a0945)
+
+```c
+#include <stdio.h>
+
+void main() {
+    setuid(0);
+    setgid(0);
+    execl("/bin/bash", "sh", 0);
+}
+```
+
+Now we compile it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/92b897de-c37a-4403-b801-8dfeb1a682e9)
+
+I'll get another shell and host a python web server on port 8080
+
+So basically when curl runs it will get the `pwn` binary then overwrite the suid to the pwn binary
+
+But the properties will still remain the same i.e it will still be suid but this time around it should spawn a shell
 
 
