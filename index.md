@@ -24,7 +24,8 @@ Arigato 🫠
 - **What I Do:**  `CTFs / Ethical Hacking / Programming`
 - **Twitter:** `https://twitter.com/0xMarkUche`
 - **Github:** `https://github.com/markuched13 & https://github.com/h4ckyou`
-
+- **Leetcode:** `https://leetcode.com/markuche/`
+  
 * * *
 ### **CyberSecLabs Writeups:~#**
 * * *
