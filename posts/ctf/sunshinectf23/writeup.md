@@ -139,7 +139,7 @@ The validate function of this program does this:
 - Then it will map the chunk index value to the value being iterated on the array `o` and the result is stored in `value`
 - The final result is then compared to the encrypted value, if it isn't the same it returns `False` else it returns `True`
 
-Here's my solve script which just basically maps the encrypted value to it's right index position: [solve]()
+Here's my solve script which just basically maps the encrypted value to it's right index position: [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/sunshinectf23/Dill/solve.py)
 
 ```python
 #!/usr/bin/python3
@@ -164,7 +164,7 @@ print(f"Flag: {flag}")
 Running it I got the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/36f9097a-a19e-487b-a820-6439c766763d)
 
-To confirm it's the right flag we can pass it into the `Dill.validate()` function
+To confirm it's the right flag we can pass it into the `Dill.validate()` [function](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/sunshinectf23/Dill/validate.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a88e436-2d2b-43cc-a3fe-719918d04ef9)
 
 Running it return `True` which means that's the right value
@@ -173,6 +173,57 @@ Running it return `True` which means that's the right value
 ```
 Flag: sun{ZGlsbGxpa2V0aGVwaWNrbGVnZXRpdD8K}
 ```
+
+
+#### Scripting (2/4)
+
+#### DDR
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58c19279-c30d-41a2-8482-c0ac78a641f1)
+
+We are given a remote instance to connect to
+
+After connecting to the remote instance via netcat it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96824576-91c6-4f57-b288-41e820071db6)
+
+```
+Welcome to DIGITAL DANCE ROBOTS!
+
+       -- INSTRUCTIONS --       
+ Use the WASD keys to input the 
+ arrow that shows up on screen. 
+ If you beat the high score of  
+     255, you win a FLAG!     
+
+   -- Press ENTER To Start --
+```
+
+After pressing the `ENTER` key it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a39b9539-f850-4baa-83fc-1b230dc8e866)
+
+From reading it you can just get what we're to do
+
+The goal is that we need to send the received arrow corresponding character key which are `W,A,S,D`. We're to repeat this process `255` times
+
+First when I tried it I spent some time before I got it to work because the way it was doing `I/O` was weird to me but I eventually got it work
+
+So my solution is simple and it involves basically grabbing the arrows, then iterate through every arrow in the arrows and map it to a hashtable (dictionary) containing it's corresponding key value
+
+Then I send the concatenated result to the server for evaluation
+
+Here's the result from running it:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1e3dffc4-2d85-4737-8c7f-da27264e9495)
+
+I ran it with pwntools debug mode because I'm too lazy to fix the code :(
+
+```
+Flag: sun{d0_r0b0t5_kn0w_h0w_t0_d4nc3}
+```
+
+
+
+
+
+
 
 
 
