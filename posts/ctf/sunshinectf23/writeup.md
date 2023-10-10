@@ -465,6 +465,21 @@ And because `exit@got ---> exit@plt` that means we can overwrite `exit@got` to t
 
 But we've already gotten our self in a while loop so I just decided to overwrite `printf@got` to the `win` function
 
+Here's my solve script: [solve]()
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a9c7b30-4cb6-4b63-b476-86a7031d0a32)
+
+If we run it in a debugger attached to it's current process we will see that `printf@got` is going to call `win`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c0c07004-0299-4258-979b-5c83add2a4da)
+
+We can run it remotely to get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f9b2f4f8-8868-4f16-94b8-a998c77f0153)
+
+```
+Flag: sun{a_ray_of_sunshine_bouncing_around}
+```
+
 
 
 
