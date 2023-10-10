@@ -308,6 +308,8 @@ Password: slicedpicklesandonions
 We can use this cred to login on the webapp
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c0c96446-550e-4c43-bb3b-3b7181174d00)
 
+This was also solved by `@Theory`
+
 Cool that's all for the web pretty easy 
 
 ```
@@ -406,6 +408,60 @@ This is how it looks like in IDA, pretty neat right?
 
 There's also a win function which would give us the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a7e4b322-f65e-4279-a6c7-a93fa83e8b7c)
+
+So from this I was able to identify this:
+- We have Out of Bound (OOB) write because the receive fruit function of this binary doesn't check if the `idx` is within the length of the fruit arrays
+
+But now what can we overwrite or what should we do?
+
+Remember that after running the binary initially it exited instead of calling itself again due to the while loop why is that so?
+
+To know the reason, we know that it can only happen if the got check returns false so let's set a breakpoint there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b75c93ad-e54b-420a-a774-e8b13f4ba37a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/947eb8b4-0089-436a-bbce-41dcb640a96c)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/19a82c59-ed62-4db2-86e2-95f74573f6be)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/14bb25e5-b46b-4df4-9362-ebe322a95c6f)
+
+From the result we can see that the resolved value from the `lookup_symbols` returned got of `printf` i.e `printf@got` which is in the `rdx` register while what it's being compared with is the value stored in the address `0x404020` which is `0x6` 
+
+So that's the reason our it exited because the comparison is false
+
+During the ctf I didn't notice there was a more easier way to solve this but anyways here's what I did
+
+First I needed a way to control the value of `printf_sym` so I can overwrite it with `0x6` so that the comparison returns True and we hit the while loop
+
+To calculate that I calculated the offset from the global variable `fruits` to `printf_sym`
+
+I used `gdb`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/356b48c2-77dc-4326-bf03-f8f878e4b81b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0c0b45ee-0d20-4ff1-b17e-33dfb3be27dd)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e3e454ea-4355-47c8-8eef-34fa2b6ba9e7)
+
+Cool we can see our replaced value which is 8 A's in the 0th index of the fruits array.
+
+Then at the offset 10 is the value of `printf_sym`
+
+We can also just calculate that if we know the addresses of the two values 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3718d1fb-2237-4308-b44d-280cabda3f7f)
+
+Now that we have a relative offset to the `printf_sym` address we can overwrite it using the write what where primitive
+
+Here's the helper function for that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/40972376-7c83-4e94-bea8-e48e653c483c)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
