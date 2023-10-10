@@ -246,7 +246,7 @@ But from the challenge description there's a secret draft and we need to find it
 
 I wasn't the one who solved this but `@Theory`
 
-Here's his solve script: [solve]()
+Here's his solve script: [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/sunshinectf23/BeepBoop/blog.sh)
 
 ```sh
 #!/bin/bash
@@ -271,12 +271,43 @@ done
 ```
 
 
+After running it we'll get the hidden post which holds the flag
 
+So frustrating bash so slow well it's using curl so I guess that's the reason :)
 
+#### Hotdog Stand
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7164a393-26a1-4bbf-8328-ae1abfbd82f9)
 
+Going over to the url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c810f087-b5f8-4f9c-b350-92f66d89b81c)
 
+We have a login page, on checking `/robots.txt` reveals this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc7e081d-906c-48c1-97f2-40a5186336f8)
 
+The first two directories are invalid but the third one downloaded a file
 
+The file type is a sqlite database
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7528e14a-4f92-4014-973e-3e0ba9fe8947)
+
+The number of tables there are 4
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/65fb07c9-3ff5-4a54-a3db-b3369e8be5aa)
+
+The credential table looks interesting and on dumping it I got credential
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c69a5708-15f2-4cf6-a7f3-3538df12bcde)
+
+```
+Username: hotdogstand
+Password: slicedpicklesandonions
+```
+
+We can use this cred to login on the webapp
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c0c96446-550e-4c43-bb3b-3b7181174d00)
+
+Cool that's all for the web pretty easy 
+
+```
+Flag: sun{5l1c3d_p1cKl35_4nd_0N10N2}
+```
 
 
 
