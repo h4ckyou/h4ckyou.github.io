@@ -213,7 +213,12 @@ Then I send the concatenated result to the server for evaluation
 Here's the result from running it:
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1e3dffc4-2d85-4737-8c7f-da27264e9495)
 
-I ran it with pwntools debug mode because I'm too lazy to fix the code :(
+I ran it with pwntools debug mode because I was too lazy to fix the code then :(
+
+So I had to fix it well and on running the updated one you should get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/09dc8c52-8c05-466b-a33a-77d4d99bb738)
+
+Here's the solve script: [solve]()
 
 ```
 Flag: sun{d0_r0b0t5_kn0w_h0w_t0_d4nc3}
@@ -225,6 +230,15 @@ Flag: sun{d0_r0b0t5_kn0w_h0w_t0_d4nc3}
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0440990b-0f4e-4022-81da-9abfd27555c6)
 
 So much words in the description (literally every challenges lol), anyways going over to the web url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b93836ea-8e4a-4b6d-9bb4-898910663694)
+
+Clicking on those link plays some pitch sound
+
+Viewing page source shows this javascript file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0c9d3f2-4220-4fb4-a8e2-af68aa4aed42)
+
+On viewing it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fbcc0384-889c-4378-8fdd-d582c2f66487)
 
 
 
