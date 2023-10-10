@@ -218,39 +218,57 @@ I ran it with pwntools debug mode because I was too lazy to fix the code then :(
 So I had to fix it well and on running the updated one you should get this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/09dc8c52-8c05-466b-a33a-77d4d99bb738)
 
-Here's the solve script: [solve]()
+Here's the solve script: [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/sunshinectf23/DDR/solve.py)
 
 ```
 Flag: sun{d0_r0b0t5_kn0w_h0w_t0_d4nc3}
 ```
 
-#### SimonProgrammer1
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e55dc15f-1928-4c36-ac3a-58cb1971913a)
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e235b4a-ffc5-4c58-bda1-e487ae65ae23)
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0440990b-0f4e-4022-81da-9abfd27555c6)
+#### Web (2/2)
 
-So much words in the description (literally every challenges lol), anyways going over to the web url shows this
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b93836ea-8e4a-4b6d-9bb4-898910663694)
+#### BeepBoop Blog 
 
-Clicking on those link plays some pitch sound
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0d845a8-b52f-41ab-ab94-690bc77913ec)
 
-Viewing page source shows this javascript file
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0c9d3f2-4220-4fb4-a8e2-af68aa4aed42)
+Going over to the web url shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/37ee4a15-8b1b-45d6-bfc1-848366131116)
 
-On viewing it I got this
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fbcc0384-889c-4378-8fdd-d582c2f66487)
+Viewing page source shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/946fa41b-248c-4393-a801-f220907ff67e)
 
+After reading the javascript included I saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c379c51f-0007-4f9f-81b7-2dfd1d017a73)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0c0043bc-0486-4d4d-85d1-06c5ae3ca4d0)
 
+So basically going over to `/posts` should return the list of posts in json
 
+But from the challenge description there's a secret draft and we need to find it
 
+I wasn't the one who solved this but `@Theory`
 
+Here's his solve script: [solve]()
 
+```sh
+#!/bin/bash
 
+url_base="https://beepboop.web.2023.sunshinectf.games/post/"
+i=0
 
-
-
-
-
+while true; do
+    url="$url_base$i"
+    response=$(curl -skS -L "$url")
+    hidden_value=$(echo "$response" | jq -r '.hidden')
+    
+    if [[ $hidden_value == "true" ]]; then
+        echo "Found a response with hidden: true at $url"
+        echo "$response"
+        break
+    else
+        echo "No luck at $url"
+        i=$((i + 1))
+    fi
+done
+```
 
 
 
