@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/596363dd-d92e-4f7d-969f-fc54d9d6e750)<h3> Sunshine CTF 2023 </h3>
+<h3> Sunshine CTF 2023 </h3>
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5c85ce84-845f-47ee-8dbf-a8caa05439eb)
 
