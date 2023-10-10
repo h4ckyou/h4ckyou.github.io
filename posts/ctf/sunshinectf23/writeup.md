@@ -449,8 +449,21 @@ Now that we have a relative offset to the `printf_sym` address we can overwrite 
 Here's the helper function for that
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/40972376-7c83-4e94-bea8-e48e653c483c)
 
+At this point we know that the binary will keep looping
 
+So what next?
 
+The idea is that we want to call the win function right?
+
+But that is only possible if any of the function to be called is replaced to the win function
+
+So if we overwrite an address that's supposed to be calling another address and that address is used in the `basket` function then we can overwrite it
+
+At this point I realised I didn't need to overwrite `printf_sym` because `exit@plt` will be called
+
+And because `exit@got ---> exit@plt` that means we can overwrite `exit@got` to the `win` function
+
+But we've already gotten our self in a while loop so I just decided to overwrite `printf@got` to the `win` function
 
 
 
