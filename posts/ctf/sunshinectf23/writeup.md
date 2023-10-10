@@ -1,4 +1,4 @@
-<h3> Sunshine CTF 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/596363dd-d92e-4f7d-969f-fc54d9d6e750)<h3> Sunshine CTF 2023 </h3>
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5c85ce84-845f-47ee-8dbf-a8caa05439eb)
 
@@ -272,8 +272,13 @@ done
 
 
 After running it we'll get the hidden post which holds the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3e09e641-421e-4383-b4be-1bdbb8898e3e)
 
 So frustrating bash so slow well it's using curl so I guess that's the reason :)
+
+```
+Flag: sun{wh00ps_4ll_IDOR}
+```
 
 #### Hotdog Stand
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7164a393-26a1-4bbf-8328-ae1abfbd82f9)
@@ -309,9 +314,98 @@ Cool that's all for the web pretty easy
 Flag: sun{5l1c3d_p1cKl35_4nd_0N10N2}
 ```
 
+#### Pwn (2/5)
 
+#### Array of Sunshine
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/161b4184-bff4-487f-8d11-987f530c5cd9)
 
+After downloading the binary checking the file type shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/23bad8e4-f3f1-4fe3-83f1-e266d35b0c05)
 
+So we're dealing with a x64 binary which is dynamically linked and not stripped
+
+The protections enabled are `Canary & NX` 
+
+I ran the binary to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c41310de-87f9-4178-a7f4-2462df2527d4)
+
+Ok it asks for a fruit we want to eat then asks what we want to replace it with
+
+This looks already like a write what where (arbitrary write) sort of challenge
+
+To identify the vulnerability I decompiled it in Ghidra
+
+Here's the decompilation of the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7163cc13-8c4f-492f-83d9-c4c2e7cd3f9f)
+
+```c
+void main(void)
+
+{
+  printf_sym = sym_lookup("printf");
+  scanf_sym = sym_lookup("scanf");
+  logo();
+  do {
+    basket();
+  } while( true );
+}
+```
+
+- So it calls `sym_lookup` to look up the got value of `printf & scanf` and the resulting value is stored in the global variable `*_sym`
+- It then calls the `logo()` function which just prints out that fruit
+- In a while loop it calls the `basket()` function
+
+Here's the decompiled code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5d522bcb-e86a-4bdb-8b12-14a5c50bbe89)
+
+```c
+void basket(void)
+
+{
+  long in_FS_OFFSET;
+  int fruit;
+  undefined *local_30;
+  undefined *local_28;
+  long local_20;
+  undefined8 local_18;
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  printf("\nWhich fruit would you like to eat [0-3] >>> ");
+  __isoc99_scanf("%i",&fruit);
+  printf("Replace it with a new fruit.\n",(&fruits)[fruit]);
+  printf("Type of new fruit >>>");
+  __isoc99_scanf("%24s",&fruits + fruit);
+  local_30 = &printf;
+  local_28 = &scanf;
+  local_20 = _printf;
+  local_18 = _scanf;
+  if ((printf_sym == _printf) && (printf_sym == _printf)) {
+    if (canary != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+      __stack_chk_fail();
+    }
+    return;
+  }
+                    /* WARNING: Subroutine does not return */
+  exit(-1);
+}
+```
+
+- First it asks for a fruit we would like to eat and it's gonna receive our input as an integer which is stored in the fruit variable let's take that as `idx`
+- Then it asks us what we would want to replace it with and receives 24 bytes of our input as a string which is stored in the `fruit[idx]`
+- It compares the value of `print_sym` to the value stored in `_printf` which is the got of `printf` the logic is done again (pretty weird I'll say why this happens later)
+- Does the canary check and returns
+- But if the comparison returns false it would exit
+
+The global variable `fruits` contains 4 values
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f36ed0f6-1794-4503-842d-22b024fc95e1)
+
+This is how it looks like in IDA, pretty neat right?
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38a3d17d-1c93-43aa-bad6-d03efd770d26)
+
+There's also a win function which would give us the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a7e4b322-f65e-4279-a6c7-a93fa83e8b7c)
 
 
 
