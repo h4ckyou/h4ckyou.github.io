@@ -64,7 +64,7 @@ But after running it the result wasn't the flag?
 
 Ok at least it has the flag format `sun{^.*}` so I assumed this to be some sort of cipher and on using cyberchef I got it to be `rot13`
 
-So here's the final script to get the flag
+So here's the final script to get the flag: [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/sunshinectf23/BeepBoop/solve.py)
 
 ```python
 #!/usr/bin/python3
@@ -92,6 +92,105 @@ Running it gives the flag
 ```
 Flag: sun{exterminate-exterminate-exterminate}
 ```
+
+#### Reversing (1/2)
+
+#### Dill
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9970b6df-9463-4027-8b10-c6024858421f)
+
+After downloading the attached file on checking the file type shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8a2561b6-8697-4bca-bbc1-351719de04a1)
+
+So that's a python compiled binary whose version is 3.8
+
+We can decompile it using [uncompyle6](https://github.com/rocky/python-uncompyle6) 
+
+Doing that I got this decompiled python code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f80ef84-2b57-4e04-a597-126608848cfc)
+
+```python
+class Dill:
+    prefix = 'sun{'
+    suffix = '}'
+    o = [5, 1, 3, 4, 7, 2, 6, 0]
+
+    def __init__(self) -> None:
+        self.encrypted = 'bGVnbGxpaGVwaWNrdD8Ka2V0ZXRpZGls'
+
+    def validate(self, value: str) -> bool:
+        return value.startswith(Dill.prefix) and value.endswith(Dill.suffix) or False
+        value = value[len(Dill.prefix):-len(Dill.suffix)]
+        if len(value) != 32:
+            return False
+        c = [value[i:i + 4] for i in range(0, len(value), 4)]
+        value = ''.join([c[i] for i in Dill.o])
+        if value != self.encrypted:
+            return False
+        return True
+```
+
+Looking at this we can see that it defines a class object called `Dill` and some variables such as `prefix, suffix, o` are created, the encrypted flag is also given
+
+The validate function of this program does this:
+- First if the content of the value passed into this functon doesn't start with `sun{` and ends with `}` it will return `False`
+- But if that isn't the case it will extract the value of the flag without it's prefix and suffix i.e removes `sun{}` from our provided value
+- Then if the length of the extracted value isn't 32 it will return `False`
+- But if it is, it will stored 4 chunks each in the array `c` of our extracted value
+- Then it will map the chunk index value to the value being iterated on the array `o` and the result is stored in `value`
+- The final result is then compared to the encrypted value, if it isn't the same it returns `False` else it returns `True`
+
+Here's my solve script which just basically maps the encrypted value to it's right index position: [solve]()
+
+```python
+#!/usr/bin/python3
+
+encrypted = 'bGVnbGxpaGVwaWNrdD8Ka2V0ZXRpZGls'
+mapping = [5, 1, 3, 4, 7, 2, 6, 0]
+prefix = "sun{"
+suffix = "}"
+
+enc = [encrypted[i:i+4] for i in range(0, len(encrypted), 4)]
+r = [0]*8
+
+for idx, value in enumerate(mapping):
+    r[value] = enc[idx]
+
+r = ''.join(r)
+flag = prefix + r + suffix
+
+print(f"Flag: {flag}")
+```
+
+Running it I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/36f9097a-a19e-487b-a820-6439c766763d)
+
+To confirm it's the right flag we can pass it into the `Dill.validate()` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a88e436-2d2b-43cc-a3fe-719918d04ef9)
+
+Running it return `True` which means that's the right value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c5bb1e19-bbe8-4e71-86fc-b0b113ed240d)
+
+```
+Flag: sun{ZGlsbGxpa2V0aGVwaWNrbGVnZXRpdD8K}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
