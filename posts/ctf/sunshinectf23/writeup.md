@@ -219,7 +219,12 @@ I ran it with pwntools debug mode because I'm too lazy to fix the code :(
 Flag: sun{d0_r0b0t5_kn0w_h0w_t0_d4nc3}
 ```
 
+#### SimonProgrammer1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e55dc15f-1928-4c36-ac3a-58cb1971913a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e235b4a-ffc5-4c58-bda1-e487ae65ae23)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0440990b-0f4e-4022-81da-9abfd27555c6)
 
+So much words in the description (literally every challenges lol), anyways going over to the web url shows this
 
 
 
