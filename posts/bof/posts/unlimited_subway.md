@@ -76,4 +76,8 @@ I'll start my explanation from option `F`:
 
 Option `V`:
 - It reads in our index value and stores in variable `idx`
-- 
+- Then it calls the `view_account` function passing our `account` and our `idx` value as the arguments
+
+Here's the decompilation of the `view_account` function
+
+
