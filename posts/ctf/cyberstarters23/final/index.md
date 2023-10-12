@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3f1a9e0c-59f7-440a-8147-e6b72390f019)<h3> CyberStarters CTF '23 Final </h3>
+<h3> CyberStarters CTF '23 Final </h3>
 
 Here are the challenges I was able to solve in the ctf which took place on the 6th May, 2023 at lasted from 9A.M - 3P.M
 
