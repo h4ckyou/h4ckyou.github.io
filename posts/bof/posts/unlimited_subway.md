@@ -150,7 +150,7 @@ And if it isn't we'll get the `Stack smashing detected` error
 
 How can we go around this in this case?
 
-Remember the function which allows us to choose an index position then gives us it's value from the account array well this can be exploited to do out of bound read because the binary doesn't check if our index value is within the range of what the accounts is
+Remember the function which allows us to choose an index position then gives us it's value from the account array well this can be exploited to do out of bound (OOB) read because the binary doesn't check if our index value is within the range of what the accounts is
 
 This means we have arbitrary read of memory addresses what next?
 
