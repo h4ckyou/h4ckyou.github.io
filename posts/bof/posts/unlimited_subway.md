@@ -79,5 +79,6 @@ Option `V`:
 - Then it calls the `view_account` function passing our `account` and our `idx` value as the arguments
 
 Here's the decompilation of the `view_account` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b3eac468-845a-4e49-8b1f-d1e697d2fd57)
 
 
