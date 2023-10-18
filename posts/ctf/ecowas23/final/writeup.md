@@ -161,9 +161,21 @@ void home(void)
 
 Ok cool
 
+This portion of the binary gives us the address of the `home` function then uses `gets()` to receive our input
 
+So we have a buffer overflow because it is impossible to tell without knowing the data in advance how many characters `gets()` will read, and because `gets()` will continue to store characters past the end of the buffer
 
+What now? 
 
+Looking at the other functions shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2730cd9b-c6dc-4997-b18d-78aaffd2bd2e)
+
+The `get_shell` function looks interesting, checking the decompiled code shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6fbe238a-556c-47cc-825a-46dde26f58bf)
+
+Nice this function would spawn a shell, and since it wasn't called in the main function our goal is to overwrite the `EIP`
+
+The problem here is that PIE is enabled and basically it will randomize the memory address each time it's been run so this means 
 
 
 
