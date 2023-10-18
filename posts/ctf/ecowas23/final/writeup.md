@@ -7,8 +7,8 @@ I'll give the solution to some of the challenges that I solved and maybe the one
 ### Binary Exploitation
 - Offset
 - Aslr Overflow
-- Cookie
 - Dep
+- Cookie
 - Just Login
 - Yooeyyeff
 - Gigashell
@@ -199,11 +199,18 @@ Note: I'm running it locally cause remote instance is not accessible
 Flag: flag{aslr_makes_addresses_change}
 ```
 
-#### Cookie [First Blood 🩸]
+#### Dep [First Blood 🩸]
 
 In the attached file holds a binary and a libc file
 
 Since I want to make the binary I'm working on be the same as the one remotely I patched it using `pwninit`
+
+Checking the file type and protections enabled showed this
+
+
+#### Cookie [First Blood 🩸]
+
+The attached file here also had a libc file so I patched it with `pwninit`
 
 Now on checking the file type & protections enabled showed this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d112663d-64a1-4dea-b7ef-371cf678c9ee)
@@ -292,7 +299,7 @@ And what I just did was Return 2 Libc (Ret2Libc)
 
 The way to go around that in this case is that when the canary has been leaked inorder to rop we need to first overwrite the canary with it's right value then the saved rbp with junk value then our rop payload
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/cookie/solve.py)
 
 Running it works
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9191d961-6348-499c-a2a2-5fca648d3bf6)
