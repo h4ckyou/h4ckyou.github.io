@@ -174,9 +174,17 @@ Looking at the other functions shows this
 The `get_shell` function looks interesting, checking the decompiled code shows this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6fbe238a-556c-47cc-825a-46dde26f58bf)
 
-Nice this function would spawn a shell, and since it wasn't called in the main function our goal is to overwrite the `EIP`
+Nice this function would spawn a shell, and since it wasn't called in the main function our goal is to overwrite the `EIP` to call the `get_shell` function
 
-The problem here is that PIE is enabled and basically it will randomize the memory address each time it's been run so this means 
+The problem here is that PIE is enabled and basically it will randomize the memory address on each program execution
+
+But that's not a problem because we have a leak of the `home` function so we can calculate the `elf` base address
+
+Let's get the offset needed to overwrite the EIP (Instruction Pointer)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c85d1ea2-e885-4186-85d0-76b31a4dabc1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83c6db3e-e329-4b01-b99f-13faeb5a123f)
+
+
 
 
 
