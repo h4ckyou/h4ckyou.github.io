@@ -258,6 +258,9 @@ void overflow(void)
 }
 ```
 
+So it receives our input using `read` which is stored in a buffer `story` that can only hold up to `264` bytes but then `reads` is allowing us to give in up to `0x1000` bytes of data so we have a buffer overflow here
+
+After it receives our input it will then print out the value stored in `story` using `puts` 
 
 
 This CTF was an interesting one and I meet tons of cool people there 
