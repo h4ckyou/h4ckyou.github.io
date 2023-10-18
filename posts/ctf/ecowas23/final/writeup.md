@@ -6,7 +6,7 @@ I'll give the solution to some of the challenges that I solved and maybe the one
 
 ### Binary Exploitation
 - Offset
-- Aslr 
+- Aslr Overflow
 - Cookie
 - Dep
 - Just Login
@@ -120,6 +120,53 @@ Running it works
 ```
 Flag: flag{m4th_i5_imp0rtan7_8ut_n0t_r3ally}
 ```
+
+#### ASLR Overflow [First Blood 🩸]
+
+On checking the file type and protections enabled on the binary showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81eb19c3-f7a3-42ae-a758-dca7cc17696f)
+
+We are working with a x86 binary which is dynamically linked and not stripped, the only protection not enabled is `Stack Canary`
+
+Running it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7251f490-1db9-492e-9590-4f23e25d6f73)
+
+On running it we get a binary section leak and then it receives our input
+
+I decompiled it usnig Ghidra and here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aed297f4-6c39-46fe-bdb4-2ee683146746)
+
+Nothing interesting it just calls the `home` function
+
+Checking the decompiled code shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8538a92d-a20e-465e-b0bb-0e92ed34ccb0)
+
+```c
+
+/* WARNING: Function: __x86.get_pc_thunk.bx replaced with injection: get_pc_thunk_bx */
+
+void home(void)
+
+{
+  char buffer [32];
+  code *leak;
+  
+  leak = home;
+  printf("I moved. My new home address is: %p\nCool?\n",home);
+  fflush(stdout);
+  gets(buffer);
+  return;
+}
+```
+
+Ok cool
+
+
+
+
+
+
+
 
 
 This CTF was an interesting one and I meet tons of cool people there 
