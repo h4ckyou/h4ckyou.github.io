@@ -199,7 +199,23 @@ Note: I'm running it locally cause remote instance is not accessible
 Flag: flag{aslr_makes_addresses_change}
 ```
 
+#### Cookie [First Blood 🩸]
 
+In the attached file holds a binary and a libc file
+
+Since I want to make the binary I'm working on be the same as the one remotely I patched it using `pwninit`
+
+Now on checking the file type & protections enabled showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d112663d-64a1-4dea-b7ef-371cf678c9ee)
+
+So we're working with a x64 binary which is dynamically linked and not stripped, the only protection enabled is Stack Canary
+
+I ran the binary to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/95a1fbaa-9dc8-46b5-81ee-9271b62287dc)
+
+So it receives our input, prints it out back then asks us if that's all and depending on our option chosen it would either repeat the process or exit
+
+To find the vulnerability I decompiled the binary using Ghidra and here's the main function
 
 
 
