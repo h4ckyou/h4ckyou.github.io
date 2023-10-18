@@ -168,6 +168,7 @@ So we have a buffer overflow because it is impossible to tell without knowing th
 What now? 
 
 Looking at the other functions shows this
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2730cd9b-c6dc-4997-b18d-78aaffd2bd2e)
 
 The `get_shell` function looks interesting, checking the decompiled code shows this
