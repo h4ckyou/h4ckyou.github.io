@@ -216,7 +216,47 @@ I ran the binary to get an overview of what it does
 So it receives our input, prints it out back then asks us if that's all and depending on our option chosen it would either repeat the process or exit
 
 To find the vulnerability I decompiled the binary using Ghidra and here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b0900a3-c875-43b9-b63e-f7afa2d10a6d)
 
+Nothing interesting it just calls the `overflow` function
+
+Here's the decompiled code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/72c7065d-c040-4287-8517-638189869fe8)
+
+```c
+void overflow(void)
+
+{
+  long in_FS_OFFSET;
+  char option;
+  char local_11d;
+  undefined4 local_11c;
+  char story [264];
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  local_11c = 0xe4ff;
+  do {
+    do {
+      memset(story,0,0x100);
+      puts("Hey, Tell me a story!?\n");
+      fflush(stdout);
+      read(0,story,0x1000);
+      puts("The story says ");
+      fflush(stdout);
+      puts(story);
+      puts("is this the story? (y/n)?");
+      fflush(stdout);
+      read(0,&option,2);
+    } while (option != 'y');
+  } while (local_11d != '\n');
+  if (canary == *(long *)(in_FS_OFFSET + 0x28)) {
+    return;
+  }
+                    /* WARNING: Subroutine does not return */
+  __stack_chk_fail();
+}
+```
 
 
 
