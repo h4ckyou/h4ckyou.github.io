@@ -184,6 +184,20 @@ Let's get the offset needed to overwrite the EIP (Instruction Pointer)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c85d1ea2-e885-4186-85d0-76b31a4dabc1)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83c6db3e-e329-4b01-b99f-13faeb5a123f)
 
+The offset is `48`
+
+At this point we can easily just return to the `get_shell` function
+
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/aslr%20overflow/solve.py)
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f63136f8-89a6-4717-91a8-26525e9efb3c)
+
+Note: I'm running it locally cause remote instance is not accessible 
+
+```
+Flag: flag{aslr_makes_addresses_change}
+```
 
 
 
