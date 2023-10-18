@@ -258,9 +258,30 @@ void overflow(void)
 }
 ```
 
-So it receives our input using `read` which is stored in a buffer `story` that can only hold up to `264` bytes but then `reads` is allowing us to give in up to `0x1000` bytes of data so we have a buffer overflow here
+So it receives our input using `read` which is stored in a buffer `story` that can only hold up to `263` (the additional 1 byte is to null our input) bytes but then `reads` is allowing us to give in up to `0x1000` bytes of data so we have a buffer overflow here
 
 After it receives our input it will then print out the value stored in `story` using `puts` 
+
+Then we have the chance of repeatly calling this again if we give in `y` as the option value or we can exit the program when we give in option `n` so that will `return`
+
+At this point the buffer overflow is clear but we need to deal with the stack canary in place because that would prevent us from smashing the stack
+
+Well because we have the overflow and our input will then be printed out using `puts` we can actually leak the canary value 
+
+If we take a look at `gdb` we'll see that the `canary` is just after the length that the buffer `story` can hold up
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/53c0d44e-670b-480d-8eef-8929b8cce043)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7dc57d37-c598-4a06-8820-84025ce2a45b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1335d019-8dbc-4271-9013-78287279525a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4243cdee-a24c-48e2-aed2-4837a3bfd81a)
+
+Btw the breakpoint is set after the `read` call
+
+So we need up to `264` bytes to leak the canary and doing that would overwrite the last byte which is always `00` (that's what make a canary identifiable)
+
+We can also get that offset by looking at ghidra stack frame
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aecf82c8-5309-4ded-800b-b51650001554)
+
+Since the input buffer is before the canary and the amount of bytes the buffer can hold is `263` that means giving one extra one byte would overwrite the last byte of the canary
 
 
 This CTF was an interesting one and I meet tons of cool people there 
