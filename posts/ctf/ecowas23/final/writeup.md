@@ -283,5 +283,23 @@ We can also get that offset by looking at ghidra stack frame
 
 Since the input buffer is before the canary and the amount of bytes the buffer can hold is `263` that means giving one extra one byte would overwrite the last byte of the canary
 
+Cool we have a way to leak it let's try that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f63f244a-7314-4e3f-b62a-6c75f49cb493)
+
+Now that we have a way to leak the canary the next thing is to ROP
+
+And what I just did was Return 2 Libc (Ret2Libc) 
+
+The way to go around that in this case is that when the canary has been leaked inorder to rop we need to first overwrite the canary with it's right value then the saved rbp with junk value then our rop payload
+
+Here's my solve script: [link]()
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9191d961-6348-499c-a2a2-5fca648d3bf6)
+
+```
+Flag: EcoWas{You_Did_It_Again_Gg_25897456}
+```
+
 
 This CTF was an interesting one and I meet tons of cool people there 
