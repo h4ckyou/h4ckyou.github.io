@@ -567,39 +567,15 @@ I still don't know why or how that works and that's bad maybe I'll look at it ag
 
 But once I was able to trigger a set of inputs that would increase the money I had I just wrote a solve script to make the money greater than 100 and get the flag
 
-Here's my solve script: [link]()
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/yooeyyeff/solve.py)
 
-```python
-from pwn import *
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a0f789de-eb79-4a81-89d9-802be4bf827a)
 
-def sell_cloth():
-    io.sendline('2')
-    io.sendline('y')
-    io.sendline('2')
-    io.sendline('y')
-
-def idk():
-    inp = [1, 5, 3, 0, 5, 2, 'y', 1, 1, 1, 3, 0, 0, 2]
-
-    for i in inp:
-        io.sendline(str(i))
-
-def solve():
-    idk()
-    io.sendline('n')
-    sell_cloth()
-
-# io = process('./yooeyyeff')
-io = remote('0.cloud.chals.io', '33146')
-context.log_level = 'debug'
-
-for i in range(25):
-    solve()
-
-io.sendline('4')
-
-io.interactive()
 ```
+Flag: flag{ur_n0t_r0b1n_h00d_ur_just_r0b1n}
+```
+
 
 
 
