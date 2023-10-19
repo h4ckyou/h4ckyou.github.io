@@ -262,13 +262,18 @@ But notice that it doesn't use `puts()` anywhere in this program so how do we go
 
 Well we can alternatively use `printf` and I did this `printf(printf@got)` to leak the libc of `printf@got`
 
-There's usually movaps stack allignment once you jump back to `main` or `getpath` and because that starts with `push rbp` 
+There's usually movaps stack allignment once you jump back to `main` or `getpath` and that's because it starts with `push rbp` 
 
 So to avoid that stack allignment I just jumped to the next address after that assembly instruction
 
 Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/dep/solve.py)
 
 Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/26027892-5d45-4fd3-964e-bec9f36d2772)
+
+```
+Flag: EcoWas{They_told_Me_You_Are_A_Master_7846231}
+```
 
 #### Cookie [First Blood 🩸]
 
