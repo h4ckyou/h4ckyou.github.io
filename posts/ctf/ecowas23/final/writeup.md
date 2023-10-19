@@ -376,5 +376,76 @@ Running it works
 Flag: EcoWas{You_Did_It_Again_Gg_25897456}
 ```
 
+#### Just Login
+
+This challenge had a python file attached and on downloading it gave this content
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/16a63f59-b894-44de-96f0-8541f14d19df)
+
+So basically this program will ask for the password then on giving it the right password we would get the flag
+
+That almost sounds like an impossible thing to solve but notice this portion of the code
+
+```python
+    def compare(self, s1, s2):
+        try:
+            for c in range(len(s2)):
+                if s1[c] == s2[c]:
+                    # Protect against brute force attacks
+                    time.sleep(1)
+                    continue
+                else:
+                    return False
+            return True
+        except:
+            return False
+```
+
+The `Challenge` class object has a function `compare` which takes in two parameters `s1 & s2` 
+
+It will iterate through the length of `s2` then compare each character of `s1` to the corresponding character of `s2`
+
+Then it will sleep for 1 second
+
+This function is actually called to check if the provided password is right
+
+```python
+    def handle(self):
+        self.request.settimeout(5)
+        data = "[ LOGIN ] Welcome to my customer remote server. What's the password?\n"
+        self.request.sendall(data)
+
+        password = 'markuche'
+        data = self.request.recv(1024).strip()
+        if self.compare(data, password):
+            self.request.sendall('flag{fake_flag_for_testing}')
+        else:
+            self.request.sendall('[ ACCESS DENIED ]\n')
+```
+
+I made some editing to the script to work with it locally
+
+Let's take a look closer at the code implementation
+
+We'll assume the `password = markuche` and we tried `input = maaaaaaa`
+
+The code will check the following:
+- is `input[0]` = `password[0]`
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 This CTF was an interesting one and I meet tons of cool people there 
