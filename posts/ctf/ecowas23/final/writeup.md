@@ -520,7 +520,28 @@ return not failed
 
 But we just need the flag and we've gotten it so let's continue 🙂
 
+#### Yooeyyeff
 
+The binary and it's C file was attached
+
+Here's the C file: [src](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/yooeyyeff/src.c)
+
+This challenge was more of a logical sort of stuff and not exploitation
+
+And oddly enough the way I solved it was just by luck LOL
+
+In the C file the main function loops 300 times while calling the menu function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1797bf64-f80f-4818-8125-86aab4275f42)
+
+The menu function has 4 cases that's dependent on our input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/45b495f3-ec35-4b86-b4c7-246b791e0541)
+
+We can:
+- Buy cloths
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/85d5b6f5-0a22-45f4-914a-9f516b24bdf3)
+
+- Sell cloths
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f21b1516-3a15-447f-835b-b8b7bea9ec98)
 
 
 
