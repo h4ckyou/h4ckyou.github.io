@@ -429,10 +429,31 @@ Let's take a look closer at the code implementation
 We'll assume the `password = markuche` and we tried `input = maaaaaaa`
 
 The code will check the following:
-- is `input[0]` = `password[0]`
-- 
+- is `input[0]` = `password[0]`? YES
+- is `input[1]` = `password[1]`? YES
+- is `input[2]` = `password[2]`? NO
+- EXIT
 
+Did you notice?
 
+```
+mbbbbbbb       mabbbbbb
+YES, NO        YES, YES, NO
+```
+
+The second example takes "more time" to execute!
+
+- Guess "aaaaaaaa" -> 30.7ms
+- Guess "baaaaaaa" -> 30.3ms
+- ....
+- Guess "laaaaaaa" -> 29.9ms
+- Guess "maaaaaaa" -> 47.3ms 👍
+- Guess "mabaaaaa" -> 47.8ms
+- ....
+- Guess "maraaaaa" -> 61.2ms 👍
+- ....
+
+As you can see the code is completely "broken"
 
 
 
