@@ -538,6 +538,7 @@ The menu function has 4 cases that's dependent on our input
 
 We can:
 - Buy clothes
+  
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/85d5b6f5-0a22-45f4-914a-9f516b24bdf3)
 
 - Sell clothes
