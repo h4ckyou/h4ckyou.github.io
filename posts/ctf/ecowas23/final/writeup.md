@@ -537,11 +537,15 @@ The menu function has 4 cases that's dependent on our input
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/45b495f3-ec35-4b86-b4c7-246b791e0541)
 
 We can:
-- Buy cloths
+- Buy clothes
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/85d5b6f5-0a22-45f4-914a-9f516b24bdf3)
 
-- Sell cloths
+- Sell clothes
+ 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f21b1516-3a15-447f-835b-b8b7bea9ec98)
+
+- Queue upgrade clothes
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d602dfc7-aa4a-44ec-9db2-d53db1395ebb)
 
 
 
