@@ -576,7 +576,119 @@ Running it works
 Flag: flag{ur_n0t_r0b1n_h00d_ur_just_r0b1n}
 ```
 
+#### Gigashell
 
+Downloading the binary and checking the file type shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/20a4b14f-b083-436b-a82f-a3e14bcc1a17)
+
+We're working with a x64 binary which is dynamically linked and not stripped
+
+The only protection enabled is just PIE and Full RELRO 
+
+Running the binary to get an overview of what it does shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9e94015a-023d-4424-b513-91b0c2ab730d)
+
+It crashes after given an input weird!
+
+Using ghidra I decompiled the binary here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8cf52e34-bcab-4de3-b55b-7a353d2d9565)
+
+```c
+
+bool main(void)
+
+{
+  int fp;
+  
+  puts("WHERES YOUR EXEC NOW!!!!!!!!!!!!:");
+  fgets(shcode,0x400,stdin);
+  strtok(shcode,"\n");
+  fp = install_syscall_filter();
+  if (fp == 0) {
+    (*(code *)shcode)();
+  }
+  return fp != 0;
+}
+```
+
+It will receive at least `0x400` bytes of input and store it in the `shcode` global variable
+
+Then it removes the newline character from it, then installs some syscall filter
+
+If the return value from that function is `0` it will execute the value stored in the global variable
+
+So this is a shellcoding challenge
+
+Looking at the `install_syscall_filter` function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c6d0780d-11c1-4154-ada1-7c0e371e41f0)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/91cfdde3-1d5c-4d41-bcb8-c955f4e86874)
+
+Basically what that does is to add SECCOMP rules that filters some syscall
+
+Using `seccomp-tools` I dumped the list of allowed syscalls
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/19fe2b3d-95d6-4dc5-a0cc-0e7ac62f1956)
+
+```
+➜  gigashellpwn seccomp-tools dump ./gigashell
+WHERES YOUR EXEC NOW!!!!!!!!!!!!:
+
+ line  CODE  JT   JF      K
+=================================
+ 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x01 0x00 0xc000003e  if (A == ARCH_X86_64) goto 0003
+ 0002: 0x06 0x00 0x00 0x00000000  return KILL
+ 0003: 0x20 0x00 0x00 0x00000000  A = sys_number
+ 0004: 0x15 0x00 0x01 0x0000000f  if (A != rt_sigreturn) goto 0006
+ 0005: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0006: 0x15 0x00 0x01 0x000000e7  if (A != exit_group) goto 0008
+ 0007: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0008: 0x15 0x00 0x01 0x0000003c  if (A != exit) goto 0010
+ 0009: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0010: 0x15 0x00 0x01 0x00000000  if (A != read) goto 0012
+ 0011: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0012: 0x15 0x00 0x01 0x00000002  if (A != open) goto 0014
+ 0013: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0014: 0x15 0x00 0x01 0x00000001  if (A != write) goto 0016
+ 0015: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0016: 0x06 0x00 0x00 0x00000000  return KILL
+➜  gigashellpwn
+```
+
+Looking at this we can see that only Open, Read & Write syscall are allowed
+
+And the challenge description says that the flag is a file called `flag`
+
+So the idea is simple we need to open up the file, read it's content then write it to stdout
+
+I used pwntools to just generate it for me but then I noticed something
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5898da92-de65-4ef6-a4d8-b40779c96940)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/64e1ef25-1b14-4624-80f4-0dd02d5d5b82)
+
+It isn't working why?
+
+I spent some time on it but then I noticed it won't even execute the first instruction of the shellcode
+
+I made just a nop instruction to see if it would execute
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a0bf00ce-e124-4181-9435-10c39d23a3ee)
+
+When I ran that I saw there's nothing wrong with the instruction as it's going to `call rdx` which is where our shellcode will later be stored in 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cdd065c6-b8e9-4aa2-980e-86b83ea79a08)
+
+But at the point it called the `rdx` to execute the shellcode I got a segfault
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8e993a00-35cc-4f16-8495-bf88c773f21b)
+
+That's not suppose to happen what's the issue?
+
+Well after looking at the permission of the section where our input will be stored I saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/278dc0bc-b850-4bfd-97cf-ac51e0ca2de4)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/72aacb3d-a07c-4638-92ab-c6e70a3f11da)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e135d769-406e-4675-9b6d-37ef93fc787d)
+
+The permission as to where our shellcode will be stored is just read & write and not read || write & execute
+
+That's why the shellcode could not execute
+
+So ideally to me this isn't possible to solve since the shellcode won't execute so I layed a complain to the admin multiple times but they kept on telling me that since it had a solve already then it's right and they seemed to have a working solution screenshot which I'm thinking isn't the same as the binary being uploaded to the challenge dashboard but it had a solve still, so if anyone knows a way to solve this "PLS DM ME ON DISCORD"
 
 
 
