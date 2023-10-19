@@ -266,29 +266,9 @@ There's usually movaps stack allignment once you jump back to `main` or `getpath
 
 So to avoid that stack allignment I just jumped to the next address after that assembly instruction
 
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ecowas23/final/dep/solve.py)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Running it works
 
 #### Cookie [First Blood 🩸]
 
