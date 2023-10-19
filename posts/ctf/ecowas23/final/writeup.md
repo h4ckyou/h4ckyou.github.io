@@ -206,6 +206,88 @@ In the attached file holds a binary and a libc file
 Since I want to make the binary I'm working on be the same as the one remotely I patched it using `pwninit`
 
 Checking the file type and protections enabled showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ebbb0913-6f80-4c30-a682-8e8c88b87c3d)
+
+So we're working with a x64 binary which is dynamically linked and not stripped, the only protection enabled is NX 
+
+Running the binary to get an overview of what it does shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4bf3c86-2328-4528-8daf-34625b37a544)
+
+It receives our input and prints it out back
+
+On decompiling with Ghidra shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fb0a3cfc-98a2-4607-8905-805999299a89)
+
+The main function just calls the `getpath()` function
+
+Here's the decompiled code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dedf3127-668f-49a3-8724-67c375be6641)
+
+```c
+
+void getpath(void)
+
+{
+  ulong unaff_retaddr;
+  char buffer [76];
+  uint ret;
+  
+  printf("input path please: ");
+  fflush(stdout);
+  gets(buffer);
+  ret = (uint)unaff_retaddr;
+  if ((ret & 0xbf000000) == 0xbf000000) {
+    printf("bzzzt (%p)\n",unaff_retaddr & 0xffffffff);
+                    /* WARNING: Subroutine does not return */
+    _exit(1);
+  }
+  printf("got path %s\n",buffer);
+  return;
+}
+```
+
+Basically it will ask for input then use `gets()` to receive our input so there's a buffer overflow here
+
+Then it does this weird check and later one prints out our input
+
+Since we have a buffer overflow I decided to then get the offset needed to overwrite the RIP
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2947331-aec8-49ef-b95e-36da95223d96)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/004b4385-d4a4-4979-a37e-6c968b28cadc)
+
+Cool the offset is `88`
+
+So I then decided to ROP using Return 2 Libc (Ret2Libc) 
+
+But notice that it doesn't use `puts()` anywhere in this program so how do we go about leaking the `got` values to calculate the libc base address?
+
+Well we can alternatively use `printf` and I did this `printf(printf@got)` to leak the libc of `printf@got`
+
+There's usually movaps stack allignment once you jump back to `main` or `getpath` and because that starts with `push rbp` 
+
+So to avoid that stack allignment I just jumped to the next address after that assembly instruction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #### Cookie [First Blood 🩸]
@@ -215,7 +297,7 @@ The attached file here also had a libc file so I patched it with `pwninit`
 Now on checking the file type & protections enabled showed this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d112663d-64a1-4dea-b7ef-371cf678c9ee)
 
-So we're working with a x64 binary which is dynamically linked and not stripped, the only protection enabled is Stack Canary
+So we're working with a x64 binary which is dynamically linked and not stripped, the only protection enabled is NX (No-Execute) & Stack Canary
 
 I ran the binary to get an overview of what it does
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/95a1fbaa-9dc8-46b5-81ee-9271b62287dc)
@@ -295,7 +377,7 @@ Cool we have a way to leak it let's try that
 
 Now that we have a way to leak the canary the next thing is to ROP
 
-And what I just did was Return 2 Libc (Ret2Libc) 
+And what I just did was Ret2Libc
 
 The way to go around that in this case is that when the canary has been leaked inorder to rop we need to first overwrite the canary with it's right value then the saved rbp with junk value then our rop payload
 
