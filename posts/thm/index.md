@@ -35,3 +35,4 @@ Discover CyberSecLabs. With our growing platform delivering beginner hacking con
 - [[May 25 2023]] [Weasel](https://h4ckyou.github.io/posts/thm/posts/weasel.html) `Jupyter, WSL, Mounting`
 - [[June 27 2023]] [Peak Hill](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/thm/posts/Peak%20Hill.pdf) `Python Deserialization`
 - [[Oct 01 2023]] [Super Secret Tip](https://h4ckyou.github.io/posts/thm/posts/supersecrettip.html) `LFI, SSTI, Cron`
+- [[Oct 26 2023]] [Hijack](https://h4ckyou.github.io/posts/thm/posts/hijack.html) `Scripting, Command Injection, Sudo, Path Library Hijack`
