@@ -61,12 +61,27 @@ From this note we can tell there's a user called `admin` and he made a password 
 
 Cool so let's move to the webapp
 
-One thing we can try here is to attempt brute force on ssh on user `admin / rick / root` with the password list but that won't work :P
+One thing we can try here is to attempt brute force on ssh for user `admin / rick / root` with the password list but that won't work :P
 
 Time to move to the webapp 
+
 ![giphy](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/09557d16-86b1-4eaf-834e-ec228f5613f5)
 
-Going
+Going over to port 80 which is the webserver shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/58fae9ca-5379-40a8-a7ee-d715a04062bd)
+
+So we can either login or create account
+
+To save us the trouble of stress I just created an account
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3eacd5d-3855-46c1-a80b-ab25babd3251)
+
+Now we can login with the credential `uche:markuche`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa98afea-bc68-4855-833f-aeac86facbca)
+
+One thing you'd immediately notice is the `Administration` panel 
+
+If you click that you'd see this
+
 
 
 
