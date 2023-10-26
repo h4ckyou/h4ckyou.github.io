@@ -186,6 +186,7 @@ rick:N3v3rG0nn4G1v3Y0uUp
 Time for privilege escalation 
 
 Checking sudo permission shows this
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/12d68db3-14e6-475b-8f8d-56d282a75a9b)
 
 So we can run `/usr/sbin/apache2 -f /etc/apache2/apache2.conf -d /etc/apache2` as `root` 
@@ -195,14 +196,14 @@ But one interesting configuration is that we can specify the environment LD Libr
 We can get the list of library going to be called when the run the `apache2` binary using `ldd` 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f84960a7-82f5-4c81-b9ef-3c72f9282517)
 
-Simple google search should lead you at least [here](https://atom.hackstreetboys.ph/linux-privilege-escalation-environment-variables/):
+Simple google search on how to privesc should lead you at least [here](https://atom.hackstreetboys.ph/linux-privilege-escalation-environment-variables/):
 
 In this case I'll hijack the library which is `libcrypt.so.1` 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38e06c23-5d74-412a-9dc0-4f67e35083d2)
 
 Here's the C code:
 
-```
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
