@@ -59,6 +59,14 @@ NOTE To rick : good job on limiting login attempts, it works like a charm, this 
 
 From this note we can tell there's a user called `admin` and he made a password list containing safe passwords. Also he says something to the user `rick` about rate limiting login attempts inorder to prevent future brute force attack
 
+Cool so let's move to the webapp
+
+One thing we can try here is to attempt brute force on ssh on user `admin / rick / root` with the password list but that won't work :P
+
+Time to move to the webapp 
+![giphy](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/09557d16-86b1-4eaf-834e-ec228f5613f5)
+
+Going
 
 
 
