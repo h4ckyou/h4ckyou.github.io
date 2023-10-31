@@ -8,7 +8,7 @@ This was a really good ctf I participated in as user `@Theory`
 
 I was feeling a bit overwhelmed when they announced they would be an upcoming CTF and this is because they hosted a CTF which I participated in but got 4th it was the Middle East and West Africa region so me taking part in the CTF opened my eyes as the boxes where so good
 
-As I'm a big fan of solving vulnerable machines I couldn't wait for the ctf to come
+As I'm a big fan of solving vulnerable machines even though im a noob I couldn't wait for the ctf to arrive still :)
 
 After few days it started and things became interesting
 
