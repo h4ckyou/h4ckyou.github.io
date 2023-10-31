@@ -187,8 +187,17 @@ So our goal is to first leak canary, calculate libc base then jump to one_gadget
 
 For the second stage of our exploit we need to first overwrite the canary value to its original value then overwrite saved rbp with some junk value of 8 bytes then finally our rop gadget with one_gadget
 
-Here's my exploit [script]():
+Here's my exploit: [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/abcctf23/reveal/solve.py)
 
+Running it works locally
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b9c4a096-c1ab-4505-9c0f-13e9071d6576)
+
+Doing the same remtotely works then we can grab our flag 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4fd41ce2-8699-439f-9f6a-c52ac1a45211)
+
+```
+Flag: abcctf{see_the_unseen_and_bring_the_flag_to_life}
+```
 
 
 
