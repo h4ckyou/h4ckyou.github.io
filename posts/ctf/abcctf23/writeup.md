@@ -2,7 +2,7 @@
 
 Hi everyone, in this writeup I'll give just the solution of the challenges which had one solve and was blooded by me
 
-### Reveal (Binary Exploitation)
+#### Reveal (Binary Exploitation)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/789b992c-9104-4523-a619-9ea9ce03de54)
 
 We are given a netcat instance and a zip file 
@@ -199,7 +199,57 @@ Doing the same remtotely works then we can grab our flag
 Flag: abcctf{see_the_unseen_and_bring_the_flag_to_life}
 ```
 
+#### Simple Calculator (Web Exploitation)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4ebe735-a838-4194-93c2-c7ed876c72cd)
 
+Going over the web page shows this calculator sort of interface
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/90ce0315-dec9-4d9d-8fde-1288044967a7)
+
+Looking at the page source just shows a client side javascript being used by the calculator that helps evalutes the user input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/85cdf9de-23e7-4a5b-8dc1-a924817fd4a1)
+
+Since it's client side I didn't really bother checking it even though it uses `eval` but this javascript not nodejs also client side not serverside besides i don't think it's possible to execute system command with javascript
+
+With that said I decided to look at the report a bug function this webapp provides
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/16a6a810-a75f-4ec4-a3d1-caf3af11aea6)
+
+I tried using a random value but I noticed it doesn't seem to do anything
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/710d9ce6-79cd-441a-b1c7-3cbf897491b2)
+
+At this point it became hard not because the challenge is hard itself but the text there was really misleading 😂
+
+After spamming like various xss payload or anything that can make it do a callback to the webhook site, it didn't work
+
+I fuzzed with any extension I could think of and various wordlist but still nothing!
+
+So I left this challenge to work on other things
+
+But eventually after some hours the creator @Muzec gave a hint saying "BLIND" 
+
+Hmmmmmmm blind what exactly?
+
+I decided to try command injection to invoke a sleep call
+
+Doing that worked!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6100f600-cf0d-4c9b-adfe-b1dbb1f5937a)
+
+So let's get a reverse shell shall we?
+
+I hosted a http server which had a file `rev.sh` containing a reverse shell then did this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/96fe03f7-ced9-4d80-bf3a-25cae2df2b9b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ab72c1f5-a596-4367-817b-a6495c06b119)
+
+The flag was in the environment variable
+
+```
+Flag: abcctf{51MP13_r3P0r7_607_Y0U_7H3_F146}
+```
+
+This is all I believe I don't need to make a writeup on the remaining one cause it's pretty much solvable by anyone just `strings & grep`
+
+Welp that's all I did 😛
+
+After the end of the ctf I came out first 🙏
 
 
 
