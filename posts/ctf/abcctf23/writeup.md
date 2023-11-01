@@ -65,7 +65,7 @@ undefined8 main(void)
 - Then it receives 100 bytes of our input which is stored in the buffer
 - It then compares the value stored in `canary` with `0x13371337132763b7`
 
-From this they are two vulnerability:
+From this there are two vulnerability:
 - We can leak the canary value because the first input receives `0x40 (64)` bytes which is stored in the buffer and the buffer can hold up only `56` bytes so we have additional `8` bytes to overwrite then later on the buffer is displayed using `printf` so if we fill up the buffer with 56 bytes then when `printf` is called it would actually leak the next value on the stack which happens to be the canary
 - There's a buffer overflow in the second input cause we are reading `100` bytes to a buffer which can only hold up `56` bytes
 
