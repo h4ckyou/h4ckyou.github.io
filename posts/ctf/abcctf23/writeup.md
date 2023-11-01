@@ -66,7 +66,7 @@ undefined8 main(void)
 - It then compares the value stored in `canary` with `0x13371337132763b7`
 
 From this there are two vulnerability:
-- We can leak the canary value because the first input receives `0x40 (64)` bytes which is stored in the buffer and the buffer can hold up only `56` bytes so we have additional `8` bytes to overwrite then later on the buffer is displayed using `printf` so if we fill up the buffer with 56 bytes then when `printf` is called it would actually leak the next value on the stack which happens to be the canary
+- We can leak the canary value because the first input receives `0x40 (64)` bytes which is stored in the buffer and the buffer can hold up only `56` bytes so we have additional `8` bytes to overwrite (but this isn't all too good cause it can just overwrite the saved rbp) then later on the buffer is displayed using `printf` and one thing about `printf` is that it would print out until it meets a null byte. Since the buffer will be terminated with a null byte we can fill the buffer up so as to overwrite the null byte then `printf` will keep on printing till it meets a new null byte and eventually it would actually leak the next value on the stack which happens to be the canary
 - There's a buffer overflow in the second input cause we are reading `100` bytes to a buffer which can only hold up `56` bytes
 
 With that said what can we do with this?
