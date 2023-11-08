@@ -148,10 +148,16 @@ So the canary is placed after our input buffer meaning if we do an overflow it w
 
 The way to go around this is to overwrite the canary to it's right value this is going to be possible because we can leak the canary via the format string bug
 
-One thing about canary which you can use to identify it is that it ends with a null byte `00` 
+One thing about canary which can be used to identify it is that it ends with a null byte `00` 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e47468c2-5497-4f7f-808c-41c578718ecb)
 
 Now let's do the good stuff :)
+
+The exploit chain is simple:
+- Leak canary and libc address
+- Buffer overflow to jump to one_gadget in libc
+
+To do the leak I wrote a fuzz script which basically leaks values off the stack and shows me it's offset
 
 
 
