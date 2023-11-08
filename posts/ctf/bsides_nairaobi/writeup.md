@@ -159,5 +159,8 @@ The exploit chain is simple:
 
 To do the leak I wrote a fuzz script which basically leaks values off the stack and shows me it's offset
 
+Here's the fuzz script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/fuzz.py)
+
+Running it gives this
 
 
