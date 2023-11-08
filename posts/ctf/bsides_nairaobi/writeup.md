@@ -193,4 +193,10 @@ Running it would spawn a shell
 
 ### Simple
 
+Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/conundrum.zip)
+
+We are given a zip file which contained a binary, libc and ld file when decompressed
+
+
+
 
