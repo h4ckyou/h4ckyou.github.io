@@ -136,4 +136,12 @@ What next?
 
 Well since there's a buffer overflow we can just overwrite the instruction pointer to jump to a one_gadget
 
-But the catch there is that Canary is watching :suspect:
+The catch there is that Canary is watching 👀 which would prevent us from doing a stack based overflow
+
+But that isn't an issue because we can use the format string bug to leak the canary
+
+The idea of canary is simple in the sense that it would generate a random value which would be stored and later compared before the program returns
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c7f37dbd-2a1f-4732-8c73-dc87316f52c8)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3761d60a-366a-4499-81e9-46ef3bce1e6e)
+
+
