@@ -162,5 +162,13 @@ To do the leak I wrote a fuzz script which basically leaks values off the stack 
 Here's the fuzz script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/fuzz.py)
 
 Running it gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/350b7e76-1eb9-4f2a-be00-aa84493bd3e7)
 
+From the result being leaked off the stack we can see that at offset 23 hold the canary value which we can confirm it being right 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b1ff62ca-facf-4ff5-8f08-1726dc46d93c)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b00bbdda-3552-42a6-8014-88bcd9329530)
+
+And at offset 29 holds some libc address value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/29699e4a-f353-4239-92b3-ecd1f154d250)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f54eee93-e2ac-4166-8ee8-7e18a07dcacc)
 
