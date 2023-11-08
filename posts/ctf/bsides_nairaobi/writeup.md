@@ -107,3 +107,21 @@ What this does is basically:
 Looking at the code they are two obvious vulnerability:
 - Buffer overflow
 - Format string bug
+
+There's a buffer overflow because it reads in at most 256 bytes of input which is stored in a buffer that can only hold up 136 bytes giving us an extra 120 bytes to write. And the format string bug exists because it prints out our input without using a format specify
+
+So what now?
+
+Well after the function is called we are given the choice to call it again
+
+```c
+write(1,"You wanna tell me a little bit more about pointers?(y/n): ",0x3a);
+read(0,choice,5);
+if (choice[0] == 'y') {
+  question();
+}
+else if (choice[0] == 'n') {
+  puts("Cheers mate!!");
+}
+```
+
