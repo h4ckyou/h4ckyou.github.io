@@ -127,12 +127,13 @@ else if (choice[0] == 'n') {
 
 What next? How do we go about exploitation!
 
-Because `FULL RELRO` is enabled this means the global offset table is just read only which we can confirm by looking at the virtual mapping
+Because `FULL RELRO` is enabled this means the global offset table is just read only which we can confirm by looking at the memory mapping in gdb
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/94968d22-70ed-45ae-9ac6-5c4d862cfb2b)
 
-The values in the got are in that binary address range which has just `read` permission set on it, so Got Overwrite isn't liable 
+The values in the got are in that binary address range which has just `read` permission set on it, so `Got Overwrite` isn't liable 
 
 What next?
 
-Well since there's a buffer overflow we can just 
+Well since there's a buffer overflow we can just overwrite the instruction pointer to jump to a one_gadget
 
+But the catch there is that Canary is watching :suspect:
