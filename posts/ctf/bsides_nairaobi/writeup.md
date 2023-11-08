@@ -140,9 +140,18 @@ The catch there is that Canary is watching 👀 which would prevent us from doin
 
 But that isn't an issue because we can use the format string bug to leak the canary
 
-The idea of canary is simple in the sense that it would generate a random value which would be stored and later compared before the program returns
+The idea of canary is simple in the sense that it would generate a random value which would be stored on the stack and later compared before the program returns
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c7f37dbd-2a1f-4732-8c73-dc87316f52c8)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3761d60a-366a-4499-81e9-46ef3bce1e6e)
 
 So the canary is placed after our input buffer meaning if we do an overflow it would overwrite the value stored in the canary and when the comparism which checks if the canary still has it's right value is done at the time the program wants to return it would return `False` because we have overwritten it therefore it calls the `__stack_chk_fail` function
+
+The way to go around this is to overwrite the canary to it's right value this is going to be possible because we can leak the canary via the format string bug
+
+One thing about canary which you can use to identify it is that it ends with a null byte `00` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e47468c2-5497-4f7f-808c-41c578718ecb)
+
+Now let's do the good stuff :)
+
+
 
