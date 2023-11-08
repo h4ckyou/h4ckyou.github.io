@@ -3,9 +3,9 @@
 ### Pwn Challenge Writeup:
 - Conundrum
 - Simple
-- Short
-- Conundrum2
 
 This challenges were made by @mug3njutsu and I really enjoyed solving it :)
 
 ### Conundrum
+
+We are given a zip file which contained 
