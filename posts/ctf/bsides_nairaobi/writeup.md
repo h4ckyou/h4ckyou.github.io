@@ -70,3 +70,40 @@ undefined8 main(void)
   exit(0);
 }
 ```
+
+So.... if we choose the first option it would just exit which is not so helpful
+
+And the next choice is option 2 which would call the `question()` function
+
+Here's the pseudo code for the function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ebb0b3b3-04ce-4231-bc83-356c1b8d42a3)
+
+```c
+void question(void)
+
+{
+  long in_FS_OFFSET;
+  char buffer [136];
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  memset(buffer,0,0x80);
+  write(1,"Educate me, what\'s so interesting about pointers: ",0x32);
+  read(0,buffer,256);
+  printf(buffer);
+  if (canary != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+```
+
+What this does is basically:
+- Defines a buffer which can hold up to 136 bytes
+- Reads in at most 256 bytes of our input which is going to be stored in the buffer
+- Uses printf to print out our provided input
+
+Looking at the code they are two obvious vulnerability:
+- Buffer overflow
+- Format string bug
