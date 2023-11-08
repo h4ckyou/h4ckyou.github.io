@@ -108,7 +108,7 @@ Looking at the code they are two obvious vulnerability:
 - Buffer overflow
 - Format string bug
 
-There's a buffer overflow because it reads in at most 256 bytes of input which is stored in a buffer that can only hold up 136 bytes giving us an extra 120 bytes to write. And the format string bug exists because it prints out our input without using a format specify
+There's a buffer overflow because it reads in at most 256 bytes of input which is stored in a buffer that can only hold up 136 bytes giving us an extra 120 bytes to write. And the format string bug exists because it prints out our input without using a format specifier
 
 So what now?
 
@@ -124,4 +124,9 @@ else if (choice[0] == 'n') {
   puts("Cheers mate!!");
 }
 ```
+
+What next? How do we go about exploitation!
+
+Because `FULL RELRO` is enabled this means the global offset table is just read only which we can confirm by looking at the virtual mapping
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/94968d22-70ed-45ae-9ac6-5c4d862cfb2b)
 
