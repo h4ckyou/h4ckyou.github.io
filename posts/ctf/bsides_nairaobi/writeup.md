@@ -175,7 +175,7 @@ And at offset 29 holds some libc address value
 If we have a libc leak we can calculate the libc base address by subtracting it with (known leak - known libc base)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8f215432-ade3-48e8-b225-0fce6dbb6012)
 
-At this point we should have the libc base address now we need to make use of the buffer overflow to overwrite the RIP to a one_gadget
+At this point we should have the libc base address now we need to make use of the buffer overflow to overwrite the RIP to a one gadget
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ca8e801-c85f-429a-8696-7018eac173a3)
 
 That's all!
@@ -183,3 +183,4 @@ That's all!
 So the final thing is to overwrite the canary with it's original value and you can easily get the offset from looking at Ghidra stack layout
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d1b6959e-2314-4a42-8a44-b97839f182ba)
 
+The offset to reach the canary is `0x98 - 0x10 = 0x88`, then we need to overwrite saved rbp with random values since it's not going to be later used and then finally the return address to the one gadget address
