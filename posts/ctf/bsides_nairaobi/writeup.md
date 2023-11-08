@@ -184,3 +184,10 @@ So the final thing is to overwrite the canary with it's original value and you c
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d1b6959e-2314-4a42-8a44-b97839f182ba)
 
 The offset to reach the canary is `0x98 - 0x10 = 0x88`, then we need to overwrite saved rbp with random values since it's not going to be later used and then finally the return address to the one gadget address
+
+Here's the final exploit script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/solve.py)
+
+Running it would spawn a shell 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d249ff5a-8a50-4f43-af54-b5a0c22670fc)
+
+
