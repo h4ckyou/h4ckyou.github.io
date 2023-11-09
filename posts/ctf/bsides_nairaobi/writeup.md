@@ -356,6 +356,13 @@ Here's my final exploit: [link](https://github.com/h4ckyou/h4ckyou.github.io/blo
 
 ### Short
 
+Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Short/short)
+
+Only a binary was given and checking the file type and protection enabled I got this
+
+
+Ah the moment the shell finally spawned I was like woohhhhhooooooooo
+
 
 
 The challenge I've not solved so far is:
