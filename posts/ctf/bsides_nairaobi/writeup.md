@@ -298,7 +298,26 @@ So I decided to check the available rop gadgets present in the binary
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3109bfb-996c-4e79-ae50-71b0642716ee)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8043dd6f-0e81-4cd0-b3a6-009bd6e6ae33)
 
+Looking at that I could clearly see a `pop rax & syscall` gadget 
 
+With this we can potentially call `execve('/bin/sh', NULL, NULL)`
+
+But we need three gadget to set up the argument in the register to achieve that
+- RDI --> '/bin/sh'
+- RSI --> 0
+- RDX --> 0
+
+I saw an easy `[pop rdi; ret] & [pop rsi, pop r15; ret]` gadget but that wasn't the case for `rdx`
+
+There's no gadget that allows us control the `rdx` register
+
+But looking at other gadgets I came across: 
+- xor rsi, rsi
+- xor rdx, rdx
+
+Ok this is worth using cause when you xor a register with it's register it will null out the register 
+
+So at this point we have a way to set `rsi & rdx` to `0` and now we need to set `rdi --> addr --> '/bin/sh'`
 
 
 
