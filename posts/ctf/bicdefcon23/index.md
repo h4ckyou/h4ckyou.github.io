@@ -1303,7 +1303,7 @@ The main function would check if the value stored in the global variable `i` is 
 
 So the goal is to call main 10 times and we can get that by doing the one byte overwrite to call back main multiple times
 
-Here's the expploit script: [link]()
+Here's the expploit script: [link](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/bicdefcon_23/fairplay/fairplay.zip)
 
 - I'll add the remaining solved 2 pwn chall later hopefully
 
