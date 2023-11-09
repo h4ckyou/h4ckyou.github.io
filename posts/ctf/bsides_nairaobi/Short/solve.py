@@ -38,7 +38,6 @@ def stage2():
         syscall
     """)
 
-    payload = sc + b'\x90'*(0x80-len(sc))
     io.send(sc)
 
 def solve(r=False):
