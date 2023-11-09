@@ -396,7 +396,7 @@ Next it calls the `junk()` function which display the fancy keyboard design
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66d56325-1f54-4bac-b6f3-3b9e46bdb6bf)
 
 
-Ah the moment the shell finally spawned I was like woohhhhhooooooooo
+Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
 
 
 
