@@ -3,6 +3,7 @@
 ### Pwn Challenge Writeup:
 - Conundrum
 - Simple
+- Short
 
 This challenges were made by @mug3njutsu and I really enjoyed solving it :)
 
@@ -353,6 +354,9 @@ Here's my final exploit: [link](https://github.com/h4ckyou/h4ckyou.github.io/blo
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e859bfc-1a4a-48d3-ab19-9a59a5365bfd)
 
 
-This are the challenges I've solved so far it remains:
-- Short
+### Short
+
+
+
+The challenge I've not solved so far is:
 - Conundrum v2
