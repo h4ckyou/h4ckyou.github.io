@@ -10,7 +10,7 @@ This challenges were made by @mug3njutsu and I really enjoyed solving it :)
 
 Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/conundrum.zip)
 
-We are given a zip file which contained a binary, libc and ld file when decompressed
+We are given a zip file which contained a binary, libc and ld file when unzipped
 
 First thing I did was to patch the binary using [pwninit](https://github.com/io12/pwninit) so as to make sure the binary uses the same libc as the remote instance does 
 
@@ -193,10 +193,63 @@ Running it would spawn a shell
 
 ### Simple
 
-Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Conundrum/conundrum.zip)
+Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Simple/simple.zip)
 
-We are given a zip file which contained a binary, libc and ld file when decompressed
+We are given a zip file which contained a binary, libc and ld file when unzipped
 
+I basically followed the same process I did in this first binary challenge (patching, file type & protection)
+
+But later on you will see there's no need to patch the binary to use the remote libc it's just a good practice I guess 🤔
+
+Checking the file type and the protection enabled on the binary shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/177e9587-9e39-43bb-807e-e9a5fd952353)
+
+So we're working with a x64 binary which is dynamically linked and not stripped
+
+The only protection not enabled is "Canary"
+
+I ran the binary to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38c52af8-8717-4c13-a2d6-3eefc64b47e2)
+
+So it's clear that it would receive our input twice while the first one prints our input back and the second one just receives our input and exit
+
+On decompiling the binary with Ghidra here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56c3a3b2-1d03-4627-bd3b-e52ab25b9ca1)
+
+```c
+undefined8 main(void)
+
+{
+  undefined8 buffer;
+  undefined8 local_50;
+  undefined8 local_48;
+  undefined8 local_40;
+  undefined8 local_38;
+  undefined8 local_30;
+  undefined8 local_28;
+  undefined8 local_20;
+  code *notcalled;
+  undefined8 *ptr;
+  
+  setup();
+  ptr = (undefined8 *)mmap((void *)0x999999000,0x1000,3,0x21,-1,0);
+  notcalled = ::notcalled;
+  fwrite("Tell me, what\'s your strategy here: ",1,0x24,stdout);
+  read(0,&buffer,64);
+  printf("Riiiiight, %s",&buffer);
+  *ptr = buffer;
+  ptr[1] = local_50;
+  ptr[2] = local_48;
+  ptr[3] = local_40;
+  ptr[4] = local_38;
+  ptr[5] = local_30;
+  ptr[6] = local_28;
+  ptr[7] = local_20;
+  fwrite("This might actually come to fruition. Try fire it up: ",1,0x36,stdout);
+  fgets((char *)&buffer,200,stdin);
+  return 0;
+}
+```
 
 
 
