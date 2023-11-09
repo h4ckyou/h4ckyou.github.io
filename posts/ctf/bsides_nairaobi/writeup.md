@@ -551,6 +551,7 @@ Cool our first staged shellcode size is just 7 bytes
 Then we can make the second staged shellcode call `execve('/bin/sh', NULL, NULL)` which would spawn a shell 🙂
 
 This the shellcode I've edited and used
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/752a3094-411d-48b3-afed-640cf19560a0)
 
 Compared to pwntools shellcraft generated shellcode length it's just 23 bytes 
@@ -571,7 +572,7 @@ To enabled ASLR do this:
 On running the exploit it would spawn a shell 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de4aadc1-2d2a-42e8-838d-c0f12dc80356)
 
-Ah the moment the shell finally spawned I was like woohhhhhoooooooooo cause I spent good 4 hours trying to solve this 🥰
+Ah the moment the shell finally spawned I was like woohhhhhoooooooooo cause I spent 4 good hours trying to solve this 🥰
 
 
 
