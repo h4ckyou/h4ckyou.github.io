@@ -396,6 +396,7 @@ Next it calls the `junk()` function which display the fancy keyboard design
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66d56325-1f54-4bac-b6f3-3b9e46bdb6bf)
 
 And finally the `chall()` function
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/789f39fe-ba11-4d7d-ba42-e7646898fb47)
 
 ```c
@@ -474,7 +475,7 @@ For example:
 - We can overwrite 0x1337 to 0x4141
 - But the thing is that address would always be different: 0x2337, 0x3337, 0x4337, 0x5337 etc.
 - Though we see that the last three nibble are always the same
-- So if we are to overwrite the need the known first nibble 0x*f*337
+- So if we are to overwrite the need the known first nibble 0x**d**337
 - 
 Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
 
