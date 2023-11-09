@@ -1,4 +1,4 @@
-<h3> Bsides Nairobi 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6aac528f-8c5b-4a53-9698-b6a41cfc7fdd)<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
@@ -359,6 +359,41 @@ Here's my final exploit: [link](https://github.com/h4ckyou/h4ckyou.github.io/blo
 Attached file: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Short/short)
 
 Only a binary was given and checking the file type and protection enabled I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c57fe606-3109-4ad9-b77e-e8153d23ba4f)
+
+So we're working with a x64 binary which is statically linked and not stripped
+
+The protections enabled are the standard `mug3njutsu` protection but something interesting is that it has RWX segments basically that means during the program execution the stack would be readable, writeable and executable
+
+And yes by the way it's a Statically linked binary meaning that all C functions are going to be in the binary rather than it being called from a libc library file
+
+Then I ran the binary to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/52f9ca20-a1b7-4f28-ab8f-378793382881)
+
+Nice it prints out some fancy keyboard banner then receives our input and seems to exit
+
+Next thing I did was to decompile the binary in Ghidra and it generously directs us to to main function 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6274f99d-fc35-41c6-93b0-dcbb15428a6d)
+
+```c
+undefined8 main(void)
+
+{
+  setup();
+  junk();
+  chall();
+  if (x != 0xcc07c9) {
+    notcalled();
+  }
+  return 0;
+}
+```
+
+So basically it calls the `setup()` function which does some buffering
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4420fc50-ab49-454b-8054-77fd1472dd4b)
+
+Next it calls the `junk()` function which display the fancy keyboard design
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66d56325-1f54-4bac-b6f3-3b9e46bdb6bf)
 
 
 Ah the moment the shell finally spawned I was like woohhhhhooooooooo
