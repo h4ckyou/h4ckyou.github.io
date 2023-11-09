@@ -1,4 +1,4 @@
-<h3> Bsides Nairobi 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2c890e2f-8617-43c0-90a2-272145d393f5)<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
@@ -440,11 +440,11 @@ void notcalled(void)
 }
 ```
 
-And what this function will basically do is to run an 8 bytes shellcode received from us
+And what this function will basically do is to run a 8 bytes shellcode received from us
 
 We can't really reach the function for now because there's no way of overwriting the global variable `x` to another value 
 
-I'm thinking it's there so as for us to see there's a function which isn't called my main directly 
+I'm thinking it's there so as for us to see there's a function which isn't called by main directly 
 
 But the fact we can't overwrite the global variable doesn't mean we can't call the function cause after all there's a buffer overflow?
 
@@ -543,8 +543,35 @@ Now let us inspect the registeres during runtime before it calls our shellcode
 
 They are other registers that hold a stack address but I made use of the `R13` register which is actually a pointer to another stack address and that pointer holds the binary full path name
 
+Now we can limit the shellcode size
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66f49d44-5f2f-4d67-be60-1c27fb03dae1)
 
-Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
+Cool our first staged shellcode size is just 7 bytes 
+
+Then we can make the second staged shellcode call `execve('/bin/sh', NULL, NULL)` which would spawn a shell 🙂
+
+This the shellcode I've edited and used
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/752a3094-411d-48b3-afed-640cf19560a0)
+
+Compared to pwntools shellcraft generated shellcode length it's just 23 bytes 
+
+With that said that's all :P
+
+We can test it by running it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0fa38e23-e24d-421e-8e8c-8e640b1c42ed)
+
+Oh yes ASLR is still disabled :(
+
+Well you can still enabled it and the exploit would work as long as you comment the `aslr_off` function and uncomment the `main` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0706bff0-dcb8-42c0-9224-27b01f48b215)
+
+To enabled ASLR do this:
+- echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
+
+On running the exploit it would spawn a shell 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de4aadc1-2d2a-42e8-838d-c0f12dc80356)
+
+Ah the moment the shell finally spawned I was like woohhhhhoooooooooo cause I spent good 4 hours trying to solve this 🥰
 
 
 
