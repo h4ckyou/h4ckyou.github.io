@@ -1293,7 +1293,19 @@ io.interactive()
 Running it spawns a shell
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0145715f-2188-42a3-910d-ad5e083373ab)
 
-- I'll add the remaining solved 2 pwn chall later
+### Fairplay [First Blood 🩸]
+
+I won't give detailed explanation but just TD;LR as I'm writing this months after the ctf ended
+
+This challenge deals with a one byte overwrite which we would take abuse of and overwrite a libc address call back main
+
+The main function would check if the value stored in the global variable `i` is `10` and if it is it spawns a shell
+
+So the goal is to call main 10 times and we can get that by doing the one byte overwrite to call back main multiple times
+
+Here's the expploit script: [link]()
+
+- I'll add the remaining solved 2 pwn chall later hopefully
 
 ## Cryptography
 
