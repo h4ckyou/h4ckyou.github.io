@@ -1,4 +1,4 @@
-<h3> Bsides Nairobi 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61f1b146-5006-4663-9503-ec66152f7e2d)<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
@@ -321,7 +321,32 @@ So at this point we have a way to set `rsi & rdx` to `0` and now we need to set 
 
 And yes to pass in `/bin/sh` to the `rdi` register we need to pass it as an address pointing to `/bin/sh` and not a string
 
-They wasn't any `mov` gadget to gives us the ability to write to memory
+They wasn't any `mov` gadget to gives us the `write-what-where` primitive so I had to come up with another way of using `/bin/sh` already in memory
 
+I ran the binary in gdb and after it receives our first input I searched for it and it happens to be stored in the virtual memory created 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/29b03633-7052-429c-b074-4ddf536db76d)
 
+That's so because the buffer content is going to be stored in the virtual memory space created:
 
+```c
+ptr = (undefined8 *)mmap((void *)0x999999000,0x1000,3,0x21,-1,0);
+*ptr = buffer;
+```
+
+Because the address `0x999999000` is always going to be the same this means we have a way of writing '/bin/sh' to memory
+
+The way I went about writing to memory is by using the last 8 byte address `0x999999038+1`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1dda5996-6232-45a0-be65-243332e305d4) 
+
+So instead of me spamming with 'A's like I'd normally do for the leaking part I actually spammed it with a space character:
+
+```
+- payload = ' '*57 + '/bin/sh'
+```
+
+This is to make sure that the address would just have `/bin/sh` and no other messey characters
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/79f623bf-6dbf-4fbc-8df6-f318c7b44960)
+
+At this point we have a way to set all register and now the rop chain should work
+
+Here's my final exploit: [link]()
