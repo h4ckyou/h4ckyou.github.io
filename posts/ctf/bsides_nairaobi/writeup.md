@@ -345,7 +345,7 @@ So instead of me spamming with 'A's like I'd normally do for the leaking part I 
 - payload = ' '*57 + '/bin/sh'
 ```
 
-This is to make sure that the address would just have `/bin/sh` and no other messey characters
+This is to make sure that the address would just have `/bin/sh` and no other messy characters
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/79f623bf-6dbf-4fbc-8df6-f318c7b44960)
 
 At this point we have a way to set all register and now the rop chain should work
