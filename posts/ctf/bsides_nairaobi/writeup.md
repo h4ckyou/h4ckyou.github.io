@@ -536,6 +536,12 @@ RAX is already set to 0x0: mov eax,0x0
 RDI is already set to 0x0: mov edi,0x0
 RDX size is already too much: lea rdx,[rbp-0x8]
 ```
+So our only concerning register is `RSI` though it's going to be the same value as `RDX` but I had issue with that so I decided to use another register
+
+Now let us inspect the registeres during runtime before it calls our shellcode
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/690df14f-f2d7-4412-9773-e864621c7b46)
+
+They are other registers that hold a stack address but I made use of the `R13` register which is actually a pointer to another stack address and that pointer holds the binary full path name
 
 
 Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
