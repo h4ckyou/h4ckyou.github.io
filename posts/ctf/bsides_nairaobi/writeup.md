@@ -272,5 +272,6 @@ So if we are to fill up the buffer it would overwrite the null byte then printf 
 And the amount of bytes to fill up the buffer is 64 before we can leak the `notcalled` function address
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3235db39-035a-4400-be72-5a515fd0ff67)
 
+At this point we know there's a way to leak an elf section addresses therefore having the elf base address
 
 
