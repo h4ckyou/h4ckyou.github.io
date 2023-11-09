@@ -251,5 +251,26 @@ undefined8 main(void)
 }
 ```
 
+Here's what it does:
+- Sets up a virtual memory space at address `0x999999000` of size `0x1000` with `PROC_READ & PROC_WRITE` permission
+- Then it receives our input which reads at most 64 bytes of our input and stored in the buffer
+- It uses printf to display the buffer content
+- It does some variable assigning and I don't really know the reason :(
+- Uses fgets to read in input to the buffer which reads in at most 200 bytes
+
+Looking at this we can tell there's a buffer overflow during the time it receives our input the second time
+
+But we can't do anything for now because PIE is enabled
+
+There's a way to leak it and that's through using printf since it receives 64 bytes of our input, and the thing about printf is that it would print until receiving a null byte
+
+Looking at the stack after it receives the first input I saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d3ef6f98-38ed-4658-a9dc-ae8619e31a76)
+
+So if we are to fill up the buffer it would overwrite the null byte then printf would leak that `notcalled` function address
+
+And the amount of bytes to fill up the buffer is 64 before we can leak the `notcalled` function address
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3235db39-035a-4400-be72-5a515fd0ff67)
+
 
 
