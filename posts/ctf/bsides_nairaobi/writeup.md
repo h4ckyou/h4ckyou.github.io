@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/61f1b146-5006-4663-9503-ec66152f7e2d)<h3> Bsides Nairobi 2023 </h3>
+<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
@@ -349,4 +349,10 @@ This is to make sure that the address would just have `/bin/sh` and no other mes
 
 At this point we have a way to set all register and now the rop chain should work
 
-Here's my final exploit: [link]()
+Here's my final exploit: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/bsides_nairaobi/Simple/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4e859bfc-1a4a-48d3-ab19-9a59a5365bfd)
+
+
+This are the challenges I've solved so far it remains:
+- Short
+- Conundrum v2
