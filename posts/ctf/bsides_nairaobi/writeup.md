@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6aac528f-8c5b-4a53-9698-b6a41cfc7fdd)<h3> Bsides Nairobi 2023 </h3>
+<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
