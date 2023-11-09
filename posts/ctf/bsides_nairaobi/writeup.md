@@ -395,7 +395,87 @@ So basically it calls the `setup()` function which does some buffering
 Next it calls the `junk()` function which display the fancy keyboard design
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66d56325-1f54-4bac-b6f3-3b9e46bdb6bf)
 
+And finally the `chall()` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/789f39fe-ba11-4d7d-ba42-e7646898fb47)
 
+```c
+
+void chall(void)
+
+{
+  undefined buffer [48];
+  
+  write(1,
+        "Gotta say, coming up with a whole backstory for a chall is hard! Anyway, what\'s your appro ach here: "
+        ,100);
+  read(0,buffer,256);
+  return;
+}
+```
+
+So it will display some words then receive our input using `read()` which will be stored in a buffer that can only hold up 48 bytes but we are given at most 256 bytes to read in
+
+Therefore there's a buffer overflow in this function
+
+Then after the program returns it does this comparism of the global variable `x` to `0xcc07c9` 
+
+The value stored there is already `0xcc07c9` meaning the comparism would return False
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e8ff0e73-162b-49da-85e2-24f5cc0fafc0)
+
+But if it was to be different it would call the `notcalled()` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4afc3fec-29c3-4a89-8d16-d9bb293d8101)
+
+```c
+
+void notcalled(void)
+
+{
+  undefined shellcode [8];
+  
+  write(1,"You managed to get here, awesome! Can i please have your autograph: ",0x44);
+  read(0,shellcode,8);
+  (*(code *)shellcode)();
+  return;
+}
+```
+
+And what this function will basically do is to run an 8 bytes shellcode received from us
+
+We can't really reach the function for now because there's no way of overwriting the global variable `x` to another value 
+
+I'm thinking it's there so as for us to see there's a function which isn't called my main directly 
+
+But the fact we can't overwrite the global variable doesn't mean we can't call the function cause after all there's a buffer overflow?
+
+Hmmmm but remember that PIE is enabled meaning that the binary memory address would be different each time the program runs
+
+So I decided to see how it looks like in a debugger when I overwrite the instruction pointer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8ff79e51-4399-4716-a781-e890a08fd428)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cabfe695-3bbc-4f87-add9-5ac905d6645e)
+
+Ok cool the offset is 56 now I decided to look at the way the overwrite works and saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/867425b1-e2d5-4bdf-85a7-43f366e10f39)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8474d79e-a31f-4b37-8eec-7b5ecc8595e8)
+
+That's nice we can see that it overwrote the last 2 bytes of the rip which basically means overwriting would start from the end of the address (lsb or ??)
+
+In our case we can see `0xa4141` the `0xa` is caused when i entered the "Enter" key 
+
+At this point we can basically call the `notcalled` function but how?
+
+The address of the function is always going to be different because of PIE but the last offset won't change
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/48766dfd-1ea8-47b7-a388-4df7fa2eb900)
+
+So that address would be always different but the last 3 nibbles would always be the same
+
+And because we can overwrite the last two bytes this means during the time we are overwriting we need to know the first nibble (??)
+
+For example:
+- We can overwrite 0x1337 to 0x4141
+- But the thing is that address would always be different: 0x2337, 0x3337, 0x4337, 0x5337 etc.
+- Though we see that the last three nibble are always the same
+- So if we are to overwrite the need the known first nibble 0x*f*337
+- 
 Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
 
 
