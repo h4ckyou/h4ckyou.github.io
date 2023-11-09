@@ -1,4 +1,4 @@
-<h3> Bsides Nairobi 2023 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e221952d-67ec-4d1f-906f-60abac4b7010)<h3> Bsides Nairobi 2023 </h3>
 
 ### Pwn Challenge Writeup:
 - Conundrum
@@ -286,5 +286,19 @@ Wow pwntools is saying there's no attribute called `got` which means there's no 
 
 I then confirmed by running that script in a debugger and on checking the got shows this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ff4ce5f-5c25-41f3-9378-a4ad63768f6b)
+
+We can clearly see that no any resolved libc function is there which means we can't possibly leak libc address
+
+At this point what next?
+
+Since this is `mug3njutsu` I had it in mind that this is solvable even though it starts looking hard (but the challenge name is `simple` 🥲)
+
+So I decided to check the available rop gadgets present in the binary
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/069e34ed-0fc9-415b-893e-0fcf58e6d5e1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3109bfb-996c-4e79-ae50-71b0642716ee)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8043dd6f-0e81-4cd0-b3a6-009bd6e6ae33)
+
+
+
 
 
