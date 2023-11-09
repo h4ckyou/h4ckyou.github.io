@@ -319,5 +319,9 @@ Ok this is worth using cause when you xor a register with it's register it will 
 
 So at this point we have a way to set `rsi & rdx` to `0` and now we need to set `rdi --> addr --> '/bin/sh'`
 
+And yes to pass in `/bin/sh` to the `rdi` register we need to pass it as an address pointing to `/bin/sh` and not a string
+
+They wasn't any `mov` gadget to gives us the ability to write to memory
+
 
 
