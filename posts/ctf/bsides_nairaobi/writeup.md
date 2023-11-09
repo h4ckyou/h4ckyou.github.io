@@ -273,5 +273,18 @@ And the amount of bytes to fill up the buffer is 64 before we can leak the `notc
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3235db39-035a-4400-be72-5a515fd0ff67)
 
 At this point we know there's a way to leak an elf section addresses therefore having the elf base address
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a377ce72-6a3b-488b-977c-fc7c601848bb)
+
+This chall so far is somewhat similar to the one I solved at Cyberlympics 2023 Prequal here's the writeup: [link](https://h4ckyou.github.io/posts/ctf/cyberlympics22/prequal/writeup.html)
+
+But the difference now is that I was able to ROP using Ret2Libc in that challenge but it doesn't work here?
+
+Since `printf` is being used, normally it can be used to leak the got values but I tried to see what the value is during runtime and I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e2755ea3-f222-4c09-85eb-d64a09a298f3)
+
+Wow pwntools is saying there's no attribute called `got` which means there's no resolved libc function during the execution?
+
+I then confirmed by running that script in a debugger and on checking the got shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ff4ce5f-5c25-41f3-9378-a4ad63768f6b)
 
 
