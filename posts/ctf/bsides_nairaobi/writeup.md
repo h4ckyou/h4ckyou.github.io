@@ -496,6 +496,46 @@ So I made this function to work with that
 To disabled ASLR run this:
 - echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
+Now we can safely jump to the `notcalled` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c68bf288-6f13-4ab2-bbdc-b328ad6284c4)
+
+Let's see what this function provides for us
+
+From the decompilation earlier we saw that it would run 8 bytes shellcode given
+
+But ideally that's too small for us to do anything
+
+In this case I would love to spawn a shell but 8 bytes is just too small for our shellcode size!
+
+So what now?
+
+Well why don't read in a larger input size and cast the input as code 🤔
+
+That's exactly what I did:- A two staged shellcode (i think that's what they call it)
+
+For us to read in a larger input size I used the read syscall
+
+```
+rax = 0x0
+read(unsigned int fd, char *buf, size_t count)
+```
+
+If we try to use something like that we would see the size exceeds 8
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/046ac115-1d27-4506-a368-09e6d15d2917)
+
+Jeez 25 bytes (But of cause they are ways to make it way smaller..... but I couldn't achieve that!)
+
+So instead this is what i did:
+- Made use of register already inplace
+
+If we take a look at the register before it calls our shellcode you should see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6eb7a39b-16fc-4b79-8b77-fa850133c8f2)
+
+```
+RAX is already set to 0x0: mov eax,0x0
+RDI is already set to 0x0: mov edi,0x0
+RDX size is already too much: lea rdx,[rbp-0x8]
+```
 
 
 Ah the moment the shell finally spawned I was like woohhhhhoooooooooo
