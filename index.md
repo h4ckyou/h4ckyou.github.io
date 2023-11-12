@@ -132,7 +132,7 @@ Arigato 🫠
 * * *
 ### **CTF Writeups:~#**
 * * *
-- [[Jan 14 2023]] [Sabr CTF](https://markuched13.github.io/posts/ctf/sabr/sabr.html) `Web, Misc, Pwn, RE`
+- [[Jan 14 2023]] [Sabr CTF](https://h4ckyou.github.io/posts/ctf/sabr23/writeup.html) `Web, Misc, Pwn, RE`
 - [[Jan 30 2023]] [BIC Winter CTF](https://h4ckyou.github.io/posts/ctf/bic23/bicctf.html) `RE,` `Pwn`
 - [[Mar 07 2023]] [DP CTF](https://h4ckyou.github.io/posts/ctf/dp23/dpctf.html) `Web, Pwn, RE`
 - [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup.html) `General, Web, Crypto, Forensics, Pwn, RE`
