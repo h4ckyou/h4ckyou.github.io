@@ -83,7 +83,7 @@ I checked the second link but instead this shows another page that has 2 links a
 
 I kept on clicking and it kept on redirecting to a new page that has new links to click or it shows `nope`.
 
-Obviously scripting your way out is the best thing to do. I read lots from stackoverflow questions and past ctfs to be able to generate this working exploit code written in python.
+Obviously scripting your way out is the best thing to do. I made the solve script (with the help of chatgpt: noob coder smh) 
 
 Here's the solve script [Solve](https://github.com/markuched13/markuched13.github.io/blob/main/solvescript/sabr/web/tunnel_vision.py)
 
@@ -1187,7 +1187,7 @@ So I downloaded the file to my machine to analyze it.
 On checking the file type and protections enabled showed this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/583f73fd-5957-4e55-9920-9b18807dfb4c)
 
-We're working with a x64 binaary which is dynamically linked and not stripped 
+We're working with a x64 binary which is dynamically linked and not stripped 
 
 I ran the binary to get an overview of how it works
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2f4c900-a1a5-423d-9950-2d323509c886)
