@@ -101,6 +101,16 @@ Here's what it does:
     - variable `c` is defined to hold the result of the value of `b` multiplied with 3 and subtracted with 7
     - then finally the encrypted character is formed from xoring the value of `c` with 23
 
+So now to retrieve the plaintext from the encrypted text the process is this:
+
+```
+c = encrypted_char ^ 23
+b = (c + 7) // 3
+a = (b - 5) ^ 42
+flag = (a - 10) // 2
+```
+
+With that I wrote a solve script
 
 
 
