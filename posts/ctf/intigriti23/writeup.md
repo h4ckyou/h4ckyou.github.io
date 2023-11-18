@@ -134,9 +134,23 @@ Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/
 
 Ret2win overwrite the lsb return address
 
-Solve [script]()
+Solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/intigriti23/hidden/solve.py)
 
+##### Floor Mat Store
 
+Format string bug to leak flag after choosing choice 6
+
+Solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/intigriti23/Floor%20Mat%20Store/solve.py)
+
+#### Reversing
+
+##### Flag Checker
+
+Some kinda complex math going on in the rust file 
+
+I just solve it using z3
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/intigriti23/flag%20checker/solve.py)
 
 
 
