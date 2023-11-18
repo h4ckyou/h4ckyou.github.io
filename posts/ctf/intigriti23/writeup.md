@@ -126,10 +126,15 @@ Flag: INTIGRITI{m4yb3_4_k3y_w0uld_b3_b3773r_4f73r_4ll}
 
 This is NoSQL Injection to dump the flag
 
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/intigriti23/ctfc/solve.py)
 
+#### Pwn
 
+##### Hidden
 
+Ret2win overwrite the lsb return address
 
+Solve [script]()
 
 
 
