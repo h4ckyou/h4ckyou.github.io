@@ -80,6 +80,39 @@ How can we decrypt it?
 
 Well we just need to reverse the process and luckily nothing hard was done there
 
+This is the encryption algorithm:
+
+```python
+def encrypt(message):
+    encrypted_message = ""
+    for char in message:
+        a = (ord(char) * 2) + 10
+        b = (a ^ 42) + 5
+        c = (b * 3) - 7
+        encrypted_char = c ^ 23
+        encrypted_message += chr(encrypted_char)
+    return encrypted_message
+```
+
+Here's what it does:
+- For each character in the plaintext flag value it does this:
+    - variable `a` is defined to hold the result of the decimal value of the character multiplied with 2 and added with 10
+    - variable `b` is defined to hold the result of the value of `a` xored with 42 and added with 5
+    - variable `c` is defined to hold the result of the value of `b` multiplied with 3 and subtracted with 7
+    - then finally the encrypted character is formed from xoring the value of `c` with 23
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
