@@ -119,6 +119,12 @@ Running it works:
 Flag: INTIGRITI{m4yb3_4_k3y_w0uld_b3_b3773r_4f73r_4ll}
 ```
 
+#### Web
+
+##### CTFC
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4b28656f-dad4-4300-937d-deb55298189a)
+
+This is NoSQL Injection to dump the flag
 
 
 
