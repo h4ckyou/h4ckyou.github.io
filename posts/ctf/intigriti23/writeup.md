@@ -110,9 +110,14 @@ a = (b - 5) ^ 42
 flag = (a - 10) // 2
 ```
 
-With that I wrote a solve script
+With that I wrote a solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/intigriti23/keyless/solve.py)
 
+Running it works:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02d47ab3-39fe-48ce-8bee-1bd5e3375a39)
 
+```
+Flag: INTIGRITI{m4yb3_4_k3y_w0uld_b3_b3773r_4f73r_4ll}
+```
 
 
 
