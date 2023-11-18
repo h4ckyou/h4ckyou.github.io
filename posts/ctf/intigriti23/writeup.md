@@ -48,3 +48,51 @@ Using [link](https://www.dcode.fr/chiffre-rsa) I got the flag
 ```
 Flag: INTIGRITI{0r_n07_50_53cur3_m4yb3}
 ```
+
+##### Keyless
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fb3ac212-2408-4e63-aa14-b2dae187cd8b)
+
+Downloading the attached file and unzipping it shows this python file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/37117060-02d9-4b06-b6c1-e9ba5d8a164b)
+
+```python
+def encrypt(message):
+    encrypted_message = ""
+    for char in message:
+        a = (ord(char) * 2) + 10
+        b = (a ^ 42) + 5
+        c = (b * 3) - 7
+        encrypted_char = c ^ 23
+        encrypted_message += chr(encrypted_char)
+    return encrypted_message
+
+flag = "INTIGRITI{REDACTED}"
+encrypted_flag = encrypt(flag)
+
+with open("flag.txt.enc", "w") as file:
+    file.write(encrypted_flag)
+```
+
+So basically this python file encrypts the flag and the output was written to `flag.txt.enc`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c90681e2-9466-4bb1-b3bd-28a1b48f3271)
+
+How can we decrypt it?
+
+Well we just need to reverse the process and luckily nothing hard was done there
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
