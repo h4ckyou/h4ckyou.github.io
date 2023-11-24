@@ -245,7 +245,7 @@ The flag was in the environment variable
 Flag: abcctf{51MP13_r3P0r7_607_Y0U_7H3_F146}
 ```
 
-This is all I believe I don't need to make a writeup on the remaining one cause it's pretty much solvable by anyone just `strings & grep`
+This is all I believe I don't need to make a writeup on the remaining ones I solvef cause it's pretty much solvable by anyone just `strings & grep`
 
 Welp that's all I did 😛
 
