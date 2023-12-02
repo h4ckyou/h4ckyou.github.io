@@ -1,0 +1,87 @@
+  ~/Desktop/CTF/Urchinsec/Rev/Sexyprime ❯ python3
+Python 3.11.6 (main, Oct  8 2023, 05:06:43) [GCC 13.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> chr(0x63)
+'c'
+>>> chr(0x6)
+'\x06'
+>>> chr(0x68)
+'h'
+>>> chr(0xf0)
+'ð'
+>>> chr(0x69)
+'i'
+>>> flag = 'ur'
+>>> 
+>>> flag += chr(0x63)
+>>> flag += chr(0x68)
+>>> flag += chr(0x69)
+>>> flag += chr(0x6e)
+>>> flag
+'urchin'
+>>> flag += chr(0x73)
+>>> flag += chr(0x65)
+>>> flag
+'urchinse'
+>>> flag += chr(0x63)
+>>> flag
+'urchinsec'
+>>> flag += chr(0x7b)
+>>> flag
+'urchinsec{'
+>>> flag += chr(0x73)
+>>> flag += chr(0x65)
+>>> flag += chr(0x78)
+>>> flag += chr(0x79)
+>>> flg
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'flg' is not defined. Did you mean: 'flag'?
+>>> flag
+'urchinsec{sexy'
+>>> flag += chr(0x5f)
+>>> flag += chr(0x70)
+>>> flag += chr(0x72)
+>>> flag += chr(0x69)
+>>> flag
+'urchinsec{sexy_pri'
+>>> flag += chr(0x6d)
+>>> flag
+'urchinsec{sexy_prim'
+>>> flag += chr(0x65)
+>>> flag += chr(0x73)
+>>> flag
+'urchinsec{sexy_primes'
+>>> flag += chr(0x5f)
+>>> flag
+'urchinsec{sexy_primes_'
+>>> flag += chr(0x70)
+>>> flag += chr(0x72)
+>>> flag
+'urchinsec{sexy_primes_pr'
+>>> flag += chr(0x69)
+>>> flag += chr(0x6d)
+>>> flag += chr(0x69)
+>>> flag
+'urchinsec{sexy_primes_primi'
+>>> flag += chr(0x6e)
+>>> flag
+'urchinsec{sexy_primes_primin'
+>>> flag += chr(0x67)
+>>> flag
+'urchinsec{sexy_primes_priming'
+>>> chr(0x7d(
+... chr(0x7
+... )
+... 
+... )
+... 
+KeyboardInterrupt
+>>> chr(0x7)
+'\x07'
+>>> chr(0x7d)
+'}'
+>>> flag += chr(0x7d)
+>>> flag
+'urchinsec{sexy_primes_priming}'
+>>>
