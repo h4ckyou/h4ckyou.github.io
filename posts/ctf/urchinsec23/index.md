@@ -4,7 +4,7 @@
 
 I will make a detailed solution for the challenges I solved later 
 
-For now you can view the solve script of some challenges: 
+For now you can view the solve script of some challenges: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/)
 
 I played as `@rizz` 🙂
 
