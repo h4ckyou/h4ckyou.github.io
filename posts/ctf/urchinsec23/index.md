@@ -2,9 +2,9 @@
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1f0815f9-8bb1-4c87-b612-69c1107d0b7d)
 
-I will make a detailed solution for the challenges I solved later 
+I wanted to make a detailed solution.......... but eventually felt lazy to do so
 
-For now you can view the solve script of some challenges: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/)
+So you can view the solve script of some challenges: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/)
 
 I played as `@rizz` 🙂
 
