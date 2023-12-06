@@ -37,7 +37,58 @@ So we're working with a x64 binary which is dynamically linked and not stripped
 
 Running it keeps printing out `6` for some reason
 
-Decompiling it in Ghidra shows this
+Decompiling it in Ghidra and going over to the main function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/21b121cb-880e-4edf-8707-537536dfbd1e)
+
+```c
+undefined8 main(void)
+
+{
+  sexyprime();
+  return 0;
+}
+```
+
+Nothing really there except that it calls the `sexyprime` function
+
+Here's the decompiled `sexyprime` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4918dd40-aede-41e4-a019-a9664fdeee65)
+
+```c
+void sexyprime(void)
+
+{
+  long in_FS_OFFSET;
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  printf("%d",6);
+  if (canary != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+```
+
+Looking at it we can see it just indeeds prints out `6` but is that all?
+
+Ghidra does not seem to decompile the binary well I have no idea why, but if you take a look at the assembly decompilation you'd see it does some other stuffs
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6a146c4f-af52-441d-86d9-78a6c99f0ffb)
+
+At some point it's supposed to receive user input but that check isn't being reached
+
+So I decided to manually step through each instruction to figure why it doesn't work
+
+I set a breapoint in the `sexyprime` function:
+
+```
+break *sexyprime
+```
+
+At `sexyprime+58` I saw that it does a comparison on `$rbp-0x80` to `0x6`, checking the current value shows it's right
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/390db2f2-9c3b-4402-8431-374f484a018a)
+
 
 
 I played as `@rizz` 🙂
