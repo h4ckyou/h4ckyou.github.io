@@ -28,6 +28,18 @@ I will be writing on the crypto, pwn and rev challenges that I solved.
 #### Pwn
 - BOF
 
+### Reverse Engineering
+
+#### Sexy Primes
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de1ea3d1-5038-47b5-b4ac-6bfd76fac54b)
+
+So we're working with a x64 binary which is dynamically linked and not stripped
+
+Running it keeps printing out `6` for some reason
+
+Decompiling it in Ghidra shows this
+
+
 I played as `@rizz` 🙂
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa3e5b95-6373-493f-9ce9-c69069021017)
