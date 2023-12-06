@@ -869,6 +869,7 @@ I played as `@rizz` 🙂
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa3e5b95-6373-493f-9ce9-c69069021017)
 
 Till next time
+![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 ![Alt Text](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a82acdb6-6a75-43eb-8107-211bbbeccfc4)
 
 
