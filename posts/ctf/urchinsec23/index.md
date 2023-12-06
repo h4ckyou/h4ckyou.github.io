@@ -463,8 +463,14 @@ Since I know the plaintext and ciphertext I can just xor them both to retrieve t
 
 Ok that looks right, with that I just wrote a script to decrypt the flag
 
+Here's my solve script: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/reverse/Suger%20Plum/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/329ae3e6-b031-425d-b6e9-c3f64179a77f)
 
+```
+Flag: urchinsec{I4M_santas_f4v0rit1_1eELF}
+```
 
+That's all for the reverse engineering I did! I remember that I spent a lot of time trying to solve `Albaster` but it refused to let me solve it 😂
 
 
 
