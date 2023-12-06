@@ -850,25 +850,25 @@ Running the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/post
 Flag: urchinsec{1t's_Qu1t3_Th3_H4rd_BUt_E4syy5}
 ```
 
+### Binary Exploitation
 
+The challenges here were very few and I was able to solve just one easy one out of two
 
+The second pwn was Heap related and I have no idea about Heap that's why I couldn't solve it
 
+As to regarding the first one I'm too lazy to make writeup but incase you're interested in reading the "general way" I'd use to solve it check here: [link](https://h4ckyou.github.io/posts/bof/index.html)
 
+The challenge idea was just a basic variable overwrite to `0xcafebabe` at offset 42
 
+Here's the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/pwn/BOF/solve.py)
 
-
-
-
-
-
-
-
-
-
-
-
-
+Welp that's all xD
 
 I played as `@rizz` 🙂
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa3e5b95-6373-493f-9ce9-c69069021017)
+
+Till next time
+![hack](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a82acdb6-6a75-43eb-8107-211bbbeccfc4)
+
+
