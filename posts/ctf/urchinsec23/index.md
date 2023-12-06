@@ -14,8 +14,19 @@ The organizers put a prize on the best writeup that would be provided then I cam
 
 I will be writing on the crypto, pwn and rev challenges that I solved.
 
-### Reverse Engineering
+#### Reverse Engineering
+- Sexy Primes
+- UrchinFlag
+- SugarPlum
 
+#### Cryptography
+- Minstix
+- SantaZIP
+- Honey Sea
+- By Polar RSA
+
+#### Pwn
+- BOF
 
 I played as `@rizz` 🙂
 
