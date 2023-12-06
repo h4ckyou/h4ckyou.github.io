@@ -771,12 +771,83 @@ ct = cipher[28:-32]
 
 Cause the signaure is 16 bytes and the iv is 14 bytes 🙂
 
-Finally the solve script ❤️‍🔥
+Finally the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/crypto/Honey%20SEA/solve.py) ❤️‍🔥
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3ec19d20-304d-4b8d-8368-62fa0560e273)
 
+Running it gives the flag after about ~10mins
 
+```
+Flag:
+```
 
+#### By Polar RSA
 
+We were given two files: `cipher, By_Polar_RSA.py`
 
+Here's the content of `By_Polar_RSA.py`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/459d5c3a-992f-4016-b5e8-50169cf344b7)
+
+```python
+from Crypto.Util.number import getPrime, long_to_bytes
+import random
+import sympy.ntheory as nt
+
+def g_prime(bit_length):
+    return getPrime(bit_length)
+
+def g_rsa_pair(bit_length):
+    p = g_prime(bit_length)
+    q = nt.nextprime(p)
+    
+    x, y = 1337, 5000
+    for _ in range(random.randint(x, y)):
+        q = nt.nextprime(q)
+
+    N = p * q
+    phi_N = (p - 1) * (q - 1)
+    e = 65537
+    d = pow(e, -1, phi_N)  
+    public_key = (N, e)
+    private_key = (N, d)
+    return public_key, private_key
+
+def enryption(message, public_key):
+    N, e = public_key
+    pt = btl(message.encode())
+    ct = pow(pt, e, N)
+    return ct
+
+bit_length = 1024
+public_key, _ = g_rsa_pair(bit_length)
+msg = "urchinsec{Fake_Flag}"
+ciphertext = enryption(msg, public_key)
+print(f"n: {public_key[0]}")
+print(f"e: {public_key[1]}")
+print(f"cipher: {ciphertext}")
+```
+
+So this challenges after I looked at it I didn't find anything weird except this:
+
+```python
+q = nt.nextprime(p)
+
+for _ in range(random.randint(x, y)):
+    q = nt.nextprime(q)
+```
+
+I looked up to google and found a similar thing from this writeup: [reference](https://ctftime.org/writeup/38102)
+
+And it did Fermet Attack
+
+I edited the script being used there to use the cipher values given to us
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3e30564-bd81-4d64-9801-517137d94b5c)
+
+Running the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/crypto/By%20Polar%20RSA/solve.py) gave the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/127d1f1b-511d-49ed-800c-7f61c8021d1d)
+
+```
+Flag: urchinsec{1t's_Qu1t3_Th3_H4rd_BUt_E4syy5}
+```
 
 
 
