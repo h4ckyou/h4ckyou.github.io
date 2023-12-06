@@ -612,14 +612,56 @@ I'll be starting from the `__init__` method
 - The next portion is the function which would generate the zip file
   - First it would set the password as the provided password which in this case we don't know
   - The iv and salt are 16 random bytes (really secure i think)
-  - the key is going to be generated using PBKDF2 with salt as the random 16 bytes
+  - The key is going to be generated using PBKDF2 with salt as the random 16 bytes
   - Then the content of `flag.txt` is stored in variable `plaintext`
   - It compresses the plaintext using `zlib`
   - Then it pads the compressed data with space character
   - Then the ciphertext is formed by using AES CBC mode where the key is the generated PBKDF2 key and the iv is the 16 random bytes
   - It would write the salt, iv and ciphertext to the zip output file
 
-  
+At this point the code really looks secured right?
+
+Next thing I checked was how to decrypt AES CBC encrypted data and found the documentation: [docs](https://pycryptodome.readthedocs.io/en/latest/src/cipher/aes.html)
+
+So the step is really the same except this time we use `cipher.decrypt`
+
+```python
+from Crypto.Cipher import AES
+cipher = AES.new(key, AES.MODE_CBC, iv)
+pt = cipher.decrypt(ct)
+```
+
+Look well at this point we can see that the iv is known and not just that but also the salt
+
+With the iv being known means we can potentially decrypt the ciphertext but that can only occur when we know the key
+
+Looking back at the code the key is generated using this:
+
+```python
+key = PBKDF2(password, salt, dkLen=32, count=1000000)
+```
+
+Ok this is good because we know the salt meaning there's possiblilty of us brute forcing the password (which happens to be the hint xD)
+
+The idea is going to be just to recreate the process but this time we are decrypting the ciphertext where the password being used is from brute forcing
+
+Now where is the salt & iv?
+
+Look here:
+
+```python
+with open(self.zip_output, "wb") as output_file:
+    output_file.write(salt)
+    output_file.write(iv)
+    output_file.write(ciphertext)
+```
+
+Since the salt and iv are 16 bytes that means we can differientiate it from the ciphertext
+
+With that said here's a screenshot of my solve script
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7d063126-e4db-4c09-a02b-d7e6ae3d0156)
+
+
 
 
 
