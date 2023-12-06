@@ -473,10 +473,74 @@ Flag: urchinsec{I4M_santas_f4v0rit1_1eELF}
 
 That's all for the reverse engineering I did! I remember that I spent a lot of time trying to solve `Albaster` but it refused to let me solve it 😂
 
+### Cryptography
 
+#### Minstix
 
+We were given three files `main.py, pew.key, secret_zip.fzip`
 
+Checking the content of `main.py` shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b074971-02c0-4894-b49c-e7c969baa991)
 
+```python
+from cryptography.fernet import Fernet
+
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+
+zip_filename = "fernet.zip"
+with open(zip_filename, 'rb') as file:
+    file_data = file.read()
+
+encrypted_data = cipher_suite.encrypt(file_data)
+
+encrypted_zip_filename = "secret_zip.fzip"
+with open(encrypted_zip_filename, 'wb') as encrypted_zip_file:
+    encrypted_zip_file.write(encrypted_data)
+
+with open("pew.key", "wb") as key_file:
+    key_file.write(key)
+```
+
+Looking at this code we can see it implements Fernet cryptography and then it encryptes the zipfile data using the generated key and writes the encrypted value content to `secret_zip.fzip`
+
+The interesting thing about this challenge which makes it easy is that the key is given which is `pew.key` file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/effdabc4-ed0d-4fe2-9d4b-5551ccce1d38)
+
+So we can easily just decrypt it 
+
+Looking at the documentation I found how to decrypt it: [docs](https://cryptography.io/en/latest/fernet/)
+
+And I was able to implement it and decrypt the fzip file, here's my solve script:
+
+```python
+from cryptography.fernet import Fernet
+
+with open("secret_zip.fzip", "rb") as fp:
+    file_data = fp.read()
+
+with open("pew.key") as fp:
+    key = fp.read()
+
+f = Fernet(key)
+d = f.decrypt(file_data)
+
+with open('dump.zip', 'wb') as fp:
+    fp.write(d)
+```
+
+Running it works but when I tried to unzip the zip file it requires a password
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2612c7cf-e7fb-4b9c-bbb3-dc96375c6f4f)
+
+Luckily the password was easily cracked by JohnTheRipper
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f0def6d4-2997-40f3-a5fe-0bc68f90e579)
+
+The password is: `dexter` and now we can unzip it and get our flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/379244b3-3352-4d0d-a518-950420142d58)
+
+```
+Flag: urchinsec{FERNET_SYMMETRIC_ENCRYPTION_WITHZIP_FILES}
+```
 
 
 
