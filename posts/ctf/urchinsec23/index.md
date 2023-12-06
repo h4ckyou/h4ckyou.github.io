@@ -244,6 +244,7 @@ It would write the encrypted content to a file named `enc`
 Let's decompile it in Ghidra to see what this binary has to offer!
 
 Looking at the available functions I could tell it's a rust binary cause ghidra was able to identify it
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aae03de2-122a-47ba-a433-7a9036f21f92)
 
 Moving over to the main function shows this
@@ -382,7 +383,7 @@ The first thing the binary would do is to try open the `flag.txt` file using:
 std::fs::File::open
 ```
 
-Then eventually calls the `xor_encrypt` function
+Then it eventually calls the `xor_encrypt` function
 
 ```rust
 undefined8 *
