@@ -542,7 +542,74 @@ The password is: `dexter` and now we can unzip it and get our flag
 Flag: urchinsec{FERNET_SYMMETRIC_ENCRYPTION_WITHZIP_FILES}
 ```
 
+#### SantaZIP
 
+Hmmmm this challenge was an interesting one, I never planned on doing anything crypto related cause that isn't what I do
+
+But in this ctf I was able to solve all crypto challenges which surprised me 😅
+
+We were given three files: `app.py, santazip.py, flag.zip`
+
+Checking the content of `app.py` shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4301703f-bba6-4b62-8702-10ada55452e5)
+
+```python
+from santazip import SantaZip
+
+zip_object = SantaZip("flag.txt", "flag.zip", "[REDACTED]")
+print(zip_object.generate_zip_file())
+```
+
+So this would import the Class `SantaZip` from the `santazip.py` file, then it would pass in `flag.txt, flag.zip, testing` as the paramater
+
+It would then generate the encrypted zip file
+
+At this point there's nothing we know aside that it would generate a zip so let's take a look at the `santazip.py` file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/897ad8f1-92b4-4394-9102-08a459b3e6c5)
+
+```python
+from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import PBKDF2
+from Crypto.Random import get_random_bytes
+import zlib
+import struct
+
+class SantaZip(object):
+    def __init__(self, file_to_zip, zip_output, password):
+        self.file_to_zip = file_to_zip
+        self.zip_output = zip_output
+        self.password = password
+
+    def generate_zip_file(self):
+        try:
+            password = self.password
+            salt = get_random_bytes(16)
+            iv = get_random_bytes(16)
+            key = PBKDF2(password, salt, dkLen=32, count=1000000)
+            cipher = AES.new(key, AES.MODE_CBC, iv)
+            with open(self.file_to_zip, "rb") as input_file:
+                plaintext = input_file.read()
+
+            compressed_data = zlib.compress(plaintext)
+            padded_data = compressed_data + b' ' * (16 - len(compressed_data) % 16)
+            ciphertext = cipher.encrypt(padded_data)
+
+            with open(self.zip_output, "wb") as output_file:
+                output_file.write(salt)
+                output_file.write(iv)
+                output_file.write(ciphertext)
+            
+            return f"{self.file_to_zip} is zipped into {self.zip_output}"
+        except Exception as e:
+            return f"Error : {e}"
+```
+
+So this might look hard or no? But if you look at it well you'd see it's pretty easy
+
+I'll be starting from the `__init__` method
+- It defines the parameter being passed into this class as the `file_to_zip, zip_output, password` respectively
+  - So this means the file to zip is: `flag.txt`, the zip output should be: `flag.zip` and finally the password is unknown since they REDACT it (too bad)
+- 
 
 
 
