@@ -609,7 +609,17 @@ So this might look hard or no? But if you look at it well you'd see it's pretty 
 I'll be starting from the `__init__` method
 - It defines the parameter being passed into this class as the `file_to_zip, zip_output, password` respectively
   - So this means the file to zip is: `flag.txt`, the zip output should be: `flag.zip` and finally the password is unknown since they REDACT it (too bad)
-- 
+- The next portion is the function which would generate the zip file
+  - First it would set the password as the provided password which in this case we don't know
+  - The iv and salt are 16 random bytes (really secure i think)
+  - the key is going to be generated using PBKDF2 with salt as the random 16 bytes
+  - Then the content of `flag.txt` is stored in variable `plaintext`
+  - It compresses the plaintext using `zlib`
+  - Then it pads the compressed data with space character
+  - Then the ciphertext is formed by using AES CBC mode where the key is the generated PBKDF2 key and the iv is the 16 random bytes
+  - It would write the salt, iv and ciphertext to the zip output file
+
+  
 
 
 
