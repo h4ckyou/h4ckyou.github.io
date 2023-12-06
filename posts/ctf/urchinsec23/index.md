@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fda93a10-19d9-4d65-beaa-59ab83d37676)<h3> Urchinsec XMAS 2023 CTF </h3>
+<h3> Urchinsec XMAS 2023 CTF </h3>
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1f0815f9-8bb1-4c87-b612-69c1107d0b7d)
 
@@ -243,7 +243,226 @@ It would write the encrypted content to a file named `enc`
 
 Let's decompile it in Ghidra to see what this binary has to offer!
 
-Moving over to the main function shows the decompilation of a rust binary 🤮
+Looking at the available functions I could tell it's a rust binary cause ghidra was able to identify it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aae03de2-122a-47ba-a433-7a9036f21f92)
+
+Moving over to the main function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/80e0b372-ec2a-4d35-baf0-481838c04594)
+
+I don't know rust but this looks like it's calling `sugerplum::main`, clicking that shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/868e1295-50a0-46bf-9c84-7491eba40ca8)
+
+```rust
+
+/* sugarplum::main */
+
+undefined8 sugarplum::main(void)
+
+{
+  undefined8 uVar1;
+  undefined auVar2 [16];
+  undefined8 local_148;
+  undefined4 local_13c;
+  int local_138;
+  undefined4 local_134;
+  undefined8 local_130;
+  undefined local_128 [16];
+  undefined local_118 [24];
+  long local_100;
+  undefined8 local_f8;
+  undefined local_f0 [16];
+  undefined local_e0 [28];
+  undefined4 local_c4;
+  int local_c0;
+  undefined4 local_bc;
+  undefined8 local_b8;
+  undefined local_b0 [16];
+  long local_a0;
+  undefined local_98 [52];
+  undefined4 local_64;
+  undefined8 local_50;
+  char *local_48;
+  undefined8 local_40;
+  undefined4 local_34;
+  long local_30;
+  undefined8 local_28;
+  undefined8 local_20;
+  undefined8 local_18;
+  char *local_10;
+  undefined8 local_8;
+  
+  std::fs::File::open(local_128,
+                      "flag.txtextern \"NulErrorencYour Data Is Secured!\nError: \n/rustc/cc66ad4689 55717ab92600c770da8c1601a4ff33/library/core/src/alloc/layout.rs"
+                      ,8);
+  <>::branch(&local_138,local_128);
+  if (local_138 == 0) {
+    local_64 = local_134;
+    local_13c = local_134;
+                    /* try { // try from 0010b7d9 to 0010b7e5 has its CatchHandler @ 0010b81d */
+    alloc::vec::Vec<T>::new(local_118);
+                    /* try { // try from 0010b833 to 0010b850 has its CatchHandler @ 0010b862 */
+    <>::read_to_end(local_f0,&local_13c,local_118);
+                    /* try { // try from 0010b878 to 0010b950 has its CatchHandler @ 0010b862 */
+    <>::branch(&local_100,local_f0);
+    if (local_100 == 0) {
+      local_50 = local_f8;
+      local_10 = 
+      "cafebabe1337007flag.txtextern \"NulErrorencYour Data Is Secured!\nError: \n/rustc/cc66ad46895 5717ab92600c770da8c1601a4ff33/library/core/src/alloc/layout.rs"
+      ;
+      local_8 = 0xf;
+      local_48 = 
+      "cafebabe1337007flag.txtextern \"NulErrorencYour Data Is Secured!\nError: \n/rustc/cc66ad46895 5717ab92600c770da8c1601a4ff33/library/core/src/alloc/layout.rs"
+      ;
+      local_40 = 0xf;
+      auVar2 = <>::deref(local_118);
+      xor_encrypt(local_e0,auVar2._0_8_,auVar2._8_8_,
+                  "cafebabe1337007flag.txtextern \"NulErrorencYour Data Is Secured!\nError: \n/rustc /cc66ad468955717ab92600c770da8c1601a4ff33/library/core/src/alloc/layout.rs"
+                  ,0xf);
+                    /* try { // try from 0010b953 to 0010b96b has its CatchHandler @ 0010b980 */
+      std::fs::File::create
+                (local_b0,
+                 "encYour Data Is Secured!\nError: \n/rustc/cc66ad468955717ab92600c770da8c1601a4ff33 /library/core/src/alloc/layout.rs"
+                 ,3);
+                    /* try { // try from 0010b996 to 0010b9aa has its CatchHandler @ 0010b980 */
+      <>::branch(&local_c0,local_b0);
+      if (local_c0 == 0) {
+        local_34 = local_bc;
+        local_c4 = local_bc;
+                    /* try { // try from 0010b9cf to 0010b9db has its CatchHandler @ 0010ba20 */
+        auVar2 = <>::deref(local_e0);
+                    /* try { // try from 0010ba36 to 0010badc has its CatchHandler @ 0010ba20 */
+        uVar1 = std::io::Write::write_all(&local_c4,auVar2._0_8_,auVar2._8_8_);
+        local_a0 = <>::branch(uVar1);
+        if (local_a0 == 0) {
+          core::fmt::Arguments::new_const(local_98,&DAT_0015ff38,1);
+          std::io::stdio::_print(local_98);
+                    /* try { // try from 0010bae8 to 0010baf4 has its CatchHandler @ 0010b980 */
+          core::ptr::drop_in_place<>(&local_c4);
+                    /* try { // try from 0010baf7 to 0010bb03 has its CatchHandler @ 0010b862 */
+          core::ptr::drop_in_place<>(local_e0);
+                    /* try { // try from 0010bb06 to 0010bb12 has its CatchHandler @ 0010b81d */
+          core::ptr::drop_in_place<>(local_118);
+          core::ptr::drop_in_place<>(&local_13c);
+          return 0;
+        }
+        local_30 = local_a0;
+        local_148 = <>::from_residual(local_a0,&PTR_s_src/main.rs_0015ff48);
+                    /* try { // try from 0010bb35 to 0010bb41 has its CatchHandler @ 0010b980 */
+        core::ptr::drop_in_place<>(&local_c4);
+      }
+      else {
+        local_28 = local_b8;
+                    /* try { // try from 0010b9f8 to 0010ba03 has its CatchHandler @ 0010b980 */
+        local_148 = <>::from_residual(local_b8,&PTR_s_src/main.rs_0015ff60);
+      }
+                    /* try { // try from 0010bb44 to 0010bb50 has its CatchHandler @ 0010b862 */
+      core::ptr::drop_in_place<>(local_e0);
+    }
+    else {
+      local_20 = local_f8;
+      local_148 = <>::from_residual(local_f8,&PTR_s_src/main.rs_0015ff78);
+    }
+                    /* try { // try from 0010bb6a to 0010bb76 has its CatchHandler @ 0010b81d */
+    core::ptr::drop_in_place<>(local_118);
+    core::ptr::drop_in_place<>(&local_13c);
+  }
+  else {
+    local_18 = local_130;
+    local_148 = <>::from_residual(local_130,&PTR_s_src/main.rs_0015ff90);
+  }
+  return local_148;
+}
+```
+
+Honestly I had no idea what that is exactly but thanks to `debug_symbols` being enabled I was able to identify what that does
+
+The first thing the binary would do is to try open the `flag.txt` file using:
+
+```rust
+std::fs::File::open
+```
+
+Then eventually calls the `xor_encrypt` function
+
+```rust
+undefined8 *
+sugarplum::xor_encrypt
+          (undefined8 *param_1,undefined8 param_2,undefined8 param_3,long param_4,ulong param_5)
+
+{
+  ulong uVar1;
+  undefined auVar2 [16];
+  undefined8 local_b0;
+  undefined8 local_a8;
+  undefined8 local_a0;
+  undefined8 local_98;
+  undefined8 local_90;
+  undefined8 local_88;
+  undefined local_80 [24];
+  undefined8 local_68;
+  undefined8 local_60;
+  undefined8 local_58;
+  undefined local_50 [16];
+  undefined8 local_40;
+  undefined8 local_38;
+  long local_30;
+  ulong local_28;
+  byte local_9;
+  ulong local_8;
+  
+  local_40 = param_2;
+  local_38 = param_3;
+  local_30 = param_4;
+  local_28 = param_5;
+  alloc::vec::Vec<T>::with_capacity(&local_b0);
+                    /* try { // try from 0010b581 to 0010b585 has its CatchHandler @ 0010b5a1 */
+  auVar2 = core::slice::<impl[T]>::iter(param_2,param_3);
+                    /* try { // try from 0010b5b7 to 0010b74a has its CatchHandler @ 0010b5a1 */
+  core::iter::traits::iterator::Iterator::enumerate(local_80,auVar2._0_8_,auVar2._8_8_);
+  <>::into_iter(&local_98,local_80);
+  local_68 = local_98;
+  local_60 = local_90;
+  local_58 = local_88;
+  while( true ) {
+    auVar2 = <>::next(&local_68);
+    local_8 = auVar2._0_8_;
+    if (auVar2._8_8_ == (byte *)0x0) {
+      *param_1 = local_b0;
+      param_1[1] = local_a8;
+      param_1[2] = local_a0;
+      return param_1;
+    }
+    local_9 = *auVar2._8_8_;
+    local_50 = auVar2;
+    if (param_5 == 0) break;
+    uVar1 = local_8 % param_5;
+    if (param_5 <= uVar1) {
+      core::panicking::panic_bounds_check(uVar1,param_5,&PTR_s_src/main.rs_0015ff20);
+      goto LAB_0010b70f;
+    }
+    alloc::vec::Vec<T,A>::push(&local_b0,local_9 ^ *(byte *)(param_4 + uVar1));
+  }
+  core::panicking::panic
+            ("attempt to calculate the remainder with a divisor of zerocafebabe1337007flag.txtextern  \"NulErrorencYour Data Is Secured!\nError: \n/rustc/cc66ad468955717ab92600c770da8c1601a 4ff33/library/core/src/alloc/layout.rs"
+             ,0x39,&PTR_s_src/main.rs_0015ff08);
+LAB_0010b70f:
+  do {
+    invalidInstructionException();
+  } while( true );
+}
+```
+
+This was where I had issue since I didn't understand that, I was feeling maybe it would not just "xor" only cause the challenge description was too intimidating
+
+Next I left this and decided to play with the binary and it's output
+
+I assumed it would just `xor` and if that's the case that means the key can be retrieved because xor is reversible
+
+Since I know the plaintext and ciphertext I can just xor them both to retrieve the key
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7591bcde-b57e-4a3c-b51b-1affa4afbd66)
+
+Ok that looks right, with that I just wrote a script to decrypt the flag
+
 
 
 
