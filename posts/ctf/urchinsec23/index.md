@@ -658,8 +658,15 @@ with open(self.zip_output, "wb") as output_file:
 
 Since the salt and iv are 16 bytes that means we can differientiate it from the ciphertext
 
-With that said here's a screenshot of my solve script
+With that said here's a screenshot of my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/crypto/Santa%20Zip/solve.py)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7d063126-e4db-4c09-a02b-d7e6ae3d0156)
+
+Running it gives the flag after about ~10mins
+
+```
+Flag:
+```
+
 
 
 
