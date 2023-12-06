@@ -774,10 +774,11 @@ Cause the signaure is 16 bytes and the iv is 14 bytes 🙂
 Finally the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/crypto/Honey%20SEA/solve.py) ❤️‍🔥
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3ec19d20-304d-4b8d-8368-62fa0560e273)
 
-Running it gives the flag after about ~10mins
+Running it gives the flag after about ~2mins
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e394bf30-c50c-41d7-986f-d4c2d93ff2a9)
 
 ```
-Flag:
+Flag: urchinsec{H4acker_L00Ks_A35_y0Y}
 ```
 
 #### By Polar RSA
