@@ -80,14 +80,49 @@ At some point it's supposed to receive user input but that check isn't being rea
 
 So I decided to manually step through each instruction to figure why it doesn't work
 
-I set a breapoint in the `sexyprime` function:
+I set a breapoint at the `sexyprime` function:
 
 ```
 break *sexyprime
 ```
 
-At `sexyprime+58` I saw that it does a comparison on `$rbp-0x80` to `0x6`, checking the current value shows it's right
+At `sexyprime+58` I saw that it compares the value of `$rbp-0x80` to `0x6`, checking the current value shows it's right
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/390db2f2-9c3b-4402-8431-374f484a018a)
+
+Moving to the next 3 instructions shows another comparism
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/11da310c-8758-481a-882b-c40b250f57b5)
+
+The reason it would fail is because of this:
+
+```
+mov    DWORD PTR [rbp-0x7c], 0x10
+```
+
+The value of `$rbp-0x7c` would be `0x10` and when it's compared to `0x6` that would return False
+
+In this case it would fail and if it does it would jump to `sexyprime+1701` which would `ret` and the program would exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
