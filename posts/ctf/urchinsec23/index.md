@@ -662,9 +662,10 @@ With that said here's a screenshot of my solve [script](https://github.com/h4cky
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7d063126-e4db-4c09-a02b-d7e6ae3d0156)
 
 Running it gives the flag after about ~10mins
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/40f9218e-b375-43f4-9b16-ba94dbd761f5)
 
 ```
-Flag:
+Flag: urchinsec{sant4_zip_1s_th3_new_ZIP}
 ```
 
 #### Honey SEA
@@ -730,7 +731,52 @@ Let's start from the main function 🙂
 
 Here's what this function does
 
-- 
+- First it has a variable `encrypted_data` which holds the return value from calling the `encrypted_data` function passing the `flag, key & iv ` as the parameter
+  - This function `encrypted_data` implements AES CBC mode and returns the encrypted data
+- Next the variable `signature` hold the value return from calling the `generate_signature` function passing the `iv & key` as the parameter
+  - This function basically would xor each byte of the iv with each byte of the reversed key value
+  - Then it's converted to hex and that's the signature
+- Next it converts the iv bytes to hex ignoring the first 4 bytes which means only 12 bytes are converted to hex (it's stored as iv_hex)
+- Then it converts the encrypted data to hex
+- Finally the ciphertext is the concatenation of the iv_hex, encrypted_hex and the signature
+- And it returns the ciphertext valye
+
+Quite an encryption you might say 🥷
+
+First what came to my mind was how would I decrypt the ciphertext?
+
+Now to do that we need the iv and key
+
+But looking at the code it gave us the iv but how about the key?
+
+If you notice the `generate_signature` function it xors the key and iv together, the only catch there is that the key is reversed before it's xored but is that really a problem?
+
+Well that isn't a problem cause we can still recover the key since the signature and iv are known
+
+So to recover the key we can do this:
+
+```python
+xor(signature, iv)[::-1]
+```
+
+What next? If you notice the given iv isn't complete cause it's missing 4 bytes but that's not a problem cause we can brute force smartly by using the `itertools` python module
+
+At this point we know the iv & key meaning we can just decrypt the ciphertext 
+
+The ciphertext should be this:
+
+```python
+ct = cipher[28:-32]
+```
+
+Cause the signaure is 16 bytes and the iv is 14 bytes 🙂
+
+Finally the solve script ❤️‍🔥
+
+
+
+
+
 
 
 
