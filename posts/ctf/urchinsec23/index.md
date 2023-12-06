@@ -2,9 +2,20 @@
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1f0815f9-8bb1-4c87-b612-69c1107d0b7d)
 
+#### INITIAL DETAILS 
 I wanted to make a detailed solution.......... but eventually felt lazy to do so
 
 So you can view the solve script of some challenges: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/urchinsec23/)
+
+#### FINAL DETAILS
+
+The organizers put a prize on the best writeup that would be provided then I came back here to make a detailed writeup! 😸
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9bb0ac0c-75a0-4ec9-af40-f11731fce45f)
+
+I will be writing on the crypto, pwn and rev challenges that I solved.
+
+### Reverse Engineering
+
 
 I played as `@rizz` 🙂
 
