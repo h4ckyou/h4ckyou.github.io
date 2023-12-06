@@ -16,13 +16,14 @@ try:
         for line in file:
             if line.isprintable:
                 password = line.strip()
-                print(f"Trying password: {password}")
+               # print(f"Trying password: {password}")
                 key = PBKDF2(password, salt, dkLen=32, count=1000000)
                 cipher = AES.new(key, AES.MODE_CBC, iv)
                 dec = cipher.decrypt(ct)
 
                 try:
                     zip_file = zlib.decompress(dec)
+                    print(f"[Password: {password}]")
                     print(zip_file)
                     exit(0)
                 except zlib.error:
