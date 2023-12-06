@@ -92,6 +92,8 @@ At `sexyprime+58` I saw that it compares the value of `$rbp-0x80` to `0x6`, chec
 Moving to the next 3 instructions shows another comparism
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/11da310c-8758-481a-882b-c40b250f57b5)
 
+In this case it would fail and if it does it would jump to `sexyprime+1701` which would `ret` and the program would exit
+
 The reason it would fail is because of this:
 
 ```
@@ -100,12 +102,49 @@ mov    DWORD PTR [rbp-0x7c], 0x10
 
 The value of `$rbp-0x7c` would be `0x10` and when it's compared to `0x6` that would return False
 
-In this case it would fail and if it does it would jump to `sexyprime+1701` which would `ret` and the program would exit
+We can set the value to `0x6`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02323163-4b53-48ae-a84d-d75954c763ab)
 
+Moving to the next instructions continues the execution flow till we reach the first `scanf` call which expects an integer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/43688677-cab5-4e1f-9250-ef6b5851d393)
 
+After moving through some few instructions I noticed that it would put some value to the `edx` register then subtracts it by the current value of the `eax` register and compare to `0x6` 
 
+So what I just did was to copy the values that's been put to the `edx` register then used `chr` which would convert the integer to its unicode character 
 
+And that turned out to be the flag
 
+Here's how it looked like in my python history
+
+```
+>>> flag
+'urchinsec{sexy_primes_'
+>>> flag += chr(0x70)
+>>> flag += chr(0x72)
+>>> flag
+'urchinsec{sexy_primes_pr'
+>>> flag += chr(0x69)
+>>> flag += chr(0x6d)
+>>> flag += chr(0x69)
+>>> flag
+'urchinsec{sexy_primes_primi'
+>>> flag += chr(0x6e)
+>>> flag
+'urchinsec{sexy_primes_primin'
+>>> flag += chr(0x67)
+>>> flag
+'urchinsec{sexy_primes_priming'
+>>> flag += chr(0x7d)
+>>> flag
+'urchinsec{sexy_primes_priming}'
+>>>
+```
+
+And I got the final flag:
+
+```
+Flag: urchinsec{sexy_primes_priming}
+```
 
 
 
