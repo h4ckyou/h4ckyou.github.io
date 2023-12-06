@@ -1,4 +1,4 @@
-<h3> Urchinsec XMAS 2023 CTF </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fda93a10-19d9-4d65-beaa-59ab83d37676)<h3> Urchinsec XMAS 2023 CTF </h3>
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1f0815f9-8bb1-4c87-b612-69c1107d0b7d)
 
@@ -207,8 +207,18 @@ public class MainActivity extends AppCompatActivity {
 
 ```
 
+I don't know Java but this was quite understandable:
+- First it seems to receive our input which is the `username & password`
+- It compares the received username to `urchinsec_rang3r` and the received password to `s0m334ga71344$!$`
+- If the comparism returns True it would reverse the password provided which is stored in the `stringBuilder` variable
+- Then finally the flag is formed from this: `urchinsec{" + username + "_@_" + stringBuilder + "}"`
 
+With that said I just reversed the password string and was able to submit the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38afef1e-d553-4d45-ba2d-d9813fab0d65)
 
+```
+Flag: urchinsec{urchinsec_rang3r_@_$!$44317ag433m0s}
+```
 
 
 
