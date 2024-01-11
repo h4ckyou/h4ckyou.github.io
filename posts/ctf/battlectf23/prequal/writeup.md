@@ -1835,9 +1835,9 @@ print(enc)
 #Output: [1245115057305148164, 1195140205147730541, 2441940832124642988, 2441940832124642988, 1835524676869638124, 1404473868033353193, 272777109172255911, 672752034376118188, 324890781330979572, 3086023531811583439, 475309634185807521, 1195140205147730541, 2441940832124642988, 1578661367846445708, 2358921859155462327, 1099718459319293547, 773945458916291731, 78288818574073053, 2441940832124642988, 1578661367846445708, 1099718459319293547, 343816904985468003, 1195140205147730541, 2527132076695959961, 2358921859155462327, 2358921859155462327, 1099718459319293547, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 72109063929756364, 2796116718132693772, 3291439457645322417]
 ```
 
-From looking at writeups online based on this I figured that maybe to solve it the inverse will be calculated with gaussian elimination
+From looking at the given script I figured that maybe to solve it the inverse will be calculated with gaussian elimination
 
-But after searching deeper I got this which works faster
+But this would work faster too
 
 ```python
 from sage.all import *
@@ -1882,6 +1882,14 @@ print(pt)
 
 With that, running it gives the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f1137f2-35a2-46c3-ac2a-5c1d992aead5)
+
+I also solved it by using Gausssian Elimination
+
+Here's the script: [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf23/prequal/Crypto/Gooss/solve.py) 
+
+I gave a quick explanation on how I went about it 
+
+And note that I used Matrix Calculator to solve the Simultaneous Linear Equations
 
 ```
 Flag: battleCTF{Maths_W1th_Gauss_0x0x0x}
