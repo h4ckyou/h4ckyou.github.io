@@ -1890,6 +1890,8 @@ Here's the script: [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/ma
 I gave a quick explanation on how I went about it 
 
 And note that I used Matrix Calculator to solve the Simultaneous Linear Equations
+![matcal](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f242e865-0ebc-4c54-b7dc-a1777a99df4c)
+![matcal2](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3f05273c-3e55-4ae7-bd69-4c7cc1ac5e4a)
 
 ```
 Flag: battleCTF{Maths_W1th_Gauss_0x0x0x}
