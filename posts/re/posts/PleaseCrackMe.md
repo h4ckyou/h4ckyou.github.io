@@ -83,7 +83,6 @@ I made a script in python to accomplish that for us
 
 ```python
 #!/usr/bin/python3
-# Author: Hack.You
 
 username = 'HackYou'
 number = 5
