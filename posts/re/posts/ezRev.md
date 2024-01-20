@@ -34,8 +34,46 @@ The size is 64 and since the elements there are `DWORD --> int()` whose size is 
 
 And from the nested inner loop which defines `j and k` it iterates till it reaches 4 twice meaning the matrix is a 4x4 matrix i.e it has 4 rows and 4 columns
 
-At this point I changed the data type of the matrix to `int[4][4]` 
+At this point I changed the data type of the global variable matrix to `int[4][4]` 
 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02b4abc7-4aa6-4c8c-bdf6-36c5d4423b6a)
 
+Now the pseudocode looks ok
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/87a7ef47-45b2-4f3d-bba5-2379d0030953)
+
+```c
+
+undefined8 main(void)
+
+{
+  undefined8 ret;
+  int value [7];
+  int sum;
+  int c;
+  int k;
+  int j;
+  int i;
+  
+  sum = 0;
+  for (c = 0; c < 4; c = c + 1) {
+    __isoc99_scanf("%d",value + c);
+  }
+  for (i = 0; i < 4; i = i + 1) {
+    for (j = 0; j < 4; j = j + 1) {
+      for (k = 0; k < 4; k = k + 1) {
+        sum = sum + value[i] * matrix[j][k];
+      }
+    }
+  }
+  if (sum == check) {
+    check_pass();
+    ret = 0;
+  }
+  else {
+    check_failed();
+    ret = 0xffffffff;
+  }
+  return ret;
+}
+```
 
