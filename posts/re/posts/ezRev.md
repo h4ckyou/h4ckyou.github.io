@@ -112,6 +112,15 @@ It looks tricky but to extract it we need to note that one value of the element 
 That way after extracting it I got the matrix to be this:
 
 ```c
+int matrix[4][4] = {
+        {0x1d4d, 0x78,  0x9f,  0xb5d},
+        {0x149,  0x9cf, 0x130, 0xde8},
+        {0x82b,  0x212, 0x596, 0x399},
+        {0x9b,   0x983, 0xff,  0x3f2}
+}
+```
+
+
 
 
 
