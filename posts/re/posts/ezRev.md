@@ -27,9 +27,14 @@ Ok it's looking good but here's the part which does not look too nice to the eye
 Inorder words that piece of code is equivalent to `matrix[j][k]` so this means the data type for the global variable `matrix` isn't right
 
 So I checked it to know the length of the array
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/39ca954b-9356-46da-84c9-889927f0b008)
 
 The size is 64 and since the elements there are `DWORD --> int()` whose size is 4 bytes that means the number of elements there are 16
 
 And from the nested inner loop which defines `j and k` it iterates till it reaches 4 twice meaning the matrix is a 4x4 matrix meaning it has 4 rows and 4 columns
+
+At this point I changed the data type of the matrix to `int[4][4]` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02b4abc7-4aa6-4c8c-bdf6-36c5d4423b6a)
+
 
