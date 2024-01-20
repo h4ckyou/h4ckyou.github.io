@@ -135,9 +135,18 @@ An example representation is this:
 ```
 int matrix [4] = {2, 4, 6, 8};
 int x;
+int sum;
 
---> x*2 + x*4 + x*6 + x*8
+sum = x*2 + x*4 + x*6 + x*8
 ```
+
+Looking at the operation we can say this:
+
+```
+2x + 4x + 6x + 8x
+```
+
+From that we know that the common value between each integers is the unknown
 
 
 
