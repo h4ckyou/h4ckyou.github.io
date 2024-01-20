@@ -146,7 +146,12 @@ Looking at the operation we can say this:
 2x + 4x + 6x + 8x
 ```
 
-From that we know that the common value between each integers is the unknown
+From that we know that the common value between each integers is the unknown variable therefore we simplify it to this:
+
+```
+x * (2 + 4 + 6 + 8)
+```
+
 
 
 
