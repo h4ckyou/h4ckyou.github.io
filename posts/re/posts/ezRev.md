@@ -120,9 +120,24 @@ int matrix[4][4] = {
 }
 ```
 
+Now that I have the values let's replicate the math done by the program
 
+We represent 4 unknown variables as `x, y, z, t` which should represent the right input
 
+```c
+int value[4] = [x, y, z, t];
+```
 
+Now the program takes each element of the value array and multiplies it by each element in the matrix where it's sum is saved and used on the next operation
+
+An example representation is this:
+
+```
+int matrix [4] = {2, 4, 6, 8};
+int x;
+
+--> x*2 + x*4 + x*6 + x*8
+```
 
 
 
