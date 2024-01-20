@@ -211,7 +211,7 @@ t = 0
 So that's one of the solution to the equation and when we feed the binary this input the comparism would return `True`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8c5b9ddf-5ec8-4822-b40e-60bfbe465df5)
 
-
+That's all. Thanks for reading 🙂
 
 
 
