@@ -82,8 +82,9 @@ Now I'll explain what this does exactly
 - First it would receive our input as an integer in a loop 4 times and the values are stored at the corresponding index position of the value array
 - It defines a variable `sum` which initially holds the value `0` then in a 3 nested loop it does this:
       - Transverse over all the elements in the matrix, during the transversal it multiplies the elements by `value[i]` where the result is stored in the `sum` variable
+      - The sum variable adds itself with the value returned by the operation on the next iterations 
 
-Then the sum after the operation is done is compared with the value stored in the global variable `check` which is `0x00E00C4`
+Then after the loop is done the sum is compared with the value stored in the global variable `check` which is `0x00E00C4`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/39d948d8-d520-4da5-9c63-1f1c13caea12)
 
 If the comparism returns `True` it calls the `check_pass()` function which validates that we have the right answer
@@ -91,4 +92,30 @@ If the comparism returns `True` it calls the `check_pass()` function which valid
 
 Else it calls the `check_failed()` function which shows the error message and exits
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/42dba7c6-39f1-476d-a739-7e97c8ab3a53)
+
+So at this point we need the right value that would make `sum == check`
+
+But inorder to do that let's extract the value of the matrix and do some math
+
+The way I got the value is from Ghidra by clicking the matrix variable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9753f462-2058-44f4-8512-e5fa4f964eb8)
+
+It looks tricky but to extract it we need to note that one value of the element of the matrix represents 4 bytes remember that the size of an unsigned or signed integer in C is 4 bytes i.e
+
+```
+4d 1d 00 00 == 0x1d4d
+78 00 00 00 == 0x78
+9f 00 00 00 == 0x9f
+5d 0b 00 00 == 0xb5d
+```
+
+That way after extracting it I got the matrix to be this:
+
+```c
+
+
+
+
+
+
 
