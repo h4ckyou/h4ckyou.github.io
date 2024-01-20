@@ -86,4 +86,9 @@ Now I'll explain what this does exactly
 Then the sum after the operation is done is compared with the value stored in the global variable `check` which is `0x00E00C4`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/39d948d8-d520-4da5-9c63-1f1c13caea12)
 
+If the comparism returns `True` it calls the `check_pass()` function which validates that we have the right answer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5718ac03-d2a3-498d-bb90-365467cb7080)
+
+Else it calls the `check_failed()` function which shows the error message and exits
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/42dba7c6-39f1-476d-a739-7e97c8ab3a53)
 
