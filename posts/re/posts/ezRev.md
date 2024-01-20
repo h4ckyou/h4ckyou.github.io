@@ -140,7 +140,7 @@ int sum;
 sum = x*2 + x*4 + x*6 + x*8
 ```
 
-Looking at the operation we can say this:
+Looking at the operation gives this:
 
 ```
 2x + 4x + 6x + 8x
@@ -151,6 +151,65 @@ From that we know that the common value between each integers is the unknown var
 ```
 x * (2 + 4 + 6 + 8)
 ```
+
+So this is exactly what we will apply for the matrix in our case it's this:
+
+```
+x * {0x1d4d + 0x78 + 0x9f + 0xb5d + 0x149 + 0x9cf + 0x130 + 0xde8 + 0x82b + 0x212 + 0x596 + 0x399 + 0x9b + 0x983 + 0xff + 0x3f2} +
+y * {0x1d4d + 0x78 + 0x9f + 0xb5d + 0x149 + 0x9cf + 0x130 + 0xde8 + 0x82b + 0x212 + 0x596 + 0x399 + 0x9b + 0x983 + 0xff + 0x3f2} + 
+z * {0x1d4d + 0x78 + 0x9f + 0xb5d + 0x149 + 0x9cf + 0x130 + 0xde8 + 0x82b + 0x212 + 0x596 + 0x399 + 0x9b + 0x983 + 0xff + 0x3f2} + 
+t * {0x1d4d + 0x78 + 0x9f + 0xb5d + 0x149 + 0x9cf + 0x130 + 0xde8 + 0x82b + 0x212 + 0x596 + 0x399 + 0x9b + 0x983 + 0xff + 0x3f2}
+
+x * 26220 + y * 26220 + z * 26220 + t * 26220 = 0x00E00C4
+```
+
+Looking at the equation we can simplify it to this:
+
+```
+26220 * (x + y + z + t) == 0x00E00C4
+```
+
+The integer representation of `0x00E00C4` is `917700`
+
+Therefore:
+
+```
+x + y + z + t = 917700 / 26220
+x + y + z + t = 35
+```
+
+We just need to find the value of `x,y,z,t` that when summed gives `35` and as you can tell they are various solutions to this as you might have come up with a valid solution
+
+But for laziness sake I wrote a script that makes use of z3 python library to give the solution
+
+```python
+from z3 import *
+
+x, y, z, t = Int('x'), Int('y'), Int('z'), Int('t')
+
+s = Solver()
+s.add(x + y + z + t == 35)
+
+if s.check() == sat:
+    m = s.model()
+    print(f"x = {m[x]}")
+    print(f"y = {m[y]}")
+    print(f"z = {m[z]}")
+    print(f"t = {m[t]}")
+```
+
+Running it gives this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81c648d2-99c7-48a6-9d4a-aca63e37c250)
+
+```
+x = 35
+y = 0
+z = 0
+t = 0
+```
+
+So that's one of the solution to the equation and when we feed the binary this input the comparism would return `True`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8c5b9ddf-5ec8-4822-b40e-60bfbe465df5)
 
 
 
