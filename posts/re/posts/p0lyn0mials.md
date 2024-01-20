@@ -1,8 +1,8 @@
 <h3> Reverse Engineering </h3>
 
-### Attack CTF 
-
-### Chall Name: S0Lving_p0lyn0mials_OR_bRuteF0rcing
+### Chall
+    - CTF: Attack CTF
+    - Name: S0Lving_p0lyn0mials_OR_bRuteF0rcing
 
 We're given a python file 
 ![image](https://user-images.githubusercontent.com/113513376/222312353-4416326d-6715-4dff-9302-535f36df72f4.png)
