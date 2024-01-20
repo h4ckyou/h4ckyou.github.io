@@ -32,7 +32,7 @@ So I checked it to know the length of the array
 
 The size is 64 and since the elements there are `DWORD --> int()` whose size is 4 bytes that means the number of elements there are 16
 
-And from the nested inner loop which defines `j and k` it iterates till it reaches 4 twice meaning the matrix is a 4x4 matrix i.e it has 4 rows and 4 columns
+And from the 2 nested inner loop which defines `j and k` it iterates till it reaches 4 twice meaning the matrix is a 4x4 matrix i.e it has 4 rows and 4 columns
 
 At this point I changed the data type of the global variable matrix to `int[4][4]` 
 
@@ -56,7 +56,7 @@ undefined8 main(void)
   
   sum = 0;
   for (c = 0; c < 4; c = c + 1) {
-    __isoc99_scanf("%d",value + c);
+    __isoc99_scanf("%d", &value[c]);
   }
   for (i = 0; i < 4; i = i + 1) {
     for (j = 0; j < 4; j = j + 1) {
@@ -76,4 +76,14 @@ undefined8 main(void)
   return ret;
 }
 ```
+
+Now I'll explain what this does exactly
+
+- First it would receive our input as an integer in a loop 4 times and the values are stored at the corresponding index position of the value array
+- It defines a variable `sum` which initially holds the value `0` then in a 3 nested loop it does this:
+      - Transverse over all the elements in the matrix, during the transversal it multiplies the elements by `value[i]` where the result is stored in the `sum` variable
+
+Then the sum after the operation is done is compared with the value stored in the global variable `check` which is `0x00E00C4`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/39d948d8-d520-4da5-9c63-1f1c13caea12)
+
 
