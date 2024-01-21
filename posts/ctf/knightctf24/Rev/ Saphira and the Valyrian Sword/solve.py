@@ -52,3 +52,5 @@ io.recvuntil("password:")
 io.sendline(str(password))
 
 print(io.recvall())
+
+# KCTF{k1LL_tHE_Saphira_dRAgon_wITH_thE_sWORD} #
