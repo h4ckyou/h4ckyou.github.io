@@ -1,4 +1,4 @@
-<h1> &Learnig </h1>
+<h1> &Learning </h1>
 
 I made this C file inorder to practice ROP by calling `mprotect()` thereby making the stack executable and popping shell 🐚
 
@@ -22,8 +22,10 @@ int main(int argc, char *argv[]){
 }
 ```
 
-Compile using:
+Compiled using:
 - gcc rop.c -no-pie -static
+
+Download link: [link](https://cdn.discordapp.com/attachments/1176106609861201921/1198812318214148176/a.out?ex=65c043f9&is=65adcef9&hm=0ccc67d2a307bc3c388e4a4366fbaa8039260cc3b40101551c245e1a87da9c93&)
 
 Here's the final exploit script:
 
