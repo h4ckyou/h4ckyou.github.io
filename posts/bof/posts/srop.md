@@ -62,10 +62,16 @@ This means the good stuff would be in the `vuln` function so I `disassembled` it
 
 If you aren't familiar with assembly this might look intimidating but I'll explain what it does here!
 
+The first set of instruction it does is this:
+- write(1, "Hello, world!!\n", 15)
 
-
-
-
+```
+mov eax, 0x1
+mov edi,0x1
+movabs rsi,0x402000
+mov edx, 0xf
+syscall
+```
 
 
 
