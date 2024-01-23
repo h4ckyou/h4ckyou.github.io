@@ -68,7 +68,7 @@ The first set of instruction it does is this:
 ```
 mov    eax, 0x1
 mov    edi,0x1
-movabs    rsi,0x402000
+movabs rsi,0x402000
 mov    edx, 0xf
 syscall
 ```
