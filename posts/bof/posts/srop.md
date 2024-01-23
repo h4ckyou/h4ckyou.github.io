@@ -73,6 +73,33 @@ mov edx, 0xf
 syscall
 ```
 
+So it moves `1` to the `eax` register and eventually it does a syscall
+
+In Linux system calls (syscall) are the way that you can make requests from user space into the Linux kernel.
+
+This case when you trigger a syscall it will lookup the rax/eax register as to what it's value is then get it's syscall name 
+
+In our case since the `eax` register isn't modified before the first syscall that means it's attempting to call `write()`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4022b5e-375a-440a-8121-ddf76f7ce250)
+
+You can check out the list of syscalls [here](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit)
+
+And because it want's to call `write()`, it needs to setup the registers needed for `write()` to work which are:
+- RDI --> File Descriptor
+- RSI --> Address of buffer
+- RDX --> Size
+
+So in our case it puts the value of `0x1` to the `edi` register (Note: `edi` is the 32bits representation of the `rdi` register) 
+
+And `0x1` which is the file descriptor stands for `standard output -> stdout`
+
+Then it moves the address of `0x402000` to the `rsi` register, that address would be pointing to a string of the binary which we can confirm by examining it's content from `gdb`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/09426b6b-688d-4803-8e7e-4683c347b6d0)
+
+```
+0x402000:       "Hello, world!!\n/bin/sh"
+```
+
 
 
 
