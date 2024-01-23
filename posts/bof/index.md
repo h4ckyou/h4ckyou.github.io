@@ -59,3 +59,4 @@ Binary exploitation involves taking advantage of a bug or vulnerability in order
 - [[September 20 2023]] [Sandbox](https://h4ckyou.github.io/posts/bof/posts/sandbox.html) `Seccomp`
 - [[October 12 2023]] [Unlimited Subway](https://h4ckyou.github.io/posts/bof/posts/unlimited_subway.html) `OOB Read, Ret2Win`
 - [[January 22 2023]] [Mprotect](https://h4ckyou.github.io/posts/bof/posts/mprotect.html) `ROP`
+- [[January 23 2023]] [SROP](https://h4ckyou.github.io/posts/bof/posts/srop.html) `SROP`
