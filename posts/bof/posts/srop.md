@@ -134,10 +134,19 @@ RDX -> 0x200 -> Size
 
 Now what's wrong with this code?
 
-Well the number of bytes created on the stack for where our input will be stored is 24 but when calling `read()` it's size is specified as 512 meaning that we it will allow us read in at most 512 bytes stored in a buffer that can only hold up 24 bytes
+Well the number of bytes created on the stack for where our input will be stored is 24 but when calling `read()` it's size is specified as 512 meaning that it will allow us read in at most 512 bytes stored in a buffer that can only hold up 24 bytes
 
+So we have a classic buffer overflow here. What next?
 
+### Expl0it4t10n
 
+Since we have a buffer overflow I decided to just ROP and spawn a shell but before I think about ropping I needed to get the offset needed to overwrite the instruction pointer (RIP)
+
+I used `gdb-gef` for it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/095fe011-8337-41dc-bdfd-8922cc4b044b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3ab2145-d4c6-4047-9901-02f5a0dce32b)
+
+The offset is 32!
 
 
 
