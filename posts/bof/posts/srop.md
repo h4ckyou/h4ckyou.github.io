@@ -7,6 +7,7 @@ Hi everyone I'll be showing the solution to the SROP challenge from NoobzCTF 202
 
 Orignally I didn't solve it due to my lack of knowledge of the exploitation technique but I decided to give it a go since I learnt it recently.
 
+### Enumeration 
 Ok first thing is always to check the type of file we're dealing with and the protections enabled on it
 
 In this case we're dealing with a 64bits linux executable which is statically linked and not stripped
@@ -24,4 +25,17 @@ Before I move on forward we should note that when a binary is statically linked,
 That case doesn't apply here since the file size is too small (8992 bytes)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00c15b7d-45b7-41ea-84ce-f9e63b9963b2)
 
-So that means it's likely written in assembly language and compiled rather than it being compiled in C language
+So that means it's likely written in assembly language and compiled rather than it being written in C language
+
+With that said I skipped using Ghidra to decompile it and I used `gdb-gef`
+
+### R3v3rs1ng
+
+I checked the functions available and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ed0d315-155d-46b9-9023-468ee75e5162)
+
+So we have two functions here which are:
+    - _start
+    - vuln
+
+
