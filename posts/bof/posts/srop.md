@@ -132,7 +132,9 @@ RSI -> $RSP -> Stores our input on the stack
 RDX -> 0x200 -> Size
 ```
 
+Now what's wrong with this code?
 
+Well the number of bytes created on the stack for where our input will be stored is 24 but when calling `read()` it's size is specified as 512 meaning that we it will allow us read in at most 512 bytes stored in a buffer that can only hold up 24 bytes
 
 
 
