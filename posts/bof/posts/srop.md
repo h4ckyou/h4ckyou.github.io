@@ -20,7 +20,7 @@ I ran the binary to get an overview of what it does and it showed this
 
 So it seems to print out some text, receive our input then exit
 
-Before I move on forward we should note that when a binary is statically linked, functions that are going to be called by the program would be in the binary usually making the file size much
+Before I move on forward we should note that when a binary is statically linked, functions that are going to be called by the program would be in the binary which then usually makes the file size much
 
 That case doesn't apply here since the file size is too small (8992 bytes)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00c15b7d-45b7-41ea-84ce-f9e63b9963b2)
@@ -45,18 +45,22 @@ Now I `disassembled` the `_start` function
 
 Here's what it does:
 - First it calls the `vuln` function
-- Then it sets up the register in order to call `exit(0)` and `returns 0`
+- Then it sets up the register in order to call `exit(0)`
 
 Nothing much here is done but incase you want it's C equivalent that's the code below!
 
 ```c
+#include <stdlib.h>
+
 int _start(){
     exit(0);
-
-    return 0;
 }
 ```
 
+This means the good stuff would be in the `vuln` function so I `disassembled` it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05e74a14-85c9-4fa0-9783-57e6bc302680)
+
+If you aren't familiar with assembly this might look intimidating but I'll explain what it does here!
 
 
 
