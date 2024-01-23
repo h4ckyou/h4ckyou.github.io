@@ -124,7 +124,7 @@ From the current `stack address` it subtracts `32 bytes` and moves the value of 
 Since the `eax` register wasn't modified before the call to `syscall` it therefores triggers `read()`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d8178155-cc3b-4dbb-b982-c5a3dc9bde22)
 
-Similarly to `write()` it expects the same thing for the parameters: 
+Similarly to `write()` it expects the same thing for the arguments: 
 
 ```
 RDI -> 0x0 -> Standard Input (stdin)
@@ -140,13 +140,70 @@ So we have a classic buffer overflow here. What next?
 
 ### Expl0it4t10n
 
-Since we have a buffer overflow I decided to just ROP and spawn a shell but before I think about ropping I needed to get the offset needed to overwrite the instruction pointer (RIP)
+Since we have a buffer overflow I decided to just [ROP](https://en.wikipedia.org/wiki/Return-oriented_programming) and spawn a shell but before I think about ropping I needed to get the offset needed to overwrite the instruction pointer (RIP)
 
 I used `gdb-gef` for it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/095fe011-8337-41dc-bdfd-8922cc4b044b)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3ab2145-d4c6-4047-9901-02f5a0dce32b)
 
 The offset is 32!
+
+Now I looked for ROP gadgets using [ropper](https://github.com/sashs/Ropper) 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/edf6c25d-0332-43a8-8c4f-62721c58a6d8)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/117dbfcb-3b20-4fd6-aa72-6211d168ffc8)
+
+But from looking at the result I didn't see gadgets I was looking for like gadgets that let's me control the `rax, rdi, rsi, rdx` register 
+
+This is bad because those are needed as the argument of a syscall
+
+At least we have a `syscall` gadget, but what can we do with it?
+
+We can leverage a technique called `Sigreturn Orientated Programming (SROP)`
+
+The condition over this technique are:
+- A very large overflow with no shortage of space.
+- Control over the `RAX` register which allows the specification of a syscall number.
+- Access to a syscall instruction.
+- The string `/bin/sh` is present within the binary.
+- Control over the Stack Frame's saved return address; this translates to control over the stack itself.
+
+From the conditions needed we only meet 4 of them with the exception of the second condition which is the control over the `rax` register
+
+But is that really a problem?
+
+I looked at the [manual](https://man7.org/linux/man-pages/man2/read.2.html) for `read()` (because that's the only time where we can give in our input) and I read the manual
+
+While reading it something caught my attention
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5ab3747d-1f7c-44a9-b74b-138bf8ba6f40)
+
+```
+On success, the number of bytes read is returned
+```
+
+This means that the number of bytes of whatever we give as input is the return value
+
+And the return value of a function is stored in the `rax` register
+
+This basically means we can control the `rax` register without needing a gadget 🙂
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
