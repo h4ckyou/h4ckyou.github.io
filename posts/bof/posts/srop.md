@@ -85,9 +85,11 @@ In our case since the `eax` register isn't modified before the first syscall tha
 You can check out the list of syscalls [here](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit)
 
 And because it want's to call `write()`, it needs to setup the registers needed for `write()` to work which are:
+```
 - RDI --> File Descriptor
 - RSI --> Address of buffer
 - RDX --> Size
+```
 
 So in our case it moves the value of `0x1` to the `edi` register (Note: `edi` is the 32bits representation of the `rdi` register) 
 
