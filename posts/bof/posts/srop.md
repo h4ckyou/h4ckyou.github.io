@@ -66,10 +66,10 @@ The first set of instruction it does is this:
 - write(1, "Hello, world!!\n", 15)
 
 ```
-mov eax, 0x1
-mov edi,0x1
-movabs rsi,0x402000
-mov edx, 0xf
+mov    eax, 0x1
+mov    edi,0x1
+movabs    rsi,0x402000
+mov    edx, 0xf
 syscall
 ```
 
@@ -106,6 +106,16 @@ The last thing it does is that it moves the value `0xf -> 15` to the `edx` regis
 
 So that's settled now!
 
+Let's move on to the last instruction
+
+```
+sub    rsp,0x20
+mov    eax,0x0
+mov    edi,0x0
+mov    rsi,rsp
+mov    edx,0x200
+syscall
+```
 
 
 
