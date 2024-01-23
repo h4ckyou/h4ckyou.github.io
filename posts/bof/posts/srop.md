@@ -35,7 +35,59 @@ I checked the functions available and got this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7ed0d315-155d-46b9-9023-468ee75e5162)
 
 So we have two functions here which are:
-    - _start
-    - vuln
+- _start
+- vuln
+
+In C language, it's `main()` is equivalent to `_start` in assembly
+
+Now I `disassembled` the `_start` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8d023d3e-3f05-49b6-8e38-12bb149eaa6d)
+
+Here's what it does:
+- First it calls the `vuln` function
+- Then it sets up the register in order to call `exit(0)` and `returns 0`
+
+Nothing much here is done but incase you want it's C equivalent that's the code below!
+
+```c
+int _start(){
+    exit(0);
+
+    return 0;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
