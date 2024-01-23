@@ -84,7 +84,7 @@ In our case since the `eax` register isn't modified before the first syscall tha
 
 You can check out the list of syscalls [here](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit)
 
-And because it want's to call `write()`, it needs to setup the registers needed for `write()` to work which are:
+And because it want's to call `write()`, it needs to setup the registers which is the way arguments are passed in `x64 binary` needed for `write()` to work which are:
 ```
 - RDI --> File Descriptor
 - RSI --> Address of buffer
@@ -119,9 +119,18 @@ mov    edx,0x200
 syscall
 ```
 
+From the current `stack address` it subtracts `32 bytes` and moves the value of `0x1` to the `eax` register, moves `0x0` to the `edi` register, moves the `stack address` to the `rsi` register, moves `0x200` to the `edx` register then triggers the `syscalls`
 
+Since the `eax` register wasn't modified before the call to `syscall` it therefores triggers `read()`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d8178155-cc3b-4dbb-b982-c5a3dc9bde22)
 
+Similarly to `write()` it expects the same thing for the parameters: 
 
+```
+RDI -> 0x0 -> Standard Input (stdin)
+RSI -> $RSP -> Stores our input on the stack
+RDX -> 0x200 -> Size
+```
 
 
 
