@@ -89,7 +89,7 @@ And because it want's to call `write()`, it needs to setup the registers needed 
 - RSI --> Address of buffer
 - RDX --> Size
 
-So in our case it puts the value of `0x1` to the `edi` register (Note: `edi` is the 32bits representation of the `rdi` register) 
+So in our case it moves the value of `0x1` to the `edi` register (Note: `edi` is the 32bits representation of the `rdi` register) 
 
 And `0x1` which is the file descriptor stands for `standard output -> stdout`
 
@@ -100,7 +100,11 @@ Then it moves the address of `0x402000` to the `rsi` register, that address woul
 0x402000:       "Hello, world!!\n/bin/sh"
 ```
 
+Notice that the value stored in that address is pretty long and luckily for us it contains the `/bin/sh` string which we would find useful soon!
 
+The last thing it does is that it moves the value `0xf -> 15` to the `edx` register which signifies that we want to `write` to `stdout` the fist `15 bytes` of the string from the `address -> 0x402000`
+
+So that's settled now!
 
 
 
