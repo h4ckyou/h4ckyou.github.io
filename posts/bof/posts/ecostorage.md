@@ -303,8 +303,13 @@ But that isn't an issue because we can offset it to get to the libc base by addi
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ef46c2e4-a5eb-4e01-88fb-582b980428f7)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/70726c4b-b2ab-4903-bbfb-abb615beb40d)
 
+At this point we have our leaks now what do we do 🤔
 
+It seemed really hard because I can't overwrite the value of `is_premium` because no stack leak 
 
+Then I searched up some pwn tricks and came around this [link](https://github.com/Naetw/CTF-pwn-tips#leak-stack-address)
+
+It talks about leaking stack but then on reading it, it became clear that the `environ` value in libc maps to the environment variable in the filesystem.... you can read it up [here](https://www.gnu.org/software/libc/manual/html_node/Program-Arguments.html)
 
 
 
