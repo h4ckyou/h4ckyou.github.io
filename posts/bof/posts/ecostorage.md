@@ -143,6 +143,18 @@ void menu(int is_premium)
 
 So basically if the value in `is_premium` is `0` we can only read file part of attempt to go premium else we can read any file or disconnect and generally quit
 
+Now back to the main function it would receive our choice and if we choose option `0` it exits so nothing good comes from it
+
+```c
+if (choice == 0) {
+                /* WARNING: Subroutine does not return */
+  exit(0);
+}
+```
+
+So the main thing we will work with is option 1 & 2
+
+Let's understand what option 1 does
 
 
 
