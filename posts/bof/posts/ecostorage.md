@@ -275,9 +275,15 @@ __isoc99_scanf("%lu %lu%*c",&where,&write);
 *where = write;
 ```
 
-This portion gives us a write-what-where (www) primitive meaning we can write to memory using this
+This portion of code gives us a write-what-where (www) primitive meaning we can write to memory using this
 
+Also once we use that function is used we can't use it again because it will check is `coupon_used == 0` before it proceeds to the next instruction.........That means it can only be called once
 
+Now what do we do?
+
+Well at this point my thought process was that:
+- How do I become a premium user because if I can become that I can surely read the flag
+- How do I take advantage of the write what where primitive
 
 
 
