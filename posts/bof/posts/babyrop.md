@@ -41,11 +41,41 @@ Now because the binary is dynamically linked and it makes use of `write()` we ca
 
 The idea basically is that we would leak the global offset table value for `gets()` using the procedure linkage table for `write()` then that would give us the libc base address which from there we can call `system()`
 
-All this depends on the availability of rop gadgets which in this case we need 3 gadgets that can control rdi, rsi & rdx because to call `write()` we need to control the 3 parameters
+All this depends on the availability of rop gadgets which in this case we need gadgets that can control rdi, rsi & rdx because to call `write()` we need to control the 3 parameters
 
 Ok so let's get the offset needed to overwrite the instruction pointer
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf196edb-8bb4-451e-8dfe-9a649775b100)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c79db9a2-a41a-4574-b695-216676b6a945)
+
+Cool the offset is 72
+
+I used `ropper` to look for gadgets and saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7800139f-8012-4eeb-a2b6-3eb804051c4b)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ee79bf5d-8b89-497c-ab64-e5dc2f21f66d)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
