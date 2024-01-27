@@ -62,10 +62,37 @@ You might wonder whether it's necessary well it is because the rdx register woul
 Take a look at the syscall table [here](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#tables)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3ec7f6aa-032f-48ad-a6ce-5a64a70db855)
 
+Now how do we control the rdx register?
 
+There's a technique called Ret2CSU, you can check it up from this [paper](https://i.blackhat.com/briefings/asia/2018/asia-18-Marco-return-to-csu-a-new-method-to-bypass-the-64-bit-Linux-ASLR-wp.pdf)
 
+Basically leveraging that technique allows us to have control over gadgets gotten from `__libc_csu_init`
 
+Here's the disassembly for that function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/da6505c5-e4b5-4f5e-b0a7-9d5a03d1e089)
 
+The portion which is of interest to us is this:
+
+Section1:
+
+```
+   0x00000000004011ca <+90>:    pop    rbx
+   0x00000000004011cb <+91>:    pop    rbp
+   0x00000000004011cc <+92>:    pop    r12
+   0x00000000004011ce <+94>:    pop    r13
+   0x00000000004011d0 <+96>:    pop    r14
+   0x00000000004011d2 <+98>:    pop    r15
+   0x00000000004011d4 <+100>:   ret
+```
+
+Section2:
+
+```
+   0x00000000004011b0 <+64>:    mov    rdx,r14
+   0x00000000004011b3 <+67>:    mov    rsi,r13
+   0x00000000004011b6 <+70>:    mov    edi,r12d
+   0x00000000004011b9 <+73>:    call   QWORD PTR [r15+rbx*8]
+```
 
 
 
