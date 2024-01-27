@@ -156,6 +156,42 @@ So the main thing we will work with is option 1 & 2
 
 Let's understand what option 1 does
 
+The first option basically let's us read a file
+
+```c
+if (choice != 1) goto case_end;
+printf("Filename: ");
+fgets(filename,64,stdin);
+null = strcspn(filename,"\n");
+filename[null] = 0;
+if ((is_premium == 0) && (fp = strstr(filename,"flag"), fp != (char *)0x0)) {
+  puts("Forbidden file, go premium to read it!");
+}
+else {
+  read_file(is_premium);
+}
+```
+
+But the check here does this:
+- If the value stored in `is_premium` is equal to `0` and the occurrence of `flag` happens to be in the filename provided we would get an error saying **Forbidden file, go premium to read**
+
+So this means that we can read the flag file if we are a premium user
+
+Now let's see the function that reads the file provided
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
