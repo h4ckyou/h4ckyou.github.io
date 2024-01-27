@@ -287,12 +287,12 @@ Well at this point my thought process was that:
 
 Before I started thinking how to use the www primitive I decided to first get a leak because it's going to be useless unless we have leaks since all protections are enabled
 
-This is how I got my leak...... I read the content of `/proc/self/maps` which holds the memory mapping for the current binary process and the result is it's equivalent to running `vmmap` on `gdb`
+This is how I got my leak, I read the content of `/proc/self/maps` which holds the memory mapping for the current binary process and the result is it's equivalent to running `vmmap` on `gdb`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/67385b4d-1f70-40c5-bb2f-c231e48c763a)
 
 Because of restrictions we can only read 12 lines of the file but that's enough because we can get the binary base and libc base from that
 
-You might be wondering that the last line is mapping to the libc path
+You might be wondering that the last line isn't mapping to the libc path
 
 ```
 7fbe70e5a000-7fbe70e5d000 rw-p 00000000 00:00 0 
