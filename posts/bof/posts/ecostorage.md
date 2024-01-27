@@ -321,12 +321,48 @@ To confirm I checked and noticed this
 Basically what I noticed is this:
 
 ```
-environ -> stack_addr -> addr_pointing_to_env -> environment variables
+environ -> stack_addr -> addr_pointing_to_env -> environment variables string
+```
+
+You can think of the environment block as a collection of nodes (key-value pairs) where each node points to the next one. The environ pointer serves as the entry point to this "linked list" of environment variables
+
+Now that we know this how can we take advantage of this?
+
+Because I figured the structure of how the environ in libc is pointing to the environment variable I figured this is how the payload would be
+
+```
+environ -> global_filename_variable -> global_filename_variable+0x10 -> "ACCESS_TOKEN=1337"
+````
+
+Because the only address I have full access to write to is the global filename variable that's why I made use of it
+
+So the idea will be this way:
+
+```python
+name = p64(filename+0x10)
+name += b'A'*8
+name += b"ACCESS_TOKEN=1337\x00"
 ```
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This exploitation part was really interesting because it's something I've never done before so doing it was satisfying
 
 
 
