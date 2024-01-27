@@ -311,8 +311,18 @@ Then I searched up some pwn tricks and came around this [link](https://github.co
 
 It talks about leaking stack but then on reading it, it became clear that the `environ` value in libc maps to the environment variable in the filesystem.... you can read it up [here](https://www.gnu.org/software/libc/manual/html_node/Program-Arguments.html)
 
+This is actually good because if it maps to the environment variable then it's possible to overwrite it using the write-what-where primitive given 
 
+And since we have a libc leak therefore we know the address of environ
 
+To confirm I checked and noticed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b55a46fe-a064-446e-934d-4fcf5f31398c)
+
+Basically what I noticed is this:
+
+```
+environ -> stack_addr -> addr_pointing_to_env -> environment variables
+```
 
 
 
