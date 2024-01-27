@@ -19,7 +19,7 @@ Ok I decided to run it to get an overview of what it does
 Well it seems to receive our name then exits
 
 Using Ghidra I decompiled the binary and here's the main function
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/60f37dd1-a311-47de-bb7f-0f9a6b48ac6d)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/94227713-db1c-4a4c-be3e-7692bde05647)
 
 ```c
 undefined8 main(void)
@@ -33,7 +33,7 @@ undefined8 main(void)
 }
 ```
 
-Well well the code is code is really small and the vulnerability is obvious
+Well well the code is really small and the vulnerability is obvious
 
 So it defines the buffer which can hold up just 64bytes but uses `gets()` to receive our input which can lead to a buffer overflow: [ref](https://man7.org/linux/man-pages/man3/gets.3.html)
 
@@ -53,7 +53,14 @@ I used `ropper` to look for gadgets and saw this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7800139f-8012-4eeb-a2b6-3eb804051c4b)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ee79bf5d-8b89-497c-ab64-e5dc2f21f66d)
 
+From looking at the available gadgets I figured it's possible to control the rdi & rsi registers
 
+But the issue is that there were no gadgets to control the rdx register
+
+You might wonder whether it's necessary well it is because the rdx register would hold the size of what we want to put to stdout in this case 8 since that's how addresses are alligned in x64 architecture
+
+Take a look at the syscall table [here](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#tables)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3ec7f6aa-032f-48ad-a6ce-5a64a70db855)
 
 
 
