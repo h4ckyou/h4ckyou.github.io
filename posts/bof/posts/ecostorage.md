@@ -344,6 +344,20 @@ name += b'A'*8
 name += b"ACCESS_TOKEN=1337\x00"
 ```
 
+That might be confusing but actually our overwrite would be this:
+
+```
+environ filename
+```
+
+That means this:
+
+```
+environ -> filename -> filename+0x10 -> "ACCESS_TOKEN=1337"
+```
+
+The reason I add `A*8` is just junk to fill up `filename+0x8`
+
 
 
 
