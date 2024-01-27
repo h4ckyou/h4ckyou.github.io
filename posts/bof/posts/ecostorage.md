@@ -119,6 +119,31 @@ case_end:
 
 Now I'll explain the idea of what this does
 
+It basically starts a while loop then shows the `menu` function passing the value of the variable `is_premium` as the parameter
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b41fa42-8392-442a-8fe7-9d472f3098c1)
+
+```c
+void menu(int is_premium)
+
+{
+  puts("-= EcoStorage =-");
+  if (is_premium == 0) {
+    puts("1. Read file part");
+    puts("2. Go premium");
+  }
+  else {
+    puts("1. Read file");
+    puts("2. Disconnect");
+  }
+  puts("0. Quit");
+  printf(">> ");
+  return;
+}
+```
+
+So basically if the value in `is_premium` is `0` we can only read file part of attempt to go premium else we can read any file or disconnect and generally quit
+
+
 
 
 
