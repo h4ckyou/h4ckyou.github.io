@@ -21,3 +21,13 @@ The following protections are enabled:
 - PIE
 
 What a hassle all protections are enabled!!
+
+To get an overview of what the binary does I ran it and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/519ef7e1-a6b7-4b50-a323-23e98dcc241e)
+
+So it seems we can:
+- Read File
+- Go Premium
+- Exit
+
+  
