@@ -285,10 +285,23 @@ Well at this point my thought process was that:
 - How do I become a premium user because if I can become that I can surely read the flag
 - How do I take advantage of the write what where primitive
 
+Before I started thinking how to use the www primitive I decided to first get a leak because it's going to be useless unless we have leaks since all protections are enabled
 
+This is how I got my leak...... I read the content of `/proc/self/maps` which holds the memory mapping for the current binary process and the result is it's equivalent to running `vmmap` on `gdb`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/67385b4d-1f70-40c5-bb2f-c231e48c763a)
 
+Because of restrictions we can only read 12 lines of the file but that's enough because we can get the binary base and libc base from that
 
+You might be wondering that the last line is mapping to the libc path
 
+```
+7fbe70e5a000-7fbe70e5d000 rw-p 00000000 00:00 0 
+```
+
+But that isn't an issue because we can offset it to get to the libc base by adding `0x3000` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4b7bf0f-608b-407c-bb11-69120b8fbae5)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ef46c2e4-a5eb-4e01-88fb-582b980428f7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/70726c4b-b2ab-4903-bbfb-abb615beb40d)
 
 
 
