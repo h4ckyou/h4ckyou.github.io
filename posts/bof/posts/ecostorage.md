@@ -11,3 +11,13 @@ Let's start shell we?
 
 First thing I do always is to know what type of file I'm working with and the protections enabled on it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/481ca51d-f842-4047-9446-7e1ae444c5f1)
+
+Cool we are working with a 64bits binary which is dynamically linked and not stripped
+
+The following protections are enabled:
+- Full Relro
+- Stack Canary
+- No-Execute
+- PIE
+
+What a hassle all protections are enabled!
