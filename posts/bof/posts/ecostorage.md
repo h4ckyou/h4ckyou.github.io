@@ -263,6 +263,19 @@ else {
 }
 ```
 
+So it will receive our input which is the access token then compare it to the value stored in the environment variable `ACCESS_TOKEN` if the comparism returns true we set the `is_premium` value to `1`
+
+Else it will check if our input equals `THCON2022` and if it is, the variable `coupon_used` is set to `1`
+
+Then once it tells us the **coupon is valid** it will receive 2 numbers 
+
+```c
+puts("Tell us your 2 lucky numbers, you might win a premium access!");
+__isoc99_scanf("%lu %lu%*c",&where,&write);
+*where = write;
+```
+
+This portion gives us a write-what-where (www) primitive meaning we can write to memory using this
 
 
 
