@@ -175,9 +175,147 @@ else {
 But the check here does this:
 - If the value stored in `is_premium` is equal to `0` and the occurrence of `flag` happens to be in the filename provided we would get an error saying **Forbidden file, go premium to read**
 
-So this means that we can read the flag file if we are a premium user
+So this means that we can read the flag file if we are a premium user, one thing to note here is that the `filename` is a global variable that has a size of 64
 
 Now let's see the function that reads the file provided
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1f55d067-193f-4c8a-ad84-e0a1dcf17816)
+
+```c
+void read_file(int is_premium)
+
+{
+  FILE *fptr;
+  size_t __n;
+  char *fp;
+  long in_FS_OFFSET;
+  int i;
+  char content [136];
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  fptr = fopen(filename,"r");
+  if (fptr == (FILE *)0x0) {
+    puts("Failed to open file.");
+  }
+  else {
+    if (is_premium == 0) {
+      puts("File content (12 lines maximum): ");
+      i = 0;
+      while ((i < 12 && (fp = fgets(content,128,fptr), fp != (char *)0x0))) {
+        printf("%s",content);
+        i = i + 1;
+      }
+    }
+    else {
+      puts("File content: ");
+      while (__n = fread(content,1,128,fptr), __n != 0) {
+        write(1,content,__n);
+      }
+    }
+    putchar(10);
+    fclose(fptr);
+  }
+  if (canary == *(long *)(in_FS_OFFSET + 0x28)) {
+    return;
+  }
+                    /* WARNING: Subroutine does not return */
+  __stack_chk_fail();
+}
+```
+
+Basically this funtion would check if `is_premium` is `0` and if it is we only get 12 lines from whatever we attempt to read else we get the whole content of the file
+
+So things are really limited is we aren't a premium user
+
+Let's see the functionality that makes us become a premium user
+
+```c
+if (is_premium == 0) {
+  printf("Access token: ");
+  fgets(access_token,64,stdin);
+  null = strcspn(access_token,"\n");
+  access_token[null] = 0x0;
+  env = getenv("ACCESS_TOKEN");
+  fp = strcmp(access_token,env);
+  if (fp == 0) {
+    is_premium = 1;
+    puts("Premium access successfully activated!");
+  }
+  else {
+    fp = strcmp(access_token,"THCON2022");
+    if (fp == 0) {
+      if (coupon_used == 0) {
+        coupon_used = 1;
+        puts("Success! Your coupon is valid.");
+        puts("Tell us your 2 lucky numbers, you might win a premium access!");
+        __isoc99_scanf("%lu %lu%*c",&where,&write);
+        *where = write;
+        puts("Thank you for playing, we\'ll contact you soon!");
+      }
+      else {
+        puts("You can\'t use your coupon twice!");
+      }
+    }
+  }
+}
+else {
+  is_premium = 0;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
