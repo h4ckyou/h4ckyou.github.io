@@ -61,3 +61,4 @@ Binary exploitation involves taking advantage of a bug or vulnerability in order
 - [[January 22 2023]] [Mprotect](https://h4ckyou.github.io/posts/bof/posts/mprotect.html) `ROP`
 - [[January 23 2023]] [SROP](https://h4ckyou.github.io/posts/bof/posts/srop.html) `SROP`
 - [[January 27 2023]] [EcoStorage](https://h4ckyou.github.io/posts/bof/posts/ecostorage.html) `Environment Hijack`
+- [[January 27 2022]] [BabyROP](https://h4ckyou.github.io/posts/bof/posts/babyrop.html) `Ret2CSU, ROP`
