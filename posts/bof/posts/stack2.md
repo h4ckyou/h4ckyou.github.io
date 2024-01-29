@@ -180,6 +180,7 @@ Now that we achieved the *eip* control let's make it call the `hackhere` functio
 I grabbed the address from `gdb` and split it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2f0fa96-3c41-4a54-be8e-7e15a323b64a)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2ddcfb56-63d0-4515-8e3d-de30c8ca6eb1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e970e67d-6255-4efc-a434-02e4c36903ed)
 
 ```
 0x0804859b  hackhere
