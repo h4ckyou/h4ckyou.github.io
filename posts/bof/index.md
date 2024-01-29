@@ -58,7 +58,8 @@ Binary exploitation involves taking advantage of a bug or vulnerability in order
 - [[September 02 2023]] [One Byte](https://h4ckyou.github.io/posts/bof/posts/onebyte.html) `One Byte Overflow, Ret2Win`
 - [[September 20 2023]] [Sandbox](https://h4ckyou.github.io/posts/bof/posts/sandbox.html) `Seccomp`
 - [[October 12 2023]] [Unlimited Subway](https://h4ckyou.github.io/posts/bof/posts/unlimited_subway.html) `OOB Read, Ret2Win`
-- [[January 22 2023]] [Mprotect](https://h4ckyou.github.io/posts/bof/posts/mprotect.html) `ROP`
-- [[January 23 2023]] [SROP](https://h4ckyou.github.io/posts/bof/posts/srop.html) `SROP`
-- [[January 27 2023]] [EcoStorage](https://h4ckyou.github.io/posts/bof/posts/ecostorage.html) `Environment Hijack`
-- [[January 27 2022]] [BabyROP](https://h4ckyou.github.io/posts/bof/posts/babyrop.html) `Ret2CSU, ROP`
+- [[January 22 2024]] [Mprotect](https://h4ckyou.github.io/posts/bof/posts/mprotect.html) `ROP`
+- [[January 23 2024]] [SROP](https://h4ckyou.github.io/posts/bof/posts/srop.html) `SROP`
+- [[January 27 2024]] [EcoStorage](https://h4ckyou.github.io/posts/bof/posts/ecostorage.html) `Environment Hijack`
+- [[January 27 2024]] [BabyROP](https://h4ckyou.github.io/posts/bof/posts/babyrop.html) `Ret2CSU, ROP`
+- [[January 29 2024]] [Stack2](https://h4ckyou.github.io/posts/bof/posts/stack2.html) `OOB Write, ROP`
