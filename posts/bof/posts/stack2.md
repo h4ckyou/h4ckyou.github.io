@@ -166,7 +166,7 @@ The resulting answer is `132`
 
 Ok let's confirm it by overwriting the `eip->0x41414141`
 
-Note that when changing number with option 3 the expected integer value is just a byte that means if we want to overwrite the instruction pointer we would send the address one byte at a time in little endian format
+Note that when changing number with option 3 the expected integer value is just a `DWORD -> sizeof(int)` that means if we want to overwrite the instruction pointer we would send the address one `DWORD` at a time in little endian format
 
 Back to our test overwrite
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c1362850-2893-4fcd-be27-1af1fbfb039e)
@@ -193,18 +193,6 @@ I tried running it remotely and got this
 
 So apparently it doesn't have `/bin/bash` remotely that's why it stopped
 
-How do we go around this?
+But hey we solved it already!
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+I couldn't find any way to write `/bin/sh` to memory then call `system(memory)`
