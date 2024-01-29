@@ -30,7 +30,58 @@ Now that we know that I decided to decompile the binary inorder to reverse it an
 
 I will look through what each function does and explain 🙂
 
-First it will receive the number of integers we want to store in the array with it's value
+- First it will receive the number of integers we want to store in the array with it's value and the number which can be stored in the array must be less than 100 that means at most 99 values can be stored
+
+```c
+char numArray [100];
+
+puts("How many numbers you have:");
+__isoc99_scanf("%d",&idx);
+puts("Give me your numbers");
+for (i = 0; (i < idx && ((int)i < 100)); i = i + 1) {
+  __isoc99_scanf("%d",&values);
+  numArray[i] = (char)values;
+}
+```
+
+Here comes the operational part of this program. In a while loop it can allow us perform 4 operations
+
+- Option one basically iterates through every element in the `numArray` and prints it's index and value
+
+```c
+if (choice != 1) goto end;
+puts("id\t\tnumber");
+for (k = 0; k < cnt; k = k + 1) {
+  printf("%d\t\t%d\n",k,(int)numArray[k]);
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
