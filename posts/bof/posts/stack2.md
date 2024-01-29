@@ -164,6 +164,7 @@ ret_addr - array = 0xffffce4c - 0xffffcdc8
 
 The resulting answer is `132`
 
+Ok let's confirm it by overwriting the `eip->0x41414141`
 
 
 
