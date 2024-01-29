@@ -101,7 +101,15 @@ end:
   }
 ```
 
+**Exploitation**
 
+Now you may wonder where the bug is?
+
+Well the bug resides in option 3 
+
+Is the reason because it would allow us specify the index position of the array we want to store our integer to? Nope!
+
+The reason is because it doesn't check if the index position we are trying to write to is within the range of the array
 
 
 
