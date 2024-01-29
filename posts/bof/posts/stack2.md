@@ -193,6 +193,18 @@ I tried running it remotely and got this
 
 So apparently it doesn't have `/bin/bash` remotely that's why it stopped
 
-But hey we solved it already!
-
 I couldn't find any way to write `/bin/sh` to memory then call `system(memory)`
+
+Later I figured instead of it doing `system('/bin/sh')` why not it do `system('sh')` basically not using full path?
+
+Because the address of `/bin/bash` is stored on the binary if we just add like `address+0x7` it would give `sh`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/892acae6-0828-4ec0-b784-2f42c874d6e7)
+
+But now we need to form the write payload to call `system('sh')` we can easily achieve that because we can control the `eip` 
+
+
+
+
+
+
+
