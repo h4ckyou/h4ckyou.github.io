@@ -188,8 +188,12 @@ I grabbed the address from `gdb` and split it
 Now on running the exploit worked locally
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7a79a221-0e34-4070-9c9e-fd83a05e0836)
 
+I tried running it remotely and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ac424680-5139-4229-a656-1611fc4aa327)
 
+So apparently it doesn't have `/bin/bash` remotely that's why it stopped
 
+How do we go around this?
 
 
 
