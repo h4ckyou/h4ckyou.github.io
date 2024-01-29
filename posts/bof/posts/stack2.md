@@ -115,6 +115,37 @@ Because the array can only hold up at most 200 bytes that means the operation sh
 
 Now because of this bug we can write out of bound of the array making this bug *OOB Write (Out-Of-Bound Write)*
 
+But what do we do with this bug? Is there anything we would want to overwrite?
+
+Looking through the available functions I came across this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/70797696-667e-4ecc-98be-3878d9cf8581)
+
+Ok cool there's a function which would spawn a shell
+
+That's satisfying because we can possibly call that function! Wait but how?
+
+Because the array is stored on the stack we can use the OOB Write to overwrite the EIP before the program returns without worrying about Canary
+
+How do we achieve that?
+
+First we need to know the address of the array and the stack return address
+
+For the first one looking at the assembly code in Ghidra when the number get stored in the array shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ffc3d7ec-c3d8-41b3-bc6d-05cbb91ffe6c)
+
+That instruction would move the value of `ebp-0x70` to the `edx` register, and the *edx* register is pointing to the *array*
+
+So I set a breakpoint at that point
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0057d20e-a2f6-42a3-8e80-02e919586d23)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/25f73ebf-2a43-428e-a4ce-7ba81739f455)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/987d2d76-93ca-4bf0-ba67-ae056205ac76)
+
+After it does *lea edx, [ebp-0x70]* operation the current value in *edx* is the array address
+
+```
+array = edx = 0xffffcdc8
+```
+
 
 
 
