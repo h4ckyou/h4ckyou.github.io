@@ -146,7 +146,23 @@ After it does *lea edx, [ebp-0x70]* operation the current value in *edx* is the 
 array = edx = 0xffffcdc8
 ```
 
+Now we need the stack return address which we can get by setting a breakpoint at the point the binary wants to *ret*
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f602c0ee-c3e4-4eca-8394-3f886735463e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d71dff40-45b1-483c-8861-3b4db16a8eb6)
 
+The value stored in *esp* is the stack return address
+
+```
+ret_addr = esp = 0xffffce4c
+```
+
+Now to get the offset needed to overwrite the instruction pointer just do this:
+
+```
+ret_addr - array = 0xffffce4c - 0xffffcdc8
+```
+
+The resulting answer is `132`
 
 
 
