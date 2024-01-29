@@ -111,7 +111,9 @@ Is the reason because it would allow us specify the index position of the array 
 
 The reason is because it doesn't check if the index position we are trying to write to is within the range of the array
 
+Because the array can only hold up at most 200 bytes that means the operation should have made sure our index value is within range(0, 199) 
 
+Now because of this bug we can write out of bound of the array making this bug *OOB Write (Out-Of-Bound Write)*
 
 
 
