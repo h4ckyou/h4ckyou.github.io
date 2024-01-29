@@ -56,6 +56,41 @@ for (k = 0; k < cnt; k = k + 1) {
 }
 ```
 
+- Option two allows us add a number to the array. The number that would be added would be stored as the next element in the array
+
+```c
+if (choice != 2) break;
+puts("Give me your number");
+__isoc99_scanf("%d",&values);
+if (cnt < 100) {
+  numArray[cnt] = (char)values;
+  cnt = cnt + 1;
+}
+```
+
+- Option three allows us to change a number at a specified index of the array
+
+```c
+if (choice != 3) break;
+puts("which number to change:");
+__isoc99_scanf("%d",&idx);
+puts("new number:");
+__isoc99_scanf("%d",&values);
+numArray[idx] = (char)values;
+}
+```
+
+- Option four calculates the average of the elements of the array by taking the sum of element in the array and dividing it by the number of element stored in the array (that's what average means ^^)
+
+```c
+if (choice != 4) break;
+sum = 0;
+for (j = 0; j < cnt; j = j + 1) {
+  sum = sum + numArray[j];
+}
+printf("average is %.2lf\n",(double)sum / (double)(ulonglong)cnt);
+}
+```
 
 
 
