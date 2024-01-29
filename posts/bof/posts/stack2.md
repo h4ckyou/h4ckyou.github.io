@@ -300,9 +300,14 @@ if __name__ == '__main__':
 Running it works remotely
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/610a45f3-907b-44c9-8d23-edaf803ecc80)
 
+You can check it out as it runs here:
+[![asciicast](https://asciinema.org/a/ofJa0QIAIIo63Vn0QGDsHLgRJ.svg)](https://asciinema.org/a/ofJa0QIAIIo63Vn0QGDsHLgRJ)
 
+Overall I'd say it's an easy challenge but during the time I was solving this I spent some minutes finding way to write a string in memory but after I couldn't achieve that I figured that alternate way
 
+So that time spent did did piss me off 🥲
 
+Anyways thanks for reading!
 
 
 
