@@ -166,15 +166,24 @@ The resulting answer is `132`
 
 Ok let's confirm it by overwriting the `eip->0x41414141`
 
+Note that when changing number with option 3 the expected integer value is just a byte that means if we want to overwrite the instruction pointer we would send the address one byte at a time in little endian format
 
+Back to our test overwrite
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c1362850-2893-4fcd-be27-1af1fbfb039e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76fce45d-0868-4c41-acb7-57580858390e)
 
+Nice that worked, here's the code I used to do that because doing it manually was annoying
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d8772e7a-5346-4c98-89f4-eed74c3fecaf)
 
+Now that we achieved the *eip* control let's make it call the `hackhere` function
 
+I grabbed the address from `gdb` and split it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2f0fa96-3c41-4a54-be8e-7e15a323b64a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2ddcfb56-63d0-4515-8e3d-de30c8ca6eb1)
 
-
-
-
-
+```
+0x0804859b  hackhere
+```
 
 
 
