@@ -92,7 +92,14 @@ printf("average is %.2lf\n",(double)sum / (double)(ulonglong)cnt);
 }
 ```
 
+And finally if none of the options are choosen the binary goes to the *end* switch case and checks if the canary is still intact and if it is it *returns 0*
 
+```c
+end:
+  if (local_14 == *(int *)(in_GS_OFFSET + 0x14)) {
+    return 0;
+  }
+```
 
 
 
