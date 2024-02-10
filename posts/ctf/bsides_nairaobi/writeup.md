@@ -493,8 +493,11 @@ It works! But I prefer working with ASLR disabled so that the offset would be th
 So I made this function to work with that
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c236dee6-7797-47c6-be86-4940dfd10804)
 
-To disabled ASLR run this:
+To disable ASLR run this:
+
+```
 - echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+```
 
 Now we can safely jump to the `notcalled` function
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c68bf288-6f13-4ab2-bbdc-b328ad6284c4)
@@ -563,11 +566,15 @@ We can test it by running it
 
 Oh yes ASLR is still disabled :(
 
-Well you can still enabled it and the exploit would work as long as you comment the `aslr_off` function and uncomment the `main` function
+Well you can still enable it and the exploit would work as long as you comment the `aslr_off` function and uncomment the `main` function
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0706bff0-dcb8-42c0-9224-27b01f48b215)
 
 To enabled ASLR do this:
+
+```
 - echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
+```
 
 On running the exploit it would spawn a shell 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de4aadc1-2d2a-42e8-838d-c0f12dc80356)
