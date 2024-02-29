@@ -104,8 +104,25 @@ But first we need to control `ebx & rbp`
 I didn't see any gadgets that allowed me to control it directly
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5fe94fe3-8750-4fe7-92f3-aff30ad855c5)
 
+Luckily there was `__libc_csu_init`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/75450f77-1d44-4759-8ce0-db1f58859ac5)
 
+This makes `ret2csu` viable and therefore giving us control over the `ebx & rbp` registers
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/57cf7bf4-95d7-43df-8397-de6656014811)
 
+So the goal is to first call `csu_pop == 0x00000000004012f6`
+
+Then the following will be stored:
+
+```
+add rsp, 0x8 == padding (fill with 0)
+pop rbx == 0xffffffff (-1)
+pop rbp == counter + 0x3d
+pop r12 == 0x0
+pop r13 == 0x0
+pop r14 == 0x0
+pop r15 == 0x0
+```
 
 
 
