@@ -91,7 +91,7 @@ But when I used `ROPgadget` to take a look at the available gadgets I came acros
 0x00000000004011dc : add dword ptr [rbp - 0x3d], ebx ; nop ; ret
 ````
 
-Looking at it we can add the value of the `ebx` register to `rbp-0x3d`
+Looking at it we can add the value of the `ebx` register to `rbp-0x3d` making it a `add-what-where` gadget which is useful
 
 So let's say the counter address is stored in `rbp-0x3d` and the `ebx` register has value of `-1`
 
