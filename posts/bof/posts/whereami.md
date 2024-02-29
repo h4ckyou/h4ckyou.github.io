@@ -91,6 +91,19 @@ But when I used `ROPgadget` to take a look at the available gadgets I came acros
 0x00000000004011dc : add dword ptr [rbp - 0x3d], ebx ; nop ; ret
 ````
 
+Looking at it we can add the value of the `ebx` register to `rbp-0x3d`
+
+So let's say the counter address is stored in `rbp-0x3d` and the `ebx` register has value of `-1`
+
+When the instruction is executed the value stored in the counter will be decremented to 0
+
+I then decided to make use of this because it's a good primitive 
+
+But first we need to control `ebx & rbp`
+
+I didn't see any gadgets that allowed me to control it directly
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5fe94fe3-8750-4fe7-92f3-aff30ad855c5)
+
 
 
 
