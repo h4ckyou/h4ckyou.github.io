@@ -49,3 +49,14 @@ undefined8 main(void)
 
 There's no other function aside that
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/90baa1c7-f43c-441b-981a-6d346fa634a1)
+
+So concerning the main function here's what it does:
+- Gets the current effective group id and sets the real user id to the value returned
+- It checks if the `counter` which is a global variable is greater than `0` and if it is the program exits with return code of `1`
+- If the program doesn't exit it will increment the counter by `1` and receive our input using `gets()` then finally return
+
+The vulnerability is pretty obvious to spot since the usage of `gets()` leads to buffer overflow
+
+At first I tried to leak libc using `puts()` and jump to the next instruction which tends to increment the counter 
+
+It worked but after I provide input the program crashes?
