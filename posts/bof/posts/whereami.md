@@ -57,6 +57,25 @@ So concerning the main function here's what it does:
 
 The vulnerability is pretty obvious to spot since the usage of `gets()` leads to buffer overflow
 
+What next?
+
 At first I tried to leak libc using `puts()` and jump to the next instruction which tends to increment the counter 
 
 It worked but after I provide input the program crashes?
+
+Here's the code snippet I used
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b98e5e77-a56c-4a1f-b602-f2b914bd2326)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
