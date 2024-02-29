@@ -82,7 +82,14 @@ But in this case we've overwritten the value that's meant to be there making the
 
 At this point I was pretty stucked so I decided to take a look at the available rop gadgets
 
+Looking at the gadgets shown from using `ropper` I couldn't make use of any of them
 
+But when I used `ROPgadget` to take a look at the available gadgets I came across one that wasn't shown by `ropper`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f40a7cc8-b6d3-4b14-bea0-1d810ac3466c)
+
+```
+0x00000000004011dc : add dword ptr [rbp - 0x3d], ebx ; nop ; ret
+````
 
 
 
