@@ -69,7 +69,18 @@ Here's the code snippet I used
 From debugging I saw that this was the issue
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/19b066da-b921-48f2-84a1-86006281bdd6)
 
+```
+ ► 0x7f7848980ad3 <gets+307>    mov    byte ptr [rbx], al
 
+al = 0x61
+rbx = 0x6161617261616131
+```
+
+We can see that it's meant to move the value of the rax register into the pointer of the rbx register
+
+But in this case we've overwritten the value that's meant to be there making the program crash
+
+At this point I was pretty stucked so I decided to take a look at the available rop gadgets
 
 
 
