@@ -22,3 +22,30 @@ I ran the binary to get an overview of what it does
 It receives our input then the program exists
 
 Loading the binary up in Ghidra and looking at the main function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3cc64162-dd05-41c9-83f6-874033724791)
+
+```c
+
+undefined8 main(void)
+
+{
+  char buffer [60];
+  __gid_t egid;
+  
+  setbuf(stdout,(char *)0x0);
+  egid = getegid();
+  setresgid(egid,egid,egid);
+  puts("I\'m so lost.");
+  printf("Who are you? ");
+  if (0 < counter) {
+    exit(1);
+  }
+  counter = counter + 1;
+  gets(buffer);
+  puts("I hope you find yourself too.");
+  return 0;
+}
+```
+
+There's no other function aside that
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/90baa1c7-f43c-441b-981a-6d346fa634a1)
