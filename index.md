@@ -9,7 +9,9 @@ title: Home
 ### Welcome To My Cyber Security Blog, H4X0R
 * * *
 
-Hi 👋, Welcome To My Cyber Security Blog I'm Mark, I Post Different Writeups, Articles, Any Stuffs Related To Hacking & Programming That I Learn xD......
+Hi 👋, Welcome To My Blog I'm Mark a Computer Science First Year Student at `Federal University of Technology (Minna)`.
+
+I Post Different Writeups, Articles, Any Stuffs Related To Hacking & Programming That I Learn xD......
 
 To view more writeups click on the above links ☝️ 
 
@@ -19,8 +21,8 @@ Arigato 🫠
 ### Whoami:~#
 * * *
 
-- **My Name:**    `Mark Uche`
-- **Also Known As:** `Hack.You`
+- **My Name:**   `Mark Uche`
+- **Also Known As:** `HackYou`
 - **What I Do:**  `CTFs / Ethical Hacking / Programming`
 - **Twitter:** `https://twitter.com/0xMarkUche`
 - **Github:** `https://github.com/markuched13 & https://github.com/h4ckyou`
