@@ -3,11 +3,11 @@
 
 - 👋 Hi, I’m @Mark
 
+- 📖 I'm a Computer Science student at Federal University of Technology Minna (FUTM)
+
 - 👀 I’m interested in Cyber Security and Programming
 
-- 🌱 I’m currently improving my knowledge in Ethical Hacking and Programming
+- 🌱 I’m currently improving my knowledge in various things
 
-- 💞️ I’m looking to collaborate on Projects
-
-- 📫 How to reach me? on Discord @Hack.You#9120 Twitter @0xMarkUche
+- 📫 How to reach me? on Discord @h4cky0u Twitter @0xMarkUche
 
