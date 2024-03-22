@@ -1,4 +1,4 @@
----
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3338ad2b-510a-4272-9f3e-0db4079ba00c)---
 layout: default
 title:  Reverse Engineering.
 ---
@@ -17,3 +17,4 @@ Reverse-engineering is the act of dismantling an object to see how it works. It 
 - [[Mar 02 2023]] [P0lyn0mials](https://h4ckyou.github.io/posts/re/posts/p0lyn0mials.html) `Reverse Engineering`
 - [[May 28 2023]] [PleaseCrackMe](https://h4ckyou.github.io/posts/re/posts/PleaseCrackMe.html) `CrackMe`
 - [[Jan 20 2023]] [EzRev](https://h4ckyou.github.io/posts/re/posts/ezRev.html) `Matrix, Math`
+- [[Mar 22 2023]] [Constrained](https://h4ckyou.github.io/posts/re/posts/constrained.html) `Z3`
