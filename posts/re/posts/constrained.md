@@ -56,6 +56,21 @@ This is what the check() function does:
 
 So to solve this challenge I made use of an [SMT](https://en.wikipedia.org/wiki/Satisfiability_modulo_theories) solver called [z3](https://github.com/Z3Prover/z3)
 
+One thing to note is that when the random module is seeded it becomes "broken" when the seed is known because it isn't more "predictable (random)". That means we can also generate the next random value since the seed is known making it easier, though with using z3 it doesn't matter as to whether the seed is known it would find the right value provided that the constraint is satisfiable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
