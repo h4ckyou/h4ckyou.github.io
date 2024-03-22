@@ -1,4 +1,3 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3338ad2b-510a-4272-9f3e-0db4079ba00c)---
 layout: default
 title:  Reverse Engineering.
 ---
