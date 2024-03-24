@@ -224,4 +224,8 @@ print(pin)
 Running that gives the pin which worked on the program and also as the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2463f3df-957f-445d-a719-bd1b4b7fab82)
 
+```
+Flag: jctf{62881624049}
+```
+
 
