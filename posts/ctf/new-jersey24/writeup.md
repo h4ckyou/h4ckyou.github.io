@@ -190,7 +190,38 @@ Since I wasn't able to fully reverse it due to it giving non printable byte I ju
 
 Basically i will iterate through the length of the buffer then in a nested loop i will iterate through a byte range(0-255) and encrypt each value with the same encryption scheme used by the program then compare the encrypted value with `buffer[i]`
 
-With that said here's my final solve script
+With that said here's my final solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/reverse/the-heist-1/solve.py)
 
 ```python
+from pwn import *
+
+def rol(value, shift):
+    return ((value << shift) | (value >> (8 - shift))) & 0xFF
+
+def ror(value, shift):
+    return (value >> shift) | (value << (8 - shift)) & 0xff
+
+def check(v4):
+    r = (v4 + 96) & 0xff
+    r = (~r) & 0xff
+    r = (rol(r, 4)) & 0xff
+    r = (r ^ 0x55) & 0xff
+    return bytes([r])
+
+buffer = p64(0xE383C3B3232383C3)
+buffer += p64(0x0C33E3A3)
+
+pin = ''
+
+for i in range(len(buffer)):
+    for j in range(0xff+1):
+        if check(j) == p8(buffer[i]):
+            pin += chr(j)
+        
+print(pin)
+```
+
+Running that gives the pin which worked on the program and also as the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2463f3df-957f-445d-a719-bd1b4b7fab82)
+
 
