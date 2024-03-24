@@ -45,6 +45,122 @@ Using that as the address worked
 Flag: jctf{mxnhCEkuBogW3E7XAEzNmaq6eZqW3zgEuu}
 ```
 
+#### Password Manager
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/df2489d1-5c07-4039-830a-0a32cdf438b2)
+
+After downloading the binary I checked the file type 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4508a37f-3197-46bb-a54d-3164159ed75b)
+
+So we're working with a x64 binary which is statiscally linked and not stripped
+
+I ran it to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/28733109-9805-4ba2-93d7-945c883b7995)
+
+Looks like a custom flag checker
+
+Loading the binary up in Ghidra here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5addb66b-c134-49df-b772-f2a6fc30adea)
+
+```c
+undefined8 main(int argc,char **argv)
+
+{
+  int fp;
+  undefined8 ret;
+  long in_FS_OFFSET;
+  int i;
+  char enc [19];
+  byte result [19];
+  undefined local_15;
+  long canary;
+  
+  canary = *(long *)(in_FS_OFFSET + 0x28);
+  enc[0] = 'O';
+  enc[1] = 'F';
+  enc[2] = 'Q';
+  enc[3] = 'C';
+  enc[4] = '^';
+  enc[5] = 'R';
+  enc[6] = 'M';
+  enc[7] = '\x16';
+  enc[8] = 'W';
+  enc[9] = '\x16';
+  enc[10] = 'V';
+  enc[11] = 'z';
+  enc[12] = 'H';
+  enc[13] = 'e';
+  enc[14] = '\\';
+  enc[15] = 'e';
+  enc[16] = '\x1a';
+  enc[17] = 'X';
+  if (argc == 2) {
+    for (i = 0; i < 0x12; i = i + 1) {
+      result[i] = enc[i] ^ 0x25;
+    }
+    local_15 = 0;
+    fp = strncmp((char *)result,argv[1],0x12);
+    if (fp == 0) {
+      puts("That\'s the password!");
+      ret = 0;
+    }
+    else {
+      puts("That\'s not the password.");
+      ret = 1;
+    }
+  }
+  else {
+    printf("Usage is %s <FLAG>\n",*argv);
+    ret = 1;
+  }
+  if (canary != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return ret;
+}
+```
+
+We can see that it basically xors the enc buffer with key `0x25` and compares it with our input
+
+We can just reimplement this or debug in gdb to get the xored value which should be the flag
+
+But I just choose the former
+
+Here's the script
+
+```python
+enc = [79, 70, 81, 67, 94, 82, 77, 22, 87, 22, 86, 122, 72, 101, 92, 101, 26, 88]
+key = 0x25
+flag = [i ^ key for i in enc]
+
+print("".join(map(chr, flag)))
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/64b021a5-ba43-4cc9-8a78-85b5c48e0c72)
+
+```
+Flag: jctf{wh3r3s_m@y@?}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #### The Heist 1
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81d4932d-2357-45b5-8d72-20ce06ca3ead)
 
