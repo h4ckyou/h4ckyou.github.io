@@ -91,3 +91,18 @@ int __fastcall main(int argc, const char **argv, const char **envp)
   return 0;
 }
 ```
+
+The function `sub_140001010` just prints out the word passed as the parameter
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/88a61295-b18d-4192-afc6-ee23819a0c30)
+
+So let's see what it does:
+- It would receive our input using `fgets` which is stored in the `Buffer` char array
+- Then for each value in the array it does this:
+  - It adds `96` to the value
+  - Negates the result
+  - Rotates the result `4` times to the left
+  - Xors the rotated value with `0x55`
+- After the encryption is done it will then:
+  - Compare the resulting value to what's stored in `qword_140003038`
+  - Compares the `Buffer[8::]` to the value stored in `dword_140003040`
+- If the comparism returns `0` 
