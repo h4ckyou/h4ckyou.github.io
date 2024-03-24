@@ -142,3 +142,22 @@ for v4 in buffer:
 
 print(''.join(map(chr, rev)))
 ```
+
+After running it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/910b6047-f04d-4017-8773-e149130f9aa4)
+
+```
+42618826
+940
+```
+
+We can see that it happened to encounter a newline character which makes this hard because we can't submit that as the flag
+
+But how do we check the validity of the digit found?
+
+I debugged it in IDA!
+
+First I set a breakpoint here
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/145ebae8-e057-4aa2-af47-d343c3439544)
+
+
