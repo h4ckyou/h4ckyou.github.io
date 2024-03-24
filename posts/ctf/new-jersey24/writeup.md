@@ -307,6 +307,84 @@ char name[100];
 scanf("%s", name);
 ```
 
+Now where exactly is the integer overflow?
+
+The point where it assigns value to `mult1, mult2` the values are integers which is supposed to have been stored as long integers
+
+Since the suffix `LL` isn't used then the size would be 4 bytes whereas we are going to multiple the 4 bytes by another long int which in this case we would pass in 8 bytes causing the overflow
+
+I made use of pwntools [negate](https://docs.pwntools.com/en/stable/util/fiddling.html#pwnlib.util.fiddling.negate) function. The syntax is `negate(number,bits_width)`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02abe52e-698c-4e61-80a4-1ea48395a076)
+
+```
+>>> from pwn import *
+>>>
+>>> negate(36864, 64)
+18446744073709514752
+>>>
+>>> -(negate(3735928559, 64))
+-18446744069973623057
+```
+
+For the last case
+
+```c
+char mult3 = 'O';
+char ans3;
+printf("Good\n");
+printf("%c * z = 'A'. What is z?\n", mult3);
+scanf("\n%c", &ans3);
+if((char)(ans3*mult3) != 'A') {
+        printf("Incorrect, try again\n");
+        return 0;
+}
+```
+
+We see that it stores a character `O` in `mult3` then receives a character as our input which is stored in `ans3`
+
+It then multiplies both `mult3 and ans3` then casts it to `char *` which is then compared to character `A`
+
+There's another integer overflow here because the size of `char` is 8 bits and when it multiplies both our input with `mult3` that becomes larger than the size of a char
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/83f2fa1e-9861-4346-83c1-1e911b35a4fc)
+
+We can see that it's not possible to just divide 'A' with 'O' as that would give a float number which we can't cast as a character
+
+So to solve this part I just wrote a script
+
+Here's the script
+
+```python
+
+for i in range(0xff+1):
+    if chr((i * ord('O')) & 0xff) == 'A':
+        print(chr(i))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
