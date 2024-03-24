@@ -185,3 +185,12 @@ The issue there is at `result[8]`, it isn't equal to `buffer[8]`
 That's the character that gives `\n` when reversed
 
 So what next?
+
+Since I wasn't able to fully reverse it due to it giving non printable byte I just decided to brute force for values
+
+Basically i will iterate through the length of the buffer then in a nested loop i will iterate through a byte range(0-255) and encrypt each value with the same encryption scheme used by the program then compare the encrypted value with `buffer[i]`
+
+With that said here's my final solve script
+
+```python
+
