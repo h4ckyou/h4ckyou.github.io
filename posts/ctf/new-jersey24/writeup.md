@@ -45,4 +45,49 @@ Using that as the address worked
 Flag: jctf{mxnhCEkuBogW3E7XAEzNmaq6eZqW3zgEuu}
 ```
 
+#### The Heist 1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81d4932d-2357-45b5-8d72-20ce06ca3ead)
 
+So this time around our goal is to find the pin
+
+I downloaded the executable, loaded it up in IDA and generated the pseudocode
+
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0a15821d-5221-4b07-8809-86eff4536dde)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  FILE *v3; // rax
+  char v4; // al
+  char *i; // rcx
+  char *v6; // rcx
+  char Buffer[16]; // [rsp+20h] [rbp-88h] BYREF
+  __int128 v9; // [rsp+30h] [rbp-78h]
+  __int128 v10; // [rsp+40h] [rbp-68h]
+  __int128 v11; // [rsp+50h] [rbp-58h]
+  __int128 v12; // [rsp+60h] [rbp-48h]
+  __int128 v13; // [rsp+70h] [rbp-38h]
+  int v14; // [rsp+80h] [rbp-28h]
+
+  sub_140001010("Please enter the pin:");
+  v14 = 0;
+  *(_OWORD *)Buffer = 0LL;
+  v9 = 0LL;
+  v10 = 0LL;
+  v11 = 0LL;
+  v12 = 0LL;
+  v13 = 0LL;
+  v3 = _acrt_iob_func(0);
+  if ( fgets(Buffer, 100, v3) == Buffer )
+  {
+    v4 = Buffer[0];
+    for ( i = Buffer; *i; v4 = *i )
+      *i++ = __ROL1__(~(v4 + 96), 4) ^ 0x55;
+    if ( qword_140003038 != *(_QWORD *)Buffer || (v6 = "Success", dword_140003040 != *(_DWORD *)&Buffer[8]) )
+      v6 = "Failure";
+    sub_140001010(v6);
+  }
+  return 0;
+}
+```
