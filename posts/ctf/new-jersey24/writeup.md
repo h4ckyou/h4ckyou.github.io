@@ -126,7 +126,7 @@ We can just reimplement this or debug in gdb to get the xored value which should
 
 But I just choose the former
 
-Here's the [script]()
+Here's the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/reverse/password-manger/solve.py)
 
 ```python
 enc = [79, 70, 81, 67, 94, 82, 77, 22, 87, 22, 86, 122, 72, 101, 92, 101, 26, 88]
@@ -274,6 +274,7 @@ int main() {
         vuln();
 }
 ```
+
 
 
 
