@@ -105,4 +105,12 @@ So let's see what it does:
 - After the encryption is done it will then:
   - Compare the resulting value to what's stored in `qword_140003038`
   - Compares the `Buffer[8::]` to the value stored in `dword_140003040`
-- If the comparism returns `0` 
+- If the comparism returns `True` we get the success message else the failed message
+
+Looking at the value stored in `qword_140003038` shows
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b4bb83ba-919a-46fb-a6ce-956789ad1866)
+
+```
+qword_140003038 = 0xE383C3B3232383C3
+dword_140003040 = 0xC33E3A3
+```
