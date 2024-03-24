@@ -275,9 +275,37 @@ int main() {
 }
 ```
 
+I won't explain all lines of code but basically we are going to be given 3 set of questions where we are to find a number that satifies the provided equation
 
+The idea in solving it is basically integer overflow
 
+Here are the questions:
 
+```c
+long mult1 = 0x9000
+long ans1;
+
+- mult1 * ans1 < 0
+
+long mult2 = 0xdeadbeef;
+long ans2;
+
+- mult2 * ans2 = 0
+
+char mult3 = 'O';
+char ans3;
+
+- ans3 * mult3 == 'A'
+```
+
+After finding `ans1, ans2, ans3` the sum must be equal to the name we set when the program starts
+
+```c
+printf("Enter Name:\n");
+char name[100];
+
+scanf("%s", name);
+```
 
 
 
