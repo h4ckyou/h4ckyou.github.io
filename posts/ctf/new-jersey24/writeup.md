@@ -119,4 +119,26 @@ That's basically the encrypted pin value
 
 So our goal is to reverse the operation to find the right value to get us that?
 
+To reverse the operation here's what I did:
+- Iterate through each byte from the encrypted value
+- Xor the byte with `0x55`
+- Rotate the xored value `4` times to the right
+- Negate the rotated value
+- Subtract 96 from the negated value
 
+Here's the code I wrote to achieve that
+
+```python
+def ror(value, shift):
+    return (value >> shift) | (value << (8 - shift)) & 0xff
+
+buffer = [0xE3, 0x83, 0xC3, 0xB3, 0x23, 0x23, 0x83, 0xC3, 0x0C, 0x33, 0xE3, 0xA3]
+rev = []
+
+for v4 in buffer:
+    r = ror((v4 ^ 0x55), 4)
+    r = (~r - 96) & 0xff
+    rev.append(r)
+
+print(''.join(map(chr, rev)))
+```
