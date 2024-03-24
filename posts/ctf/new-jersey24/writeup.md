@@ -114,3 +114,9 @@ Looking at the value stored in `qword_140003038` shows
 qword_140003038 = 0xE383C3B3232383C3
 dword_140003040 = 0xC33E3A3
 ```
+
+That's basically the encrypted pin value
+
+So our goal is to reverse the operation to find the right value to get us that?
+
+
