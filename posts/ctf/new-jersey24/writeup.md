@@ -137,11 +137,60 @@ print("".join(map(chr, flag)))
 ```
 
 Running it gives the flag
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/64b021a5-ba43-4cc9-8a78-85b5c48e0c72)
 
 ```
 Flag: jctf{wh3r3s_m@y@?}
 ```
+
+#### Searching-Through-Vines
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6c660a07-14bf-45ba-a0b8-e447875d3731)
+
+Downloading the attached file shows it's a C code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9146b4ef-56f8-4294-bb1c-9dd45e2b0b4b)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(){
+        char commandStr[32];
+        scanf("%s", commandStr);
+        int i;
+        const char * bTexts[6] = {"ls", "cat", "cd", "pwd", "less"};
+        int bTexts_size = (sizeof(bTexts) - 1) / sizeof(bTexts[0]);
+        if (strlen(commandStr) <= 5){
+                for(i = 0; i < bTexts_size; i++){
+                        if(strstr(commandStr, (char*)(bTexts[i])) != 0){
+                                printf("Terminating... a violation occured!\n");
+                                exit(1);
+                        }
+                }
+                system(commandStr);
+        }
+        else{
+                printf("Terminating... a violation occured!\n");
+                exit(2);
+        }
+        return 0;
+}
+```
+
+Basically we have an array of blacklisted words, it receives our input and makes sure it's less than or equal to 5 bytes, it then searches for substring of each blacklisted words in our input and while it finds one it would exit else it passes the input to `system`
+
+So this is sort of direct command injection with some restriction?
+
+That isn't a big deal because `bash` itself isn't blacklisted and many other things
+
+So when we pass that as the input we should then be able to get the flag cause it would spawn a bash shell
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/16f66728-ea6b-46fc-9824-f4c14f33332b)
+
+```
+Flag: jctf{nav1gat10n_1s_k3y}
+```
+
 
 
 
