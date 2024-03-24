@@ -21,7 +21,7 @@ Out of this I was able to do 8/9 from this category
 
 So let's start...
 
-##### Humble Beginning
+#### Humble Beginning
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d690764-40c6-41a8-9eaa-09e1aff297de)
 
 So our goal is to find the crypto wallet address
@@ -126,7 +126,7 @@ We can just reimplement this or debug in gdb to get the xored value which should
 
 But I just choose the former
 
-Here's the script
+Here's the [script]()
 
 ```python
 enc = [79, 70, 81, 67, 94, 82, 77, 22, 87, 22, 86, 122, 72, 101, 92, 101, 26, 88]
@@ -191,11 +191,89 @@ So when we pass that as the input we should then be able to get the flag cause i
 Flag: jctf{nav1gat10n_1s_k3y}
 ```
 
+#### MathTest
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76bb4412-a4ff-43e6-a837-1f51134573c7)
 
+Downloading the attached C code and viewing it shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81ed64c0-2ff8-419f-83c9-31476c2a4d94)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/924f6248-cfed-4642-8d68-fec086118431)
 
+```c
+#include <stdio.h>
+#include <stdlib.h>
 
+void printflag(){
+        FILE *f;
+        f = fopen("flag.txt", "r");
+        char flag[64];
+        fread(flag, sizeof(char), 64, f);
+        printf("%s\n", flag);
+}
 
+int vuln() {
+        printf("Welcome to your Math Test. Perfect Score gets a Flag!\n");
+        printf("Enter Name:\n");
+        char name[100];
+        if(scanf("%s", name) < 1){
+                printf("You need a name\n");
+                return 0;
+        }
+        long mult1 = 0x9000;
+        long ans1;
+        printf("%ld*x < 0. What is x\n", mult1);
+        scanf("%ld", &ans1);
+        if(ans1 < 0) {
+                printf("No Negatives!\n");
+                return 0;
+        }
+        if(mult1*ans1 > 0) {
+                printf("Incorrect, try again\n");
+                return 0;
+        }
+        printf("Next Question\n");
+        long mult2 = 0xdeadbeef;
+        long ans2;
+        printf("%ld * y = 0. What is y\n", mult2);
+        scanf("%ld", &ans2);
+        if(ans2 >= 0) {
+                printf("Now Only Negatives!\n");
+                return 0;
+        }
+        if((mult2*ans2) == 0) {
+                printf("%ld\n", mult2*ans2);
+                printf("Incorrect, try again\n");
+                return 0;
+        }
+        printf("Final Quesiton\n");
+        char mult3 = 'O';
+        char ans3;
+        printf("Good\n");
+        printf("%c * z = 'A'. What is z?\n", mult3);
+        scanf("\n%c", &ans3);
+        if((char)(ans3*mult3) != 'A') {
+                printf("Incorrect, try again\n");
+                return 0;
+        }
+        printf("Final Question: ans1 + ans2 + ans3 = name\n");
+        long *n = (long *)name;
+        if(ans1 + ans2 + ans3 == *n) {
+                printf("Congratulations! Here is your flag!!!!\n");
+                printflag();
+        }
+        else {
+                printf("If only you had a better name :(\n");
+                return 0;
+        }
+}
 
+int main() {
+        setvbuf(stdin, 0, _IONBF, 0);
+        setvbuf(stdout, 0, _IONBF, 0);
+        setvbuf(stderr, 0, _IONBF, 0);
+
+        vuln();
+}
+```
 
 
 
