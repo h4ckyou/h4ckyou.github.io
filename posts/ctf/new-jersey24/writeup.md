@@ -160,4 +160,28 @@ I debugged it in IDA!
 First I set a breakpoint here
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/145ebae8-e057-4aa2-af47-d343c3439544)
 
+```
+cmp  rax, qword ptr [rsp+0A8h+Buffer]
+```
 
+Now I start a new process with the debugger passing the input I got as the pin
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f42e4b7f-bb32-477d-a96d-23f0e541b8cb)
+
+Back at IDA we are at the breakpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d5fba7a1-29bb-40a6-84c0-63b28a9a3707)
+
+And now if we click on the `Buffer` we would see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0b3cbe8b-7ddd-434f-b514-0612a513aaf6)
+
+We can see it's very identical to the expected buffer char array
+
+```
+buffer = [0xE3, 0x83, 0xC3, 0xB3, 0x23, 0x23, 0x83, 0xC3, 0x0C, 0x33, 0xE3, 0xA3]
+result = [0xE3, 0x83, 0xC3, 0xB3, 0x23, 0x23, 0x83, 0xC3, 0xB0, 0x33, 0xE3, 0xA3]
+```
+
+The issue there is at `result[8]`, it isn't equal to `buffer[8]`
+
+That's the character that gives `\n` when reversed
+
+So what next?
