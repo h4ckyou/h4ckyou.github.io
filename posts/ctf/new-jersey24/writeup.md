@@ -933,7 +933,35 @@ Ok that's better but if there any way to use lesser bytes than that?
 So far I was able to limit that to just 2 bytes by using a `push & pop` instruction
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e7d938fd-b111-4679-a24a-d7e11f205f63)
 
+Now the next thing is to store the buffer where our input will be stored to `rsi`.
 
+At first I just subtracted the current value of `rsp` after the `jmp rsp` instruction with `0x300` because i wanted to store the second stage shellcode in an address that has no value residing in it
+
+But then after I worked around with that I saw that I used up more than the size limit so I just decided to write to the current `rsp`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/08dd6306-2523-41d0-be5a-6c987f413288)
+
+Next thing is the size which is `rdx`, fortunately we don't need to set it because when fgets was called rdx was set to `stdin` meaning whatever byte we feed in during that call the length of the input will be saved in rdx 
+
+So next thing is to trigger a syscall and finally execute the second stage shellcode
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5d6a8bf7-2a75-48a0-9558-12e1828b126a)
+
+The full shellcode is this:
+
+```
+push rax
+pop rdi
+mov rsi, rsp
+syscall
+call rsi
+```
+
+The length is 9 which is less than the length limit 
+
+At this point we can go on ahead by sending the second staged shellcode as a call to `execve()` which should spawn a shell...
+
+But that doesn't work!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/931eb20a-5d1e-4554-a8f4-23ec5a5ec879)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/270a3676-3056-459a-a24a-dc99f3b0bab4)
 
 
 
