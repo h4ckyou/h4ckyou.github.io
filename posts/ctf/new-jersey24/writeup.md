@@ -1,9 +1,7 @@
 ### New Jersey 2024 CTF
 
 #### It was fun and I only focused on solving the Binary Exploitation & Reverse Engineering challenges. I played with `THE TOMATO DUDES`
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e465014d-57ac-44c0-957e-7adf914b3089)
-
-Currently the scoreboard is hidden though the ctf is over so i can't see our position nor each user point
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/beebbc57-3bf8-4441-a40d-89ac15fdfc38)
 
 #### Challenges Solved:
   - Humble Beginnings (reverse)
@@ -22,7 +20,7 @@ Out of this I was able to do 8/9 from this category
 So let's start...
 
 #### Humble Beginning
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d690764-40c6-41a8-9eaa-09e1aff297de)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dac11c51-6c9c-4b7e-8b8e-0efb6718ec95)
 
 So our goal is to find the crypto wallet address
 
@@ -46,7 +44,7 @@ Flag: jctf{mxnhCEkuBogW3E7XAEzNmaq6eZqW3zgEuu}
 ```
 
 #### Password Manager
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/df2489d1-5c07-4039-830a-0a32cdf438b2)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bca25a65-a37e-4824-9600-4f4fc2659834)
 
 After downloading the binary I checked the file type 
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4508a37f-3197-46bb-a54d-3164159ed75b)
@@ -145,7 +143,7 @@ Flag: jctf{wh3r3s_m@y@?}
 ```
 
 #### Searching-Through-Vines
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6c660a07-14bf-45ba-a0b8-e447875d3731)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/944d0c46-6714-4d26-995c-45ee9492f456)
 
 Downloading the attached file shows it's a C code
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9146b4ef-56f8-4294-bb1c-9dd45e2b0b4b)
@@ -192,7 +190,7 @@ Flag: jctf{nav1gat10n_1s_k3y}
 ```
 
 #### MathTest
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76bb4412-a4ff-43e6-a837-1f51134573c7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f9274d88-4b7d-4950-920a-db507a8995c1)
 
 Downloading the attached C code and viewing it shows this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81ed64c0-2ff8-419f-83c9-31476c2a4d94)
@@ -412,34 +410,8 @@ Running it gives the flag
 Flag: jctf{C4CLULAT0R_US3R}
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #### The Heist 1
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/81d4932d-2357-45b5-8d72-20ce06ca3ead)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0fadfd5f-b007-4b83-bd90-584a84889511)
 
 So this time around our goal is to find the pin
 
@@ -620,5 +592,8 @@ Running that gives the pin which worked on the program and also as the flag
 ```
 Flag: jctf{62881624049}
 ```
+
+####  Running On Prayers 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/337899cc-acf9-42a7-b2b3-247a21c5df83)
 
 
