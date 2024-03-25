@@ -719,6 +719,7 @@ After downloading the binary I did the basic file checks
 It's similar to the previous challenge so I will just go ahead with the reversing
 
 Here's the main function
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1091f27c-0ee3-434e-9661-78c5b801756b)
 
 Since it calls the `vuln` function let's take a look at it
