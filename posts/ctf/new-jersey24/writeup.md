@@ -924,6 +924,7 @@ Using that shows it takes lot of space because the length is 7 and we have just 
 We need to find a better way of setting `rdi` to `0x0`
 
 Moving between two registers is just of length 3
+
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf093b29-34b5-415b-959a-6f065ec81c13)
 
 Ok that's better but if there any way to use lesser bytes than that?
