@@ -405,8 +405,12 @@ io.sendline(str(ans3))
 io.interactive()
 ```
 
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/190f4c4f-d740-478d-b6d4-ded1f70961e7)
 
-
+```
+Flag: jctf{C4CLULAT0R_US3R}
+```
 
 
 
