@@ -762,9 +762,9 @@ My end goal is to call `execve('/bin/sh', 0x0, 0x0)` but the rsi & rdx register 
 
 But then I noticed that the rcx contains my input from the start
 
-Note: I will solve it in two ways
+- Note: I will solve it in two ways
 
-*** Initial Way I Solved This During The CTF ***
+***Initial Way I Solved This During The CTF***
 
 
 
