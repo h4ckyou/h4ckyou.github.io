@@ -710,12 +710,61 @@ Running it works
 Flag: jctf{Really_Obvious_Problem}
 ```
 
+#### StageLeft
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b98a9088-92ee-4b1b-a038-d964f8c950d4)
 
+After downloading the binary I did the basic file checks
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c1d2fcab-33ba-49c5-8ba7-9ba76adc1413)
 
+It's similar to the previous challenge so I will just go ahead with the reversing
 
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1091f27c-0ee3-434e-9661-78c5b801756b)
 
+Since it calls the `vuln` function let's take a look at it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6dd36651-1d28-41cb-86a9-f317be3c0a8f)
 
+```c
 
+undefined8 vuln(void)
+
+{
+  char buffer [32];
+  
+  printf("Cramped...");
+  fgets(buffer,64,stdin);
+  return 0;
+}
+```
+
+This time around we see that the buffer still can only hold up 32bytes but we are allowed to store at most 64 bytes into the buffer leading to an overflow
+
+I got the offset required to overwrite the rip similarly to how I solved the previous challenge
+
+The offset is 40
+
+So out of 64 bytes we must use up 40 bytes leading to just 24 bytes left 
+
+Looking for available gadgets I saw a `jmp rsp` gadget
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/124555aa-8b0b-4c6c-9c42-fc2f48e4c893)
+
+So now we know that we can do shellcode injection again but this time around we have just 16 bytes left because the `jmp rsp` takes up 8 bytes when packed
+
+What exactly can we achieve with that?
+
+To know that I had to first know the state of the register when the program is about to `ret`
+
+Set a breakpoint in `vuln+62` and start the process
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dcea9b4f-53b0-4f80-ac48-4e24a4a5aaaf)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c83a0bf2-bd61-4cb8-80d2-c425a561e451)
+
+My end goal is to call `execve('/bin/sh', 0x0, 0x0)` but the rsi & rdx register is already populated 
+
+But then I noticed that the rcx contains my input from the start
+
+Note: I will solve it in two ways
+
+*** Initial Way I Solved This During The CTF ***
 
 
 
