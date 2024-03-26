@@ -99,7 +99,7 @@ First portion:
   }
 ```
 
-- First it receives a number which is the "magic number" and checks if it's divisible by 17 or greater than 20.
+- First it receives a number which is the "magic number" which is stored as `seed`, and checks if it's divisible by 17 or greater than 20.
   - If it is, then the program just returns 1 and basically stop it's execution.
 
 In order to pass this check we need to pass a number which is divisible by 17 and less than 20. The only numbers which meet that check are 0 and 17.
@@ -136,3 +136,43 @@ if ( v4 <= seed )
   - Allocates dynamic memory with size of `(4 * seed)` which is stored in pointer `ptr`
   - Sets `ptr[0]` to `2 * seed + rand() % (5 * seed);`
   - In a for loop with range of `1-17` it sets an integer `v5` which is the value gotten from `ptr[i-1]` and then each index of the malloc'd pointer is set to `v5 + rand() % 94 + 33`
+
+For this portion we know that since it seeds srand with the magic number which is 17 that means we can also generate the list of 17 random integers it creates
+
+The reason the magic number can't be 0 is because it generates some value in the malloc'd pointer and we can loop over a value that's 0
+
+Third portion:
+
+```c
+for ( j = 0; j < seed; ++j )
+{
+  v9 = 0;
+  for ( k = 0; k <= j; ++k )
+    v9 += s[k];
+  if ( v9 != ptr[j] )
+  {
+    puts("NOOB! Keep trying...");
+    free(s);
+    free(ptr);
+    return 1;
+  }
+}
+printf("flag{%s}\n", s);
+free(s);
+return 0;
+}
+```
+
+- Looping over the range of the seed (0, 17) as (j)
+- It sets variable `v9` to 0
+- In a nested loop ranging from `0 to (j)`, it get's the sum of our input from the two current nested loop index
+- And after the inner loop is completed it checks if the generated sum equals `ptr[j]`
+- If it is that means our input is the flag else we get the error message "NOOB! Keep trying..."
+
+The algorithm here is pretty tricky relative to me.
+
+At this point we know that the flag length is the same as the seed i.e 17
+
+How do we get the flag?
+
+
