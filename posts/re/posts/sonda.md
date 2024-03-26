@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/40ddcfdf-cd75-4aa0-8430-cbfcf38fca9a)<h3> Sonda </h3>
+<h3> Sonda </h3>
 
 A fun reverse engineering challenge ;)
 
@@ -86,5 +86,22 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 ```
 
 Here's what the code does:
-1 - First it receives a number which is the "magic number" and checks if it's divisible by 17 or greater than 20. If it is, then the program just returns 1 and basically stop it's execution.
-2 - 
+
+```c
+  printf("Give me the magic number: ");
+  __isoc99_scanf("%d", &seed);
+  if ( seed % 17 || seed > 20 )
+  {
+    puts("BAD...");
+    return 1;
+  }
+```
+
+- First it receives a number which is the "magic number" and checks if it's divisible by 17 or greater than 20.
+  - If it is, then the program just returns 1 and basically stop it's execution.
+
+In order to pass this check we need to pass a number which is divisible by 17 and less than 20. The only numbers which meet that check are 0 and 17.
+
+```
+seed = [0, 17]
+```
