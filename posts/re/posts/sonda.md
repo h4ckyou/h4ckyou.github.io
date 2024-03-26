@@ -133,5 +133,6 @@ if ( v4 <= seed )
   - If the length isn't equal it would stop it's execution after giving the error message "WTF is wrong with u?"
 - If the input length matches the check then it does this:
   - Calls `srand()` seeding it with the magic number
-  - Allocates `(4 * seed)` chunks on the heap wi
-  - Sets
+  - Allocates dynamic memory with size of `(4 * seed)` which is stored in pointer `ptr`
+  - Sets `ptr[0]` to `2 * seed + rand() % (5 * seed);`
+  - In a for loop with range of `1-17` it sets an integer `v5` which is the value gotten from `ptr[i-1]` and then each index of the malloc'd pointer is set to `v5 + rand() % 94 + 33`
