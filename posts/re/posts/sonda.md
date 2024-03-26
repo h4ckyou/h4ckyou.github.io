@@ -87,6 +87,8 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 
 Here's what the code does:
 
+First portion:
+
 ```c
   printf("Give me the magic number: ");
   __isoc99_scanf("%d", &seed);
@@ -105,3 +107,31 @@ In order to pass this check we need to pass a number which is divisible by 17 an
 ```
 seed = [0, 17]
 ```
+
+Second portion:
+
+```c
+s = malloc(seed);
+printf("Tell me more: ");
+__isoc99_scanf("%s", s);
+v4 = strlen(s);
+if ( v4 <= seed )
+{
+  srand(seed);
+  ptr = malloc(4LL * seed);
+  *ptr = 2 * seed + rand() % (5 * seed);
+  for ( i = 1; i < seed; ++i )
+  {
+    v5 = ptr[i - 1];
+    ptr[i] = v5 + rand() % 94 + 33;
+  }
+```
+
+- It allocates dynamic memory with the size of the magic number
+- Receives our input which is then stored in the malloc'd pointer `s`
+- Checks if the length of the input is less than or equal to the seed (magic number)
+  - If the length isn't equal it would stop it's execution after giving the error message "WTF is wrong with u?"
+- If the input length matches the check then it does this:
+  - Calls `srand()` seeding it with the magic number
+  - Allocates `(4 * seed)` chunks on the heap wi
+  - Sets
