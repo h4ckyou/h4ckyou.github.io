@@ -71,7 +71,7 @@ int __cdecl main(int argc, const char **argv, const char **envp)
           return 1;
         }
       }
-      printf("flag{%s}\n", s);
+      printf("flag\n");
       free(s);
       return 0;
     }
