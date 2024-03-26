@@ -84,3 +84,7 @@ int __cdecl main(int argc, const char **argv, const char **envp)
   }
 }
 ```
+
+Here's what the code does:
+1 - First it receives a number which is the "magic number" and checks if it's divisible by 17 or greater than 20. If it is, then the program just returns 1 and basically stop it's execution.
+2 - 
