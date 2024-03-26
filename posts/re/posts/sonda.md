@@ -157,7 +157,7 @@ for ( j = 0; j < seed; ++j )
     return 1;
   }
 }
-printf("flag{%s}\n", s);
+printf("flag\n");
 free(s);
 return 0;
 }
