@@ -175,4 +175,86 @@ At this point we know that the flag length is the same as the seed i.e 17
 
 How do we get the flag?
 
+To solve this I made use of an [SMT](https://en.wikipedia.org/wiki/Satisfiability_modulo_theories) solver called [Z3](https://github.com/Z3Prover/z3)
 
+First we need to generate the 17 various random value gotten when seeded with 17
+
+I wrote a simple C program for that
+
+```c
+#include <stdio.h>
+
+int main(void){
+    unsigned int seed = 17;
+    srand(seed);
+
+    for (int i = 0; i < seed; i++){
+        printf("%d\n", rand());
+    }
+}
+```
+
+Running it generates the value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/80143ca5-c4fb-4654-8d34-2faf1f4f31f9)
+
+And now I stored them in a list
+
+```
+rands = [1227918265, 3978157, 263514239, 1969574147, 1833982879, 488658959, 231688945, 1043863911, 1421669753, 1942003127, 1343955001, 461983965, 602354579, 726141576, 1746455982, 1641023978, 1153484208]
+```
+
+Now here's my final script
+
+```python
+from z3 import *
+
+rands = [1227918265, 3978157, 263514239, 1969574147, 1833982879, 488658959, 231688945, 1043863911, 1421669753, 1942003127, 1343955001, 461983965, 602354579, 726141576, 1746455982, 1641023978, 1153484208]
+seed = 17
+
+ptr = [BitVec(f"seed_{i}", 32) for i in range(seed)]
+flag = [BitVec(f"f_{i}", 8) for i in range(seed)]
+
+s = Solver()
+
+s.add(ptr[0] == 2 * seed + rands[0] % (5 * seed))
+
+for i in range(1, seed):
+    v5 = ptr[i-1]
+    s.add(ptr[i] == v5 + rands[i] % 94 + 33)
+
+for j in range(0, seed):
+    v9 = BitVecVal(0, 32)
+    for k in range(0, j+1):
+        v9 += ZeroExt(24, flag[k])
+    
+    s.add(ptr[j] == v9)
+
+if s.check() == sat:
+    m = s.model()
+    print(m)
+```
+
+Running it generates the right value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d46113b-c4e7-4bb8-884a-8dec7247bb75)
+
+I then saved the `f_*` values in a list and got it's equivalent character presentation
+
+```python
+soln = [89, 117, 123, 69, 74, 36, 92, 102, 62, 54, 34, 86, 48, 76, 124, 110, 54][::-1]
+print(''.join(list(map(chr, soln))))
+```
+
+Running it generates this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4c05fe26-05aa-4a52-b01c-aca41cb090fa)
+
+Trying that as the flag worked!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c32aa1f5-188e-4978-a3bc-75a60633981f)
+
+```
+PS C:\Sonda> python .\solve.py
+6n|L0V"6>f\$JE{uY
+```
+
+And that's all!
+
+Thanks for reading 😅
