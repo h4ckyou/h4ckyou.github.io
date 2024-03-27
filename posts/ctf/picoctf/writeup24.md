@@ -163,7 +163,20 @@ With that I just concatenated the 3 portions of the flag to form the full flag
 Flag: picoCTF{t3@mw0rk_m@k3s_th3_dr3@m_w0rk_2c91ca76}
 ```
 
+#### Binhexa
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0e81658e-00fe-4162-9abd-708b58bf8886)
 
+We are given a remote instance to connect to
+
+After connecting to it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/54fc7ff3-c16e-4e04-a06a-ed534ef40920)
+
+So we'll be given two binary numbers and we are to perform various operations on it 6 times
+
+Also the operations to be performed changes
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a98a80d9-05c9-4b99-b22d-4ed236005f8c)
+
+Tbh during this ctf I solved this manually since the 
 
 
 
