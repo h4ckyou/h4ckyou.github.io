@@ -185,6 +185,12 @@ I can't redo it here cause it's stressfull and i'm too lazy to write a script no
 
 But the process was that i received the two binary string convert them to integer with python `int(binary, 2)` then perform the operation expected and send the result as a binary string
 
+With that on the 6th trial I got the flag
+
+```
+Flag:
+```
+
 #### Binary Search
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05190373-3744-42e8-9bc6-09b867672a86)
 
@@ -376,8 +382,17 @@ Hopefully you get the point...following the algorithm eventually made me get the
 Flag: picoCTF{g00d_gu355_6dcfb67c}
 ```
 
+#### Endianness
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6664aaad-85e2-4e15-ba32-33154d51acfa)
 
+We are given a download file and after downloading it I saw it's a C program
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f6490b6d-cd3d-4411-af59-166798b5d266)
 
+The code is pretty much but the basic idea about it is that we will be given a word and we need to submit the little and big endian representation of the word
+
+What is Endian? Endian refers to the order in which bytes are stored for multi-byte data types such as integers or floating-point numbers. There are two primary ways to represent these values in memory:
+- Little Endian: The least significant byte (LSB) is stored at the lowest memory address, with the remaining bytes stored in increasing order of significance.
+- Big Endian: The most significant byte (MSB) is stored at the lowest memory address, with the remaining bytes stored in decreasing order of significance.
 
 
 
