@@ -18,7 +18,7 @@ Capture the Flag (CTF) in computer security is an exercise in which "flags" are 
 - [[Jan 14 2023]] [Sabr CTF](https://h4ckyou.github.io/posts/ctf/sabr23/writeup.html) `Web, Misc, Pwn, RE`
 - [[Jan 30 2023]] [BIC Winter CTF](https://h4ckyou.github.io/posts/ctf/bic23/bicctf.html) `RE,` `Pwn`
 - [[Mar 07 2023]] [DP CTF](https://h4ckyou.github.io/posts/ctf/dp23/dpctf.html) `Web, Pwn, RE`
-- [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup.html) `General, Web, Crypto, Forensics, Pwn, RE`
+- [[Mar 31 2023]] [PICO CTF 2023](https://h4ckyou.github.io/posts/ctf/picoctf/writeup23.html) `General, Web, Crypto, Forensics, Pwn, RE`
 - [[April 02 2023]] [RITSEC CTF](https://h4ckyou.github.io/posts/ctf/ritsec23/writeup.html) `Web, Pwn, Crypto`
 - [[April 28 2023]] [CyberStarters '23 Qualif](https://h4ckyou.github.io/posts/ctf/cyberstarters23/qualif/index.html) `Web, Crypto, Web3, OSINT`
 - [[May 06 2023]] [CyberStarters 2023 Final](https://h4ckyou.github.io/posts/ctf/cyberstarters23/final/index.html) `Web, Crypto, Forensics`
