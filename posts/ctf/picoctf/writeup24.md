@@ -700,6 +700,14 @@ On the remote instance we can connect to it and send that generated string as th
 Flag: picoCTF{s0lv3_angry_symb0ls_ddcc130f}
 ```
 
+#### WeirdSnake
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/937f1ffd-3abc-4ce3-b026-f10d9bdd22db)
+
+After downloading the attached file and checking it I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a2659bdf-69da-4844-a7ba-1364650d710e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7617084c-10d9-44e2-bc24-85c96af0ba7e)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc0963aa-8c19-4e68-9030-43d860bb97df)
+
 
 
 
