@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4b10da40-6e4e-40df-bb55-0c11530ceba8)<h3> PICOCTF '24 </h3>
+<h3> PICOCTF '24 </h3>
 
 #### Description: This was a fun ctf that took place from March 12 to March 26, 2024. I played with team *Fuji_*
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
@@ -532,6 +532,28 @@ Decoding that hex value gives the flag
 ```
 Flag: picoCTF{U9X_UnP4ck1N6_B1n4Ri3S_1a5a3f39}
 ```
+
+#### FactCheck
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a03c31cf-3371-437f-882e-bdf89eaa0aeb)
+
+After downloading the binary I checked the file type
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/215ecef2-f4ea-4e1c-a940-3e06d68880f7)
+
+Nothing special there except we're dealing with a 64bits binary which is dynamically linked and not stripped
+
+I ran it to get an overview of what it does but it just exits
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/001a8d42-300f-49ea-9029-a71f92b6e20d)
+
+I used Ghidra to load the binary but then I saw it's a C++ compiled binary then I immediately switched to IDA because it looks really ugly on Ghidra 🥲
+
+Here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3da09a25-cbd6-4a5d-857b-4f739767b013)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/55175786-0973-496a-b9da-c0524a175745)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/389dba4e-122d-42ec-9083-5403ffcf54af)
+
+So we see some portion of the flag is being stored in memory
+
+I just assummed that it builds up the flag in memory thus I switched to Dynamic Reversing
 
 
 
