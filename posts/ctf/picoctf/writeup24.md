@@ -1,107 +1,58 @@
 <h3> PICOCTF '23 </h3>
 
 #### Description: This was a fun ctf that took place from March 12 to March 26, 2024. I played with team *Fuji_*
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
 
-![image](https://user-images.githubusercontent.com/113513376/228130926-bc6f29e7-1276-47d0-9a00-f04321d01b82.png)
+I'll be giving writeup to challenges I solved
 
 <h3> Challenge Solved </h3>
 
 ## General Skills
-- Chrono
-- Money-Ware
-- Permissions
-- Repetitions
-- Useless
-- Special
-- Specialer
+- Super SSH
+- Commitment Issues
+- Time Machine
+- Blame Game
+- Collaborative Development
+- Binhexa
+- Binary Search
+- Endianness
+- Dont-you-love-banners
 
 ## Forensics
-- HideMe
-- PcapPoisioning
-- Invisible Words
+- Scan Surprise
+- CanYouSee
+- Secret of the Polyglot
+- Mob psycho
+- Endianness-v2
 
 ## Reverse Engineering
-- Ready Gladiator 0
-- Reverse
-- Safe Opener 2
-- Timer
-- No Way Out
-- Ready Gladiator 1
-- Ready Gladiator 2
-
-## WEB
-- FindMe
-- MatchTheRegex
-- SOAP
-- More SQLi
-- Java Code Analysis
+- Packer
+- FactCheck
+- Classic Crackme 0x100
+- WeirdSnake
+- WinAntiDbg0x100
+- WinAntiDbg0x200
+- WinAntiDbg0x300
 
 ## Cryptography
-- HideToSee
-- ReadMyCert
-- Rotation
-- SRA
+- Interencdec
+- Custom encryption
+- C3
+- Rsa Oracle
 
 ## Binary Exploitation
-- BabyGame01
-- Two-Sum
-- BabyGame02
-- Hijacking
-- Tic-Tac
-- VNE
-- HorseTrack
+- Format String 0
+- Heap 0
+- Format String 1
+- Heap 1
+- Heap 2
+- Heap 3
+- Format  String 2
+- Format String 3
+- Babygame 03
 
 ### General Skills 8/8 :~
 
-#### Chronozi participated in with team 8h037. I really learnt a lot during this ctf thanks to the organizers for bringing such a good challenge
-![image](https://user-images.githubusercontent.com/113513376/228130926-bc6f29e7-1276-47d0-9a00-f04321d01b82.png)
-
-<h3> Challenge Solved </h3>
-
-## General Skills
-- Chrono
-- Money-Ware
-- Permissions
-- Repetitions
-- Useless
-- Special
-- Specialer
-
-## Forensics
-- HideMe
-- PcapPoisioning
-- Invisible Words
-
-## Reverse Engineering
-- Ready Gladiator 0
-- Reverse
-- Safe Opener 2
-- Timer
-- No Way Out
-- Ready Gladiator 1
-- Ready Gladiator 2
-
-## WEB
-- FindMe
-- MatchTheRegex
-- SOAP
-- More SQLi
-- Java Code Analysis
-
-## Cryptography
-- HideToSee
-- ReadMyCert
-- Rotation
-- SRA
-
-## Binary Exploitation
-- BabyGame01
-- Two-Sum
-- BabyGame02
-- Hijacking
-- Tic-Tac
-- VNE
-- HorseTrack
 
 ### General Skills 8/8 :~
 
