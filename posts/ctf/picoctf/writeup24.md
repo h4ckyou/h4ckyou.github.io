@@ -40,6 +40,9 @@
 - WinAntiDbg0x200
 - WinAntiDbg0x300
 
+## Web 
+- Elements
+
 ## Cryptography
 - Interencdec
 - Custom encryption
@@ -252,7 +255,21 @@ So let's go over what it does:
   - If our guess is greater than the random generated number we get an error telling us that the target number is lower than our input
 - Once the while loop meets the condition it exits
 
+Now that we are aware of what it does exactly we need to figure a way to guess the target value under the limited search sapce
 
+To do that I implemented an algorithm called [Binary Search](https://en.wikipedia.org/wiki/Binary_search_algorithm)
+
+It's basically an algorithm used to find the position of a value in a sorted array and it's time complexity is `O(log n)`
+
+
+### Web 10/10 :~
+
+#### Elements
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8fa4cc9a-f87f-4b71-bb7e-f6f6d52c64c5)
+
+I actually wasn't the one who solved this but I helped in writing the solve script since our solution takes time before exfiltrating the flag
+
+You can read up on how to solve it here: [solution]()
 
 
 
