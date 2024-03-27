@@ -69,6 +69,28 @@ So I just did that and got the flag :)
 Flag: picoCTF{s3cur3_c0nn3ct10n_07a987ac}
 ```
 
+#### Commitment Issues
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/15c45383-53ca-49c9-ab78-515cf046c0f0)
+
+We are given a zip file and after unzipping it showed a git directory in the `./drop-in` directory
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6b7213b9-3563-4f2f-a95d-8d2494f69969)
+
+Going over there shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/daa04493-61f4-4cfb-a987-cb4be2c8220d)
+
+From the challenge description we know the message was already deleted 
+
+So I checked the git logs
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/079a61dd-5fc9-4c26-a3ea-df65d1984750)
+
+The commit `87b85d7dfb839b077678611280fa023d76e017b8` was responsible in the creation of the flag
+
+I checked it and got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2fd81a96-e134-4e7b-9da6-da9c634e1af5)
+
+```
+Flag: picoCTF{s@n1t1z3_ea83ff2a}
+```
 
 
 
