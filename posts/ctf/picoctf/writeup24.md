@@ -176,8 +176,9 @@ So we'll be given two binary numbers and we are to perform various operations on
 Also the operations to be performed changes
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a98a80d9-05c9-4b99-b22d-4ed236005f8c)
 
-Tbh during this ctf I solved this manually since the 
+Tbh during this ctf I solved this manually since the number of times we get question are just 6
 
+I can't redo it here cause it's stressfull and i'm too lazy to write a script now :(
 
 
 
