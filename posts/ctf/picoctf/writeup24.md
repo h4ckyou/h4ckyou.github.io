@@ -555,6 +555,19 @@ So we see some portion of the flag is being stored in memory
 
 I just assummed that it builds up the flag in memory thus I switched to Dynamic Reversing
 
+Loading it up and gdb and disassembling the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5e499d38-daff-4ce9-88ea-a7df357e5dc7)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bf3950ae-e3ef-44ae-acfa-d45e992df5e0)
+
+Now I just set a breakpoint right before it calls `ret`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5ea11d61-5681-4fe2-85da-3025857f92bd)
+
+Starting the process hits the breakpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3bd2b77e-9077-47e9-a82e-580c83a39009)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a583f5f2-79c5-42da-b9b8-aca0e463c286)
+
+Now I just search for occurrence of `pico & mate` in memory
+
 
 
 
