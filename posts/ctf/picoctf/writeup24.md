@@ -1,4 +1,4 @@
-<h3> PICOCTF '24 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4b10da40-6e4e-40df-bb55-0c11530ceba8)<h3> PICOCTF '24 </h3>
 
 #### Description: This was a fun ctf that took place from March 12 to March 26, 2024. I played with team *Fuji_*
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
@@ -457,6 +457,59 @@ The flag was in the root directory
 ```
 Flag: picoCTF{b4nn3r_gr4bb1n9_su((3sfu11y_ed6f9c71}
 ```
+
+#### SansAlpha
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/518276e3-edb0-4663-b610-c70a22fc9c0f)
+
+Connecting to the ssh instance I landed in a restricted shell
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/90b28b82-425b-4cf1-8415-07f83462fbdc)
+
+I can't seem to use some certain words....that's what I thought at first
+
+But after some trial I figured we can't use any characters except some certain symbols and digits
+
+After spending some hours on this I decided to do some research and found this awesome video of LiveOverflow solving a similar challenge [here](https://www.youtube.com/watch?v=6D1LnMj0Yt0)
+
+From that I found out that we can access files using `?` which represents like a wildcard in bash
+
+First I need to know the path to the flag
+
+I used an asterisk `*` on the current path and it showed this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04fc7945-7f08-4e4b-bed1-b3cea7aab2b8)
+
+And using an asterisk on that path showed that the flag is there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d944e0d8-3bf3-4055-8472-a73725e48dbb)
+
+After some while my teammate was able to encode the flag using `base32` 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/65cacb37-a124-4851-bc54-8ad1b5587be4)
+
+Doing that gives the encoded flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5b80c1fb-21df-4f67-abe8-42965128c303)
+
+```
+/???/???/????32  ~/??????/????.???
+```
+
+On decoding the value we got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7e34440b-f0a6-4b53-853b-a3c325a82f63)
+
+
+```
+Flag: picoCTF{7h15_mu171v3r53_15_m4dn355_640b6add}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
