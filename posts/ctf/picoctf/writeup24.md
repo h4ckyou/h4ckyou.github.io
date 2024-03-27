@@ -261,6 +261,173 @@ To do that I implemented an algorithm called [Binary Search](https://en.wikipedi
 
 It's basically an algorithm used to find the position of a value in a sorted array and it's time complexity is `O(log n)`
 
+To test my solution I ran it locally
+
+Here's the edited script
+
+```bash
+#!/bin/bash
+
+# Generate a random number between 1 and 1000
+target=689
+
+echo "Welcome to the Binary Search Game!"
+echo "I'm thinking of a number between 1 and 1000."
+
+# Limit the player to 10 guesses
+MAX_GUESSES=10
+guess_count=0
+
+while (( guess_count < MAX_GUESSES )); do
+    read -p "Enter your guess: " guess
+
+    if ! [[ "$guess" =~ ^[0-9]+$ ]]; then
+        echo "Please enter a valid number."
+        continue
+    fi
+
+    (( guess_count++ ))
+
+    if (( guess < target )); then
+        echo "Higher! Try again."
+    elif (( guess > target )); then
+        echo "Lower! Try again."
+    else
+        echo "Congratulations! You guessed the correct number: $target"
+
+        # Retrieve the flag from the metadata file
+        flag="fake_flag_for_testing"
+        #flag=$(cat /challenge/metadata.json | jq -r '.flag')
+        echo "Here's your flag: $flag"
+        exit 0  # Exit with success code
+    fi
+done
+
+# Player has exceeded maximum guesses
+echo "Sorry, you've exceeded the maximum number of guesses."
+exit 1  # Exit with error code to close the connection
+```
+
+And my solve script
+
+```python
+from pwn import *
+
+context.log_level = 'debug'
+
+io = process("./guessing_game.sh")
+
+io.recvline()
+
+def binarySearch(N):
+    left, right = 0, N
+
+    io.recvline()
+
+    while left <= right:
+        middle = left + (right - left) // 2
+
+        io.sendline(str(middle))
+        
+        recv = io.recvline().decode().split()[0]
+
+        if recv == "Lower!":
+            right = middle - 1
+
+        elif recv == "Higher!":
+            left = middle + 1
+
+        else:
+            recv = io.recvline()
+            return recv.decode()
+
+
+N = 1000
+
+binarySearch(N)
+
+io.interactive()
+```
+
+Running it works!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e927bc5f-1d02-4eaa-8c63-6c4be4cbd142)
+
+Now I need to do the same remotely
+
+But pwntools was always hanging
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf278520-7784-486c-a0c2-300260f2caca)
+
+Because the number of guesses we can make is just 10 I decided to do it manually 😢
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6e2e77e3-5e1d-49a6-9fcd-b825333a9ff8)
+
+We see that the target value is lower than our input, so we set the new right pointer to `middle - 1` and update the new middle value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cf2d4aa8-b8fe-4632-b365-b9c86db90f4a)
+
+Now it's higher so we set the left pointer to `middle + 1` and update the new middle value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9fc56703-cdb7-45b1-8627-ad0f7fe7a112)
+
+Lower so we set the right pointer to `middle - 1` and update the new middle value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cafb7ca9-93dd-449c-a8b1-34b45b44b70d)
+
+Hopefully you get the point...following the algorithm eventually made me get the right value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b16ca357-fa12-4bf7-a331-b0f50e8e742c)
+
+```
+Flag: picoCTF{g00d_gu355_6dcfb67c}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Web 10/10 :~
 
