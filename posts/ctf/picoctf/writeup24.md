@@ -636,18 +636,69 @@ int __fastcall main(int argc, const char **argv, const char **envp)
 }
 ```
 
-Looking at this we see that our input is going to pass through some sort of encryption scheme then eventually compared to the string stored in variable `output`
+Looking at this we see that our input is going to pass through some sort of encryption scheme which is then eventually compared to the string stored in `output`
 
 We can possibly brute force each character of the expected input since the encryption is deterministic 
 
 But the way I solved this was by using an SMT solver called Z3
 
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Classic%20Crackme%200x100/solve.py)
 
+```python
+from z3 import *
 
+output = "mpknnphjngbhgzydttvkahppevhkmpwgdzxsykkokriepfnrdm"
+secret1 = 85
+secret2 = 51
+secret3 = 15
+fix = 97
+i = 0
 
+s = Solver()
 
+arr = [BitVec(f'f_{i}', 8) for i in range(len(output))]
+tmp = [BitVec(f'f_{i}', 8) for i in range(len(output))]
 
+for v in arr:
+    s.add(v > 0x60)
+    s.add(v < 0x7f)
+          
+while i < 3:
+    for j in range(len(output)):
+        random1 = ((secret1 & (j % 255)) + (secret1 & ((j % 255) >> 1))) 
+        random2 = ((random1 & secret2) + (secret2 & (random1 >> 2))) 
+        val = (((random2 & secret3) + arr[j] - fix + (secret3 & (random2 >> 4))) % 26 + fix) 
+        arr[j] = val
 
+    i += 1
+
+for j in range(len(output)):
+    s.add(arr[j] == ord(output[j]))
+
+if s.check() == sat:
+    m = s.model()
+    inp = ""
+
+    for i in tmp:
+        inp += chr(m[i].as_long())
+    
+    print(inp)
+```
+
+One thing to note there is that the constraint I used which let's z3 know the range of value which our input should be is within ascii lowercase letters plus some special characters
+
+Running that generates the a string
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6c315e90-c5d3-4c1e-890f-10b20dcd852f)
+
+We can test it locally
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/88cf8ac1-f897-4f6e-aa3e-1100c607153c)
+
+On the remote instance we can connect to it and send that generated string as the password to get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d5c4562d-65ae-446d-ab90-7ca23badfea8)
+
+```
+Flag: picoCTF{s0lv3_angry_symb0ls_ddcc130f}
+```
 
 
 
