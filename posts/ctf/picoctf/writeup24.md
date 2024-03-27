@@ -194,8 +194,63 @@ We are given an attachment to download and on downloading it we see this bash sc
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad544fe1-e9dc-4a23-91b7-8cdc6926f8ce)
 
 
+```sh
+#!/bin/bash
 
+# Generate a random number between 1 and 1000
+target=$(( (RANDOM % 1000) + 1 ))
 
+echo "Welcome to the Binary Search Game!"
+echo "I'm thinking of a number between 1 and 1000."
+
+# Trap signals to prevent exiting
+trap 'echo "Exiting is not allowed."' INT
+trap '' SIGQUIT
+trap '' SIGTSTP
+
+# Limit the player to 10 guesses
+MAX_GUESSES=10
+guess_count=0
+
+while (( guess_count < MAX_GUESSES )); do
+    read -p "Enter your guess: " guess
+
+    if ! [[ "$guess" =~ ^[0-9]+$ ]]; then
+        echo "Please enter a valid number."
+        continue
+    fi
+
+    (( guess_count++ ))
+
+    if (( guess < target )); then
+        echo "Higher! Try again."
+    elif (( guess > target )); then
+        echo "Lower! Try again."
+    else
+        echo "Congratulations! You guessed the correct number: $target"
+
+        # Retrieve the flag from the metadata file
+        flag=$(cat /challenge/metadata.json | jq -r '.flag')
+        echo "Here's your flag: $flag"
+        exit 0  # Exit with success code
+    fi
+done
+
+# Player has exceeded maximum guesses
+echo "Sorry, you've exceeded the maximum number of guesses."
+exit 1  # Exit with error code to close the connection
+```
+
+So let's go over what it does:
+- It generates a number between 1-1000
+- It initilizes our maximum guess and guess counter to 10 and 0 respectively
+- In a while loop where the condition checks if the guess counter is less than and equal to the maximum guess:
+  - It reads in our input and checks if it's an integer using regex
+  - Increments the guess counter by 1
+  - If our guess is equal to the random generated number we get the flag
+  - If our guess is less than the random generated number we get an error telling us that the target number is higher than our input
+  - If our guess is greater than the random generated number we get an error telling us that the target number is lower than our input
+- Once the while loop meets the condition it exits
 
 
 
