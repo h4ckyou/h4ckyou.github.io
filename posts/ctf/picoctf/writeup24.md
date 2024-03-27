@@ -498,6 +498,42 @@ On decoding the value we got the flag
 Flag: picoCTF{7h15_mu171v3r53_15_m4dn355_640b6add}
 ```
 
+### Reverse Engineering 7/7 :~
+
+#### Packer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6196986d-1c15-4713-85d0-4e2dd763b4f2)
+
+Downloading the binary attached and checking the file type shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5f04bf33-aea8-4ed6-bcbe-eb0564b5f144)
+
+We see that it's packed with UPX so i just unpacked it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/86aed00a-ab0b-4778-904d-242d5cbeab9d)
+
+Running it shows that it expects a password
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3332d339-bf2d-4648-9a28-88b2ee23e35d)
+
+Since I don't know the password I decided to perform static reversing on the binary to see what it does
+
+Loading it up in Ghidra and decompiling it takes few minutes because the binary is statically linked
+
+But eventually after it does it's thing the main function shows up
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c3e04867-bfbc-4f59-a532-3817bef0ccd4)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d065c119-8925-4049-bb71-5923f4618434)
+
+I didn't bother reading it cause I noticed that it eventually gives the flag which is encoded in hex
+
+```c
+puts("Password correct, please see flag: 7069636f4354467b5539585f556e5034636b314e365f42316e34526933535f31613561336633397d")
+```
+
+Decoding that hex value gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b136daec-a144-4acb-83a3-684980047209)
+
+```
+Flag: picoCTF{U9X_UnP4ck1N6_B1n4Ri3S_1a5a3f39}
+```
+
+
 
 
 
