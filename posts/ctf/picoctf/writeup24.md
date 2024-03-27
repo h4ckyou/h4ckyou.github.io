@@ -575,6 +575,98 @@ With that I got the flag
 Flag: picoCTF{wELF_d0N3_mate_7d29a538}
 ```
 
+#### Classic Crackme 0x100
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8a2904f9-ee82-451e-87d1-82d76b620328)
+
+We are given a binary and a remote instance to connect to
+
+Checking the file type of the binary shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/63c10565-ca43-4c1a-a267-c5647cf013ce)
+
+So the same as usual but this type we have debug_info present 
+
+Running the binary to get an overview of what it does shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fab6d7e8-815e-4d93-bc23-49c82984f5d8)
+
+Looks like time we need to get the password 
+
+Loading it up in IDA to decompile it shows this as the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2db4c893-01a7-4472-bc22-b40e9050ed3d)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  char input[51]; // [rsp+0h] [rbp-A0h] BYREF
+  char output[51]; // [rsp+40h] [rbp-60h] BYREF
+  int random2; // [rsp+7Ch] [rbp-24h]
+  int random1; // [rsp+80h] [rbp-20h]
+  char fix; // [rsp+87h] [rbp-19h]
+  int secret3; // [rsp+88h] [rbp-18h]
+  int secret2; // [rsp+8Ch] [rbp-14h]
+  int secret1; // [rsp+90h] [rbp-10h]
+  int len; // [rsp+94h] [rbp-Ch]
+  int i_0; // [rsp+98h] [rbp-8h]
+  int i; // [rsp+9Ch] [rbp-4h]
+
+  strcpy(output, "lxpyrvmgduiprervmoqkvfqrblqpvqueeuzmpqgycirxthsjaw");
+  setvbuf(_bss_start, 0LL, 2, 0LL);
+  printf("Enter the secret password: ");
+  __isoc99_scanf("%50s", input);
+  i = 0;
+  len = strlen(output);
+  secret1 = 85;
+  secret2 = 51;
+  secret3 = 15;
+  fix = 97;
+  while ( i <= 2 )
+  {
+    for ( i_0 = 0; i_0 < len; ++i_0 )
+    {
+      random1 = (secret1 & (i_0 % 255)) + (secret1 & ((i_0 % 255) >> 1));
+      random2 = (random1 & secret2) + (secret2 & (random1 >> 2));
+      input[i_0] = ((random2 & secret3) + input[i_0] - fix + (secret3 & (random2 >> 4))) % 26 + fix;
+    }
+    ++i;
+  }
+  if ( !memcmp(input, output, len) )
+    printf("SUCCESS! Here is your flag: %s\n", "picoCTF{sample_flag}");
+  else
+    puts("FAILED!");
+  return 0;
+}
+```
+
+Looking at this we see that our input is going to pass through some sort of encryption scheme then eventually compared to the string stored in variable `output`
+
+We can possibly brute force each character of the expected input since the encryption is deterministic 
+
+But the way I solved this was by using an SMT solver called Z3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
