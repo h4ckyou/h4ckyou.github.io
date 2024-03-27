@@ -180,6 +180,39 @@ Tbh during this ctf I solved this manually since the number of times we get ques
 
 I can't redo it here cause it's stressfull and i'm too lazy to write a script now :(
 
+But the process was that i received the two binary string convert them to integer with python `int(binary, 2)` then perform the operation expected and send the result as a binary string
+
+#### Binary Search
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05190373-3744-42e8-9bc6-09b867672a86)
+
+Reading the description we know that we need to guess a number with 1000 possibilities and we have just 10 trials
+
+The challenge already hinted to use an Algorithm called Binary Search
+
+We are given an attachment to download and on downloading it we see this bash script
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/643f4d6d-5ef7-4b9b-ad30-e44b1e7c9c78)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad544fe1-e9dc-4a23-91b7-8cdc6926f8ce)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
