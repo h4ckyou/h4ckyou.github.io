@@ -783,9 +783,86 @@ while len(key_list) < len(input_list):
     key_list.extends(key_list)
 ```
 
+The next part is this
 
+```
+ 15     >>  162 LOAD_CONST              38 (<code object <listcomp> at 0x7f704e8a4df0, file "snake.py", line 15>)
+            164 LOAD_CONST              37 ('<listcomp>')
+            166 MAKE_FUNCTION            0
+            168 LOAD_NAME                5 (zip)
+            170 LOAD_NAME                0 (input_list)
+            172 LOAD_NAME                2 (key_list)
+            174 CALL_FUNCTION            2
+            176 GET_ITER
+            178 CALL_FUNCTION            1
+            180 STORE_NAME               6 (result)
 
+ 18         182 LOAD_CONST              39 ('')
+            184 LOAD_METHOD              7 (join)
+            186 LOAD_NAME                8 (map)
+            188 LOAD_NAME                9 (chr)
+            190 LOAD_NAME                6 (result)
+            192 CALL_FUNCTION            2
+            194 CALL_METHOD              1
+            196 STORE_NAME              10 (result_text)
+            198 LOAD_CONST              40 (None)
+            200 RETURN_VALUE
 
+Disassembly of <code object <listcomp> at 0x7f704e8a4df0, file "snake.py", line 15>:
+ 15           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                16 (to 22)
+              6 UNPACK_SEQUENCE          2
+              8 STORE_FAST               1 (a)
+             10 STORE_FAST               2 (b)
+             12 LOAD_FAST                1 (a)
+             14 LOAD_FAST                2 (b)
+             16 BINARY_XOR
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            4
+        >>   22 RETURN_VALUE
+
+```
+
+This is equivalent to doing
+
+```python
+result = [a ^ b for a, b in zip(input_list, key_list)]
+
+result_text = ''.join(map(chr, result))
+```
+
+At this point we can get tell what this bytecode does is to decrypt the input_list using xor with the key as the key_str
+
+I decided to just reimplement that but then I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00e00bea-f6bc-4532-93f8-bbc560b1d531)
+
+```python
+input_list = [4, 54, 41, 0, 112, 32, 25, 49, 33, 3, 0, 0, 57, 32, 108, 23, 48, 4, 9, 70, 7, 110, 36, 8, 108, 7, 49, 10, 4, 86, 43, 106, 123, 89, 87, 18, 62, 47, 10, 78]
+key_str = "J_o3t"
+
+r = ''
+
+for i in range(len(input_list)):
+    xr = ord(key_str[i % len(key_str)]) ^ input_list[i]
+    r += chr(xr)
+
+print(r)
+```
+
+That doesn't work? 
+
+Luckily because xor is reversible I decided to retrieve the key since we know the plaintext should start with `picoCTF` and we've got the ciphertext
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bc278b21-3a0e-4875-8a88-2ff60dce8e4d)
+
+Cool the key should be `t_Jo3`
+
+Using that worked....here's the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Reverse%20Engineering/Weird%20Snake/solve.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0cf883d8-2a62-408c-adee-305a4e9a263a)
+
+```
+Flag: picoCTF{N0t_sO_coNfus1ng_sn@ke_516dfaee}
+```
 
 
 
