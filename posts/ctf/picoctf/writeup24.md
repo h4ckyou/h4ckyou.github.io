@@ -17,6 +17,7 @@
 - Binary Search
 - Endianness
 - Dont-you-love-banners
+- SansAlpha
 
 ## Forensics
 - Scan Surprise
@@ -51,9 +52,7 @@
 - Format String 3
 - Babygame 03
 
-### General Skills 8/8 :~
+### General Skills 10/10 :~
 
-
-### General Skills 8/8 :~
-
-#### Chrono
+#### Super SSH
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6baf5964-a045-4fd8-9e09-b75809b7cf4f)
