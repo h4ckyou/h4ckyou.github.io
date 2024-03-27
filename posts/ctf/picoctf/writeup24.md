@@ -58,3 +58,29 @@
 
 #### Super SSH
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6baf5964-a045-4fd8-9e09-b75809b7cf4f)
+
+
+We are to ssh as `ctf-player` to `titan.picoctf.net` at port `50832` with password `84b12bae`
+
+So I just did that and got the flag :)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1ac9aae8-c943-4332-a423-d36682b8cffc)
+
+```
+Flag: picoCTF{s3cur3_c0nn3ct10n_07a987ac}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
