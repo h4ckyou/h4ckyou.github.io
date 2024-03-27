@@ -92,6 +92,13 @@ I checked it and got the flag
 Flag: picoCTF{s@n1t1z3_ea83ff2a}
 ```
 
+#### Time Machine
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/18cb8d91-570c-47ca-bcad-029791f60309)
+
+We are given a zip file and after unzipping it showed a git directory in the `./drop-in` directory (same as the previous challenge)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/34c90ea7-fc66-40ae-a05b-6644d6f5370b)
+
+Going over there shows this
 
 
 
