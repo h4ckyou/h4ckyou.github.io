@@ -1,4 +1,4 @@
-<h3> PICOCTF '23 </h3>
+<h3> PICOCTF '24 </h3>
 
 #### Description: This was a fun ctf that took place from March 12 to March 26, 2024. I played with team *Fuji_*
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
