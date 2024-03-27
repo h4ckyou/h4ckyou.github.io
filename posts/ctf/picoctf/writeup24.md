@@ -129,6 +129,40 @@ The flag was in the author field
 Flag: picoCTF{@sk_th3_1nt3rn_d2d29f22}
 ```
 
+#### Collaborative Development
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6ad2886e-892a-4843-a1c1-a6c75d574318)
+
+Same as the previous one again
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a1da72d6-f217-444d-9565-ca07db00de79)
+
+In the git directory the python code there just prints out some word
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1393fa25-9396-41c4-9b77-b1dccd94adcf)
+
+Checking the git log shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dbf779c1-a5d1-4836-ab83-c007f5970bdd)
+
+So the flag isn't there
+
+On noticing that we are in the main branch I decided to see if there are other branch
+
+Checking it shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/66b80390-a9e0-4837-919a-46e17581dd8e)
+
+I switched to `feature/part-1`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d656d670-7496-49d1-82bd-727e1b0adb58)
+
+We can see that it had one portion of the flag
+
+I repeated this process for the two branches left 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c08003f0-b407-40a0-9537-684d60079cc0)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/24a2e941-7838-463b-bc18-1910fe66868a)
+
+With that I just concatenated the 3 portions of the flag to form the full flag
+
+```
+Flag: picoCTF{t3@mw0rk_m@k3s_th3_dr3@m_w0rk_2c91ca76}"
+```
+
 
 
 
