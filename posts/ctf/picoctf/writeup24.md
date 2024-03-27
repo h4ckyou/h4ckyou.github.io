@@ -567,6 +567,13 @@ Starting the process hits the breakpoint
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a583f5f2-79c5-42da-b9b8-aca0e463c286)
 
 Now I just search for occurrence of `pico & mate` in memory
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9784d445-dcbd-46b7-a794-73ddafa44f13)
+
+With that I got the flag
+
+```
+Flag: picoCTF{wELF_d0N3_mate_7d29a538}
+```
 
 
 
