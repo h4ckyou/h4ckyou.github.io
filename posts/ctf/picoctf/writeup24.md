@@ -23,10 +23,13 @@
 
 ## Forensics
 - Scan Surprise
+- Verify
 - CanYouSee
 - Secret of the Polyglot
 - Mob psycho
 - Endianness-v2
+- Blast from the past
+- Dear Diary
 
 ## Reverse Engineering
 - Packer
