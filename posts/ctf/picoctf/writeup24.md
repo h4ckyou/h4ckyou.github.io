@@ -111,8 +111,23 @@ I just did the same thing I did before :)
 Flag: picoCTF{t1m3m@ch1n3_186cd7d7}
 ```
 
+#### Blame Game
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e37948d1-ad2a-4780-b7ed-7b01748022cc)
 
+Same as the previous ones
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ea6af638-e302-4ad5-be19-1a0f19fb40d1)
 
+But this time around when I checked the git log it was much
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/26530660-0a32-4f24-8ad6-e94200a4ce2f)
+
+I checked from the first commit and saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d908167e-e479-4715-910f-f7bb294ba50a)
+
+The flag was in the author field
+
+```
+Flag: picoCTF{@sk_th3_1nt3rn_d2d29f22}
+```
 
 
 
