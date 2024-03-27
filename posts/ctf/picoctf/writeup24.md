@@ -314,7 +314,7 @@ echo "Sorry, you've exceeded the maximum number of guesses."
 exit 1  # Exit with error code to close the connection
 ```
 
-And my solve script
+And my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/General/Binary%20Search/local.py)
 
 ```python
 from pwn import *
@@ -394,7 +394,7 @@ What is Endian? Endian refers to the order in which bytes are stored for multi-b
 - Little Endian: The least significant byte (LSB) is stored at the lowest memory address, with the remaining bytes stored in increasing order of significance.
 - Big Endian: The most significant byte (MSB) is stored at the lowest memory address, with the remaining bytes stored in decreasing order of significance.
 
-With that said I wrote a solve script
+With that said I wrote a solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/General/Endianness/solve.py)
 
 Here's my solution
 
@@ -420,6 +420,42 @@ flag = io.recvline()
 
 info(flag)
 io.close()
+```
+
+#### Dont-you-love-banners
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3474eadd-0527-4b35-82f4-dad9fdf88f2d)
+
+We are given a remote instance to connect to
+
+On doing that I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/668bef9b-2698-4753-a236-217b38764185)
+
+I was confused at this point cause I have no idea what the password is and after trying silly guesses with no luck I decided to brute force
+
+I wrote a script to achieve that this is it here: [brute](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/General/Don't%20You%20Love%20Banners/brute.py)
+
+After running the script I got the password to be `My_Passw@rd_@1234`
+
+Using that worked!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3c4ad114-88eb-4114-a735-9fbf2b4d988a)
+
+After it worked we got 2 questions which was easily solved once you search it up and then finally we spawn into a bash shell
+
+Looking through the file system I couldn't find the flag so I decided to escalate privilege
+
+From doing some manual checks I found out that the `/etc/shadow` file is readable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/54b26647-2c58-477c-b431-c261223a3b87)
+
+We got the root hash which was crackable
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/79c6e40c-3123-4086-a4c8-847797fe5d85)
+
+At this point I just switched to user `root` with password `iloveyou`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ee6e7917-0936-4f24-b197-990be0455abe)
+
+The flag was in the root directory
+
+```
+Flag: picoCTF{b4nn3r_gr4bb1n9_su((3sfu11y_ed6f9c71}
 ```
 
 
