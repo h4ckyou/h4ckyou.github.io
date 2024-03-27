@@ -708,13 +708,80 @@ After downloading the attached file and checking it I got this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7617084c-10d9-44e2-bc24-85c96af0ba7e)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc0963aa-8c19-4e68-9030-43d860bb97df)
 
+This is a python bytecode 
 
+Since I wasn't familiar with it I looked at the hint and saw they gave a python library
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9a271787-f9da-4113-aec4-ba451c62da5e)
 
+After I checked it out I saw it's a Disassembler for Python bytecode
 
+From reading the documentation I saw various types of bytecode instructions: [here](https://docs.python.org/3/library/dis.html#python-bytecode-instructions)
 
+I also played with it to see how it works here's an example
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9ef59d5b-e131-4241-ba44-8c12e45ac461)
 
+After I've tried disassembling some various operations I decided to start with reversing the bytecode
 
+First it stores some values into an array called `input_list`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6f8d7c57-52ad-4b0c-bca0-2de674555fcf)
 
+Note that the instruction `LOAD_CONST` pushes the value to the stack, and `STORE_NAME` implements `STACK.pop()` which basically moves the value on the stack to the variable we specified
+
+Next it generates a string which is stored in variable `key_str` with value `J_o3t`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c3a0b80c-48e1-4022-baf9-6a0eb56a9899)
+
+At this point I spent some time trying to understand this:
+
+```
+  9         120 LOAD_CONST              36 (<code object <listcomp> at 0x7f704e8a4d40, file "snake.py", line 9>)
+            122 LOAD_CONST              37 ('<listcomp>')
+            124 MAKE_FUNCTION            0
+            126 LOAD_NAME                1 (key_str)
+            128 GET_ITER
+            130 CALL_FUNCTION            1
+            132 STORE_NAME               2 (key_list)
+
+ 11     >>  134 LOAD_NAME                3 (len)
+            136 LOAD_NAME                2 (key_list)
+            138 CALL_FUNCTION            1
+            140 LOAD_NAME                3 (len)
+            142 LOAD_NAME                0 (input_list)
+            144 CALL_FUNCTION            1
+            146 COMPARE_OP               0 (<)
+            148 POP_JUMP_IF_FALSE      162
+
+ 12         150 LOAD_NAME                2 (key_list)
+            152 LOAD_METHOD              4 (extend)
+            154 LOAD_NAME                2 (key_list)
+            156 CALL_METHOD              1
+            158 POP_TOP
+            160 JUMP_ABSOLUTE          134
+
+Disassembly of <code object <listcomp> at 0x7f704e8a4d40, file "snake.py", line 9>:
+  9           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                12 (to 18)
+              6 STORE_FAST               1 (char)
+              8 LOAD_GLOBAL              0 (ord)
+             10 LOAD_FAST                1 (char)
+             12 CALL_FUNCTION            1
+             14 LIST_APPEND              2
+             16 JUMP_ABSOLUTE            4
+        >>   18 RETURN_VALUE
+```
+
+But basically it will iterate over each character in `key_str` and store it's integer representation to a list `key_list` by using a list comprehension
+
+```python
+key_list = [ord(i) for i in key_str]
+```
+
+Next it extends the `key_list` till the length is equal that of the `input_list`
+
+```python
+while len(key_list) < len(input_list):
+    key_list.extends(key_list)
+```
 
 
 
