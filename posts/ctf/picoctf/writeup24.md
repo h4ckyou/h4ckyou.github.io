@@ -102,7 +102,14 @@ We are given a zip file and after unzipping it showed a git directory in the `./
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/34c90ea7-fc66-40ae-a05b-6644d6f5370b)
 
 Going over there shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2b8b9041-b081-4111-8aa2-2a4675589451)
 
+I just did the same thing I did before :)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bb11fda3-97ac-4ffa-9b6f-ed2a4086eb95)
+
+```
+Flag: picoCTF{t1m3m@ch1n3_186cd7d7}
+```
 
 
 
