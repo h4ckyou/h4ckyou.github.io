@@ -642,7 +642,7 @@ We can possibly brute force each character of the expected input since the encry
 
 But the way I solved this was by using an SMT solver called Z3
 
-Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Classic%20Crackme%200x100/solve.py)
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Reverse%20Engineering/Classic%20Crackme%200x100/solve.py)
 
 ```python
 from z3 import *
