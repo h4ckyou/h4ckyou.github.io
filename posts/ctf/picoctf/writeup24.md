@@ -160,7 +160,7 @@ I repeated this process for the two branches left
 With that I just concatenated the 3 portions of the flag to form the full flag
 
 ```
-Flag: picoCTF{t3@mw0rk_m@k3s_th3_dr3@m_w0rk_2c91ca76}"
+Flag: picoCTF{t3@mw0rk_m@k3s_th3_dr3@m_w0rk_2c91ca76}
 ```
 
 
