@@ -22,14 +22,8 @@
 - SansAlpha
 
 ## Forensics
-- Scan Surprise
-- Verify
-- CanYouSee
-- Secret of the Polyglot
 - Mob psycho
 - Endianness-v2
-- Blast from the past
-- Dear Diary
 
 ## Reverse Engineering
 - Packer
@@ -497,6 +491,38 @@ On decoding the value we got the flag
 ```
 Flag: picoCTF{7h15_mu171v3r53_15_m4dn355_640b6add}
 ```
+
+### Forensics 2/7 :~
+
+#### Mob psycho
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/857c8e51-e972-438d-8e11-64624d03ecec)
+
+For this category I really didn't do much just two challenges my team mate solved the other challs there
+
+In this challenge we are given an apk file
+
+After downloading it I just unzipped it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/10742098-4325-474c-b20d-6b34c78ed585)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1de7cc96-5043-4eb1-812e-e3adf2585029)
+
+I tried low hanging fruit things in this case search for a `*.txt` file to see if we can get the flag
+
+Doing that indeed works but the flag was hex encoded which i just decoded
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c2c3a0f-3515-427e-8cfa-c174ebb8c1c4)
+
+```
+Flag: picoCTF{ax8mC0RU6ve_NX85l4ax8mCl_5e67ea5e}
+```
+
+#### Endianness-v2
+
+
+
+
+
+
+
+
 
 ### Reverse Engineering 7/7 :~
 
