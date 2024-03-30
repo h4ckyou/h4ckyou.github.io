@@ -537,12 +537,12 @@ Taking a look at the signature of a valid jpeg file shows this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04aaa89a-fda9-4973-8303-1901bcb3171f)
 
 ```
-FF D8 FF E0 00 10 4A 46 49 46 00 01`
+FF D8 FF E0 00 10 4A 46 49 46 00 01
 ```
 
 From this we can tell that for every 4 chunks it will basically flip it so that it's in is reverse order
 
-At this point of figuring that I wrote a script to do the opposite
+At this point of figuring that I wrote a [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Forensics/Endianess-V2/solve.py) to do the opposite
 
 ```python
 
@@ -581,7 +581,15 @@ if __name__ == "__main__":
     main()
 ```
 
+Running that script gives a file and on checking the file type shows it's indeed a jpeg file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0e022e03-d569-44c0-929d-5e3e824f6028)
 
+On viewing it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5d7b0f84-b479-4b45-b32d-6b37b583127f)
+
+```
+Flag: picoCTF{cert!f1Ed_iNd!4n_s0rrY_3nDian_f72c4bf7}
+```
 
 
 
