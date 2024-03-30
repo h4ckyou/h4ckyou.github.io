@@ -515,6 +515,75 @@ Flag: picoCTF{ax8mC0RU6ve_NX85l4ax8mCl_5e67ea5e}
 ```
 
 #### Endianness-v2
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1a149261-c72c-405c-81a0-6289bdedb459)
+
+After downloading the file I saw the data is not recognizable by the `file` command
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/02b89b05-578b-4976-864e-0c0b680d4b35)
+
+I uploaded it to cyberchef inorder to view it's hex dump
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dae95e4b-dde2-40ad-b9d7-bd993c41b9de)
+
+From looking at the first line from the hex dump result I noticed something peculiar
+
+```
+00000000  e0 ff d8 ff 46 4a 10 00 01 00 46 49 01 00 00 01  |àÿØÿFJ....FI....|
+```
+
+The file seems to a jpeg file but in this case the bytes are flipped 
+
+Here's what I mean
+
+Taking a look at the signature of a valid jpeg file shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04aaa89a-fda9-4973-8303-1901bcb3171f)
+
+```
+FF D8 FF E0 00 10 4A 46 49 46 00 01`
+```
+
+From this we can tell that for every 4 chunks it will basically flip it so that it's in is reverse order
+
+At this point of figuring that I wrote a script to do the opposite
+
+```python
+
+def swap_chunks(data):
+    chunks = []
+    swapped_data = ""
+
+    for i in range(0, len(data), 4):
+        chunks.append(data[i:i+4])
+
+    lt_idx = chunks[-1]
+    chunks = chunks[:-1]
+    swapped = b""
+
+    for i in range(len(chunks)):
+        swapped += chunks[i][::-1]
+            
+
+    return swapped
+
+def main():
+    input_file = 'challengefile'
+    output_file = 'dump'
+
+    with open(input_file, 'rb') as f:
+        file_data = f.read()
+
+    swapped_data = swap_chunks(file_data)
+
+
+    with open(output_file, 'wb') as f:
+        f.write(swapped_data)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
 
 
 
