@@ -1050,7 +1050,7 @@ So that should "prevent" us from using a debugger but we can easily bypass this
 
 Remember that the eax/rax holds the return value from a called function
 
-From the assembly portion that handles that check
+From the disassembly that handles that check I saw this:
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c077a05-1f52-4f4e-bf01-3bc8f03a15ba)
 
 ```
@@ -1061,13 +1061,16 @@ jz      short loc_CB161B
 
 From that we can see that after the call to `IsDebuggerPresent` it checks if the `eax` register is `0` and if it is we should get to the function that prints the flag
 
-There are two ways I went about this
+There are two ways I could go about this
 
 First I set a breakpoint at `test eax, eax` then modified the eax register which was set to `1` to `0` which bypasses the check
 
-But then the issue was that the program exited immediately and made me not able to even get the flag
+But then the program exited immediately and made me not able to even get the flag
 
-So the next thing I did was to directly patch the `jz` opcode to a `jnz`
+That's not an issue because if we take a look at the output tab we should see the flag there
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/79297dd9-db41-4149-8099-c9864c29b5bf)
+
+The next way to go about this is to directly patch the `jz` opcode to a `jnz`
 
 To do that in IDA click on the opcode then go to:
 
@@ -1098,12 +1101,197 @@ Here's how it looked here after running the newly patched executable in IDA
 Flag: picoCTF{d3bug_f0r_th3_Win_0x100_e70398c9}
 ```
 
+#### WinAntiDbg0x200
+
+Same type of file given again
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ef1e0c2b-bbb6-431f-b5d7-49bd7071f464)
+
+If we try to run it we get this error
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f4170e6f-5554-4f56-8889-de7a68866137)
+
+This time around we need to run it as admin
+
+I opened IDA but with admin privilege this time around then loaded the executable to it
+
+On generating the pseudocode I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/13364580-df13-44a5-b91e-83d6364dffa1)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9d7c0a60-155b-4729-b38a-8d5e04c5ee58)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/aa027a1f-069a-455d-ba79-247bb55c2d98)
+
+```c
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  int v3; // eax
+  char Block; // [esp+0h] [ebp-Ch]
+  char Blockb; // [esp+0h] [ebp-Ch]
+  char Blocka; // [esp+0h] [ebp-Ch]
+  HANDLE hObject; // [esp+4h] [ebp-8h]
+  WCHAR *lpOutputString; // [esp+8h] [ebp-4h]
+
+  if ( !sub_4012F0() )
+  {
+    sub_401910(
+      "[ERROR] There are permission issues. This program requires debug privileges and hence you might want to run it as an Admin.\n",
+      Block);
+    sub_401910("Challenge aborted. Please run this program as an Admin. Exiting now...\n", Blockb);
+    exit(255);
+  }
+  hObject = CreateMutexW(0, 0, L"WinAntiDbg0x200");
+  if ( !hObject )
+  {
+    sub_401910("[ERROR] Failed to create the Mutex. Exiting now...\n", Block);
+    exit(255);
+  }
+  if ( GetLastError() == 183 )
+  {
+    if ( argc != 2 )
+    {
+      sub_401910("[ERROR] Expected an argument\n", Block);
+      exit(48879);
+    }
+    v3 = atoi(argv[1]);
+    if ( DebugActiveProcess(v3) )
+      exit(0);
+    exit(48879);
+  }
+  sub_401910((char *)lpMultiByteStr, Block);
+  if ( (unsigned __int8)sub_401600() )
+  {
+    OutputDebugStringW("\n");
+    OutputDebugStringW("\n");
+    sub_401400();
+    if ( sub_401450() )
+    {
+      OutputDebugStringW(
+        L"### Level 2: Why did the parent process get a promotion at work? Because it had a \"fork-tastic\" child process "
+         "that excelled in multitasking!\n");
+      sub_401090(3);
+      if ( (unsigned __int8)sub_4011D0() && IsDebuggerPresent() )
+      {
+        sub_401090(1);
+        sub_401180(dword_40509C);
+        lpOutputString = (WCHAR *)sub_401000(dword_4050A0);
+        if ( lpOutputString )
+        {
+          OutputDebugStringW(L"### Good job! Here's your flag:\n");
+          OutputDebugStringW(L"### ~~~ ");
+          OutputDebugStringW(lpOutputString);
+          OutputDebugStringW(L"\n");
+          OutputDebugStringW(L"### (Note: The flag could become corrupted if the process state is tampered with in any way.)\n\n");
+          j_j_free(lpOutputString);
+        }
+        else
+        {
+          OutputDebugStringW(L"### Something went wrong...\n");
+        }
+      }
+      else
+      {
+        OutputDebugStringW(L"### Oops! The debugger was detected. Try to bypass this check to get the flag!\n");
+      }
+    }
+    else
+    {
+      OutputDebugStringW(L"### Error reading the 'config.bin' file... Challenge aborted.\n");
+    }
+    free(::Block);
+  }
+  else
+  {
+    sub_401910("### To start the challenge, you'll need to first launch this program using a debugger!\n", Blocka);
+  }
+  CloseHandle(hObject);
+  OutputDebugStringW(L"\n");
+  OutputDebugStringW(L"\n");
+  return 0;
+}
+```
+
+Looking at the code I noticed this line:
+
+```c
+if ( (unsigned __int8)sub_4011D0() && IsDebuggerPresent() )
+```
+
+And the function `sub_4011D0()` basically trys to create a child process
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/71a697d5-4f10-4fe0-960f-86a1717343c9)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/69ecba64-5f6d-45c2-bcc0-641b8950c28e)
+
+The program comparism checks if the value returned from calling `sub_4011D0()` is `1` and if `IsDebuggerPresent()` returns `1` then we get the "error debugging message"
+
+Ok now that we know this we just need to make sure it doesn't meet this check
+
+Looking at the assembly representation I saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3472020d-5d8e-43f1-8f03-4fa4f30729b5)
+
+```
+push    offset aLevel2WhyDidTh ; "### Level 2: Why did the parent process"...
+call    ds:OutputDebugStringW
+push    3
+call    sub_401090
+add     esp, 4
+call    sub_4011D0
+movzx   edx, al
+test    edx, edx
+jnz     short loc_401832
+
+call    ds:IsDebuggerPresent
+test    eax, eax
+jz      short loc_401847
+
+loc_401847: ; get flag :)
+push    1
+call    sub_401090
+add     esp, 4
+mov     eax, dword_40509C
+```
+
+Ok the assembly looks pretty good and this are the two main parts:
+
+```
+part1:
+    call    sub_4011D0
+    movzx   edx, al
+    test    edx, edx
+    jnz     short loc_401832
+
+part2:
+    call    ds:IsDebuggerPresent
+    test    eax, eax
+    jz      short loc_401847
+```
+
+For the first part, after it calls the `sub_4011D0` function it sets `edx` to the value returned by the called function and it's stored in the `al` register, then it checks if `edx` is zero and finally it jumps if not zero to the function that handles the "error message" else it moves on to the `IsDebuggerPresent` check
+
+From this we know that edx must equal 0 for we to bypass this check
+
+For this I set a breakpoint at the `test edx, edx` instruction then I start the process
+
+To set a breakpoint in IDA we can just click on `F2` at the instruction we want to break at or just right click and choose `add breakpoint`
+
+Doing that I got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ac777e18-6259-4514-a2f8-cdeca6540b25)
+
+Looking at the "General Registers" tab we see that `EDX` currently is `1`
+
+So we need to patch that opcode from a `jnz --> jz` which is basically saying jump to the isdebugger check if edx is not zero
+
+The next part is what we did in the previous `WinAntiDbg0x100` challenge
+
+Just patch `jz --> jnz`
+
+With that said after doing that I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a80d8c84-7e28-4620-942b-72c464690675)
+
+```
+Flag: picoCTF{0x200_debug_f0r_Win_c6db2768}
+```
 
 
 
 
 
-
+    
 
 
 
