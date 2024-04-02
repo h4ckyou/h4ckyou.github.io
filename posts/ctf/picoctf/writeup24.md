@@ -1,7 +1,7 @@
 <h3> PICOCTF '24 </h3>
 
 #### I participated in picoCTF 2024 organized by Carnegie Mellon University with team Fuji_, which took place between March 12, 2024 to March 26, 2024. It was a great solving the challenges and I learnt something new!
-.![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/87b20483-b9c6-4cde-97b1-8abc8ee6cc32)
 
 
