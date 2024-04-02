@@ -37,31 +37,23 @@ def dynamic_xor_encrypt(plaintext, text_key):
 def test(plain_text, text_key):
     p = 97
     g = 31
-
     if not is_prime(p) and not is_prime(g):
         print("Enter prime numbers")
         return
-    
     a = randint(p-10, p)
     b = randint(g-10, g)
-    # a = 89
-    # b = 27
     print(f"a = {a}")
     print(f"b = {b}")
-
     u = generator(g, a, p)
     v = generator(g, b, p)
     key = generator(v, a, p)
     b_key = generator(u, b, p)
-
     shared_key = None
-
     if key == b_key:
         shared_key = key
     else:
         print("Invalid key")
         return
-    
     semi_cipher = dynamic_xor_encrypt(plain_text, text_key)
     cipher = encrypt(semi_cipher, shared_key)
     print(f'cipher is: {cipher}')
