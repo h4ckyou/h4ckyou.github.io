@@ -1,6 +1,6 @@
 <h3> PICOCTF '24 </h3>
 
-#### My teammates (Fuji_) and I participated in the picoCTF 2024 organized by Carnegie Mellon University, which took place between March 12, 2024 to March 26, 2024. It was a great solving the challenges and I learnt something new!
+#### I participated in picoCTF 2024 organized by Carnegie Mellon University with team Fuji_, which took place between March 12, 2024 to March 26, 2024. It was a great solving the challenges and I learnt something new!
 .![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/87b20483-b9c6-4cde-97b1-8abc8ee6cc32)
 
@@ -1040,11 +1040,23 @@ Flag: picoCTF{N0t_sO_coNfus1ng_sn@ke_516dfaee}
 #### Elements
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8fa4cc9a-f87f-4b71-bb7e-f6f6d52c64c5)
 
-I actually wasn't the one who solved this but I helped in writing the solve script since our solution takes time before exfiltrating the flag
+I actually wasn't the one who solved this but I helped in writing the solve script since our solution takes quite some time before exfiltrating the flag
 
-You can read up on how to solve it here: [solution]()
+You can read up on how to solve it here and the other web challenges: [solution](https://krill-x7.github.io/2024/03/27/PicoCTF.html)
 
+And here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Web/Elements/solve.py)
 
+Basically what it does is to brute force the flag character by character using the xss payload which causes the chrome browser to crash once the character being guessed is right
+
+If it crashes, the python script itself stops and I couldn't figure a way to make it continue when the "server instance" isn't reachable which means the chrome browser crashed
+
+So because of that I actually had to do manual changing of the index and updating the known flag character leaked
+
+It was quite a bit of pain but after about ~3hours from guessing the right words and brute force we got the flag
+
+```
+Flag: picoCTF{little_alchemy_was_the_0g_game_does_anyone_rememb3r_9889fd4a}
+```
 
 
 
