@@ -1058,8 +1058,22 @@ It was quite a bit of pain but after about ~3hours from guessing the right words
 Flag: picoCTF{little_alchemy_was_the_0g_game_does_anyone_rememb3r_9889fd4a}
 ```
 
+### Cryptography 4/5 :~
 
+#### Interencdec
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d1cef18-d367-46d5-a1e7-7d88c79209f2)
 
+After downloading the attached file and checking it I saw it was base64 encoded
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0149b059-fb8d-41b9-9ada-a94f8e347296)
+
+I decoded it using the cli tool and got another base64 encoded value
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ed2acfaf-b699-44c5-aa2b-588e63cc5587)
+
+On further decoding gives a value which seems to be shifted
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/05bb8a30-b235-4ca2-8311-9327b7263969)
+
+I then used dcodefr caesar cipher [decoder](https://www.dcode.fr/caesar-cipher) to get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d01d7599-0982-4a7e-acbb-59146e54be4b)
 
 
 
