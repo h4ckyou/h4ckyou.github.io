@@ -57,7 +57,7 @@
 ### General Skills 10/10 :~
 
 #### Super SSH
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6baf5964-a045-4fd8-9e09-b75809b7cf4f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2132d3ae-f386-4e9f-a2b5-8b477ab3e875)
 
 
 We are to ssh as `ctf-player` to `titan.picoctf.net` at port `50832` with password `84b12bae`
@@ -70,7 +70,7 @@ Flag: picoCTF{s3cur3_c0nn3ct10n_07a987ac}
 ```
 
 #### Commitment Issues
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/15c45383-53ca-49c9-ab78-515cf046c0f0)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e0011168-abf8-4f80-b76b-16d0b2a2d8b8)
 
 We are given a zip file and after unzipping it showed a git directory in the `./drop-in` directory
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6b7213b9-3563-4f2f-a95d-8d2494f69969)
@@ -93,7 +93,7 @@ Flag: picoCTF{s@n1t1z3_ea83ff2a}
 ```
 
 #### Time Machine
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/18cb8d91-570c-47ca-bcad-029791f60309)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f95819b9-1da6-49d7-8778-126b3630ab58)
 
 We are given a zip file and after unzipping it showed a git directory in the `./drop-in` directory (same as the previous challenge)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/34c90ea7-fc66-40ae-a05b-6644d6f5370b)
@@ -109,7 +109,7 @@ Flag: picoCTF{t1m3m@ch1n3_186cd7d7}
 ```
 
 #### Blame Game
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e37948d1-ad2a-4780-b7ed-7b01748022cc)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/71de47c9-4c08-4bb2-a1f2-e080abc57022)
 
 Same as the previous ones
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ea6af638-e302-4ad5-be19-1a0f19fb40d1)
