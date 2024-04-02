@@ -967,11 +967,136 @@ Using that worked....here's the solve [script](https://github.com/h4ckyou/h4ckyo
 Flag: picoCTF{N0t_sO_coNfus1ng_sn@ke_516dfaee}
 ```
 
+#### WinAntiDbg0x100
 
+This series of Windows Antidebug Challenges are not currently in picogym
 
+But since I do have the files saved I'll go on ahead with the solution
 
+I'll only be writing about WinAntiDbg0x100-0x200 I wasn't able to run the 3rd one on my host due to some DLL file missing so my teammate did that instead
 
+For the first one we are given this set of files
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5ea6db12-3fdd-4968-b1a6-2f924f856b00)
 
+If we try to run it we get an error saying it needs to be run in a debugger
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/86693466-90f1-4181-b7c0-7195ebb7b53e)
+
+Loading it up in IDA we can generate the pseudocode 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c7d570d8-5f0e-4297-9a12-ba1e79a9a606)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a22baf4f-4150-4e18-8106-8b45b33742d8)
+
+```c
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  char Block; // [esp+0h] [ebp-8h]
+  char Blocka; // [esp+0h] [ebp-8h]
+  WCHAR *lpOutputString; // [esp+4h] [ebp-4h]
+
+  if ( (unsigned __int8)sub_401130() )
+  {
+    OutputDebugStringW("\n");
+    OutputDebugStringW("\n");
+    sub_4011B0();
+    if ( sub_401200() )
+    {
+      OutputDebugStringW(
+        L"### Level 1: Why did the clever programmer become a gardener? Because they discovered their talent for growing a"
+         " 'patch' of roses!\n");
+      sub_401440(7);
+      if ( IsDebuggerPresent() )
+      {
+        OutputDebugStringW(L"### Oops! The debugger was detected. Try to bypass this check to get the flag!\n");
+      }
+      else
+      {
+        sub_401440(11);
+        sub_401530(dword_405404);
+        lpOutputString = (WCHAR *)sub_4013B0(dword_405408);
+        if ( lpOutputString )
+        {
+          OutputDebugStringW(L"### Good job! Here's your flag:\n");
+          OutputDebugStringW(L"### ~~~ ");
+          OutputDebugStringW(lpOutputString);
+          OutputDebugStringW(L"\n");
+          OutputDebugStringW(L"### (Note: The flag could become corrupted if the process state is tampered with in any way.)\n\n");
+          j_j_free(lpOutputString);
+        }
+        else
+        {
+          OutputDebugStringW(L"### Something went wrong...\n");
+        }
+      }
+    }
+    else
+    {
+      OutputDebugStringW(L"### Error reading the 'config.bin' file... Challenge aborted.\n");
+    }
+    free(::Block);
+  }
+  else
+  {
+    sub_401060((char *)lpMultiByteStr, Block);
+    sub_401060("### To start the challenge, you'll need to first launch this program using a debugger!\n", Blocka);
+  }
+  OutputDebugStringW(L"\n");
+  OutputDebugStringW(L"\n");
+  return 0;
+}
+```
+
+From reading the code I could tell that this would open up the file `config.bin` performs some operation on it then makes sure we aren't running the executable in a debugger using the windows `IsDebuggerPresent` [api](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-isdebuggerpresent) 
+
+So that should "prevent" us from using a debugger but we can easily bypass this
+
+Remember that the eax/rax holds the return value from a called function
+
+From the assembly portion that handles that check
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c077a05-1f52-4f4e-bf01-3bc8f03a15ba)
+
+```
+call    ds:IsDebuggerPresent
+test    eax, eax
+jz      short loc_CB161B
+```
+
+From that we can see that after the call to `IsDebuggerPresent` it checks if the `eax` register is `0` and if it is we should get to the function that prints the flag
+
+There are two ways I went about this
+
+First I set a breakpoint at `test eax, eax` then modified the eax register which was set to `1` to `0` which bypasses the check
+
+But then the issue was that the program exited immediately and made me not able to even get the flag
+
+So the next thing I did was to directly patch the `jz` opcode to a `jnz`
+
+To do that in IDA click on the opcode then go to:
+
+```
+Edit --> Patch Program --> Assemble
+```
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cba79b29-106a-45a7-ae01-36cbf906c0af)
+
+Now I just replaced that with then pressed `Ok --> Cancel`
+
+```
+jnz      short loc_CB161B
+``` 
+
+Now time to save the patched binary 
+
+```
+Edit --> Patch Porgram --> Apply Patch to input file
+```
+
+With that the executable should be able to run bypassing the debugger check
+
+Here's how it looked here after running the newly patched executable in IDA
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f997cf2-0070-4343-ad8a-c8de37ca22e5)
+
+```
+Flag: picoCTF{d3bug_f0r_th3_Win_0x100_e70398c9}
+```
 
 
 
