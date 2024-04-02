@@ -1075,13 +1075,295 @@ On further decoding gives a value which seems to be shifted
 I then used dcodefr caesar cipher [decoder](https://www.dcode.fr/caesar-cipher) to get the flag
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d01d7599-0982-4a7e-acbb-59146e54be4b)
 
+```
+Flag: 	picoCTF{caesar_d3cr9pt3d_a47c6d69}
+```
+
+#### Custom encryption
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/82434bb9-35d3-45d5-ab9c-7994390531fc)
+
+We are given a python file and the encoded flag
+
+```python
+from random import randint
+import sys
 
 
+def generator(g, x, p):
+    return pow(g, x) % p
 
 
+def encrypt(plaintext, key):
+    cipher = []
+    for char in plaintext:
+        cipher.append(((ord(char) * key*311)))
+    return cipher
 
 
+def is_prime(p):
+    v = 0
+    for i in range(2, p + 1):
+        if p % i == 0:
+            v = v + 1
+    if v > 1:
+        return False
+    else:
+        return True
 
+
+def dynamic_xor_encrypt(plaintext, text_key):
+    cipher_text = ""
+    key_length = len(text_key)
+    for i, char in enumerate(plaintext[::-1]):
+        key_char = text_key[i % key_length]
+        encrypted_char = chr(ord(char) ^ ord(key_char))
+        cipher_text += encrypted_char
+    return cipher_text
+
+
+def test(plain_text, text_key):
+    p = 97
+    g = 31
+
+    if not is_prime(p) and not is_prime(g):
+        print("Enter prime numbers")
+        return
+    
+    a = randint(p-10, p)
+    b = randint(g-10, g)
+    # a = 89
+    # b = 27
+    print(f"a = {a}")
+    print(f"b = {b}")
+
+    u = generator(g, a, p)
+    v = generator(g, b, p)
+    key = generator(v, a, p)
+    b_key = generator(u, b, p)
+
+    shared_key = None
+
+    if key == b_key:
+        shared_key = key
+    else:
+        print("Invalid key")
+        return
+    
+    semi_cipher = dynamic_xor_encrypt(plain_text, text_key)
+    cipher = encrypt(semi_cipher, shared_key)
+    print(f'cipher is: {cipher}')
+
+
+if __name__ == "__main__":
+    # message = sys.argv[1]
+    test(message, "trudeau")
+```
+
+Here's the encoded flag file content
+
+```
+a = 89
+b = 27
+cipher is: [33588, 276168, 261240, 302292, 343344, 328416, 242580, 85836, 82104, 156744, 0, 309756, 78372, 18660, 253776, 0, 82104, 320952, 3732, 231384, 89568, 100764, 22392, 22392, 63444, 22392, 97032, 190332, 119424, 182868, 97032, 26124, 44784, 63444]
+```
+
+I'll go through what the encryption scheme is
+
+First it imports two python modules
+
+```python
+from random import randint
+import sys
+```
+
+Then it calls function `test` passing the first argument which is the message as the first parameter and the second parameter is the key
+
+```python
+if __name__ == "__main__":
+    message = sys.argv[1]
+    test(message, "trudeau")
+```
+
+Here's the test function code
+
+```python
+def test(plain_text, text_key):
+    p = 97
+    g = 31
+    if not is_prime(p) and not is_prime(g):
+        print("Enter prime numbers")
+        return
+    a = randint(p-10, p)
+    b = randint(g-10, g)
+    print(f"a = {a}")
+    print(f"b = {b}")
+    u = generator(g, a, p)
+    v = generator(g, b, p)
+    key = generator(v, a, p)
+    b_key = generator(u, b, p)
+    shared_key = None
+    if key == b_key:
+        shared_key = key
+    else:
+        print("Invalid key")
+        return
+    semi_cipher = dynamic_xor_encrypt(plain_text, text_key)
+    cipher = encrypt(semi_cipher, shared_key)
+    print(f'cipher is: {cipher}')
+```
+
+So it stores two prime number in variable `p & g` and makes sure they are prime
+
+Next it generates `a, b `which are random number between `(p-10) & p` and `(g-10) & g` respectively
+
+We are given the value of `a & b`
+
+It calls function `generator` passing `g, a & p` as the parameter where the result is stored in variable `u` and the same is done with with `g, b, p` which is stored in `v`
+
+Here's what the `generator` function does
+
+```python
+def generator(g, x, p):
+    return pow(g, x) % p
+```
+
+Basically what that does is to take the power of `g` to `x` modded with `p` i.e `(g ** x) mod p`
+
+And it generates `u, v, key & b_key`
+
+This is actually a known cryptography implementation called [Diffie–Hellman key exchange](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
+
+But here we are given just the private exponent 
+
+Still we can calculate `u & v`
+
+```
+a, b = 89, 27
+p, g = 97, 31
+
+u = generator(g, a, p)
+v = generator(g, b, p)
+key = generator(v, a, p)
+b_key = generator(u, b, p)
+
+assert key == b_key
+shared_key = key
+```
+
+Back to the code it calls function `dynamic_xor_encrypt` passing the `message & text_key` as the parameter
+
+Here's what it does
+
+```python
+def dynamic_xor_encrypt(plaintext, text_key):
+    cipher_text = ""
+    key_length = len(text_key)
+    for i, char in enumerate(plaintext[::-1]):
+        key_char = text_key[i % key_length]
+        encrypted_char = chr(ord(char) ^ ord(key_char))
+        cipher_text += encrypted_char
+    return cipher_text
+```
+
+So it basically just performs a xor operation but this time it reverses the message string which is then xored
+
+After that it generates a cipher which is the value return from calling function `cipher` passing the xored value and the shared key as the parameter
+
+Here's what the function does
+
+```python
+def encrypt(plaintext, key):
+    cipher = []
+    for char in plaintext:
+        cipher.append(((ord(char) * key*311)))
+    return cipher
+```
+
+For each character in the "xored value" it multiplies it by `key*311`
+
+And the result is appended to a cipher list and returned to us
+
+Now how to solve this?
+
+Since we know the key and xor key we can just reverse the process used to encrypt the flag
+
+First we need to deal with the `encrypt` function
+
+```
+cipher = char * (key*311)
+```
+
+To recover `char` we can simply do this
+
+```
+char = cipher // (key*311)
+```
+
+Ok that's the first step and with we should retreive the xored value
+
+Now how do we reverse xor?
+
+Well xor is reversible by this
+
+```
+a ^ b == c
+a ^ c == b
+b ^ a == a
+```
+
+We can just make use of this commutative property of xor to retrieve the plaintext
+
+```
+xored = plaintext ^ key
+plaintext = xored ^ key
+```
+
+With that said here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Cryptography/Custom%20Encryption/solve.py)
+
+```python
+def generator(g, x, p):
+    return pow(g, x) % p
+
+def decrypt(cipher, shared_key):
+    semi_cipher =  ""
+    for value in cipher:
+        semi_cipher += chr(value // (shared_key * 311))
+
+    return semi_cipher
+
+def xor_pwn(enc, key):
+    pt = ""
+    k_len = len(key)
+
+    for idx, val in enumerate(enc[::-1]):
+        k_chr = key[idx % k_len]
+        d_chr = chr(ord(k_chr) ^ ord(val))
+        pt += d_chr
+    
+    print(pt[::-1])
+
+a, b = 89, 27
+p, g = 97, 31
+
+u = generator(g, a, p)
+v = generator(g, b, p)
+key = generator(v, a, p)
+b_key = generator(u, b, p)
+
+assert key == b_key
+shared_key = key
+
+cipher = [33588, 276168, 261240, 302292, 343344, 328416, 242580, 85836, 82104, 156744, 0, 309756, 78372, 18660, 253776, 0, 82104, 320952, 3732, 231384, 89568, 100764, 22392, 22392, 63444, 22392, 97032, 190332, 119424, 182868, 97032, 26124, 44784, 63444]
+semi_cipher = decrypt(cipher, shared_key)
+flag = xor_pwn(semi_cipher[::-1], "trudeau")
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/54c4321c-5a7b-4e0f-aa92-079d98cc6301)
+
+```
+Flag: picoCTF{custom_d2cr0pt6d_dc499538}
+```
 
 
 
