@@ -1,4 +1,4 @@
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/950f60a3-b7dc-4d28-bd90-33dc2f009555)<h3> PICOCTF '24 </h3>
+<h3> PICOCTF '24 </h3>
 
 #### I participated in picoCTF 2024 organized by Carnegie Mellon University with team Fuji_, which took place between March 12, 2024 to March 26, 2024. It was a great solving the challenges and I learnt something new!
 .![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
@@ -1475,8 +1475,51 @@ print(r)
 Flag: picoCTF{adlibs}
 ```
 
+#### Rsa Oracle
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3b898e7f-efef-4035-89df-1b02885112e9)
 
+We are given an encoded password and secret file with also a remote instance to connect to
 
+Checking the given files shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c8277a05-2dbe-41f3-b49d-8947b88ce8b2)
+
+From the challenge hint we know that we are meant to decrypt the AES encrypted file (secret.enc) but it needs a password
+
+So the password file given is actually the encrypted password also that means we would need to get the plaintext form of the encrypted password
+
+Now that we know that let's connect to the remote instance
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d01200ac-5123-4153-9ddf-40028a668780)
+
+On connecting to it i saw that this is a service which encrypts and decrypts values for us
+
+We can try to encrypt a word
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c2c423d2-33a2-4691-8088-dc4be7848f67)
+
+Here i encrypted `pwn` and the ciphertext is `2047850252706091840405479775769742652500446636392769116787296844217713229548194309699205024040158803529449603571974932458613731680043863948321059171243239`
+
+Let's decrypt it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4641f65a-9ddd-4ba0-a32c-edaa04b366f6)
+
+Ok nice we can encrypt and decrypt 
+
+So bascially this is an oracle because it's offering to decrypt any ciphertext we give it
+
+And we know that it implements RSA 
+
+For the encryption/decryption part of RSA it computes this:
+
+```
+## Encryption
+ct = (m ^ e) mod n
+
+## Decryption
+m = (ct ^ d) mod n
+```
+
+When we try to decrypt the ciphertext we get this error 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f2e78bef-755e-400b-a3ba-49db97e0822b)
+
+So no easy win :)
 
 
 
