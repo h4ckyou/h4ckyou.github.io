@@ -1521,6 +1521,86 @@ When we try to decrypt the ciphertext we get this error
 
 So no easy win :)
 
+Now how do we exactly trick this oracle to give me the flag?
+
+I made some research and found [this](https://bitsdeep.com/posts/attacking-rsa-for-fun-and-ctf-points-part-1/)
+
+So here's how to craft the ciphertext
+
+First we already know that the server computes `m = (ct ^ d) mod n and ct = (m ^ e) mod n`
+
+Because the server check that we don’t ask for the decryption of the flag, you can’t give it the ciphertext right away, we need to modify it in a way to trick the server into thinking it’s something else 
+
+The modification must be carefully chosen so that we can revert the process once we get the response of the server
+
+For instance, we can’t just add one and expect to subtract 1 from the output
+
+The trick is the multiply the ciphertext with another ciphertext `ct2` from which we know the plaintext
+
+```
+ct2 = (2 ^ e) mod n
+```
+
+Now the new ciphertext that you will send to the server will be:
+
+```
+C = ct * ct2
+  = (m ^ e) * (2 ^ e)
+  = ((2m) ^ e)
+  = 2m^e
+```
+
+The server will give you back:
+
+```
+pt = (2(C ^ e) ^ d) mod n
+   = 2*m
+```
+
+Now we just divide `pt` by 2 and that's the password
+
+You must choose a small value because the computations are made modulo n, so if the result gets too big we wont be able to know the real value
+
+With that said I wrote a solve [script]()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
