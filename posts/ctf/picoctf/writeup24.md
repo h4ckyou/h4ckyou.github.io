@@ -1,4 +1,4 @@
-<h3> PICOCTF '24 </h3>
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/950f60a3-b7dc-4d28-bd90-33dc2f009555)<h3> PICOCTF '24 </h3>
 
 #### I participated in picoCTF 2024 organized by Carnegie Mellon University with team Fuji_, which took place between March 12, 2024 to March 26, 2024. It was a great solving the challenges and I learnt something new!
 .![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b697be8a-2adb-48f3-8260-1db8ddfd8e69)
@@ -1237,7 +1237,7 @@ But here we are given just the private exponent
 
 Still we can calculate `u & v`
 
-```
+```python
 a, b = 89, 27
 p, g = 97, 31
 
@@ -1364,6 +1364,127 @@ Running it gives the flag
 ```
 Flag: picoCTF{custom_d2cr0pt6d_dc499538}
 ```
+
+#### C3
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5bbc7699-0354-4e59-9827-f161ac8ebcc9)
+
+We are given a python file and a ciphertext
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/eaca6fac-36c0-4210-a130-bca695fd824c)
+
+```python
+import sys
+chars = ""
+from fileinput import input
+for line in input():
+  chars += line
+
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+out = ""
+
+prev = 0
+for char in chars:
+  cur = lookup1.index(char)
+  out += lookup2[(cur - prev) % 40]
+  prev = cur
+
+sys.stdout.write(out)
+```
+
+Ok basically this code will iterate through our input and get the index of the current character in the lookup1 string, then it subtracts the index with the prev variable which is set to 0 initially and is modded by 40. The result is used as the index to get the character specified at the string lookup2 and finally it updates the variable `prev` to the current index `cur`
+
+We can easily reverse this process
+
+```python
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+ciphertext = "DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTKAkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl"
+
+out = ""
+
+prev = 0
+for char in ciphertext:
+    cur = lookup2.index(char)
+    out += lookup1[(cur + prev) % 40]
+    prev = (cur + prev) % 40
+
+print(out)
+```
+
+Running that gives another python code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/04de7fae-e860-40dc-b9b0-87730702e162)
+
+```python
+#asciiorder
+#fortychars
+#selfinput
+#pythontwo
+
+chars = ""
+from fileinput import input
+for line in input():
+    chars += line
+b = 1 / 1
+
+for i in range(len(chars)):
+    if i == b * b * b:
+        print chars[i] #prints
+        b += 1 / 1
+```
+
+Hmm nothing sus there
+
+I just stored the result obtained from the first reversed operation and used that for this new python code retrieved
+
+And that gave me the word which is the flag
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Cryptography/C3/solve.py)
+
+```python
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+ciphertext = "DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTKAkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl"
+
+out = ""
+
+prev = 0
+for char in ciphertext:
+    cur = lookup2.index(char)
+    out += lookup1[(cur + prev) % 40]
+    prev = (cur + prev) % 40
+
+chars = out
+b = 1 / 1
+
+r = ""
+
+for i in range(len(chars)):
+    if i == b * b * b:
+        r += chars[i] 
+        b += 1 / 1
+
+print(r)
+```
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/235701c2-ab74-4ba6-86f7-445bc522691e)
+
+```
+Flag: picoCTF{adlibs}
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
