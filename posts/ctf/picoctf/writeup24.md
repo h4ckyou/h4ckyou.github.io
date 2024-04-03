@@ -1287,67 +1287,6 @@ With that said after doing that I got the flag
 Flag: picoCTF{0x200_debug_f0r_Win_c6db2768}
 ```
 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Web 10/10 :~
 
 #### Elements
@@ -1911,13 +1850,42 @@ Running that we get the aes key which we can then go ahead decrypting `secret.en
 Flag: picoCTF{su((3ss_(r@ck1ng_r3@_24bcbc66}
 ```
 
+### Binary Exploitation 9/10 :~
+
+#### Format String 0
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0506f1f6-1ff2-4cc9-9f3b-8a3db3629c17)
+
+We are given a binary and the source code with a remote instance to connect to
+
+Downloading the attached file and checking the source shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1a723603-c0a6-4f19-b172-4883ddb79c99)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/23fc13a4-6cfc-4dc5-bd2f-ec5731c31300)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d72b18cc-6926-478d-8e5b-bd6bae054728)
+
+Since this was the first challenge in this category I felt lazy to read the source code but i saw some interesting things just by looking at it
+- The flag is opened and stored in a global variable
+- We have have a prompt where we need to choose the right bugger and if we meet certain condition we get another prompt which allows us choose another burger
+
+Ok that doesn't make much sense but looking at the part where we select a burger i noticed this
+
+```c
+#define BUFSIZE 32
+
+char choice1[BUFSIZE];
+scanf("%s", choice1);
+char *menu1[3] = {"Breakf@st_Burger", "Gr%114d_Cheese", "Bac0n_D3luxe"};
+if (!on_menu(choice1, menu1, 3)) {
+    printf("%s", "There is no such burger yet!\n");
+    fflush(stdout);
+} else {
+    int count = printf(choice1);
+    if (count > 2 * BUFSIZE) {
+        serve_bob();
+
+```
 
 
-
-
-
-
-
+First we read in the choice using `scanf` and it's stored in the buffer `choice1` then it stores some burgers in the `menu1` array and if our input is among the buffer array then it calls `printf` on our choice and then it saves the return value from calling printf to an integer variable `count` then checks if `count` is greater than `2 * BUFSIZE`. If the check returns True then it calls the `server_bob` function
 
 
 
