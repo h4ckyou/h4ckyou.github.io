@@ -1866,7 +1866,7 @@ Since this was the first challenge in this category I felt lazy to read the sour
 - The flag is opened and stored in a global variable
 - We have have a prompt where we need to choose the right bugger and if we meet certain condition we get another prompt which allows us choose another burger
 
-Ok that doesn't make much sense but looking at the part where we select a burger i noticed this
+Ok that doesn't make much sense but looking at the part where we select a burger i saw this
 
 ```c
 #define BUFSIZE 32
@@ -1886,6 +1886,159 @@ if (!on_menu(choice1, menu1, 3)) {
 
 
 First we read in the choice using `scanf` and it's stored in the buffer `choice1` then it stores some burgers in the `menu1` array and if our input is among the buffer array then it calls `printf` on our choice and then it saves the return value from calling printf to an integer variable `count` then checks if `count` is greater than `2 * BUFSIZE`. If the check returns True then it calls the `server_bob` function
+
+There are two vulnerabilities here:
+- Buffer overflow
+- Format String Bug
+
+The first one is when it receives our input, we can see that when it calls `scanf` it doesn't specify to number of bytes to read in which causes the overflow since the choice buffer can only hold up just 32 bytes
+
+So at this point of knowing that I basically just decided to spam 'A's
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f6f3a240-4430-4189-84e9-a37c222539b5)
+
+It also worked remotely
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/872832c7-1d8c-43de-a841-8eb644c08491)
+
+But looking back at the challenge this is probably not a good way to solve this even though it works
+
+So let me talk about the second vuln which is format string bug
+
+I saw that when it wants to store the result of printf to variable count, printf would print out our choice without using a format specifier
+
+That's what leads to the format string bug
+
+But how exactly do we leverage that when it eventually checks if the count is greater than 64 (2 * 32)
+
+Since we are meant to choose from the menu I noticed that `menu1[1]` has a format specifier in it
+
+```
+Gr%114d_Cheese
+```
+
+In other words when printf is called it would also do `printf(%114d)`
+
+And the return value from calling [printf](https://man7.org/linux/man-pages/man3/printf.3.html#RETURN_VALUE) is the number of characters printed (excluding the null byte used to end output to strings).
+
+So when `%114d` is passed to printf the number of bytes returned would be `114`
+
+We can check this out by making a dummy script --> compiling it and setting a breakpoint after printf is called
+
+```c
+#include <stdio.h>
+
+int main(){
+    char value[32];
+    scanf("%s", value);
+    int count = printf(value);
+    printf("\nsize: %d\n", count);
+
+    return 0;
+}
+```
+
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e30e2e1c-e110-4b87-8144-7e7fd1fc829a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a29076c7-bc3e-4329-a866-f9d1d44f0227)
+
+We can see that `rax` is `0x72 == 144` and that's greater than `64` with that we can get us to the next function `serve_bob`
+
+Doing that works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a7ce57f5-1f93-49e1-bdbd-6b80f058874a)
+
+Now for the next function it's also similar
+
+```c
+char choice2[BUFSIZE];
+scanf("%s", choice2);
+char *menu2[3] = {"Pe%to_Portobello", "$outhwest_Burger", "Cla%sic_Che%s%steak"};
+if (!on_menu(choice2, menu2, 3)) {
+    printf("%s", "There is no such burger yet!\n");
+    fflush(stdout);
+} else {
+    printf(choice2);
+    fflush(stdout);
+}
+```
+
+We just choose `menu[2]` which then does `printf(%s%s%s)` 
+
+But is that meant to give the flag? 
+
+Rather how did we get the flag initially with the buffer overflow
+
+Well I didn't say this at first but there's a function which handle signals
+
+```c
+void sigsegv_handler(int sig) {
+    printf("\n%s\n", flag);
+    fflush(stdout);
+    exit(1);
+}
+
+signal(SIGSEGV, sigsegv_handler);
+```
+
+In this case once the program sees a SIGSEGV signal it would call the handler function which helps us print the flag
+
+That's why the buffer overflow when caused produces a SIGSEGV signal which we then got the flag
+
+To see this we can try it in a debugger and cause an overflow
+
+I set a breakpoint at the point where `server_patrick` function wants to return
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7be06560-8631-4271-be9b-3728279ab33f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a8c25440-2de4-4470-b52d-fd8335bfa281)
+
+If we move to next instruction we would see that we triggered the SIGSEGV signal
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/21d305bc-34f3-4fdc-b112-d56ba53b8091)
+
+But how exactly can we acheive a SIGSEGV signal with this uncontrollable format string bug
+
+Here's how it's possible, remember that the choice two would do `printf(%s%s%s)`
+
+And what printf would interpret is that:
+- Print the string stored in the pointer at the first offset i.e 0xffffffff -> "test"...... so print "test"
+
+But what if that address pointer is invalid what happens? Well the SIGSEGV signal is triggered
+
+So now that we know that, we just choose it and hope the address at the first offset is invalid
+
+Doing that I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a7f1a688-04aa-4da4-8af0-662987f4cd84)
+
+```
+Flag: picoCTF{7h3_cu570m3r_15_n3v3r_SEGFAULT_63191ce6}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
