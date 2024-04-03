@@ -3041,10 +3041,130 @@ void init_player(player *player)
 }
 ```
 
+Back to the main function the next function that's called is `init_map()`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/35c621c7-ea76-4e4d-8745-a90c7e5a4999)
 
+After some renaming and correct data type changing i got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/939742f3-c499-45fe-97f5-3b443c0b9ea7)
 
+```c
+void init_map(char *map,player *player,int *level)
 
+{
+  int random;
+  int i;
+  int j;
+  
+  j = 0;
+  do {
+    if (0x1d < j) {
+      return;
+    }
+    for (i = 0; i < 0x5a; i = i + 1) {
+      if ((j == 0x1d) && (i == 0x59)) {
+        map[0xa8b] = 'X';
+      }
+      else if ((j == player->y) && (i == player->x)) {
+        map[i + j * 0x5a] = player_tile;
+      }
+      else {
+        random = rand();
+        if (j == random % *level) {
+          random = rand();
+          if (i == random % *level) {
+            map[i + j * 0x5a] = '#';
+            goto inc;
+          }
+        }
+        map[i + j * 0x5a] = '.';
+      }
+inc:
+    }
+    j = j + 1;
+  } while( true );
+}
+```
 
+This function does exactly what it says....it initializes the map
+
+Ok one thing to note is that the map is an array that can hold up 2700 bytes
+
+```c
+char map [2700];
+```
+
+Next function does exactly what it says
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c02a3b56-fcae-48db-912f-8ecde34bcac7)
+
+```c
+void print_map(char *map,player *player,int level)
+
+{
+  int j;
+  int i;
+  
+  clear_screen();
+  find_player_pos(map,level);
+  find_end_tile_pos(map);
+  print_lives_left(player);
+  for (i = 0; i < 0x1e; i = i + 1) {
+    for (j = 0; j < 0x5a; j = j + 1) {
+      putchar((int)map[j + i * 0x5a]);
+    }
+    putchar(10);
+  }
+  fflush(_stdout);
+  return;
+}
+```
+
+Now this the the part that deals with how the game works based on our input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/46988337-cb5f-48cf-bcf5-35a17dda8bd8)
+
+```c
+undefined4 main(void)
+
+{
+  int inp;
+  int level;
+  player player;
+  char map [2700];
+  char value;
+  int i;
+  undefined *local_10;
+  
+  local_10 = &stack0x00000004;
+  init_player(&player);
+  level = 1;
+  i = 0;
+  init_map(map,&player,&level);
+  print_map(map,&player,(int)&level);
+  signal(2,sigint_handler);
+  do {
+    inp = getchar();
+    position = (char)inp;
+    move_player(&player,(int)position,map,&level);
+    print_map(map,&player,(int)&level);
+    if (((player.y == 0x1d) && (player.x == 0x59)) && (level != 4)) {
+      puts("You win!\n Next level starting ");
+      i = i + 1;
+      level = level + 1;
+      init_player(&player);
+      init_map(map,&player,&level);
+    }
+  } while (((player.y != 0x1d) || (player.x != 0x59)) || ((level != 5 || (i != 4))));
+  win(&level);
+  return 0;
+}
+```
+
+Here's what it does:
+- Initializes the `level` and `i` to `1` and `0` respectively.
+- While the player's `y` and `x` coordinates are not equal to `29` and `89` with the `level` and `i` not being equal `5` and `4` respectively it goes into the while loop doing this:
+  - Receives our input which is used as the position passed into the `move_player` function
+  - Prints the current map.
+  - It then checks if the player's `y` and `x` coordinates are equal to `29` and `89` with the `level` being equal to 4. If that's the case it will increment `i` and `level` by 1 and initialize the map and player's structure again.
+- Else if we don't meet that condition it would call the win function passing our current level as the parameter.
 
 
 
