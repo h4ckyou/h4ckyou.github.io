@@ -2590,7 +2590,7 @@ Here's how the exploit flow goes:
 - First i free the the struct object
 - Then i allocate a new malloc chunk of size 40, i could have just used 35 because that's the size of the struct but i just decided to use 40
 
-Then i fill in the struct with junks and on the 30th offset i start filling it with `pico`
+Then i fill in the struct 3 fields with junks and on the 30th offset which is where the flag field is `x-flag` i filled it with `pico`
 
 Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%203/solve.py)
 
@@ -2934,6 +2934,32 @@ Running it works and i got the flag
 Flag: picoCTF{G07_G07?_d285a282}
 ```
 
+#### Babygame 03
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6958d38a-3e99-46da-9f8c-a5b65a305b84)
+
+Note that this is a sequel to last year picoctf babygame series so it would help in knowing how to solve the other two
+
+But i'll just try to explain it here 
+
+We are given a binary and no source code with a remote instance to connect to
+
+After downloading the binary i checked the file type and protections enabled
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ca28930c-8553-4467-9391-f42647e89fdb)
+
+We are working with a x32 binary which is dynamically linked and not stripped with the only protection being enabled to be NX
+
+Ok let's run the binary to get an overview of what it does
+
+On running it we are presented with a game like sort of structure where we have the: player's position which are shown as the x,y coordinates, current level, end tile position in it's coordinate form and the number of lives left
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de002451-1a59-4d95-a0bf-a930ff2e39ec)
+
+We are also see that the player is represented by `@`
+
+Initial knowledge of the previous babygame series I saw that we can move around the map using `w,a,s,d`
+
+Ok but this time I want to work on it as if i never did those two previous ones 
+
+So if that was the case we could have just guessed it because that's like the standard gaming key for such type of thing
 
 
 
