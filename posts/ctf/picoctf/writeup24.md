@@ -3632,7 +3632,7 @@ for _ in range(5):
 Ok now we have everything needed but when we then choose `p` which solves the map we don't break out of the loop?
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7b658d8d-bbbf-4e8a-9b3b-49859600f762)
 
-We can see that it rather increments our live value
+We can see that it rather increments our live value to 7?
 
 How do we avoid this and instead get the flag?
 
@@ -3642,9 +3642,10 @@ Well to do this rather than us jumping to `0x0804997a` we can jump to few instru
 In my case I choose to jump here `0x80499e5`
 
 Here's how to do it:
-- Increment the level by 4 and i should be set to 3
+- Increment the level by 5 and i should be set to 4
 - On the 4th oob write we set the stack frame instruction pointer to `0xe5`
-- When we then trigger the write our level is going to be 5 and then it calls win!
+- When we then trigger the write it calls win()
+- Profit since level is set to 5 (flag gotten!)
 
 Here's it
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ad977937-1fb1-4a3d-be26-ddb8e2b8c0f8)
@@ -3674,60 +3675,20 @@ Though it seems to work now
 
 During the ctf it didn't work so instead i fuzzed for the right offset to overwrite and that got me the flag too
 
-Here's my full solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Babygame%2003/solve.py)
+Also i didn't mention this but here's the python implementation of how the level increases:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1b503d39-d664-4357-be43-5fdea7264d78)
+
+I actually got stucked here because though the level was at 5 it showed 4 that's why when i tried to write in 5 loops and used 'p' it incremented to 7 because it was 6 😄
+
+With that said, here's my full solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Babygame%2003/solve.py)
 
 ```
 Flag: picoCTF{gamer_leveluP_fb9b377c}
 ```
 
+That's all the challenges I was able to solve
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Thanks for reading!
 
 
 
