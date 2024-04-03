@@ -3166,6 +3166,146 @@ Here's what it does:
   - It then checks if the player's `y` and `x` coordinates are equal to `29` and `89` with the `level` being equal to 4. If that's the case it will increment `i` and `level` by 1 and initialize the map and player's structure again.
 - Else if we don't meet that condition it would call the win function passing our current level as the parameter.
 
+At this point we can kind of tell what's the "goal"
+
+We need to move the player to the end of the map (29, 89) and the level and i must be 5 and 4
+
+But if you look well you would see that the level was initialized as 1 while i as 0
+
+And there's a weird condition in the part that deals with how we can increment our level and i
+
+It would only increment when we are at the end of the map and the level is not equal to 4
+
+Do you see it?
+
+If the level is not equal to 4 means we can only get to pass that comparism 3 times
+
+Meaning we can only get to set level and i to 4 and 3 
+
+And the condition set for the loop to exit and call the win() function is when the player's position is at the end of the map (29, 89), the level is 5, and i is 4
+
+Ok that looks impossible to achieve "for now :)"
+
+Back to reversing.....If we are able to break out of the loop it would call the win function passing the level as the parameter
+
+Looking at the pseudocode shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d9422c83-3a53-4987-b67f-98d636242b10)
+
+This would open up the flag file and print it's content to stdout only when the level is 5
+
+OK at this point we know that the level must surely equal 5 to get the flag
+
+Now let us take a look at the function that moves the player around the map
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6f4d4677-d2fb-4fdb-be6f-efcb56a45215)
+
+```c
+void move_player(player *player,char position,char *map,int level)
+
+{
+  int value;
+  
+  if (player->lives < 1) {
+    puts("No more lives left. Game over!");
+    fflush(_stdout);
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+  if (position == 'l') {
+    value = getchar();
+    player_tile = (char)value;
+  }
+  if (position == 'p') {
+    solve_round(map,player,level);
+  }
+  map[player->x + player->y * 0x5a] = '.';
+  if (position == 'w') {
+    player->y = player->y + -1;
+  }
+  else if (position == 's') {
+    player->y = player->y + 1;
+  }
+  else if (position == 'a') {
+    player->x = player->x + -1;
+  }
+  else if (position == 'd') {
+    player->x = player->x + 1;
+  }
+  if (map[player->x + player->y * 0x5a] == '#') {
+    puts("You hit an obstacle!");
+    fflush(_stdout);
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+  map[player->x + player->y * 0x5a] = player_tile;
+  player->lives = player->lives + -1;
+  return;
+}
+```
+
+First thing it does is to make sure the player's live isn't less than 1
+
+Then it does this:
+
+```c
+map[player->x + player->y * 0x5a] = '.';
+```
+
+Basically what that does is to set the previous location of the player's position to `.`
+
+Based on the position we choose it will update the coordinates (y, x)
+
+```
+w --> move up
+s --> move down
+a --> move left
+d --> move right
+```
+
+But there are two position that were not known to us and they are `l & p`
+
+We can use `l` to change the value of the player character
+
+```c
+  if (position == 'l') {
+    value = getchar();
+    player_tile = (char)value;
+  }
+```
+
+While `p` is used to automatially solve the map
+
+```c
+  if (position == 'p') {
+    solve_round(map,player,level);
+  }
+```
+
+And it achieves that by moving the player on the map based on certain conditions
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/2279b007-9f5b-46eb-ac13-3eaf3c8debd4)
+
+Ok back to the `move_player()` function the last part is this
+
+```c
+if (map[player->x + player->y * 0x5a] == '#') {
+puts("You hit an obstacle!");
+fflush(_stdout);
+                /* WARNING: Subroutine does not return */
+exit(0);
+}
+map[player->x + player->y * 0x5a] = player_tile;
+player->lives = player->lives + -1;
+return;
+}
+```
+
+Basically this checks if we are at (0, 1) and if we are there then we hit the obstable and the program exits, we can try this out
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/df693f96-88a0-402b-9cd7-9e805fc802f7)
+
+But if that's not the case it updates the current value of the player on the map to the `player_tile` character and decrements the player's live by 1
+
+And returns........
+
+
 
 
 
