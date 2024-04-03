@@ -2961,6 +2961,100 @@ Ok but this time I want to work on it as if i never did those two previous ones
 
 So if that was the case we could have just guessed it because that's like the standard gaming key for such type of thing
 
+If we try to send the movement characters with keyboard it will decrement the lives by 2 but that's not meant to be right
+
+Inorder to prevent this I just made a function wrapper to deal with moving the player's character on the map
+
+Before i show that here let's reverse engineer the program to see it's funtionality well and as well the vulnerability
+
+Opening it up and Ghidra and decompiling it, here's the main function:
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9cbb261b-28a8-40f5-98cf-cd43ad64f4c2)
+
+It may not look well but that's manageable to read
+
+Ok so let's go through what it does (i'll just give the important portion)
+
+First it initializes the player by calling the `init_player()` function
+
+Looking at the pseudocode shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/360f14ec-59a2-438f-b318-6d7e6796ee25)
+
+```c
+void init_player(undefined4 *param_1)
+
+{
+  *param_1 = 4;
+  param_1[1] = 4;
+  param_1[2] = 0x32;
+  return;
+}
+```
+
+We can tell that this is the player's structure because it's setting `y, x, lives` field to the initial value we saw when we ran the program
+
+Inorder for readability I want to create a new struct type in Ghidra called `player` which should be this
+
+```c
+typedef struct player {
+    int y;
+    int x;
+    int lives;
+} player;
+```
+
+To do that look at the "Data Type Manager" tab
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f788796f-1f36-4b5d-a052-a7bdbda52f41)
+
+Then click on `game --> {right click} --> New --> Structure`
+
+Doing that you should get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/acf1ef29-087e-4d8a-9573-130f9df945c9)
+
+Ok from the fields of the player's structure each is of type `int` and the size of an integer in C is 4 bytes
+
+That means the size of the struct should be 12
+
+So we just add that in the "Structure Editor"
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cb576611-80fb-4999-8d7f-6bec4eaea9d0)
+
+Now we just need to fill in the data type correctly and give it a name and that's all
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c764b1ec-7637-4bda-bc14-80fbe6e7b800)
+
+With this done let us change the data type in the `init_player()` function to the `player` struct
+
+To do that click `CTRL+L` and change it to `player *`
+
+Doing that we should get this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8c7cff56-c830-4d27-bec0-c6f3f1437095)
+
+Ok that's now more readable and clear at this point we can just rename the variable and continue with reversing
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5c018b98-a05f-42dc-807a-2430c87976fc)
+
+```c
+void init_player(player *player)
+
+{
+  player->y = 4;
+  player->x = 4;
+  player->lives = 0x32;
+  return;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
