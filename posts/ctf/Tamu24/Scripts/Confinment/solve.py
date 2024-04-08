@@ -60,7 +60,7 @@ def solve():
 
     while flag[-1] != "}":
         for char in charset:
-            sys.stdout.write(f"Trying: {flag}+{char}")
+            sys.stdout.write(f"Trying: {flag}{char}")
             init()
 
             print(len(flag))
