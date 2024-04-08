@@ -155,6 +155,24 @@ pop rip
 
 In the second `leave; ret` instruction the `rip` register would hold the value stored at the top of the stack but notice that before it does that it will `mov` the value stored in the `rbp` register to the `rsp` register and from the first `leave; ret` instruction if we control the `rbp` we can therefore control the program flow since the value of `rbp` would be stored in `rsp`
 
+But in this our case we can't overwrite the saved rbp nor the return address so what do we do?
+
+Well we can't fully overwrite the saved rbp but we do control the lsb of the address
+
+And also the second case should be how do we trigger another `leave; ret` instruction?
+
+Luckily this function was called from another function that isn't `main` meaning the function would have a `leave; ret` instruction too
+
+We can check it out
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/89197169-3804-42ab-be2e-12870c08cf41)
+
+Ok cool 
+
+Here's how my exploit plan would go:
+- Since the offset between the saved rbp in the `get_input` stack frame differs with the `input` buffer with just the lsb we can overwrite the saved rbp lsb with that of our input buffer on the stack
+- Then eventually the rip would point to the value of our input
+- My input would contain rop gadget which would stored `/bin/sh` in memory and spawns a shell via `execve`
+- Profit!
 
 
 
