@@ -120,6 +120,12 @@ So we can't even control the program flow or can we?
 
 Inorder to solve this we need to stack pivot so that we can then rop and spawn a shell
 
+Before we get to that, we should know that every function aside main does this instruction before it returns
+
+```asm
+leave
+ret
+```
 
 
 
