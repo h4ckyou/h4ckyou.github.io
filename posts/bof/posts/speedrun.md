@@ -110,8 +110,15 @@ Then it prints out the input and returns
 
 From this we know that we can control the size of what we read in and looking at the buffer size we see that it can only hold up 256 bytes but we are allowed to use at most 257 bytes
 
-This therefore leads to a one byte overflow?
+This therefore leads to a one byte overflow
 
+But what the hell can we do with just a byte?
+
+First thing we need to know is that the one byte overflow is going to just overwrite the least signifcant bit of the saved rbp 
+
+So we can't even control the program flow or can we?
+
+Inorder to solve this we need to stack pivot so that we can then rop and spawn a shell
 
 
 
