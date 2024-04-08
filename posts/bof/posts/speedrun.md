@@ -127,8 +127,12 @@ leave
 ret
 ```
 
+And the `leave` instruction is equivalent to
 
-
+```asm
+mov rsp, rbp
+pop rbp
+```
 
 
 
