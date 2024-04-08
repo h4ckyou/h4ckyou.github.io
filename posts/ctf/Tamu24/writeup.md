@@ -7,7 +7,7 @@ Hi, I participated in this ctf as a solo player and I'll just be giving my solve
 
 I'm currently too busy to make a writeup but i'll try to give a detailed solution soon once i'm done with my school exams :)
 
-I focused mainly on solvning pwn/rev and here are the ones i was able to solve
+I focused mainly on solving pwn/rev and here are the ones i was able to solve
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/421a55b7-d6a6-41b4-b990-378764f28a5b)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0ab9ba72-7cb1-481e-9795-5d31314976cb)
 
