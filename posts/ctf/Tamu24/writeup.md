@@ -13,6 +13,6 @@ I focused mainly on solvning pwn/rev and here are the ones i was able to solve
 
 I must say I really enjoyed solving the challenges and I learnt a lot!
 
-Well you can get my solve scripts [here]()
+Well you can get my solve scripts [here](https://github.com/h4ckyou/h4ckyou.github.io/tree/main/posts/ctf/Tamu24/Scripts)
 
 Thanks to the organizers for the awesome challenge
