@@ -52,6 +52,65 @@ main(undefined8 param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4
 
 The main part is in function `get_input()` as both `say & bye` just prints out some text
 
+Looking at that function shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/061ff97e-6636-4de3-82aa-59de945296df)
+
+```c
+void get_input(void)
+
+{
+  undefined input [9];
+  undefined i;
+  int size;
+  
+  puts("how much do you have to say?");
+  read(0,input,9);
+  i = 0;
+  size = atoi(input);
+  if (size < 1) {
+    puts("That\'s not much to say.");
+  }
+  else if (size < 258) {
+    get_input(size);
+  }
+  else {
+    puts("That\'s too much to say!.");
+  }
+  return;
+}
+```
+
+Basically this will receive our integer string then convert it to an integer using `atoi` and it makes sure the size is less than `258`
+
+Our input is passed as the parameter to function `get_input()`
+
+It's pretty weird as to why it's calling itself but I guess it's just the decompiler issue :)
+
+Looking at the function shows an entirely different code
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b7548040-3629-423c-96fb-fba31ba4c9fd)
+
+```c
+
+void get_input(int fp)
+
+{
+  undefined input [256];
+  
+  input[0] = 0;
+  puts("Ok, what do you have to say for yourself?");
+  read(0,input,(long)fp);
+  printf("Interesting thought \"%s\", I\'ll take it into consideration.\n",input);
+  return;
+}
+```
+
+Ok so it defines a buffer called `input` which can hold up at most 256 bytes of data then it receives our input which is stored in the buffer with the size of what we initially choose?
+
+Then it prints out the input and returns
+
+From this we know that we can control the size of what we read in and looking at the buffer size we see that it can only hold up 256 bytes but we are allowed to use at most 257 bytes
+
+This therefore leads to a one byte overflow?
 
 
 
