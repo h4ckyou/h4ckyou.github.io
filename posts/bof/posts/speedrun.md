@@ -28,3 +28,53 @@ After that I viewed the main function which can be gotten from `entry` but the d
 I had to renamed it and most of it was based on the output gotten when i ran the program
 
 With that said here's the main function
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8b0deb6e-e32c-4412-9f24-3b220524d61e)
+
+```c
+undefined8
+main(undefined8 param_1,undefined8 param_2,undefined8 param_3,undefined8 param_4,undefined8 param_5,
+    undefined8 param_6)
+
+{
+  long fp;
+  
+  FUN_00410e30(PTR_DAT_006b97a0,0,2,0,param_5,param_6,param_2);
+  fp = FUN_0040e840("DEBUG");
+  if (fp == 0) {
+    alarm(5);
+  }
+  say();
+  get_input();
+  bye();
+  return 0;
+}
+```
+
+The main part is in function `get_input()` as both `say & bye` just prints out some text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
