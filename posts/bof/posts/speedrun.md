@@ -22,3 +22,9 @@ It seems to receive our input then exit
 I opened the binary up in Ghidra inorder to reverse it and find the vulnerability
 
 It sure did take some minutes for Ghidra to do it's stuff!
+
+After that I viewed the main function which can be gotten from `entry` but the decompiled code was stripped so we don't get to know what exact function is being called
+
+I had to renamed it and most of it was based on the output gotten when i ran the program
+
+With that said here's the main function
