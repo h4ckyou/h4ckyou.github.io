@@ -134,7 +134,7 @@ mov rsp, rbp
 pop rbp
 ```
 
-The whole `leave; ret` is then this:
+The whole `leave; ret` instruction is then this:
 
 ```asm
 mov rsp, rbp
@@ -142,7 +142,18 @@ pop rbp
 pop rip
 ```
 
+So basically if we can control the `rbp` register and it does a `leave; ret` instruction twice we can therefore control the instruction register because it does this:
 
+```asm
+mov rsp, rbp
+pop rbp
+pop rip
+mov rsp, rbp
+pop rbp
+pop rip
+```
+
+In the second `leave; ret` instruction the `rip` register would hold the value stored at the top of the stack but notice that before it does that it will `mov` the value stored in the `rbp` register to the `rsp` register and from the first `leave; ret` instruction if we control the `rbp` we can therefore control the program flow since the value of `rbp` would be stored in `rsp`
 
 
 
