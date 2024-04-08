@@ -296,9 +296,11 @@ if __name__ == '__main__':
     main()
 ```
 
+Running it works!
 
+[![asciicast](https://asciinema.org/a/77rDHbpKDoK5dff7s8rTE50wl.svg)](https://asciinema.org/a/77rDHbpKDoK5dff7s8rTE50wl)
 
-
+Thanks for reading
 
 
 
