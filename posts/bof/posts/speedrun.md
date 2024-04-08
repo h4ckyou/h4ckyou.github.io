@@ -174,7 +174,31 @@ Here's how my exploit plan would go:
 - My input would contain rop gadget which would stored `/bin/sh` in memory and spawns a shell via `execve`
 - Profit!
 
+Let's see how we can get the stack address of our input
 
+I just set a breakpoint at `0x400bca` and after starting the process we should see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/9be75ac9-4248-4b79-b77c-bd9fbb3ec8ef)
+
+```
+*RSI  0x7ffea8878180 ◂— 0x4141414141414141 ('AAAAAAAA')
+```
+
+So we can overwrite the saved rbp address with `0x80`
+
+But that address isn't going to always be the same
+
+Here's another process of the binary 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dc85b17e-52ad-4879-9a4f-d1ce21c37441)
+
+```
+*RSI  0x7fff12aa5ba0 ◂— 0x4141414141414141 ('AAAAAAAA')
+```
+
+That doesn't matter since we would eventually hit the jackpot once we keep running our exploit 😄
+
+With that another thing is that because my rop chain was less than 256 bytes i needed to pad it 
+
+I just made use of nop slides (not the raw bytecode but rather the rop gadget that has the nop; ret instruction)
 
 
 
