@@ -65,12 +65,6 @@ Let us run the binary to see how it behaves
 
 It is as we saw from the source code! 
 
-I was still wondering why they gave us a elf section leak 🤔
-
-Don't mind that I have lot of skill isses :(
-
-![skillissue-skill](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/050f0dcf-b2e7-4ede-a2e7-426ffa0f6630)
-
 Ok back to the challenge, I have done at least 2 `one byte overflow` before but it was on a x64 binary so solving this really taught me something new
 
 I decided to check out the overflow using `gdb-gef`
@@ -85,7 +79,7 @@ This is where I starter getting confused
 
 And the reason is becasue I'm used to seeing addresses being in form of Little Endian when I do one byte overflow i.e `0x56565541`
 
-Note: The way I solved this is based on logic I don't really know `why` it works like that 🥲
+Note: The way I solved this is based on me playing with gdb I don't really know `why` it works like that 🥲
 
 So if we take a look at the current address of the win function we will see this
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b42d7c56-b2a8-43ea-9e58-0e5b095544f1)
