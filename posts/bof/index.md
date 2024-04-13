@@ -65,3 +65,4 @@ Binary exploitation involves taking advantage of a bug or vulnerability in order
 - [[January 29 2024]] [Stack2](https://h4ckyou.github.io/posts/bof/posts/stack2.html) `OOB Write, ROP`
 - [[February 29 2024]] [WhereAmI](https://h4ckyou.github.io/posts/bof/posts/whereami.html) `Ret2Libc, ROP`
 - [[April 08 2024]] [Speedrun4](https://h4ckyou.github.io/posts/bof/posts/speedrun.html) `Stack Pivot, ROP`
+- [[April 13 2023]] [Simple Calculator](https://h4ckyou.github.io/posts/bof/posts/simplecalc.html) `ROP`
