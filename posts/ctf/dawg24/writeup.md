@@ -6,6 +6,6 @@ Hello I participated in this ctf as a solo player and ended up 4th on the leader
 I'll be giving just the solve script to some challenges I solved specifically the `Binary Bomb Lab` in the reverse engineering category
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/de606b6d-3051-4d02-9897-1063407b0526)
 
-Here's my solve [script]()
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/dawg24/scripts/Binary%20Lab/solve.py)
 
-
+If I have time I'll try to make a more detailed writeup on this and others i solved as well
