@@ -11,3 +11,61 @@ Just the standard "sanity check" challenge, going over to their discord challeng
 Flag: openECSC{ldepywBS5XUBYHLeVDo6+mK7iFHFhwhwY0+LjR3R9EI=}
 ```
 
+#### Blind Maze
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/301e0bb1-be91-4aea-9389-25c1b35f9e49)
+
+We are given a pcap file and after downloading the attachment I opened it up in Wireshark
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/abd6bec2-ef13-4806-80db-8bc77ed87dfe)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7bcd9120-3011-4c8d-95f5-2a8bb9884d64)
+
+The first noticable thing is that this contains http requests
+
+And on looking at the protocol hierachy shows it contains mostly http request
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dc5a46d0-f4b0-40f0-a007-5b6191616752)
+
+Following the tcp stream I saw that it's basically solving a web based maze challenge where direction `start` initializes the game and gives us a session cookie and `up, down, left & right` are the paths used to move around the maze
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/a228b6ce-93b3-4b12-9faa-6625dc7da907)
+
+At the last http request that is after solving the maze finish the flag is shown to us
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e004a9b9-95ad-4a70-8a1d-f0fb0fcad315)
+
+Apparently this didn't involve us solving it at our end and it turned out to be an unintended solution so they released a `revenge` sequel of the challenge
+
+```
+Flag: openECSC{i_found_a_map_e1871a60}
+```
+
+#### Revenge of the Blind maze
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/c6157194-7b31-4a53-b349-6df447630ee8)
+
+It's very identical to the previous one but this time around the flag isn't in the pcap file meaning we would need to solve it
+
+During the process of trying to solve it I spent quite some time on it because i didn't bother to understand how the maze worked
+
+Here's what I did:
+- I extracted all the paths from the pcap using python
+- Sent the extracted path to the provided instance
+
+This didn't work then I started debugging
+
+From looking through various packets I concluded that when a user sends a path to the server there's a possibility of it being not processed which then the user needs to resend the path
+
+Here's how that failed chance looks here
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/e5f03a03-8910-441f-95ef-faaa233940af)
+
+So if we get that we then need to resend the path as shown here
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1b10a0a6-6c9c-4f2f-be5d-2c8675450673)
+
+With that said my initial path which I extracted contained repetitive paths i.e the path which are valid and the ones which are repeated again due to failure
+
+In order to extract just the valid path I checked for the case where by the path given fails
+
+With that said it's then simple to solve 
+
+Another thing is that we can get the "failed" message multiple times but that can be easily fixed by just resending the path till it works
+
+Here's the script I used to extract the paths from the pcap file
+
+
+
+
