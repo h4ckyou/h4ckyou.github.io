@@ -128,6 +128,14 @@ Running the script works and we get the flag
 Flag: openECSC{flag_inside_the_attachment_yes_we_like_it_bb01b0d5}
 ```
 
+#### Anti-rev
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5bc16728-9f8d-48bf-b371-119bd2953543)
 
+We are given an executable file and running it to get an overview of what it does shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/077a0960-67bd-4ef1-ad68-f10cff082fa6)
+
+This seems like we would need to find the expected input inorder to get the right output
+
+Throwing it up into a decompile which in my case IDA shows this
 
 
