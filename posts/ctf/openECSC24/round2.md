@@ -136,6 +136,33 @@ We are given an executable file and running it to get an overview of what it doe
 
 This seems like we would need to find the expected input inorder to get the right output
 
-Throwing it up into a decompile which in my case IDA shows this
+Throwing it into a decompiler which in my case IDA gave something like [this](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/openECSC24/scripts/round2/Anti-Rev/diss.c)
+
+Note that's the decompilation from using dogbolt 
+
+IDA didn't decompile it well and from looking at the control flow graph i saw it had just so many branches
+
+And looking at the disassembly in gdb shows lots of `nops` & `add` instruction
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/11672227-5ecc-4265-9b9e-fc50b4ee1a57)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38d3a94e-0cbf-4171-9af9-6e503e888020)
+
+I suppose this is preventing us from reversing it as the challenge name implies
+
+In order to get around this I first thought of patching the `nops & add` with a `ret` but then I remember this can actually be quite the job for [angr](https://github.com/angr/angr)
+
+So yeah I just grabbed a sample template from [here](https://book.hacktricks.xyz/reversing/reversing-tools-basic-methods/angr/angr-examples)
+
+In our case the win condition is if we get "Correct!" and we would like to avoid any path that would lead to us getting "Wrong!"
+
+Here's the solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/openECSC24/scripts/round2/Anti-Rev/solve.py)
+
+Running it gives the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/529c84e2-14eb-4cb8-b291-4b43306c2d8d)
+
+```
+Flag: openECSC{f4nCy_n0p5!_745fb2f2}
+```
+
+
 
 
