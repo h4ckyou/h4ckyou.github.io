@@ -64,7 +64,62 @@ With that said it's then simple to solve
 
 Another thing is that we can get the "failed" message multiple times but that can be easily fixed by just resending the path till it works
 
-Here's the script I used to extract the paths from the pcap file
+Here's the script I used to extract the paths from the pcap file: [extract](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/openECSC24/scripts/round2/Blind%20Maze%20Revenge/extract.py)
+
+```python
+import re
+
+def extract_paths(content):
+    pattern = r'Last Move: (.+?)</h4>'
+    paths = re.findall(pattern, content)
+    return paths
+
+def filter_successful_paths(paths):
+    return [path for path in paths if "FAILED" not in path]
+
+file = ["response1.txt", "response2.txt", "response3.txt"] 
+exp = []
+
+for f in file:
+    with open(f, "r") as file:
+        content = file.read()
+        path = extract_paths(content)
+        filtered = filter_successful_paths(path)
+
+        exp += filtered
+
+exp.append('right') # --> it kinda missed this part which was the last value of the maze path
+
+with open("direction.txt", "w") as f:
+    for line in exp:
+        f.write(line + '\n')
+```
+
+And finally the solve script
+
+```python
+import requests
+import tqdm
+import time
+
+path = []
+with open('direction.txt', 'r') as f:
+    path = [line.strip() for line in f]
+
+url = 'http://blindmazerevenge.challs.open.ecsc2024.it/maze?direction='
+print(path)
+
+with requests.Session() as session:
+    response = session.get(url + 'start')
+    for value in tqdm.tqdm(path):
+        response = session.get(url + value)
+        if 'Last Move: FAILED because the maze was busy. Try the move again!' in response.text:
+            while 'Last Move: FAILED because the maze was busy. Try the move again!' in response.text:
+                response = session.get(url + value)
+        time.sleep(0.5)
+
+    print(response.text)
+```
 
 
 
