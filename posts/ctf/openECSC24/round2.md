@@ -95,7 +95,7 @@ with open("direction.txt", "w") as f:
         f.write(line + '\n')
 ```
 
-And finally the solve script
+And finally the [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/openECSC24/scripts/round2/Blind%20Maze%20Revenge/solve.py) script
 
 ```python
 import requests
@@ -119,6 +119,13 @@ with requests.Session() as session:
         time.sleep(0.5)
 
     print(response.text)
+```
+
+Running the script works and we get the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b9ada3d5-4432-40b3-a584-59389f5ecc74)
+
+```
+Flag: openECSC{flag_inside_the_attachment_yes_we_like_it_bb01b0d5}
 ```
 
 
