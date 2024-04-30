@@ -163,6 +163,150 @@ Running it gives the flag
 Flag: openECSC{f4nCy_n0p5!_745fb2f2}
 ```
 
+#### WOauth a laundry!
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/77412b59-b06d-48db-9dd2-01f5a94bccd0)
+
+We are given a web instance to connect to and on going there shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fb186d5a-957c-4f1f-851f-d1b1bc59e45d)
+
+We can't view anything as we are not authenticated
+
+Since there's a login button at the left edge i clicked on it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/1d793323-2b1a-4dc5-8361-c6c7f52b173c)
+
+It surprisingly worked without even asking for any form of authentication 🤔
+
+We can view the availble laundries or amenities
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d94c88a8-1f8f-4b17-8240-e50aef7f3226)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b9d7ed32-9cb6-42a6-bd8e-11507d027130)
+
+I didn't see anything of interest here
+
+Checking the session storage shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/76aa5c27-58f5-4420-a187-48f6bf5adcc1)
+
+The value of `admin` is set to `0` we probably want it to be `1` inorder to view other things?
+
+As of now changing it from the client side won't really do much at the server side so let's take a look at the request handling the login
+
+I logged out then relogin while intercepting the request
+
+First it does a `GET` request to the `creds` api endpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/f441e5df-c063-4f07-bb89-a53458735ce6)
+
+Intercepting the response to the request shows the `client_id & client_secret`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/7156afc1-9d6e-492d-9b5a-3c8eb25fa517)
+
+The next request shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dadb3865-300c-4f47-92a1-2013b0e79e60)
+
+This is making a connection via `openid` which is an interoperable authentication protocol based on the OAuth 2.0 framework [src](https://openid.net/developers/how-connect-works/)
+
+And looking at the parameters passed as the query I saw this
+
+```
+scope=openid laundry amenities
+```
+
+We can assume that this scope determines what we as an authenticated user would have access to
+
+I appended `admin` to it since that happens to be a `key` value in the session storage
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/968d3698-d2dc-4742-a769-f51cce28bd56)
+
+The request seems to work because it was able to generate the access token bearer
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/38269974-f0ce-4a3d-a3c7-9f9730a56334)
+
+But after doing that I still noticed the `admin` value in the session is `0`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cc5b066c-e05b-4877-8060-bc36637b9291)
+
+Weird.
+
+So i decided to look for endpoint that might be useful
+
+I viewed the page source and saw it's importing a js file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/4133852b-fe2b-4a4b-9891-a3a4189d6b7b)
+
+```
+./_app/immutable/entry/app.Ck9duSk9.js
+```
+
+I accessed it from the browser but the result looks bad
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/08157786-5796-44bb-8358-fa8ecb22a2b0)
+
+We can easily js beautifier it
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/399e5c49-2aec-4d7f-8a1a-05026ba726b8)
+
+Scrolling down the js file shows a new endpoint
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/8815b8f3-ff0e-46f7-b452-a7974d214560)
+
+```js
+const ae = [() => v(() => import("../nodes/0.DwINNMcl.js"), __vite__mapDeps([0, 1, 2, 3, 4, 5, 6, 7, 8]), import.meta.url), () => v(() => import("../nodes/1.COoiP6uJ.js"), __vite__mapDeps([9, 1, 2, 10, 6]), import.meta.url), () => v(() => import("../nodes/2.CngkQmog.js"), __vite__mapDeps([11, 1, 2, 4, 12, 6, 7]), import.meta.url), () => v(() => import("../nodes/3.D75S8dhM.js"), __vite__mapDeps([13, 1, 2, 3, 4]), import.meta.url), () => v(() => import("../nodes/4.LaKRB8Xm.js"), __vite__mapDeps([14, 1, 2, 12, 4, 15, 5]), import.meta.url), () => v(() => import("../nodes/5.BpDOC5ki.js"), __vite__mapDeps([16, 1, 2, 12, 4, 15, 5]), import.meta.url)],
+    le = [],
+    fe = {
+        "/": [2],
+        "/admin": [3],
+        "/amenities": [4],
+        "/laundry": [5]
+    },
+    ce = {
+        handleError: ({
+            error: a
+        }) => {
+            console.error(a)
+        },
+        reroute: () => {}
+    };
+export {
+    fe as dictionary, ce as hooks, re as matchers, ae as nodes, oe as root, le as server_loads
+};
+```
+
+Let's try accessing `/admin`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ebc6f4d9-4e0d-4799-8980-18a0b449be54)
+
+It shows a generate button
+
+I confirmed if this is accessible from a normal user and it is but when clicking the button nothing happens
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/03d156af-4973-4f07-b32a-45353fed9e98)
+
+On the other hand since we have admin as part of the scope it works
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/150eb85b-f239-4467-bb2c-702c16c044ff)
+
+But from the content of what's generated we would like to maybe change it
+
+Looking at the request that handles the pdf generation shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/fc883fde-dbd1-48ac-956f-54668afc8e15)
+
+Unfortunately the body isn't in the request and we would like to maybe edit it?
+
+I started searching through various js files
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
