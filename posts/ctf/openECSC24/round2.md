@@ -281,8 +281,43 @@ Unfortunately the body isn't in the request and we would like to maybe edit it?
 
 I started searching through various js files
 
+And eventually I found a js file that handles the pdf generation
 
+I can't find it again and i'm lazy to start searching through the whole js files (yes i did this manually 💀)
 
+The body expected was:
+
+```js
+{
+    "requiredBy": "John Doe"
+}
+```
+
+I tried this and it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/22c74d21-2726-4ceb-968c-91d830726c95)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d7bac40b-8547-4416-9539-7c682faa85f9)
+
+At this point we need to exfiltrate the flag 
+
+I was familiar with a technique which can be used then all I needed was just to search it up
+
+From searching it I found [this](https://book.hacktricks.xyz/pentesting-web/xss-cross-site-scripting/server-side-xss-dynamic-pdf)
+
+In my case I used the `iframe` tag
+
+```
+<iframe src=file:///flag.txt></iframe>
+```
+
+Using that works and I got the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/dadc7ff1-1155-44c4-90c9-fbf765e302e8)
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/ce40d9ad-caac-4417-8667-b1d22d2df479)
+
+```
+Flag: openECSC{On3_l4uNdrY_70_ruL3_7h3m_4l1!_d208a530}
+```
+
+Thanks for reading!
 
 
 
