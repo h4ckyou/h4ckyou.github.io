@@ -92,11 +92,44 @@ I tried to learn about "EIP" but didn't succeed as I could not find any where to
 
 Now i decided to work back with what I have
 
-From reading [this](https://ethereum-magicians.org/t/eip-3855-push0-instruction/7014/2) it made me conclude that this has to deal with some bytecode because it was referencing opcode (operational code) and instructions, you can also use the challenge name to make your assumption right (`Byteops`)
+From reading [this](https://ethereum-magicians.org/t/eip-3855-push0-instruction/7014/2) it made me conclude that the hex value given as the challenge is a bytecode because the links based on "EIP-3855" was referencing opcode (operational code) and instructions, you can also use the challenge name to conclude your assumption is right (`Byteops`)
 
-I am familiar with assembly so this was not too difficult to conclude
+Now that I know this I had to find a way to decompile the bytecode
 
-Now that I know this
+Searching it up on google gave [this](https://ethervm.io/decompile) and trying to use it worked
+
+```c
+contract Contract {
+    function main() {
+        var var0 = 0x8266;
+        // Unhandled termination
+    }
+}
+
+label_0000:
+	0000    61  PUSH2 0x8266
+	0003    5F  5F
+	// Stack delta = +1
+	// Outputs[1] { @0000  stack[0] = 0x8266 }
+	// Block terminates
+
+	0004    35    CALLDATALOAD
+	0005    14    EQ
+	0006    15    ISZERO
+	0007    60    PUSH1 0x0b
+	0009    57    *JUMPI
+	000A    00    *STOP
+	000B    5B    JUMPDEST
+	000C    5F    5F
+	000D    80    DUP1
+	000E    FD    *REVERT
+```
+
+Ok good now we decompiled it what next?
+
+Well we need to understand what it does and each opcode has the operation it performs so I searched for the opcode 
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0d9793fc-379e-4ad8-8606-56f70de6dbda)
+
 
 
 
