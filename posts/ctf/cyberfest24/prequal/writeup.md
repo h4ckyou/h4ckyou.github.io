@@ -229,6 +229,15 @@ We can then submit that :)
 Flag: ACTF{0x0000000000000000000000000000000000000000000000000000000000008266}
 ```
 
+### Troll
+
+This challenge was pretty much created due to a rant about why there were no very trivial challs 😄
+
+-- We asked for it...
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/556e5bef-06ac-475e-9f40-82560a35c2d3)
+
+-- He delivered
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d9d5495d-0005-430c-ba29-660c3f0b4e75)
 
 
 
