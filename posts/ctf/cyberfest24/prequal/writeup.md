@@ -97,6 +97,7 @@ From reading [this](https://ethereum-magicians.org/t/eip-3855-push0-instruction/
 Now that I know this I had to find a way to decompile the bytecode
 
 Searching it up on google gave [this](https://ethervm.io/decompile) and trying to use it worked
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0d9793fc-379e-4ad8-8606-56f70de6dbda)
 
 ```c
 contract Contract {
@@ -127,14 +128,106 @@ label_0000:
 
 Ok good now we decompiled it what next?
 
-Well we need to understand what it does and each opcode has the operation it performs so I searched for the opcode 
-![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/0d9793fc-379e-4ad8-8606-56f70de6dbda)
+Well we need to understand what it does and each opcode has the operation it performs so I searched for the opcode list and got [this](https://ethervm.io/#82)
 
+Before diving into the bytecode we can see that some portion was decompiled correctly and it defines a contract `Contract` where the `main` function stores a value `0x8266` in variable `var0`
 
+At this point of seeing it I went back to the challenge and read the description
 
+```
+The hexcode calldata of a transaction that will not revert is said to be the key.
+````
 
+This looks like the right input to this challenge so I tried it but unfortunately it didn't work
 
+I did spam lot of it though 💀
 
+Now let's understand what the bytecode does
+
+First I'll write what each opcode translates too
+
+```
+PUSH2 - Pushes a 2-byte value onto the stack
+CALLDATALOAD - Reads a (u)int256 from message data
+EQ - (u)int256 equality
+ISZERO - (u)int256 is zero
+PUSH1 - Pushes a 1-byte value onto the stack
+JUMPI - conditional jump if condition is truthy
+STOP - Halts execution of the contract
+JUMPDEST - Metadata to annotate possible jump destinations
+PUSH0 - Shanghai hardfork, EIP-3855: pushes 0 onto the stack
+DUP1 - clones the last value on the stack
+REVERT - Byzantium hardfork, EIP-140: reverts with return data
+```
+
+Harmed with this instruction let's translate what it does
+
+- First it pushes a 2 byte value onto the stack then pushes 0 to the stack
+
+At this point let's visualize the stack as an array, then it should hold this:
+
+```
+[0x8266, 0x0]
+```
+
+- Next it reads an unsigned int from the message data
+- Then it compares our input with the value on the stack (i presume)
+- If it's equal it stops else it reverts
+
+Ok pretty straight forward we just need to provide the value that would make the contract not to revert, and for that to happen the value oughts to be `0x8266`
+
+But when I submitted that as flag it wasn't working
+
+I then decided to work with this dynamically, basically seeing how it works during runtime
+
+Searching for how I could achieve that lead me to [evm_playground](https://www.evm.codes/playground)
+
+This is how it looks like
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b82f9fd9-97a5-447f-a803-5f883dd7ad21)
+
+So I change the default bytecode there to the one we have
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d43c9858-bc5b-4105-947e-a4e4df2b9546)
+
+One thing to note there is that the `Calldata` form is where we pass in input as hex in this case the value we want to check
+
+First i tried using the value it's compared to which is `0x8266`
+
+Starting it's execution shows this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/997f2adc-77e4-435f-befa-180d86c15261)
+
+We can click on `next instruction`
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/bb513182-fdef-4eea-807c-54b546dad3ae)
+
+After the `CALLDATALOAD` instruction we see our given value has multiple 0's
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/cdc0139f-2466-496e-aa05-d6c720ff4d5a)
+
+I don't really know how i can say this but i think it's just like how memory address are when it uses msb to represent data
+
+Like in this case `CALLDATALOAD` reads an unsigned 256 bits int
+
+When I checked the size of `(u)int256` in solidity I got it to be `2^256-1`
+
+If you compute that and compare it with the length of the value we have you should see this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b92348fd-b1da-4844-854d-dc50cad5a81f)
+
+This means it's just alligned based on the size of the data type
+
+When we continue the execution it will hit `REVERT` because of course the values aren't equal
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/837368f9-ab18-487a-a5b0-5713a82e1af3)
+
+So here's the value I used
+
+```
+0x0000000000000000000000000000000000000000000000000000000000008266
+```
+
+Using that the execution hits `STOP` which means this is the expected value
+
+We can then submit that :)
+
+```
+Flag: ACTF{0x0000000000000000000000000000000000000000000000000000000000008266}
+```
 
 
 
