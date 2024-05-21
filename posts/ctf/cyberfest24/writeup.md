@@ -464,11 +464,11 @@ Now that we figured that we need to patch the opcode
                  d3 27 00                                                                    = 0012de50
 ```
 
-So we will chance `0xff1558d32700` to `0x909090909090`
+So we will change `0xff1558d32700` to `0x909090909090`
 
 With that instead of the program calling that function it will just do nothing (nop -> no operation)
 
-Here's the script I wrote to patch it
+Here's the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberfest24/scripts/sore/patch.py) I wrote to patch it
 
 ```python
 with open("sore", "rb") as f:
@@ -477,14 +477,50 @@ with open("sore", "rb") as f:
 f.close()
 
 binary = binary.replace(b"\xff\x15\x58\xd3\x27\x00", b'\x90'*6)
-#print(binary)
+
 with open("patched", "wb") as f:
     f.write(binary)
 ```
 
+Running that it should patch the binary and now we can easily run it
 
+To confirm if the program would do what it says I tried this
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/95b6d519-d5a7-4f02-8c0c-12055927db06)
 
+Luckily it wasn't a bluff and now we can brute force
 
+Here's the [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/cyberfest24/scripts/sore/solve.py) I wrote to achieve that
+
+```python
+import string
+import subprocess
+
+flag = ""
+charset = string.ascii_letters + '_{}'
+
+while True:
+    for char in charset:
+        command = f"echo {flag+char} | ./patched"
+        execute = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        output, err = execute.communicate()
+        print(f"Trying {flag+char}")
+
+        if 'Wrong' not in output:
+            flag += char
+            break
+    
+    if flag[-1] == "}":
+        break
+
+print(f"FLAG: {flag}")
+```
+
+Running it works and I got the flag
+[![asciicast](https://asciinema.org/a/MaYoHe5yASPW95v3Nm4DDvFiu.svg)](https://asciinema.org/a/MaYoHe5yASPW95v3Nm4DDvFiu)
+
+```
+Flag: ACTF{xor_xor_diff}
+```
 
 
 
