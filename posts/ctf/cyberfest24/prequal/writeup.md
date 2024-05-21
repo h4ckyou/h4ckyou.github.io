@@ -264,7 +264,8 @@ I ran it and got this message
 
 At this point when solving it I actually had to `CTRL+C` because during the prequal there was a rev chall which would logout the current session so I thought it was the same but luckily it wasn't
 
-Searching for low hanging fruits revealed the flag
+Strings & grepping for the flag pattern reveals the flag
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/be496a23-5c1d-4200-add1-d079346cdc04)
 
 ```
 Flag: aCtF{robotTxt_and_strings_as_requested}
