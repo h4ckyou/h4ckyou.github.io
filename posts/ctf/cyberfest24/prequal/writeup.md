@@ -24,6 +24,9 @@ I'll be giving writeups to some of the challenges which I solved
 - Sore
 - Finding Nunlock
 
+## Digital Forensics
+-  Whispers in the Wires
+  
 ## Misc
 -  Hip Hip HIp!
 
