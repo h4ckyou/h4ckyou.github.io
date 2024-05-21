@@ -419,6 +419,7 @@ void FUN_0012bc90(int param_1,undefined8 param_2)
 Variable `local_8` is a function pointer to `FUN_0012b890` 
 
 Clicking on that shows this, which seems to be the function that handles the input validation and presumably the logout function?
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/6284df13-42c8-4dde-9227-d6af6224c464)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/113d03b0-3b29-4943-b0f1-6564116a0459)
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/22ff1f66-8298-4609-aa79-ddd32651c8f3)
 
@@ -467,7 +468,19 @@ So we will chance `0xff1558d32700` to `0x909090909090`
 
 With that instead of the program calling that function it will just do nothing (nop -> no operation)
 
+Here's the script I wrote to patch it
 
+```python
+with open("sore", "rb") as f:
+    binary = f.read()
+
+f.close()
+
+binary = binary.replace(b"\xff\x15\x58\xd3\x27\x00", b'\x90'*6)
+#print(binary)
+with open("patched", "wb") as f:
+    f.write(binary)
+```
 
 
 
