@@ -363,3 +363,32 @@ With that we get the flag
 Flag: ACTF{Dynamic_Analysis_h0s7_R3v3al5}
 ```
 
+### Sore
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/d984a085-ec6b-4941-9aba-e33f9ac2aa9d)
+
+The second and last reverse engineering challenge
+
+We are given an executable file
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/5d6a3fa3-f782-4524-9779-14b2aa55e964)
+
+The description states that it's a malware yet silly me still ran it 💀
+
+When I ran it, the program asks for input
+![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/b3526d2b-d8e4-4072-9b1f-ed772c7d80e5)
+
+After we give it input then it would log out from the current session
+
+That's why i am running it in gdb so that it won't logout yet
+
+One important thing is this:
+
+```
+Input the flag. I'll let you know if it's correct
+```
+
+The program claims it will let us know if our provided input is right? That means it's going to be giving us an oracle which can allow us brute force the flag
+
+But before we think of brute forcing I needed a way to prevent it from logging out
+
+Throwing the binary in Ghidra reveals 
+
