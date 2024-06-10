@@ -1,0 +1,199 @@
+  6           0 LOAD_CONST               1 ('\n  password = whippin3(key)(real_password) to keep real_password safe\n  so crypted_password = dpjLgviGRJJN1IUUFeKu1ls8\n  I deleted real_password from this check function\n  ')
+              2 STORE_FAST               2 (hint)
+
+ 11           4 LOAD_CONST               2 (-9)
+              6 STORE_FAST               3 (key)
+
+ 12           8 LOAD_CONST               3 (<code object whippin5 at 0x7f63b6b86c90, file "keygen2.py", line 12>)
+             10 LOAD_CONST               4 ('check.<locals>.whippin5')
+             12 MAKE_FUNCTION            0
+             14 STORE_FAST               4 (whippin5)
+
+ 16          16 LOAD_CONST               5 (<code object whippin3 at 0x7f63b6b4ca80, file "keygen2.py", line 16>)
+             18 LOAD_CONST               6 ('check.<locals>.whippin3')
+             20 MAKE_FUNCTION            0
+             22 STORE_FAST               5 (whippin3)
+
+ 22          24 LOAD_CONST               7 (<code object whippin4 at 0x7f63b6b4cb30, file "keygen2.py", line 22>)
+             26 LOAD_CONST               8 ('check.<locals>.whippin4')
+             28 MAKE_FUNCTION            0
+             30 STORE_FAST               6 (whippin4)
+
+ 25          32 LOAD_FAST                4 (whippin5)
+             34 LOAD_FAST                6 (whippin4)
+             36 LOAD_FAST                0 (username)
+             38 LOAD_GLOBAL              0 (real_password)
+             40 CALL_FUNCTION            2
+             42 CALL_FUNCTION            1
+             44 LOAD_FAST                1 (y_key)
+             46 COMPARE_OP               2 (==)
+             48 POP_JUMP_IF_FALSE       86
+
+ 26          50 LOAD_FAST                0 (username)
+             52 LOAD_CONST               9 ('BJIZ-HACKERLAB')
+             54 COMPARE_OP               2 (==)
+             56 POP_JUMP_IF_FALSE       76
+
+ 27          58 LOAD_GLOBAL              1 (print)
+             60 LOAD_CONST              10 ('Congratz, you can use this flag to validate : HLB2024{')
+             62 LOAD_FAST                1 (y_key)
+             64 BINARY_ADD
+             66 LOAD_CONST              11 ('}')
+             68 BINARY_ADD
+             70 CALL_FUNCTION            1
+             72 POP_TOP
+             74 JUMP_ABSOLUTE           94
+
+ 29     >>   76 LOAD_GLOBAL              1 (print)
+             78 LOAD_CONST              12 ("Good, but the key of BJIZ-HACKERLAB' is the flag")
+             80 CALL_FUNCTION            1
+             82 POP_TOP
+             84 JUMP_FORWARD             8 (to 94)
+
+ 31     >>   86 LOAD_GLOBAL              1 (print)
+             88 LOAD_CONST              13 ('Error, checking failed')
+             90 CALL_FUNCTION            1
+             92 POP_TOP
+        >>   94 LOAD_CONST               0 (None)
+             96 RETURN_VALUE
+
+Disassembly of <code object whippin5 at 0x7f63b6b86c90, file "keygen2.py", line 12>:
+ 13           0 LOAD_GLOBAL              0 (md0)
+              2 CALL_FUNCTION            0
+              4 STORE_FAST               1 (sh)
+
+ 14           6 LOAD_FAST                1 (sh)
+              8 LOAD_METHOD              1 (update)
+             10 LOAD_FAST                0 (inpt)
+             12 CALL_METHOD              1
+             14 POP_TOP
+
+ 15          16 LOAD_FAST                1 (sh)
+             18 LOAD_METHOD              2 (hexdigest)
+             20 CALL_METHOD              0
+             22 RETURN_VALUE
+
+Disassembly of <code object whippin3 at 0x7f63b6b4ca80, file "keygen2.py", line 16>:
+ 17           0 LOAD_GLOBAL              0 (string)
+              2 LOAD_ATTR                1 (ascii_lowercase)
+              4 STORE_FAST               1 (lc)
+
+ 18           6 LOAD_GLOBAL              0 (string)
+              8 LOAD_ATTR                2 (ascii_uppercase)
+             10 STORE_FAST               2 (uc)
+
+ 19          12 LOAD_GLOBAL              0 (string)
+             14 LOAD_ATTR                3 (digits)
+             16 STORE_FAST               3 (dc)
+
+ 20          18 LOAD_GLOBAL              4 (str)
+             20 LOAD_METHOD              5 (maketrans)
+             22 LOAD_FAST                1 (lc)
+             24 LOAD_FAST                2 (uc)
+             26 BINARY_ADD
+             28 LOAD_FAST                3 (dc)
+             30 BINARY_ADD
+             32 LOAD_FAST                1 (lc)
+             34 LOAD_FAST                0 (n)
+             36 LOAD_CONST               0 (None)
+             38 BUILD_SLICE              2
+             40 BINARY_SUBSCR
+             42 LOAD_FAST                1 (lc)
+             44 LOAD_CONST               0 (None)
+             46 LOAD_FAST                0 (n)
+             48 BUILD_SLICE              2
+             50 BINARY_SUBSCR
+             52 BINARY_ADD
+             54 LOAD_FAST                2 (uc)
+             56 LOAD_FAST                0 (n)
+             58 LOAD_CONST               0 (None)
+             60 BUILD_SLICE              2
+             62 BINARY_SUBSCR
+             64 BINARY_ADD
+             66 LOAD_FAST                2 (uc)
+             68 LOAD_CONST               0 (None)
+             70 LOAD_FAST                0 (n)
+             72 BUILD_SLICE              2
+             74 BINARY_SUBSCR
+             76 BINARY_ADD
+             78 LOAD_FAST                3 (dc)
+             80 LOAD_FAST                0 (n)
+             82 LOAD_CONST               0 (None)
+             84 BUILD_SLICE              2
+             86 BINARY_SUBSCR
+             88 BINARY_ADD
+             90 LOAD_FAST                3 (dc)
+             92 LOAD_CONST               0 (None)
+             94 LOAD_FAST                0 (n)
+             96 BUILD_SLICE              2
+             98 BINARY_SUBSCR
+            100 BINARY_ADD
+            102 CALL_METHOD              2
+            104 STORE_DEREF              0 (trans)
+
+ 21         106 LOAD_CLOSURE             0 (trans)
+            108 BUILD_TUPLE              1
+            110 LOAD_CONST               1 (<code object <lambda> at 0x7f63b6b4c920, file "keygen2.py", line 21>)
+            112 LOAD_CONST               2 ('check.<locals>.whippin3.<locals>.<lambda>')
+            114 MAKE_FUNCTION            8 (closure)
+            116 RETURN_VALUE
+
+Disassembly of <code object <lambda> at 0x7f63b6b4c920, file "keygen2.py", line 21>:
+ 21           0 LOAD_GLOBAL              0 (str)
+              2 LOAD_METHOD              1 (translate)
+              4 LOAD_FAST                0 (s)
+              6 LOAD_DEREF               0 (trans)
+              8 CALL_METHOD              2
+             10 RETURN_VALUE
+
+Disassembly of <code object whippin4 at 0x7f63b6b4cb30, file "keygen2.py", line 22>:
+ 23           0 LOAD_FAST                1 (b)
+              2 LOAD_GLOBAL              0 (len)
+              4 LOAD_FAST                0 (a)
+              6 CALL_FUNCTION            1
+              8 LOAD_GLOBAL              0 (len)
+             10 LOAD_FAST                1 (b)
+             12 CALL_FUNCTION            1
+             14 BINARY_FLOOR_DIVIDE
+             16 LOAD_CONST               1 (1)
+             18 BINARY_ADD
+             20 BINARY_MULTIPLY
+             22 STORE_FAST               2 (b_etx)
+
+ 24          24 LOAD_CONST               2 (b'')
+             26 LOAD_METHOD              1 (join)
+             28 LOAD_CONST               3 (<code object <genexpr> at 0x7f63b6b4c9d0, file "keygen2.py", line 24>)
+             30 LOAD_CONST               4 ('check.<locals>.whippin4.<locals>.<genexpr>')
+             32 MAKE_FUNCTION            0
+             34 LOAD_GLOBAL              2 (zip)
+             36 LOAD_FAST                0 (a)
+             38 LOAD_METHOD              3 (encode)
+             40 CALL_METHOD              0
+             42 LOAD_FAST                2 (b_etx)
+             44 LOAD_METHOD              3 (encode)
+             46 CALL_METHOD              0
+             48 CALL_FUNCTION            2
+             50 GET_ITER
+             52 CALL_FUNCTION            1
+             54 CALL_METHOD              1
+             56 RETURN_VALUE
+
+Disassembly of <code object <genexpr> at 0x7f63b6b4c9d0, file "keygen2.py", line 24>:
+ 24           0 LOAD_FAST                0 (.0)
+        >>    2 FOR_ITER                26 (to 30)
+              4 UNPACK_SEQUENCE          2
+              6 STORE_FAST               1 (c)
+              8 STORE_FAST               2 (d)
+             10 LOAD_GLOBAL              0 (chr)
+             12 LOAD_FAST                1 (c)
+             14 LOAD_FAST                2 (d)
+             16 BINARY_XOR
+             18 CALL_FUNCTION            1
+             20 LOAD_METHOD              1 (encode)
+             22 CALL_METHOD              0
+             24 YIELD_VALUE
+             26 POP_TOP
+             28 JUMP_ABSOLUTE            2
+        >>   30 LOAD_CONST               0 (None)
+             32 RETURN_VALUE
+None
