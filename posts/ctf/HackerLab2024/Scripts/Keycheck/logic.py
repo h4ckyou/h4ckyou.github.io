@@ -92,3 +92,8 @@ print("\n")
 # compute = [1, 1, 5]
 # x == 0 + 5*1
 # x == 5
+
+# - https://www.openssl.org/docs/manmaster/man3/BIO_new_mem_buf.html
+# - https://www.openssl.org/docs/man1.1.1/man3/BIO_f_base64.html
+# - https://github.com/openbsd/src/blob/master/include/regex.h#L61
+
