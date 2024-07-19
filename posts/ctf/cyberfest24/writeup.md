@@ -564,6 +564,31 @@ Just a blue pane image
 I went over to [aperisolve](https://www.aperisolve.com/) and got the flag in the `view->superimposed` pane
 ![image](https://github.com/h4ckyou/h4ckyou.github.io/assets/127159644/46c02db4-e826-41b4-b40f-efd205c004be)
 
+UPDATE: Another way you could have extracted it is using Scapy Python Module
+
+```python
+from scapy.all import *
+
+packets = rdpcap("ctf.pcapng")
+dns_packets = []
+
+for packet in packets:
+    if packet.haslayer(DNSRR):
+        if isinstance(packet.an, DNSRR):
+            dns_packets.append(packet.an.rrname)
+
+    
+hex_bytes = b""
+
+for dns_name in dns_packets:
+    if dns_name[-24:] == b".shadowheadquarters.com.":
+        hex_bytes += bytes.fromhex(dns_name[:-24].decode())
+
+
+with open('dumped', "wb") as f:
+    f.write(hex_bytes)
+```
+
 ```
 Flag: ACTF{our_secrets_are_in_plain_sight!!}
 ```
