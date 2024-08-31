@@ -311,7 +311,9 @@ What this function basically does is to access the url which is in the request b
 
 So we know that this query function can be used to access internal service running and we can only make use of it only if we know the `SECRET` value
 
-Ok the bug here is pretty straight forward
+Because we can access internal service with this we have a Server Side Request Forgery (SSRF) vulnerability
+
+Back to the `server.py` file, the bug there is pretty straight forward
 
 There's an XSS vulnerability in the `/` route
 
@@ -373,9 +375,25 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port=port, threaded=True)
 ```
 
-Ok this has only one route which is `/pickle` and it requires the `GET` parameter `pickle` to be of type `hex` which is then decoded and finally it uses `pickle.loads()` to loads the serialized object
+Ok this has only one route which is `/pickle` and it requires the `GET` parameter `pickle` to be a `hex` which is then decoded and finally it uses `pickle.loads()` to load the serialized object
 
-The port this is running on is chosen randomly between `5700-6000` 
+The port this service is running on is chosen at random between `5700-6000` 
+
+This is clearly an insecure deserialization [vulnerability](https://portswigger.net/web-security/deserialization) because `pickle.loads()` is used for de-serializing a python serialized object and it isn't [secure](https://docs.python.org/3/library/pickle.html)
+
+Now that we've looked through the source we see there are three main bugs:
+- Cross Site Scripting (XSS)
+- Server Side Request Forgery (SSRF)
+- Insecure Deserialization
+
+The third one is of high advantage because we can use that to get Remote Code Execution (RCE)
+
+But we can't access that because it is running internally at some random port
+
+How do we then go about this?
+
+Because we have a SSRF we can leverage that to access the internal service which is running the code that gives us the deserialization vulnerability
+
 
 
 
