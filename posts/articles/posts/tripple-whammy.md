@@ -392,8 +392,13 @@ But we can't access that because it is running internally at some random port
 
 How do we then go about this?
 
-Because we have a SSRF we can leverage that to access the internal service which is running the code that gives us the deserialization vulnerability
+Because we have SSRF we can leverage that to access the internal service which is running the web service that gives us the deserialization vulnerability
 
+But we can't really make use of the SSRF directly because to access `/query` we need to know the `SECRET` value and we don't know that
+
+Luckily we can make use of the XSS to do this
+
+That would work because when the admin bot visits our path it would set the cookie `secret` to hold the `SECRET` value and the `/query` route on the main server checks if the `secret` cookie value equals the `SECRET` value
 
 
 
