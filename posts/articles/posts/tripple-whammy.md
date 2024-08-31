@@ -304,6 +304,27 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port=1337, threaded=True)
 ```
 
+What this function basically does is to access the url which is in the request body but before it accesses it, some checks are done:
+- Makes sure the secret cookie value equals value stored in variable `SECRET`
+- The url wrapper is either http or https
+- The url hostname is 127.0.0.1
+
+So we know that this query function can be used to access internal service running and we can only make use of it only if we know the `SECRET` value
+
+Ok the bug here is pretty straight forward
+
+There's an XSS vulnerability in the `/` route
+
+We can see no sanitization is done before it renders our input
+
+```python
+@app.route('/', methods=['GET'])
+def main():
+    name = request.args.get('name','')
+    return 'Nope still no front end, front end is for noobs '+name
+```
+
+Let us confirm it
 
 
 
