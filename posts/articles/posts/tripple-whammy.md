@@ -333,6 +333,49 @@ Now we inject basic html tags
 And the holy grail
 ![image](https://github.com/user-attachments/assets/d794903a-69a4-4a70-9b82-0a684d5e9e1f)
 
+Ok cool we've confirmed the XSS what now?
+
+Well let us check the last code `internal.py`
+![image](https://github.com/user-attachments/assets/555b61d8-160d-4470-8c16-9b08e860f0e5)
+
+```python
+# imports
+from flask import Flask, request
+import pickle, random
+
+
+# initialize flask
+app = Flask(__name__)
+port = random.randint(5700, 6000)
+
+# index
+@app.route('/pickle', methods=['GET'])
+def main():
+    pickle_bytes = request.args.get('pickle')
+
+    if pickle_bytes is None:
+        return 'No pickle bytes'
+    
+    try:
+        b = bytes.fromhex(pickle_bytes)
+    except:
+        return 'Invalid hex'
+    
+    try:
+        data = pickle.loads(b)
+    except:
+        return 'Invalid pickle'
+
+    return str(data)
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=port, threaded=True)
+```
+
+Ok this has only one route which is `/pickle` and it requires the `GET` parameter `pickle` to be of type `hex` which is then decoded and finally it uses `pickle.loads()` to loads the serialized object
+
+The port this is running on is chosen randomly between `5700-6000` 
 
 
 
