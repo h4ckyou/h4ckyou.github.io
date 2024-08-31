@@ -400,5 +400,5 @@ Luckily we can make use of the XSS to do this
 
 That would work because when the admin bot visits our path it would set the cookie `secret` to hold the `SECRET` value and the `/query` route on the main server checks if the `secret` cookie value equals the `SECRET` value
 
-
-
+Ok so it's clear now:
+- We need to make an XSS payload such that it would make the admin bot access the `/query` route by sending a `POST` request with body of the url pointing to the internal web service which has the deserialization bug passing the GET parameter `pickle` which holds the deserialization payload
