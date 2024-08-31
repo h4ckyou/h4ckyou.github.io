@@ -481,7 +481,7 @@ We just need to set a listener on port 8888 to receive the flag!
 
 This is the overall XSS payload
 
-```javascript
+```js
 <script>
     fetch('/query', {{
         method: 'POST',
