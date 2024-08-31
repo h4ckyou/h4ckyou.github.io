@@ -401,6 +401,7 @@ Luckily we can make use of the XSS to do this
 That would work because when the admin bot visits our path it would set the cookie `secret` to hold the `SECRET` value and the `/query` route on the main server checks if the `secret` cookie value equals the `SECRET` value
 
 Ok so it's clear now:
+
 - We need to craft an XSS payload that triggers the admin bot to send a POST request to the /query route.
 - The request's body should contain a URL pointing to an internal web service with a deserialization vulnerability.
 - The URL should include a GET parameter named pickle, which carries the deserialization payload
