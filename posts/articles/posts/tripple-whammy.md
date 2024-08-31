@@ -80,12 +80,69 @@ done
 Now when we execute it, we should see this
 ![image](https://github.com/user-attachments/assets/d6e8cbde-aae7-4579-a29d-9d6884f323fb)
 
+Time to do some code review to figure the bug and exploit it.
 
+First we have 3 main important files which are:
+- server.py
+- internal.py
+- admin_bot.js
 
+From the javascript file `admin_bot.js` we can tell this is likely a `XSS` challenge 
 
+Looking at the source code for that we it does some imports
+![image](https://github.com/user-attachments/assets/bd516ceb-8030-433f-8f02-baf35a337e99)
 
+It also reads the content of `secret.txt` and stores it in variable `SECRET` it also defines the `CHAL_URL` to be `http://127.0.0.1:1337/`
 
+On my local host i created a fake `secret.txt` with content `SuperSecretKey`
 
+This async function is used to setup the headless browser which would be used to access our provided url
+
+```js
+const visitUrl = async (url) => {
+
+    let browser =
+            await puppeteer.launch({
+                headless: "new",
+                pipe: true,
+                dumpio: true,
+
+                // headless chrome in docker is not a picnic
+                args: [
+                    '--no-sandbox',
+                    '--disable-gpu',
+                    '--disable-software-rasterizer',
+                    '--disable-dev-shm-usage',
+                    '--disable-setuid-sandbox',
+                    '--js-flags=--noexpose_wasm,--jitless'
+                ]
+            })
+
+    try {
+        const page = await browser.newPage()
+
+        try {
+            await page.setUserAgent('puppeteer');
+            let cookies = [{
+                name: 'secret',
+                value: SECRET,
+                domain: '127.0.0.1',
+                httpOnly: true
+            }]
+            await page.setCookie(...cookies)
+            await page.goto(url, { timeout: 5000, waitUntil: 'networkidle2' })
+        } finally {
+            await page.close()
+        }
+    }
+    finally {
+        browser.close()
+        return
+    }
+}
+```
+
+And while it accesses our url it would set the cookie `secret` to the value stored in variable `SECRET`
 
 
 
