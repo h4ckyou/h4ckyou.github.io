@@ -144,11 +144,84 @@ const visitUrl = async (url) => {
 
 And while it accesses our url it would set the cookie `secret` to the value stored in variable `SECRET`
 
+This handles the default route that would let the user give in the path we want the admin bot to visit
 
+```
+app.get('/', async (req, res) => {
+    html = `
+    <html>
+    <head>
+        <title>Admin bot</title>
+    </head>
+    [................SNIPPED.....................]
+    <body>
+        <br><br><br>
+        <div class="container">
+            <h1>Have the admin bot visit a page on this site</h1>
+            <div id="path_box">
+                <div>http://127.0.0.1:1337/</div>
+                <input type="text" id="path" name="path" size="50">
+            </div>
+            <button onclick="go()">Go</button>
+        </div>
+        <script>
+            async function go() {
+                document.getElementsByTagName('button')[0].disabled = true;
+                document.getElementsByTagName('button')[0].textContent = "Visiting page..."
+                let path = document.getElementById('path').value
+                await fetch('/visit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'path=' + encodeURIComponent(path)
+                })
+                .then(response => response.text())
+                .then(text => {
+                    alert(text)
+                })
+                document.getElementsByTagName('button')[0].textContent = "Go"
+                document.getElementsByTagName('button')[0].disabled = false;
+            }
+        </script>
+    </body>
+    </html>
+    <html>`
+    res.send(html)
+});
+```
 
+And finally this
+![image](https://github.com/user-attachments/assets/1bc1f9ef-e46c-4bb3-a833-b2fa3eb841cc)
 
+```js
+app.post('/visit', async (req, res) => {
+    const path = req.body.path
+    console.log('received path: ', path)
 
+    let url = CHAL_URL + path;
 
+    try {
+        console.log('visiting url: ', url)
+        await visitUrl(url)
+    } catch (e) {
+        console.log('error visiting: ', url, ', ', e.message)
+        res.send('Error visiting page: ' + escape(e.message))
+    } finally {
+        console.log('done visiting url: ', url)
+        res.send('Visited page.')
+    }
+});
+
+const port = 1336
+app.listen(port, async () => {
+    console.log(`Listening on ${port}`)
+})
+```
+
+It would get the path from the request body, concatenate it to the challenge url and make the headless browser access it
+
+This bot instance is running on port 1336
 
 
 
