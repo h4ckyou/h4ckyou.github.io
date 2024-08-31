@@ -325,7 +325,13 @@ def main():
 ```
 
 Let us confirm it
+![image](https://github.com/user-attachments/assets/4def6865-6663-4749-a97c-8b12d1d6c57d)
 
+Now we inject basic html tags
+![image](https://github.com/user-attachments/assets/88b54b33-32c1-4e52-bc36-a2d27b00b204)
+
+And the holy grail
+![image](https://github.com/user-attachments/assets/d794903a-69a4-4a70-9b82-0a684d5e9e1f)
 
 
 
