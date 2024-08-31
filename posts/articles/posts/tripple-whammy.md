@@ -253,8 +253,56 @@ So this python code would import the standard libraries for working with Flask, 
 
 Then it initilizes the app object and then reads in the content of `secret.txt` into the variable `SECRET`
 
-The default route `/` gets the name from the `name` parameter and then returns it with some string concatenated to it
+The default route `/` gets the name value from the `name` parameter and then returns it with some string concatenated to it
 
+The last available route is `/query` 
+
+```python
+@app.route('/query', methods=['POST'])
+def query():
+    # get "secret" cookie
+    cookie = request.cookies.get('secret')
+
+    # check if cookie exists
+    if cookie == None:
+        return {"error": "Unauthorized"}
+    
+    # check if cookie is valid
+    if cookie != SECRET:
+        return {"error": "Unauthorized"}
+    
+    # get URL
+    try:
+        url = request.json['url']
+        print(f'finally {url}')
+    except:
+        return {"error": "No URL provided"}
+
+    # check if URL exists
+    if url == None:
+        return {"error": "No URL provided"}
+    
+    # check if URL is valid
+    try:
+        url_parsed = urlparse(url)
+        if url_parsed.scheme not in ['http', 'https'] or url_parsed.hostname != '127.0.0.1':
+            return {"error": "Invalid URL"}
+    except:
+        return {"error": "Invalid URL"}
+    
+    
+    # request URL
+    try:
+        requests.get(url)
+    except:
+        return {"error": "Invalid URL"}
+    
+    return {"success": "Requested"}
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=1337, threaded=True)
+```
 
 
 
