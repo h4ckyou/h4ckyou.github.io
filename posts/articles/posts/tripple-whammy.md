@@ -146,7 +146,7 @@ And while it accesses our url it would set the cookie `secret` to the value stor
 
 This handles the default route that would let the user give in the path we want the admin bot to visit
 
-```
+```js
 app.get('/', async (req, res) => {
     html = `
     <html>
