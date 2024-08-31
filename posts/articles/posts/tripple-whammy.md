@@ -223,9 +223,37 @@ It would get the path from the request body, concatenate it to the challenge url
 
 This bot instance is running on port 1336
 
+So this bot would only access valid routes based on the challenge url!
+
+Moving on let us check the server code
+![image](https://github.com/user-attachments/assets/3dc7873e-9bb2-4277-9b60-e51598b7f19d)
+
+```python
+# imports
+from flask import Flask, request
+from urllib.parse import urlparse
+import requests
 
 
+# initialize flask
+app = Flask(__name__)
+SECRET = open("secret.txt", "r").read().strip()
 
+
+# index
+@app.route('/', methods=['GET'])
+def main():
+    name = request.args.get('name','')
+    return 'Nope still no front end, front end is for noobs '+name
+```
+
+Luckily it was commented but nevertheless it is easy to understand
+
+So this python code would import the standard libraries for working with Flask, urllib.parse and requests
+
+Then it initilizes the app object and then reads in the content of `secret.txt` into the variable `SECRET`
+
+The default route `/` gets the name from the `name` parameter and then returns it with some string concatenated to it
 
 
 
