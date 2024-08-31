@@ -12,6 +12,7 @@ Hacking cheatsheet....
 <hr>
 <hr>
 
+- [[September 01 2024]] [Tripple Whammy](https://h4ckyou.github.io/posts/articles/posts/tripple-whammy.html) `XSS, SSRF, RCE`
 - [[September 06 2023]] [MrGuesser](https://h4ckyou.github.io/posts/articles/posts/mrguesser.html) `DSA`
 - [[Mar 13 2023]] [SSTI](https://h4ckyou.github.io/posts/articles/posts/ssti.html) `Server Side Template Injection`
 - [[Mar 13 2023]] [SSRF](https://h4ckyou.github.io/posts/articles/posts/ssrf.html) `Server Side Request Forgery`
