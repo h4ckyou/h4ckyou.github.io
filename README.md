@@ -3,7 +3,7 @@
 
 - 👋 Hi, I’m @Mark
 
-- 📖 Computer Science student at Federal University of Technology Minna (FUTM)
+- 📖 Computer Science Student at Federal University of Technology Minna (FUTM)
 
 - 👀 Cyber Security Enthusiast
 
