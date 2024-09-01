@@ -1,8 +1,27 @@
+# Use only one theme
+theme: jekyll-theme-hacker
+
 title: ➜  ~
 description: Playing Hacks and Stuffs!
 show_downloads: false
+show_repo: false
+
+safe: true
 
 remote_theme: pages-themes/midnight@v0.2.0
 plugins:
-- jekyll-remote-theme # add this line to the plugins list if you already have one
-gem "github-pages", group: :jekyll_plugins
+  - jekyll-gist
+  - jekyll-coffeescript
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-remote-theme
+
+whitelist:
+  - jekyll-gist
+  - jekyll-coffeescript
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-remote-theme
+
+# Remove any gem configuration here
+# gem "github-pages", group: :jekyll_plugins
