@@ -3,6 +3,8 @@ Binary is packed with: ConfuserEx
 
 The decryption is easy to spot so i didn't bother trying to unpack, deobsfucate
 
+The decryption schema is as follows:
+
 Generates a random byte value which is used as xor key against a list of numbers
 
 It's within 0 to 0xff so we can either brute force the key or recover it via property of xor
