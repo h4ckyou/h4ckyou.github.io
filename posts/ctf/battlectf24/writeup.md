@@ -80,4 +80,9 @@ The last one looks oddly like `rc4_encrypt` so we can assume that we need to rc4
 
 Since there's also a password hash we can assume that the rc4 key is the password plaintext value
 
+From this I used JTR to crack the hash and that took time but yea it cracks!
+![image](https://github.com/user-attachments/assets/98d209a4-6f0f-4993-9bda-0cd398727621)
+
+The password is `nohara`
+
 
