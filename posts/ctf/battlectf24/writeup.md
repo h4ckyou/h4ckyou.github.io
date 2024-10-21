@@ -1043,3 +1043,4 @@ Thanks!
 I played as user `0x1337` for the qualifiers event!
 ![image](https://github.com/user-attachments/assets/7ad930cc-9364-4778-b453-e54e306eb5fb)
 
+I'm bound to make mistake, if you find any feel free to DM and i'll make changes, thank you.
