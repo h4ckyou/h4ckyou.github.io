@@ -1040,6 +1040,6 @@ And this ends my writeup, hope you had fun reading (if you read all or not)
 
 Thanks!
 
-I played as user `0x1337`
+I played as user `0x1337` for the qualifiers event!
 ![image](https://github.com/user-attachments/assets/7ad930cc-9364-4778-b453-e54e306eb5fb)
 
