@@ -164,7 +164,7 @@ And with the libc base we can just go ahead with ROP
 
 Since i couldnt debug remotely i just went ahead exploiting it on the remote instance
 
-Here's my solve script
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/Poj/solve.py)
 
 ```python
 #!/usr/bin/env python3
@@ -236,6 +236,13 @@ def main():
 
 if __name__ == '__main__':
     main()
+```
+
+Running it works!
+![image](https://github.com/user-attachments/assets/f67c40bc-2935-4ef2-9ef9-479ca4d9164c)
+
+```
+Flag: battleCTF{Libc_J0P_b4s1c_000_bc8a769d91ae062911c32829608e7d547a3f54bd18c7a7c2f5cc52bd}
 ```
 
 **Sweet Game**
