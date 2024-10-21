@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/836f038f-67da-4591-9ba7-f84005399c43)<h3> Battle CTF 2024 </h3>
+<h3> Battle CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/9d74fbd3-a76b-421c-8247-8630551c826d)
 
