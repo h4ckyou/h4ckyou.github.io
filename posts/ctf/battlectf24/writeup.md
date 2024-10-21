@@ -857,7 +857,18 @@ They are at various offsets
 
 To fix that i made use of the docker file provided to build a container which is the same as the remote instance and debugged to get right offset
 
-This is my local solve [script]()
+This is my local solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/NTCrack/local.py)
+![image](https://github.com/user-attachments/assets/a5d47326-a3ca-4e61-a496-01cb21bf79d0)
+
+And this is my remote solve
+![image](https://github.com/user-attachments/assets/e4924705-4901-4224-9cfa-c0a7131ab02f)
+
+Seems the remote is down so let us try it on the docker i built based on the Dockerfile provided
+![image](https://github.com/user-attachments/assets/c145f9a9-d4ee-4b9f-84d0-b0bd3441d44a)
+
+```
+Flag:
+```
 
 
 
