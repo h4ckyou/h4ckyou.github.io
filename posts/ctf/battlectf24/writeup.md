@@ -276,9 +276,21 @@ The offset between the first buffer and the seed variable is:
 
 So this means if we fill up the name buffer with 10 bytes the next byte is going to be the seed variable on the stack
 
+Here's confirmation
+![image](https://github.com/user-attachments/assets/a9387b6b-63b0-4572-ac00-163226b65dac)
 
+The next thing is to guess the right secret code
 
+If we decode that value we'd get this: `itucsyu`
 
+But we need to reverse the string due to endianess
+
+With that we'd get to the next check
+![image](https://github.com/user-attachments/assets/e8d5ff15-8497-4fca-ae10-70f96b4edc59)
+
+Now we have right seed we can easily predict the value to `rand()` and guess the right calculated value
+
+Ok the next thing after that is that it would call function `sub_150D`
 
 
 
