@@ -70,3 +70,14 @@ The content is an XML file
         </user>
 </users>\r\n<!-- battleCTF AFRICA 2024 -->\r\n 
 ```
+
+From the xml content we can see there are 3 fields:
+- loginname
+- password
+- 4cr_encrypt
+
+The last one looks oddly like `rc4_encrypt` so we can assume that we need to rc4 decrypt that hex value, but that requires the key 
+
+Since there's also a password hash we can assume that the rc4 key is the password plaintext value
+
+
