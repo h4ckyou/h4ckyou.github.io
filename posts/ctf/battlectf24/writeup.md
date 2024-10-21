@@ -1,4 +1,4 @@
-<h3> Battle CTF 2024 </h3>
+![image](https://github.com/user-attachments/assets/836f038f-67da-4591-9ba7-f84005399c43)<h3> Battle CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/9d74fbd3-a76b-421c-8247-8630551c826d)
 
@@ -114,13 +114,155 @@ This is the solution in pdf format: [solution](https://github.com/h4ckyou/h4ckyo
 
 **Sweet Game**
 
+We are given an executable, and checking the file type and protections enabled on it shows this
+![image](https://github.com/user-attachments/assets/3abfd42e-c882-4715-9f41-bbf6fc669ccf)
 
+So this is a 64 bits binary which is dynamically linked and stripped
 
+From the result of `checksec` we can see that:
+- We have Full RELRO
+- NX is enabled
+- PIE is enabled
 
+Ok next thing I did was to run it so as to get a general overview of what it does
+![image](https://github.com/user-attachments/assets/f734009c-18c2-4e8c-b007-7d2c151de02c)
 
+We see it prints out some banner thingy, receives our name and expects a secret code
 
+With this I threw the binary into IDA and here's the main function
+![image](https://github.com/user-attachments/assets/269c3186-64e2-47af-8f88-9cbe57d37c77)
 
+```c
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  __int64 v4; // [rsp+8h] [rbp-28h] BYREF
+  char buf[10]; // [rsp+16h] [rbp-1Ah] BYREF
+  unsigned int seed[3]; // [rsp+20h] [rbp-10h]
+  int i; // [rsp+2Ch] [rbp-4h]
 
+  *(_QWORD *)seed = time(0LL);
+  sub_1209(0LL, a2);
+  printf("\nEnter your name to access the system: ");
+  fflush(stdout);
+  read(0, buf, 0x50uLL);
+  printf("\nWelcome Alien %s\nEnter the secret code to proceed: ", buf);
+  fflush(stdout);
+  __isoc99_scanf("%s", &v4);
+  srand(seed[0]);
+  if ( v4 == 0x69747563737975LL )
+  {
+    puts("\nCorrect Secret code..");
+    puts("Welcome in the game space.\n");
+    for ( i = 0; i <= 69; ++i )
+    {
+      if ( !(unsigned int)sub_126A() )
+      {
+        puts("Bye bye!");
+        return 0LL;
+      }
+    }
+    sub_150D();
+  }
+  else
+  {
+    puts("\nWrong Secret ..!");
+  }
+  return 0LL;
+}
+```
+
+I won't explain in details what it does but the basic idea is this:
+- Initializes a seed which is based on the current time
+- Reads in at most 50 bytes of data into a buffer that can only hold up 10 bytes
+- Reads in the secret code
+- Calls srand with the seed so it's basically seeding with the current time
+- Casts the secret code provided as a long and compares it against a hardcoded value: 0x69747563737975LL
+- Based on if the code provided is right it would do another thing else it prints the error message
+
+From this there are two obvious vulnerability:
+- Buffer overflow via read()
+- Buffer overflow via scanf()
+
+I actually ignored it for now to know what would happen if we pass the comparism
+
+So once we pass the check we get into this:
+
+```c
+   puts("\nCorrect Secret code..");
+    puts("Welcome in the game space.\n");
+    for ( i = 0; i <= 69; ++i )
+    {
+      if ( !(unsigned int)sub_126A() )
+      {
+        puts("Bye bye!");
+        return 0LL;
+      }
+    }
+    sub_150D();
+  }
+```
+
+Basically it would loop 70 times and if after calling `sub_126A()` it doesn't return `1` it would print the error message then `returns`
+
+Here's function `sub_126A` decompilation
+![image](https://github.com/user-attachments/assets/9d22f744-5458-4b0a-8e05-acf933573e2e)
+
+```c
+__int64 sub_126A()
+{
+  _QWORD v1[21]; // [rsp+0h] [rbp-B0h]
+  int v2; // [rsp+A8h] [rbp-8h] BYREF
+  int v3; // [rsp+ACh] [rbp-4h]
+
+  v1[0] = "1: Reach for the stars; you might just catch one!";
+  v1[1] = "2: Ignite the cosmic flame within you!";
+  v1[2] = "3: Celestial traveler, let's have some interstellar fun!";
+  v1[3] = "4: Ready to embark on an astronomical journey?";
+  v1[4] = "5: Buckle up, it's time for a cosmic adventure!";
+  v1[5] = "6: You're about to enter a universe of possibilities.";
+  v1[6] = "7: Get ready for an amazing celestial experience!";
+  v1[7] = "8: Welcome, let's launch this cosmic party!";
+  v1[8] = "9: Exciting times await in the vast cosmos, welcome aboard!";
+  v1[9] = "10: Your journey through the galaxies begins now!";
+  v1[10] = "11: Step into the cosmos of possibilities.";
+  v1[11] = "12: Join the cosmic fun and enjoy the interstellar ride!";
+  v1[12] = "13: The journey to the stars begins with you!";
+  v1[13] = "14: Prepare for a fantastic astral experience.";
+  v1[14] = "15: Welcome to the universe of endless possibilities.";
+  v1[15] = "16: The cosmic stage is yours, shine like a supernova!";
+  v1[16] = "17: Time to shine bright like distant stars and have some fun!";
+  v1[17] = "18: Embrace the astronomical adventure that lies ahead.";
+  v1[18] = "19: You're in for a celestial treat!";
+  v1[19] = "20: The cosmic fun starts now!";
+  printf("\nGuess the next alien quote number.\nChoose a number from 1 to 20:");
+  fflush(stdout);
+  __isoc99_scanf("%d", &v2);
+  if ( v2 > 0 && v2 <= 20 )
+  {
+    v3 = (rand() + 8) % 20 + 1;
+    printf("\nQuote | %s\n", (const char *)v1[v3]);
+    if ( v3 == v2 )
+    {
+      puts("\nYou win.");
+      return 1LL;
+    }
+    else
+    {
+      puts("\nYou lost.");
+      return 0LL;
+    }
+  }
+  else
+  {
+    puts("Invalid value!");
+    return 0LL;
+  }
+}
+```
+
+Basically we just need to guess the right choice, and that's computed using a value returned from calling `rand()`
+
+Ok good 
 
 
 
