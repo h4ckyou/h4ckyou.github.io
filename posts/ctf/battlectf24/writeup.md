@@ -860,11 +860,14 @@ To fix that i made use of the docker file provided to build a container which is
 This is my local solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/NTCrack/local.py)
 ![image](https://github.com/user-attachments/assets/a5d47326-a3ca-4e61-a496-01cb21bf79d0)
 
-And this is my remote solve
+And this is my remote [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/NTCrack/remote.py)
 ![image](https://github.com/user-attachments/assets/e4924705-4901-4224-9cfa-c0a7131ab02f)
 
 Seems the remote is down so let us try it on the docker i built based on the Dockerfile provided
 ![image](https://github.com/user-attachments/assets/c145f9a9-d4ee-4b9f-84d0-b0bd3441d44a)
+
+Also note that instead of using a ropchain i just used a one gadget as that's easier and the only constraint i had to fix was setting rbx to 0
+![image](https://github.com/user-attachments/assets/2b2afd85-5097-4ea1-8b83-67a767d564de)
 
 ```
 Flag:
