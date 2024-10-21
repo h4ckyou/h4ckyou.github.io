@@ -17,3 +17,12 @@ Challenges:
 - Hmmmm!... (Web)
 
 
+**Rules**
+
+Going over to the discord channel and checking the #announcement page gives the flag
+![image](https://github.com/user-attachments/assets/8ec1e651-47c2-4989-972d-b314bb4801d1)
+
+```
+Flag: battleCTF{HereWeGo}
+```
+
