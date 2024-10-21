@@ -873,5 +873,141 @@ Also note that instead of using a ropchain i just used a one gadget as that's ea
 Flag:
 ```
 
+**0xterminal**
+
+As usual i checked the file type & protections enabled
+![image](https://github.com/user-attachments/assets/404b789b-f751-478a-9511-89d1a67c94a2)
+
+So this time we are dealing with a x86 executable and the only protection enabled is NX
+
+Running it i got this
+![image](https://github.com/user-attachments/assets/cb399213-3304-4f1e-9679-5a494bd19373)
+
+Looks like a command line interface tool
+
+I went ahead to decompile the binary and here's the main function
+![image](https://github.com/user-attachments/assets/a790062c-2096-45b9-8a72-d073535b358a)
+
+```c
+int real_main()
+{
+  char *v1; // [esp+0h] [ebp-18h]
+  const char *v2; // [esp+4h] [ebp-14h]
+  const char *s1; // [esp+8h] [ebp-10h]
+  char *v4; // [esp+Ch] [ebp-Ch]
+
+  sub_804968C();
+  while ( 1 )
+  {
+    while ( 1 )
+    {
+      do
+      {
+        fflush(stdout);
+        printf("\x1B[0;32mCLI@RAVEN\x1B[0;37m# ");
+        fflush(stdout);
+        sub_8049648();
+        v4 = strchr(byte_804C060, 10);
+        if ( v4 )
+          *v4 = 0;
+        s1 = strtok(byte_804C060, " ");
+      }
+      while ( !s1 );
+      v2 = strtok(0, " ");
+      v1 = strtok(0, " ");
+      if ( strcmp(s1, "show") )
+        break;
+      if ( strcmp(v2, "all") || v1 )
+      {
+        if ( strcmp(v2, "up") || v1 )
+        {
+          if ( strcmp(v2, "down") || v1 )
+          {
+            if ( strcmp(v2, "logs") || v1 )
+            {
+              if ( strcmp(v2, "help") || v1 )
+LABEL_26:
+                puts("Invalid command. Type 'show help' for available commands.");
+              else
+                sub_80495A0();
+            }
+            else
+            {
+              sub_80494E3();
+            }
+          }
+          else
+          {
+            sub_804939C();
+          }
+        }
+        else
+        {
+          sub_8049255();
+        }
+      }
+      else
+      {
+        sub_8049226();
+      }
+    }
+    if ( strcmp(s1, "clear") )
+      break;
+    sub_8049722();
+  }
+  if ( strcmp(s1, "exit") )
+    goto LABEL_26;
+  puts("Exiting...");
+  return 0;
+}
+```
+
+Function `sub_8049648` handles the command provided
+![image](https://github.com/user-attachments/assets/a1a2bb62-c542-4ba2-9c33-0ce8648a0613)
+
+```c
+char *sub_8049648()
+{
+  char buf[54]; // [esp+Eh] [ebp-3Ah] BYREF
+
+  read(0, buf, 200);
+  return strcpy(byte_804C060, buf);
+}
+```
+
+We can see there's a buffer overflow here due to it reading in at most 200 bytes to the stack buffer that can only hold up 54 bytes
+
+At this point i just left trying to figure our what the program does and went on with exploitation
+
+First we need a libc leak and to do that I did a ret2libc attack
+
+You can check [here](https://ir0nstone.gitbook.io/notes/binexp/stack/return-oriented-programming/ret2libc) for more understanding i suppose
+
+But the idea is that we'd first get a libc leak by doing:
+- puts(got@puts)
+
+Recall that the GOT points to the resolved function address in libc hence doing that would give us a libc leak for that function
+
+And we weed to return back to main to do the second stage exploit which effectively does this:
+- system('/bin/sh')
+
+One issue would be that the libc for your current host isn't the same as the remote one thus it was needed to get the remote libc file 
+
+To do that i made use of [this](https://libc.rip/) which basically would use the leak gotten to give possible values for the libc being used and this works because the last 3 nibbles for all libcs are always the same
+
+I found mine to be `libc6-i386_2.39-0ubuntu8.3_amd64.so`
+
+With that i could exploit the remote instance
+![image](https://github.com/user-attachments/assets/becb957d-f6cc-48a8-a1a1-1c6cc1d86a1d)
+
+The flag references ret2dlresolve hmmm 
+
+Definitely didn't use that
+
+In any case we have the flag
+
+```
+Flag: battleCTF{ret2CLI@dlresolve_a22c24101f31bb15ea7ac818364c980c3fd8ab0a9ed99f023a5c6910a30ee52d}
+```
 
 
