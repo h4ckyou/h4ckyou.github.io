@@ -737,3 +737,103 @@ Running it works!
 ```
 Flag: battleCTF{Are_W3_4l0ne_!n_7he_univ3rs3?_0e2899c65e58d028b0f553c80e5d413eeefef7af987fd4181e834ee6}
 ```
+
+**NTcrack**
+
+Doing the usual checks we get this
+![image](https://github.com/user-attachments/assets/1350b14f-2cdc-4794-9a06-11fe877dc787)
+
+From the result of `checksec` we can see:
+- Full RELRO
+- NX is enabled
+- PIE is enabled
+
+Running it to get an overview of what it does shows this
+![image](https://github.com/user-attachments/assets/4c82d2c6-0129-4caf-8a23-c37e2981876f)
+
+We see it just receives our input, prints it out and repeats
+
+I decompiled the binary and here's the main function
+![image](https://github.com/user-attachments/assets/e217c05d-8486-43c2-ae03-e6441d012061)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  char s[512]; // [rsp+0h] [rbp-200h] BYREF
+
+  printf("\nEntrez le hash NTLM : ");
+  fgets(s, 512, _bss_start);
+  s[strcspn(s, "\n")] = 0;
+  if ( s[0] )
+  {
+    printf(s);
+    return curl_ntlm_pw(s);
+  }
+  else
+  {
+    puts("No hash was provided. Exiting the program.");
+    return 1;
+  }
+}
+```
+
+We can see it receives our input and then if it's successful it prints it out and then call the `curl_ntlm_pw` function passing our input as the first parameter
+
+The bug here is obvious and it's a format string bug
+
+The `curl_ntlm_pw()` function after it's done returns back to `main`
+![image](https://github.com/user-attachments/assets/a5dd03cf-061a-4c07-89ff-77d8342cf6a4)
+
+```c
+int __fastcall curl_ntlm_pw(const char *a1)
+{
+  __int64 v2; // rax
+  int v3; // edi
+  const char **v4; // rdx
+  char v5[1008]; // [rsp+10h] [rbp-470h] BYREF
+  char s[104]; // [rsp+400h] [rbp-80h] BYREF
+  unsigned int v7; // [rsp+468h] [rbp-18h]
+  int v8; // [rsp+46Ch] [rbp-14h]
+  int v9; // [rsp+470h] [rbp-10h]
+  int v10; // [rsp+474h] [rbp-Ch]
+  __int64 v11; // [rsp+478h] [rbp-8h]
+
+  memset(v5, 0, 0x3E8uLL);
+  v11 = curl_easy_init();
+  if ( v11 )
+  {
+    snprintf(s, 0x64uLL, "https://ntlm.pw/%s", a1);
+    v10 = 10002;
+    curl_easy_setopt(v11, 10002LL, s);
+    v9 = 20011;
+    curl_easy_setopt(v11, 20011LL, write_callback);
+    v8 = 10001;
+    curl_easy_setopt(v11, 10001LL, v5);
+    v7 = curl_easy_perform(v11);
+    if ( v7 )
+    {
+      v2 = curl_easy_strerror(v7);
+      fprintf(stderr, aErreurLorsDeLa, v2);
+      curl_easy_cleanup(v11);
+    }
+    v5[strcspn(v5, "\n")] = 0;
+    printf(" : %s\n", v5);
+    v3 = v11;
+    curl_easy_cleanup(v11);
+    return main(v3, (const char **)v5, v4);
+  }
+  else
+  {
+    fwrite("Erreur lors de l'initialisation de Curl\n", 1uLL, 0x28uLL, stderr);
+    return 1;
+  }
+}
+```
+
+So this means we have an infinite call to `printf`
+
+Now how do we solve this?
+
+The first thing once would think of is a GOT overwrite, but that isn't possible in this scenerio because we have Full RELRO
+
+
