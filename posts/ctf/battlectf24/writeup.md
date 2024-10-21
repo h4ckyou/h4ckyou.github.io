@@ -85,4 +85,26 @@ From this I used JTR to crack the hash and that took time but yea it cracks!
 
 The password is `nohara`
 
+At this point I just looked for a rc4 decrypt implementation in python and got [this](https://pycryptodome.readthedocs.io/en/latest/src/cipher/arc4.html)
+
+So we just need to call the `ARC4` class with the password and use the `decrypt` function
+
+Doing that I got the decoded message
+![image](https://github.com/user-attachments/assets/45fd9d00-6ebf-4707-8da3-3bdde78de3a7)
+
+```python
+from arc4 import ARC4
+
+password = "nohara".encode()
+arc4 = ARC4(password)
+ct = bytes.fromhex("05 5F 26 74 9B 8D D7 09 49 EB 61 94 5D 07 7D 13 AA E8 75 CD 6A 1E 79 12 DA 1E 8A E7 2F 5F DB 87 E4 0D D2 13 E4 82 EE 10 AC A7 3A BF 54 B2 A4 A5 36 EA 2C 16 00 89 AE B8 22 0B F5 18 CA 03 32 C8 C6 6B 58 80 EC 70 77 6E 16 5C 56 82 6F AD 0B C5 97 69 E9 B8 4E 54 90 95 BB 4D ED 87 99 98 BF EC D4 E2 8A 0D C5 76 03 89 A6 11 AB 73 67 A0 75 AE 3C 84 B6 5D 21 03 71 B8 D9 A0 3B 62 C0 5B 12 DA 5C 91 87 19 63 02 A4 3B 04 9F E0 AD 75 3E 35 C3 FB 1B 5E CB F0 5A A7 8B DF 00 8B DC 88 24 EF F4 EE CE 5C 3B F3 20 10 C2 52 DF 57 D2 59 5E 3E 46 D0 85 10 89 AC 09 07 EF C5 EE 1D 2F 89 1D 83 51 C6 52 38 13 2A D0 20 66 6D 52 B1 93 1B 21 06 9F E5 00 B7 AB 30 EB 98 7F CB 80 17 36 16 EF 73 BB 59 60 E4 4B F0 8A BD FF 85 A1 37 5D 4E C0 91 92 F2 68 C5 20 68 A0 A7 84 EB")
+
+print(arc4.decrypt(ct).decode())
+```
+
+And we have the flag!
+
+```
+Flag: battleCTF{pwn2live_d7c51d9effacfe021fa0246e031c63e9116d8366875555771349d96c2cf0a60b}
+```
 
