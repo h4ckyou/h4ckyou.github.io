@@ -291,7 +291,25 @@ With that we'd get to the next check
 Now we have right seed we can easily predict the value to `rand()` and guess the right calculated value
 
 Ok the next thing after that is that it would call function `sub_150D`
+![image](https://github.com/user-attachments/assets/d145e903-64cb-4d3d-9635-f6f2f5b40667)
 
+```c
+__int64 sub_150D()
+{
+  void *s; // [rsp+8h] [rbp-8h]
+
+  s = mmap(0LL, 0x1000uLL, 7, 33, -1, 0LL);
+  memset(s, 0, 0x1000uLL);
+  fflush(stdout);
+  printf("Give us your feedbacks for this game: ");
+  fflush(stdout);
+  read(0, s, 0x25DuLL);
+  sub_1457();
+  return (s)(0LL);
+}
+```
+
+Seems this is our goal because it would create a memory region with `rwx` permission then sets the first `0x1000` bytes to null and reads into the memory our input which is later on executes the value stored there
 
 
 
