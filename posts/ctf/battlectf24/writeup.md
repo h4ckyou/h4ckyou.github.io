@@ -834,6 +834,30 @@ So this means we have an infinite call to `printf`
 
 Now how do we solve this?
 
-The first thing once would think of is a GOT overwrite, but that isn't possible in this scenerio because we have Full RELRO
+The first thing once would think of is a GOT overwrite, but that isn't possible in this scenerio because we have Full RELRO and this mitigation makes the global offset table `read-only`
+![image](https://github.com/user-attachments/assets/59a65383-e761-42f8-9873-6d5d51aee6b0)
+
+So what now?
+
+Well we can make `main` return by not giving it any value and from the current stack frame of the main function it's return address is stored on the stack
+
+So if we overwrite that return address on the stack to any function we hence have control flow over the program
+
+Our goal is to:
+- leak libc
+- leak stack address
+- leverage the format string bug to gain arbitrary write
+- overwrite the saved rip on the stack with our ropchain
+
+I don't want to go through my debugging procedure cause it's stressful but that's the idea
+
+One thing to note is that my local solve differ from remote and this is due to the addresses on the stack we leak
+
+They are at various offsets
+
+To fix that i made use of the docker file provided to build a container which is the same as the remote instance and debugged to get right offset
+
+This is my local solve [script]()
+
 
 
