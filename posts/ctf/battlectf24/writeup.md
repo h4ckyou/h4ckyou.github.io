@@ -119,8 +119,8 @@ We are given an executable, and checking the file type and protections enabled o
 
 So this is a 64 bits binary which is dynamically linked and stripped
 
-From the result of `checksec` we can see that:
-- We have Full RELRO
+From the result of `checksec` we can see:
+- Full RELRO
 - NX is enabled
 - PIE is enabled
 
@@ -262,12 +262,19 @@ __int64 sub_126A()
 
 Basically we just need to guess the right choice, and that's computed using a value returned from calling `rand()`
 
-Ok good 
+Ok good, remember that it seeds with the current time this means if we know the seed then we can also generate any value that's going to be returned from calling `rand()`
 
+Recall from the first read that we can cause an overflow so we would make use of the overflow to do a variable overwrite
 
+Basically we would overwrite the seed with a known value like 0 and then any future call to `rand()` we would also be able to predict it
 
+The offset between the first buffer and the seed variable is:
 
+```
+(rbp-0x1A) - (rbp-0x10) = 0xa
+```
 
+So this means if we fill up the name buffer with 10 bytes the next byte is going to be the seed variable on the stack
 
 
 
