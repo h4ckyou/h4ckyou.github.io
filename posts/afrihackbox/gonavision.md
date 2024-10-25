@@ -69,10 +69,16 @@ If we save the html response and view in our browser we'd see this
 
 But why does this work exactly?
 
-This is a class of vulnereability called [Execute After Redirect](https://owasp.org/www-community/attacks/Execution_After_Redirect_(EAR))
+This is a class of web vulnereability called [Execute After Redirect](https://owasp.org/www-community/attacks/Execution_After_Redirect_(EAR))
 
+From this I was able to get other php files hosted on the server (by viewing the page source of the store.php html content)
+![image](https://github.com/user-attachments/assets/a0243c84-5dd8-4f36-9ae6-d330e852951c)
 
+After looking through them I got something juicy which is `product.php`
+![image](https://github.com/user-attachments/assets/f623c5de-93e6-4352-93f1-b5d2993b4425)
 
+I accessed it using the burp method as that reserves images making it look much better
+![image](https://github.com/user-attachments/assets/d4e7e586-7845-40d6-9b62-393e0bee7833)
 
 
 
