@@ -46,11 +46,30 @@ What next?
 
 Well time to check out why those files which were supposed to do a "redirect" happens to have a large content length
 
-If we try access it we will notice that it immediately redirects to the `/index.php` file
+If we try access it you will notice that it immediately redirects to the `/index.php`
 
+This is how i went about bypassing that
 
+I captured the request with Burp Suite and then I intercepted the response to the request and modified the http status code to 200
 
+This is the equivalent in python
+![image](https://github.com/user-attachments/assets/075cea51-2387-4e18-9549-16abfe2fb417)
 
+```python
+import requests
+
+url = "http://10.0.1.5/"
+res = requests.get(url + "store.php", allow_redirects=False)
+
+print(res.text)
+```
+
+If we save the html response and view in our browser we'd see this
+![image](https://github.com/user-attachments/assets/231114a8-7c88-474b-b82f-67b6ed66527c)
+
+But why does this work exactly?
+
+This is a class of vulnereability called [Execute After Redirect](https://owasp.org/www-community/attacks/Execution_After_Redirect_(EAR))
 
 
 
