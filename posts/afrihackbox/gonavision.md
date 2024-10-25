@@ -75,24 +75,36 @@ From this I was able to get other php files hosted on the server (by viewing the
 ![image](https://github.com/user-attachments/assets/a0243c84-5dd8-4f36-9ae6-d330e852951c)
 
 After looking through them I got something juicy which is `product.php`
-![image](https://github.com/user-attachments/assets/f623c5de-93e6-4352-93f1-b5d2993b4425)
 
-I accessed it using the burp method as that reserves images making it look much better
+I accessed it using the burp method as that reserves images/css making it look much better
+![image](https://github.com/user-attachments/assets/f623c5de-93e6-4352-93f1-b5d2993b4425)
 ![image](https://github.com/user-attachments/assets/d4e7e586-7845-40d6-9b62-393e0bee7833)
 
+We have the ability to upload a photo (screams.. file upload bypass)
 
+The first thing which came to mind was to upload a php file (obviously)
 
+But on intercepting the upload request i got this
+![image](https://github.com/user-attachments/assets/42f83e42-fec3-43de-9615-efd45cdbb751)
 
+Notice how it's actually uploading to the wrong file? `index.php` rather than `product.php`
 
+I sent that request to Repeater and here's the response
+![image](https://github.com/user-attachments/assets/93c9843b-08f2-4ded-b144-9a6ec37a03b2)
 
+Doesn't seem to error? I then searched for the file i uploaded in the response and boom i saw this
+![image](https://github.com/user-attachments/assets/9d40fbee-5229-4ace-b5c0-714421d0d0a0)
 
+Looks like it uploaded to: `assets/img/productimages/a.php`
 
+Access it showed this
+![image](https://github.com/user-attachments/assets/ce15c331-07d7-4818-9ad0-f4d16ef3835e)
 
+Nice lab pwned!
 
+The flag location is at: `/etc/passwd`
 
-
-
-
+Thanks for reading!
 
 
 
