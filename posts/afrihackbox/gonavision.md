@@ -97,7 +97,7 @@ Doesn't seem to error? I then searched for the file i uploaded in the response a
 
 Looks like it uploaded to: `assets/img/productimages/a.php`
 
-Access it showed this
+Accessing it showed this
 ![image](https://github.com/user-attachments/assets/ce15c331-07d7-4818-9ad0-f4d16ef3835e)
 
 Nice lab pwned!
