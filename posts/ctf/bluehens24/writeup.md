@@ -17,6 +17,6 @@ Hi, I participated in this ctf with team BlitzHack where I focused mainly on Pwn
 
 - Brainrot.c
 
-This is the solve script link
+This is the solve script [link](https://github.com/h4ckyou/h4ckyou.github.io/tree/main/posts/ctf/bluehens24/solve)
 
 Thanks!
