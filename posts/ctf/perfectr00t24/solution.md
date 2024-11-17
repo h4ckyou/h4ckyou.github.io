@@ -334,9 +334,59 @@ But thinking of that we can't pretty much do that for now because our input leng
 
 Keep in mind that the size to be allocated with malloc is also used as the size when reading input into the allocated memory, and this size is actually a global variable
 
+Case 12:
+![image](https://github.com/user-attachments/assets/4b539558-b52b-4c2e-b044-a8fd1eacef81)
 
+- It reads in our input which is stored in variable s
+- Opens the file specified by `s`
+- Prints the content of the file specified to stdout
 
+Basically this function is used for reading a file
 
+At this point you might be like why not just read the flag? 
+
+That would work! (I didn't even notice this during the ctf i used another way 😄)
+
+But notice that if you tried communicate with the program and read a file via terminal it won't work
+![image](https://github.com/user-attachments/assets/a3359286-be0c-4845-8bc3-4d8dbfc47123)
+
+This is because a newline is sent with our filename and `fgets()` would read it therefore `open` would also attempt reading the filename which is already appended with a newline which is going to return -1 because such file doesn't exit
+
+To fix this you need to add a null byte at the end of the filename because fgets stops at a null byte 
+
+This is how you'd do it in pwntools
+
+```python
+from pwn import *
+
+io = remote("94.72.112.248", "5050")
+
+io.sendlineafter(b">", b"12")
+io.sendline(b"flag.txt\x00")
+
+io.interactive()
+```
+
+Doing that works!
+![image](https://github.com/user-attachments/assets/23582cae-9754-4342-80ce-d5c56d348be7)
+
+But now that wasn't how i solved it (i just even found that now while making the writeup)
+
+So let's continue looking through the important functions
+
+Case 14:
+![image](https://github.com/user-attachments/assets/49b1a4f4-cc94-4359-8007-400bf9780436)
+
+- Calls `read_int()` and assigns the returned value to the variable `v1`.
+- It then calls `read_int()` a second time and assigns the returned value to the array `pretty_large_array` at the index specified by `v1`.
+
+The `read_int()` basically is used to convert a string to a long int
+
+The caveat is that it doesn't explicitly define v1 as an unsigned long int, meaning we can set v1 to a negative value, thereby causing an out-of-bounds write
+
+Now we have a primitive that can let us make OOB write what next?
+
+At this point during the time I was solving it i immediately decided to target the global offset table because it was writable since `RELRO was disabled`
 
 
 
