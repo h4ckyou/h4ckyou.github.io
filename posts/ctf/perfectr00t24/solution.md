@@ -100,7 +100,7 @@ So here's our goal:
 - Overwrite the v2 variable with 0x34333231
 - Profit
 
-Doing that i get the flag and here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/flow/solve.py)
+Doing that i get the flag and here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Flow/solve.py)
 ![image](https://github.com/user-attachments/assets/bab0e779-c119-4d26-a361-c8fdb6818cdf)
 
 ```
@@ -162,8 +162,16 @@ int __fastcall main(int argc, const char **argv, const char **envp)
 }
 ```
 
+Let's understand what this does:
+- first it reads in our input into variable `s`
+- it then converts the string in `s` to an integer and stores the resulting int value into `v6`
+- it sets `v5` to the `v6 + 1`
+- receives our input again into variable `s`
+- if the `v5` variable is less than `v6` it will compare the v6 with 727 and it's equal we get the flag else some error message
 
+At first it might look like we just need to set our first input to 727 such that when it's converted we would pass the check
 
+But that won't work because if we do that then v5 is set to `727 + 1 = 728` and the check done on `v5` to make sure it's less than `v6` won't return True thereby giving us the error message
 
 
 
