@@ -38,12 +38,23 @@ Anyways I don't plan on making the solutions to all the challenges I solved but 
 ## Web
 - Console-idation
 
+
 ### Pwn 7/8 :~
 
 #### Flow
 ![image](https://github.com/user-attachments/assets/5fb6d5b0-074f-4859-bce8-c3a44eb5ddfb)
 
-I downloaded the 
+TD;LR -> Variable overwrite
+
+I downloaded the attached file and checking the file type shows this
+![image](https://github.com/user-attachments/assets/a919c171-5503-44fa-a3dd-903e5eea7334)
+
+So we're working with a 64bits executable which is dynamically linked and not stripped
+
+From the protections shown by `checksec` we can see just `PIE and NX` enabled
+
+Moving on, I ran the binary to get an overview of what it does
+
 
 
 
