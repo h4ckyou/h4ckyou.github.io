@@ -301,9 +301,26 @@ This is what the `read_int` function does
 
 Basically it reads in our input which is the choice we want from the menu then it null terminates it and converts it to a long int
 
-Based on the choice provided it switches to the 
+Based on the choice provided it switches to the cases
 
+Most of the functions there based on the case are not useful so i'll show some relevant ones
 
+Case 1:
+![image](https://github.com/user-attachments/assets/e9a10a1a-9ec2-4815-b555-357a745acb01)
+
+- At first that might look like an overflow because we are reading at most 0x4000 bytes into variable `s` which is a buffer that can hold up 256 bytes
+- But then it calls `print_message()` on `s`
+- And what that does is to print the content stored in s and exit()
+
+![image](https://github.com/user-attachments/assets/66b1c0a9-ebe8-4c80-a95a-d90b04899b24)
+
+- Because it exits therefore we don't have control over the return address so this is not useful
+
+Case 3:
+![image](https://github.com/user-attachments/assets/1eaac0b9-004f-4d77-be52-91504efc464a)
+
+- It allocates a pointer of size pointed by global variable `injection_size`
+- Reads our input into the pointer of at most 7 (
 
 
 
