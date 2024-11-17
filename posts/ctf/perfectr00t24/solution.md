@@ -201,6 +201,10 @@ Doing that should give us the flag and here's my [solve]()
 Flag: r00t{n0th1ng_t0_h1d3_wh3n_th3_fl0w_1s_nihil_9027}
 ```
 
+#### Daily Routine
+
+![image](https://github.com/user-attachments/assets/05ace08c-b350-4262-b872-bb901e4b697a)
+
 
 
 
