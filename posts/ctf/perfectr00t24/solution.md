@@ -183,10 +183,17 @@ Our goal is obviously to pass the check because doing that would give us the fla
 
 Here's what i did
 
-Notice how we have the overflow on our second read and basically at that point the v5 & v6 variables would already hold some value and there are going to be on the stack
+Notice how we have the overflow on our second read and basically at that point the v5 & v6 variables would already hold some value and there are going to be on the stack and we are still reading into the `s` variable
 
 Now take a look at the stack of the function
 ![image](https://github.com/user-attachments/assets/6764f11d-0d3d-4196-a873-6b804cd95073)
+
+Basically we can groom the stack such that we leverage the overflow and set those varaibles to any value we want
+
+This is how my payload looks like:
+- junk to just set v5 to a value (in order to reach second read)
+- fill up the s variable with 16 bytes -> the next 8 bytes is the v5 variable so we overwrite that with a small value -> padding with 4 bytes -> next 4 bytes is the v6 variable and we set that to the expected value 727
+
 
 
 
