@@ -171,10 +171,22 @@ Let's understand what this does:
 
 At first it might look like we just need to set our first input to 727 such that when it's converted we would pass the check
 
-But that won't work because if we do that then v5 is set to `727 + 1 = 728` and the check done on `v5` to make sure it's less than `v6` won't return True thereby giving us the error message
+But that won't work because if we do that then v5 is set to `727 + 1 = 728` and the check done on `v5` to make sure it's less than `v6` won't return true because at that point v5 > v6 thereby giving us the error message
 
+Now what's the bug? Well there's a buffer overflow on both the first & second read
 
+It defines a char buffer `s` which can hold up at most `16` bytes of data, but during our read we actually `fgets` at most `100` bytes into the `s` buffer leading to an overflow
 
+What can we do with this? 
+
+Our goal is obviously to pass the check because doing that would give us the flag
+
+Here's what i did
+
+Notice how we have the overflow on our second read and basically at that point the v5 & v6 variables would already hold some value and there are going to be on the stack
+
+Now take a look at the stack of the function
+![image](https://github.com/user-attachments/assets/6764f11d-0d3d-4196-a873-6b804cd95073)
 
 
 
