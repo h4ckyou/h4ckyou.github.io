@@ -90,6 +90,15 @@ Ok firstly the vulnerability is a 4 byte overflow and the reason is due to the p
 
 Our goal is to overwrite the v2 variable to the expected value because that check can never pass since v2 is initialized as 12
 
+Looking at the stack view of the function we get this
+![image](https://github.com/user-attachments/assets/009c5371-d5b6-4918-aa9a-c88d0d6b1e7d)
 
+Basically after the buffer is the v2 variable, so this means if we fill up the buffer with 60 bytes the next 4 bytes will overwrite the check (v2) variable
 
+Doing that i get the flag and here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/flow/solve.py)
+![image](https://github.com/user-attachments/assets/bab0e779-c119-4d26-a361-c8fdb6818cdf)
+
+```
+Flag: r00t{fl0w_0f_c0ntr0l_3ngag3d_7391}
+```
 
