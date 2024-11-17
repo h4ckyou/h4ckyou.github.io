@@ -411,8 +411,173 @@ So after the call to `fgets` our input would be stored in `s`, then `strcspn` is
 
 If we overwrite that to system rather than it calling `strcspn` it would do `system`
 
-With that as our goal here's my exploit [script]()
+With that as our goal here's my exploit [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Daily%20Routine/solve.py)
 
 Running it works
 ![image](https://github.com/user-attachments/assets/7dca908e-9510-4be1-8c1d-2415c2db1ebb)
+
+```
+Flag: r00t{At_th4t_r4t3_Y0u_mu5t_b3_5t4lk1n9_m3_3ac1294}
+```
+
+#### Heap Wars
+![image](https://github.com/user-attachments/assets/5b3b80a8-93a7-47fd-91e2-d52a7e2a1743)
+
+Usual file type & protection check process
+![image](https://github.com/user-attachments/assets/424ef429-272c-4dd5-a4fd-942ba28bcd0e)
+
+Nothing out of the ordinary
+
+Running it we get this
+![image](https://github.com/user-attachments/assets/a3a13534-044a-4a47-8653-cade4b76c0e1)
+
+Seems we have 4 options to choose from
+
+Loading it in IDA here's the main function
+![image](https://github.com/user-attachments/assets/10a9ec2c-24e2-4b13-847a-3f2b6a46466e)
+
+```
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  char *v3; // rdi
+  int v5; // [rsp+18h] [rbp-128h] BYREF
+  int v6; // [rsp+1Ch] [rbp-124h]
+  char *dest; // [rsp+20h] [rbp-120h]
+  void *ptr; // [rsp+28h] [rbp-118h]
+  char s[264]; // [rsp+30h] [rbp-110h] BYREF
+  unsigned __int64 v10; // [rsp+138h] [rbp-8h]
+
+  v10 = __readfsqword(0x28u);
+  setup();
+  dest = malloc(0x40uLL);
+  ptr = malloc(8uLL);
+  *ptr = darthVader;
+  v6 = 1;
+  while ( v6 )
+  {
+    puts("====== Jedi Training Menu ======");
+    puts("1. Enter your Jedi code");
+    puts("2. Jedi data");
+    puts("3. Jedi next bounty");
+    puts("4. Exit");
+    printf("Enter your choice: ");
+    if ( __isoc99_scanf("%d", &v5) != 1 )
+    {
+      puts("Invalid input! Please enter a number.");
+      while ( getchar() != 10 )
+        ;
+    }
+    if ( v5 == 4 )
+    {
+      puts("Exiting the program. May the Force be with you!");
+      v6 = 0;
+    }
+    else
+    {
+      if ( v5 > 4 )
+        goto LABEL_17;
+      switch ( v5 )
+      {
+        case 3:
+          printf("Jedi bounty: %p\n", ptr);
+          break;
+        case 1:
+          printf("Enter your Jedi code: ");
+          getchar();
+          if ( !fgets(s, 256, stdin) )
+          {
+            perror("Error reading input");
+            exit(1);
+          }
+          v3 = dest;
+          strcpy(dest, s);
+          (*ptr)(v3);
+          puts("Jedi code saved.");
+          break;
+        case 2:
+          printf("Jedi data: %p\n", dest);
+          break;
+        default:
+LABEL_17:
+          puts("Invalid choice! Please select a valid option.");
+          break;
+      }
+    }
+  }
+  free(dest);
+  free(ptr);
+  return 0;
+}
+```
+
+So let's understand what it does:
+- First it does some memory allocation via a call to `malloc`
+- The first call is allocating a chunk of size `0x40`
+- The second call is allocating a chunk of size `0x8` and it sets the value at that address to the function address of `darthVader`
+- In a while loop it prints the menu and we can select from choice 1 - 4
+
+Choice 4:
+- Breaks out of the loop
+- Deallocates the memory via a call to `free`
+
+Choice 3:
+- Leaks the heap address of the second allocated memory `ptr`
+
+Choice 2:
+- Leaks the heap address of the first allocated memory `dest`
+
+Choice 1:
+- Reads in at most 256 bytes into the stack variable `s` which can hold up to 264 bytes ( so no overflow here)
+- Copies the value stored in `s` into the heap chunk `dest`
+- Calls the function stored in `ptr` passing the address of `dest` as parameter
+
+From this the bug is a heap overflow and the reason is because during the allocation it specifies that it wants `64` bytes of data but during the part where it moves our input value from the stack to the heap is makes use of `strcpy` which is a vulnerable function because it doesn't check the size of src which is been moved to dest
+
+What now?
+
+Well since we know that the value stored in ptr is a function pointer and it's going to be executed after the strcpy we can use the heap overflow to overwrite the function pointer to any value
+
+But what value should we overwrite it to?
+
+Looking through the available functions i saw a win function called `theForce`
+![image](https://github.com/user-attachments/assets/b8205786-051f-48ad-ac6f-3538f5d6e167)
+
+So we just overwrite the function pointer on the heap to that and profit!
+
+To calculate the offset needed to reach the pointer i did it dynamically
+
+- Set a breakpoint at main+381 (this is the point where it does a strcpy)
+- Go to the next instruction
+- vis_heap_chunks to get a visualization on how the heap chunks are (this is a pwndbg command)
+
+![image](https://github.com/user-attachments/assets/a5aec816-53e4-4424-b566-5d47d2452019)
+
+We can see our input starts at: 0x4052a0 and the function pointer is at: 0x4052f0
+
+So we just subtract it:
+= 0x4052f0 - 0x4052a0
+= 80
+= 80 - 8 = 72
+
+Now we just pad with 72 bytes chunk then the next 8 bytes is the function pointer which we would overwrite
+
+Here's my solve [script]()
+![image](https://github.com/user-attachments/assets/a27f804c-a1e7-4069-88c7-c554e5eeb41a)
+
+
+```
+Flag: r00t{h34p_0v3rfl0w_1n_th3_f0rc3_1ebfe9e04a01ac4b00d4bd194b1bd505}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
