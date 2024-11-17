@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/35144d46-6926-4ead-8e2f-452abab09409)<h3> Perfectroot CTF 2024 </h3>
+<h3> Perfectroot CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/b55b9b6d-8b2c-429a-bd9f-b2542a787953)
 
