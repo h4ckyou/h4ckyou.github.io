@@ -95,10 +95,46 @@ Looking at the stack view of the function we get this
 
 Basically after the buffer is the v2 variable, so this means if we fill up the buffer with 60 bytes the next 4 bytes will overwrite the check (v2) variable
 
+So here's our goal:
+- Fill up the buffer with junk 60 bytes
+- Overwrite the v2 variable with 0x34333231
+- Profit
+
 Doing that i get the flag and here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/flow/solve.py)
 ![image](https://github.com/user-attachments/assets/bab0e779-c119-4d26-a361-c8fdb6818cdf)
 
 ```
 Flag: r00t{fl0w_0f_c0ntr0l_3ngag3d_7391}
 ```
+
+#### Nihil
+![image](https://github.com/user-attachments/assets/9111315d-a14d-49eb-ac0d-fcd911e44099)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
