@@ -100,7 +100,7 @@ So here's our goal:
 - Overwrite the v2 variable with 0x34333231
 - Profit
 
-Doing that i get the flag and here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Flow/solve.py)
+Doing that i get the flag and here's my [solve script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Flow/solve.py)
 ![image](https://github.com/user-attachments/assets/bab0e779-c119-4d26-a361-c8fdb6818cdf)
 
 ```
@@ -194,7 +194,7 @@ This is how my payload looks like:
 - junk to just set v5 to a value (in order to reach second read)
 - fill up the s variable with 16 bytes -> the next 8 bytes is the v5 variable so we overwrite that with a small value -> padding with 4 bytes -> next 4 bytes is the v6 variable and we set that to the expected value 727
 
-Doing that should give us the flag and here's my [solve]()
+Doing that should give us the flag and here's my [solve script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Nihil/solve.py)
 ![image](https://github.com/user-attachments/assets/3f362af2-c4c4-440a-8aa3-7b68f737b07f)
 
 ```
@@ -202,10 +202,94 @@ Flag: r00t{n0th1ng_t0_h1d3_wh3n_th3_fl0w_1s_nihil_9027}
 ```
 
 #### Daily Routine
-
 ![image](https://github.com/user-attachments/assets/05ace08c-b350-4262-b872-bb901e4b697a)
 
+Okay same process as always :)
+![image](https://github.com/user-attachments/assets/9636fe7d-fe53-436a-8546-6450ac2c772a)
 
+This time around we are actually given the libc, linker and Dockerfile
+![image](https://github.com/user-attachments/assets/d25ae2f5-fbe3-40b2-be86-530366db16bb)
+
+Just to be on a safe side I always patch the binary to use the libc given with pwninit that's to make sure it uses the same libc as the one being used on the remote instance
+
+```
+pwninit --bin challenge --libc libc.so.6 --ld ld-linux-x86-64.so.2 --no-template
+```
+
+Back to the protections from the result of running checksec we can see that only NX is enabled
+
+Moving on I ran the binary to get an overview of what it does
+![image](https://github.com/user-attachments/assets/327a1894-a530-48eb-8d43-b3d080cbe5d3)
+
+Well well, there are so many options
+
+We can try play around but I just decided to reverse it 
+
+Throwing it in IDA we get the main function
+![image](https://github.com/user-attachments/assets/7b09356a-1dc0-4d4f-b034-699f4b1852ae)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  init();
+  while ( 1 )
+  {
+    menu();
+    switch ( (unsigned int)get_choice(14LL) )
+    {
+      case 1u:
+        eat_breakfast();
+      case 2u:
+        brush_my_teeth();
+        break;
+      case 3u:
+        tweet_inject();
+        break;
+      case 4u:
+        meditate();
+        break;
+      case 5u:
+        free_palestine();
+        break;
+      case 6u:
+        podcast_time();
+        break;
+      case 7u:
+        play_warzone();
+        break;
+      case 8u:
+        pet_the_cat();
+        break;
+      case 9u:
+        take_a_shower();
+        break;
+      case 0xAu:
+        make_the_bed();
+        break;
+      case 0xBu:
+        watch_youtube_videos();
+        break;
+      case 0xCu:
+        play_guitar();
+        break;
+      case 0xDu:
+        read_notes();
+        break;
+      case 0xEu:
+        take_notes();
+        break;
+      default:
+        continue;
+    }
+  }
+}
+```
+
+First it calls the `init` function which disables buffering on `stdin & stdout`
+![image](https://github.com/user-attachments/assets/d69b699e-e3e3-467a-9d3f-1984bedd3e87)
+
+In a while loop it calls the `menu` function which basically prints out the menu available
+![image](https://github.com/user-attachments/assets/f5055a0d-3b36-40de-bd62-e7b5c2928929)
 
 
 
