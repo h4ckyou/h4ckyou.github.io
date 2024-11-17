@@ -17,3 +17,38 @@ Anyways I don't plan on making the solutions to all the challenges I solved but 
 ![image](https://github.com/user-attachments/assets/df755a22-23e7-4252-9e9e-b56a2228e82b)
 ![image](https://github.com/user-attachments/assets/cefac533-589c-4c64-b5de-707fc900547b)
 ![image](https://github.com/user-attachments/assets/6d01822d-971d-47d7-8673-fcbf0047cefc)
+
+## Pwn
+- Flow
+- Nihil
+- Daily Routine
+- Heap Wars
+- Heaps Don't Lie
+- Sea Shells
+- Arm and a Leg
+
+## Rev
+- Hackers Catch
+- Re-Incarnation
+- Hackers Catch 2
+- Go Dark
+- Box
+- Pores
+
+## Web
+- Console-idation
+
+### Pwn 7/8 :~
+
+#### Flow
+![image](https://github.com/user-attachments/assets/5fb6d5b0-074f-4859-bce8-c3a44eb5ddfb)
+
+I downloaded the 
+
+
+
+
+
+
+
+
