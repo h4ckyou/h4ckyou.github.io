@@ -110,6 +110,57 @@ Flag: r00t{fl0w_0f_c0ntr0l_3ngag3d_7391}
 #### Nihil
 ![image](https://github.com/user-attachments/assets/9111315d-a14d-49eb-ac0d-fcd911e44099)
 
+I downloaded the attached file and checking the file type shows this
+![image](https://github.com/user-attachments/assets/031846f2-fbef-423f-a16b-7397d77c5079)
+
+Pretty much same as before so i'm not repeating myself
+
+I ran the binary to get an overview of what it does
+![image](https://github.com/user-attachments/assets/d70d13a1-10cd-4bd0-a8c3-1a6a0bec277f)
+
+Running it, we can see that it receives a number and a string before exiting 
+
+Loading it in IDA here's the main function
+![image](https://github.com/user-attachments/assets/ba731bb2-55a1-4405-b857-ac16e60b6407)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  char s[16]; // [rsp+0h] [rbp-20h] BYREF
+  unsigned __int64 v5; // [rsp+10h] [rbp-10h]
+  unsigned int v6; // [rsp+1Ch] [rbp-4h]
+
+  setbuf(stdin, 0LL);
+  setbuf(_bss_start, 0LL);
+  printf("How much did you get? ");
+  fgets(s, 100, stdin);
+  v6 = atoi(s);
+  v5 = v6 + 1;
+  puts("Any last words?");
+  fgets(s, 100, stdin);
+  if ( v5 < v6 )
+  {
+    printf("What, How did you beat me?");
+    if ( v6 == 727 )
+    {
+      printf("Here is your flag: ");
+      flag_file = fopen("flag.txt", "r");
+      fgets(flag, 100, flag_file);
+      puts(flag);
+    }
+    else
+    {
+      puts("Just kidding!");
+    }
+  }
+  else
+  {
+    printf("Ha! I got %d\n", v5);
+    puts("Maybe you will beat me next time");
+  }
+  return 0;
+}
+```
 
 
 
