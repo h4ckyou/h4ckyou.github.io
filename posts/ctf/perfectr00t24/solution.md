@@ -388,5 +388,31 @@ Now we have a primitive that can let us make OOB write what next?
 
 At this point during the time I was solving it i immediately decided to target the global offset table because it was writable since `RELRO was disabled`
 
+To calculate the offset from the `pretty_large_array` global variable to any of our specified got address we simple subtract it
 
+```
+(got_addr - pretty_large_array) // 8 (diving by 8 because of the way it accesses the array -> does it based on the size which is 8 bytes)
+```
+
+Next thing is what got address should we overwrite and what should we overwrite it to?
+
+My main goal was spawning a shell:
+
+```
+system("/bin/sh")
+```
+
+So I need a function such that when called it uses our user control input as the first parameter
+
+Looking through I found a perfect function `strcspn` which is only used in `read_int`
+![image](https://github.com/user-attachments/assets/9de99f71-c6f6-42c1-861c-9bd4504ad385)
+
+So after the call to `fgets` our input would be stored in `s`, then `strcspn` is used to null terminate our input, and as we can see our input variable is passed as the first parameter
+
+If we overwrite that to system rather than it calling `strcspn` it would do `system`
+
+With that as our goal here's my exploit [script]()
+
+Running it works
+![image](https://github.com/user-attachments/assets/7dca908e-9510-4be1-8c1d-2415c2db1ebb)
 
