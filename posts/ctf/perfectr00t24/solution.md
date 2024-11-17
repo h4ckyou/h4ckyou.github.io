@@ -561,7 +561,7 @@ So we just subtract it:
 
 Now we just pad with 72 bytes chunk then the next 8 bytes is the function pointer which we would overwrite
 
-Here's my solve [script]()
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Heap%20Wars/solve.py)
 ![image](https://github.com/user-attachments/assets/a27f804c-a1e7-4069-88c7-c554e5eeb41a)
 
 
