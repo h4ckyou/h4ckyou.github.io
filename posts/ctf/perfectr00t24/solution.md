@@ -319,13 +319,20 @@ Case 1:
 Case 3:
 ![image](https://github.com/user-attachments/assets/1eaac0b9-004f-4d77-be52-91504efc464a)
 
-- It allocates a pointer of size pointed by global variable `injection_size`
-- Reads our input into the pointer of at most 7 (
+- It allocates a pointer of size pointed by global variable `injection_size` and stores the memory address in variable `s`
+- Reads our input into `s` of at most 7 bytes (injection_size = 7)
+- Allocates another pointer of (16 + 7) bytes
+- Generates a string: "unset PATH; echo $s"
+- Copy the string into the newly allocated memory
+- Calls `system` on the value stored in the address
 
+Ok this looks good basically it would read our input let's say we give it: `abcd` then the final command passed into `system` is `unset PATH; echo "abcd"`
 
+Since we can control what to echo we can do a command injection but take into consideration that the environment variable PATH is unset so we have to fully specify the full path to the executable we want to run or set the PATH variable again
 
+But thinking of that we can't pretty much do that for now because our input length is limited to just 7 bytes and that's not enough to apply what we want
 
-
+Keep in mind that the size to be allocated with malloc is also used as the size when reading input into the allocated memory, and this size is actually a global variable
 
 
 
