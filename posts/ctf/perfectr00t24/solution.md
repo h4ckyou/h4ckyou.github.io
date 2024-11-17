@@ -1,4 +1,4 @@
-<h3> Perfectroot CTF 2024 </h3>
+![image](https://github.com/user-attachments/assets/35144d46-6926-4ead-8e2f-452abab09409)<h3> Perfectroot CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/b55b9b6d-8b2c-429a-bd9f-b2542a787953)
 
@@ -291,9 +291,17 @@ First it calls the `init` function which disables buffering on `stdin & stdout`
 In a while loop it calls the `menu` function which basically prints out the menu available
 ![image](https://github.com/user-attachments/assets/f5055a0d-3b36-40de-bd62-e7b5c2928929)
 
+Next it calls the `get_choice` function passing `14` as the parameter
+![image](https://github.com/user-attachments/assets/0c1f598b-b146-49d2-afb2-bf51cb7b8bdd)
 
+So what this function does is to basically read in an integer and make sure that it's within the available function based on the switch cases (making sure it's greater than 0 and less than or equal to 14)
 
+This is what the `read_int` function does
+![image](https://github.com/user-attachments/assets/bb6e4371-64c1-43b1-8cb7-9a72bc400178)
 
+Basically it reads in our input which is the choice we want from the menu then it null terminates it and converts it to a long int
+
+Based on the choice provided it switches to the 
 
 
 
