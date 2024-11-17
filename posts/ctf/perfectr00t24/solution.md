@@ -44,8 +44,6 @@ Anyways I don't plan on making the solutions to all the challenges I solved but 
 #### Flow
 ![image](https://github.com/user-attachments/assets/5fb6d5b0-074f-4859-bce8-c3a44eb5ddfb)
 
-TD;LR -> Variable overwrite
-
 I downloaded the attached file and checking the file type shows this
 ![image](https://github.com/user-attachments/assets/a919c171-5503-44fa-a3dd-903e5eea7334)
 
@@ -54,11 +52,43 @@ So we're working with a 64bits executable which is dynamically linked and not st
 From the protections shown by `checksec` we can see just `PIE and NX` enabled
 
 Moving on, I ran the binary to get an overview of what it does
+![image](https://github.com/user-attachments/assets/f618f612-f8a3-46ab-bd9b-14560fff5a3e)
 
+It seems to receive our input then the program stops!
 
+Okay time to reverse it, throwing it into IDA i get the main function
+![image](https://github.com/user-attachments/assets/906e2ed7-f639-4366-8039-6d94c3aa6a63)
 
+The main function just calls the `vulnerable` function, and here's the decompilation
+![image](https://github.com/user-attachments/assets/ee2170fb-2efc-4cc7-8a16-012eaa349169)
 
+```c
+__int64 vulnerable()
+{
+  __int64 result; // rax
+  _BYTE v1[60]; // [rsp+0h] [rbp-40h] BYREF
+  int v2; // [rsp+3Ch] [rbp-4h]
 
+  v2 = 12;
+  printf("Enter a text please: ");
+  result = __isoc99_scanf("%64s", v1);
+  if ( v2 == 0x34333231 )
+    return win();
+  return result;
+}
+```
+
+Okay looking at the pseudocode, we can see that:
+- it defines a char array `v1` that can hold up 60 bytes of data
+- a variable `v2` is initialized to 12
+- after it receives our input which is then stored into `v1` it does a comparism that checks if `v2` equals `0x34333231`
+- if the comparism returns True it calls the win function which basically prints the flag else it just returns
+
+![image](https://github.com/user-attachments/assets/e6ad10a9-1703-4202-8f0d-6024b45d64dc)
+
+Ok firstly the vulnerability is a 4 byte overflow and the reason is due to the program reading in at most 64 bytes into a buffer that can only hold up 60 bytes 
+
+Our goal is to overwrite the v2 variable to the expected value because that check can never pass since v2 is initialized as 12
 
 
 
