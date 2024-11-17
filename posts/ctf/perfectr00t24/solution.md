@@ -194,8 +194,12 @@ This is how my payload looks like:
 - junk to just set v5 to a value (in order to reach second read)
 - fill up the s variable with 16 bytes -> the next 8 bytes is the v5 variable so we overwrite that with a small value -> padding with 4 bytes -> next 4 bytes is the v6 variable and we set that to the expected value 727
 
+Doing that should give us the flag and here's my [solve]()
+![image](https://github.com/user-attachments/assets/3f362af2-c4c4-440a-8aa3-7b68f737b07f)
 
-
+```
+Flag: r00t{n0th1ng_t0_h1d3_wh3n_th3_fl0w_1s_nihil_9027}
+```
 
 
 
