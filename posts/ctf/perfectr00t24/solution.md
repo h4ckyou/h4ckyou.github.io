@@ -1444,6 +1444,20 @@ Running it gives the flag
 Flag: r00t{uguntu_g0ing_t0_the_r00t}
 ```
 
+#### Pores
+![image](https://github.com/user-attachments/assets/cf4068c1-f280-4942-96e8-c6f7ae8042e3)
+
+Let us do our standard checks
+![image](https://github.com/user-attachments/assets/858aec31-4a92-4966-a572-40ca9fb75dd6)
+![image](https://github.com/user-attachments/assets/16c7aa60-6298-4563-80d2-5b5c71067676)
+
+Nothing out of the ordinary
+
+Running it shows this
+![image](https://github.com/user-attachments/assets/ecfd2ff4-9974-4322-8add-1614ee394aae)
+
+Similarly to `Go Dark` let us run strace
+![image](https://github.com/user-attachments/assets/4ad8fa1b-016c-40d1-98d5-540d0494d29e)
 
 
 
