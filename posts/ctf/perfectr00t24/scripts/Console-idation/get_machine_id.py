@@ -5,7 +5,7 @@ def get_machine_id() -> str | bytes | None:
         linux = b""
 
         # machine-id is stable across boots, boot_id is not.
-        for filename in "/etc/machine-id", "/proc/sys/kernel/random/boot_id":
+        for filename in "machine_id", "boot_id":
             try:
                 with open(filename, "rb") as f:
                     value = f.readline().strip()
@@ -22,7 +22,7 @@ def get_machine_id() -> str | bytes | None:
         # information. This is used outside containers too but should be
         # relatively stable across boots.
         try:
-            with open("/proc/self/cgroup", "rb") as f:
+            with open("cgroup", "rb") as f:
                 linux += f.readline().strip().rpartition(b"/")[2]
         except OSError:
             pass
