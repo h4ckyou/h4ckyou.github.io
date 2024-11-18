@@ -1498,17 +1498,74 @@ About handler:
 SayName handler:
 ![image](https://github.com/user-attachments/assets/5d462306-86d9-4709-bb5d-a4cb111caf82)
 
-Now let us look at the Flag handler
-
 Opening the binary in IDA we can see the list of functions defined in main and they all correspond to the handlers
 ![image](https://github.com/user-attachments/assets/8683233a-62b0-44e0-b8f0-6f91e221bd8f)
 
+Our interest is that of `main.getFlagHandler`
+![image](https://github.com/user-attachments/assets/3a6e03a4-4af0-49c8-9667-6ed80c6e472c)
 
+Here's the pseudocode
+![image](https://github.com/user-attachments/assets/5d256e3c-ec01-4556-8cb5-c16dd2ccf869)
+![image](https://github.com/user-attachments/assets/bbcde92f-c120-4edc-9781-5d1b2007441b)
+![image](https://github.com/user-attachments/assets/ed2ef805-e2d7-4d1f-9c43-6137749c5e83)
 
+Now as you may have noticed it's not exactly nice in the eye but it's way more better than looking at a stripped version with no debug info
 
+So i'll just go through it briefly:
+- First it checks the request method length if it equals 4 or the method is `POST` and if that's not the case it goes to `LABEL_5` which is the part that prints the fake flag
+- This means our main check is going to be triggered via a post request
+- If the request method is post:
+    - It's going to make sure the content type is application/json
+    - Moving forward it's going to basically check the content of the json data to see if the key field is the same as the expected one
+    - And then there's a `memequal` call that compares our json data value with some hardcoded one, if it's equal it opens up the flag and prints it out
+    - If we fail any of the above check it would just print that fake flag
 
+More of how i figured that was gotten via debugging which i don't want to show here because it's tedious
 
+In anycase we know that it:
+- expects a valid json data in the request body
+- makes sure that the json key matches the correct type
+- compares the json value with some hardcoded one
 
+Now we need to figure the expected json key and value
+
+Looking at the comparism portion in the disassembly i got this
+![image](https://github.com/user-attachments/assets/4ab71d4c-7858-4239-b4ee-771dd3a263c1)
+
+So it's clear that our expected value should be `r00t{LITERALLY_FAKE_FLAG}` 
+
+To get the expected key i saw it was loading `&byte_888503` and on clicking it i got this
+![image](https://github.com/user-attachments/assets/5ef57a91-fb98-4dda-a0ad-8f5c0113e14e)
+
+This looks very much like a character array so i converted it to string and got this
+![image](https://github.com/user-attachments/assets/cf141458-a362-41be-8bb1-a59d0699bfb3)
+
+It seems to merge all strings together but nevertheless we now know the expected key which is `secret_key`
+
+To solve we just make the expected post request and doing that i got the flag
+![image](https://github.com/user-attachments/assets/1a302ffb-6a86-49f5-9ca0-1d9c7c39b7ab)
+
+```
+POST /Z2V0RmxhZwo= HTTP/1.1
+Host: 94.72.112.248:61337
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.65 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Connection: close
+Content-Length: 42
+Content-Type: application/json;charset=UTF-8
+
+{"secret_key":"r00t{LITERALLY_FAKE_FLAG}"}
+```
+
+Got the flag
+
+```
+Flag: r00t{you_4re_kind@_sm4rt_t0_be_H#R#}
+```
 
 #### Pores
 ![image](https://github.com/user-attachments/assets/cf4068c1-f280-4942-96e8-c6f7ae8042e3)
