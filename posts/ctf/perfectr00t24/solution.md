@@ -350,7 +350,7 @@ That would work! (I didn't even notice this during the ctf i used another way ðŸ
 But notice that if you tried communicate with the program and read a file via terminal it won't work
 ![image](https://github.com/user-attachments/assets/a3359286-be0c-4845-8bc3-4d8dbfc47123)
 
-This is because a newline is sent with our filename and `fgets()` would read it therefore `open` would also attempt reading the filename which is already appended with a newline which is going to return -1 because such file doesn't exit
+This is because a newline is sent with our filename and `fgets()` would read it therefore `open` would also attempt reading the filename which is already appended with a newline which is going to return -1 because such file doesn't exist
 
 To fix this you need to add a null byte at the end of the filename because fgets stops at a null byte 
 
@@ -438,7 +438,7 @@ Seems we have 4 options to choose from
 Loading it in IDA here's the main function
 ![image](https://github.com/user-attachments/assets/10a9ec2c-24e2-4b13-847a-3f2b6a46466e)
 
-```
+```c
 int __fastcall main(int argc, const char **argv, const char **envp)
 {
   char *v3; // rdi
@@ -675,7 +675,14 @@ To leak libc, I set a breakpoint at `main+78`, which is just before the program 
 Offset 11 holds a libc address and we can confirm by checking the memory region that address resides in
 ![image](https://github.com/user-attachments/assets/8c147dff-252d-4337-9352-3e86364cea2a)
 
+Now to calculate the libc base we need to get the offset from our leak to the libc which we can easily do by subtracting it
+![image](https://github.com/user-attachments/assets/7454fed4-6b27-4796-ae08-4051226c8816)
 
+```
+x/gx 0x7f467b42a1ca-0x7f467b400000 = 0x2a1ca
+```
+
+This means that whenever we leak the pointer at stack offset 11 we would get a libc address then when we subtract it with `0x2a1ca` we'd get the libc base
 
 
 
