@@ -658,7 +658,7 @@ Well there are two vulnerabilities:
 - Heap overflow
 - Format string bug
 
-The heap overflow exists because we are reading at most 48 bytes into `chunk->name`  which can only hold up 32bytes of data
+The heap overflow exists because we are reading at most 48 bytes into `chunk->name`  which can only hold up 32 bytes of data
 
 While the format string bug is because it prints the content of `chunk->name` without using a format specifier
 
@@ -668,9 +668,12 @@ Our goal is to get code execution and how i went about it was using the format s
 
 Next i used the heap overflow to modify the function pointer of the second chunk to be allocated to that of `system` such that when the function pointer is about to be executed it would rather call `system` rather than `select_tune`
 
+To leak libc, I set a breakpoint at `main+78`, which is just before the program calls `printf(ptr1->name)`. This allows me to inspect the stack for libc pointers.
+![image](https://github.com/user-attachments/assets/0c670f5a-9d47-404a-b51b-a7bc0a48ceda)
+![image](https://github.com/user-attachments/assets/bfcb8a2b-abad-4b68-996d-e92e42a1854e)
 
-
-
+Offset 11 holds a libc address and we can confirm by checking the memory region that address resides in
+![image](https://github.com/user-attachments/assets/8c147dff-252d-4337-9352-3e86364cea2a)
 
 
 
