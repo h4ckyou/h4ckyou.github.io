@@ -621,6 +621,23 @@ struct Dance {
 };
 ```
 
+Now let us understand what it does:
+- It calls the dance function setting the parameter to the address of `select_tune`
+
+![image](https://github.com/user-attachments/assets/29181160-c25a-49ef-ba2d-a6708863f9e6)
+
+```c
+Dance *__fastcall dance(__int64 *func)
+{
+  Dance *chunk; // [rsp+10h] [rbp-10h]
+
+  chunk = malloc(40uLL);
+  mprotect((chunk & 0xFFFFFFFFFFFFF000LL), 0x1000uLL, 7);
+  chunk->func = func;
+  fgets(chunk->name, 48, _bss_start);
+  return chunk;
+}
+```
 
 
 
