@@ -1,0 +1,13 @@
+POST /Z2V0RmxhZwo= HTTP/1.1
+Host: 94.72.112.248:61337
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: lang=en-US; _csrf=dQdp1ToUQ9Jy9Y2qDT2vTt4iQbw6MTczMTY4NjEwMzg3NDQyNTIwNQ%3D%3D; i_like_gitea=f9ecf903c8a2ca13
+Upgrade-Insecure-Requests: 1
+Content-Length: 42
+Content-Type: application/json;charset=UTF-8
+
+{"secret_key":"r00t{LITERALLY_FAKE_FLAG}"}
