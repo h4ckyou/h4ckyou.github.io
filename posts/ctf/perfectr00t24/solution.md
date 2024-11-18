@@ -900,7 +900,15 @@ In a while loop it does this:
 
 Ok great, this is a shellcoding challenge but with a twist
 
-The twist is that we can't directly set the value at `steer` specified at `idx` to any value
+The twist is that we can't directly set the value at `steer` specified at `idx` to the byte we want
+
+But notice that we can control the index by using option 1 or 2 and that even if we can't directly control the byte at that index we can make use of option 3 to 6 to set it to what we want
+
+Now here's where things began to get though
+
+Our goal is obvious, fill up `steer` with our shellcode and execute it with option 7
+
+
 
 
 
