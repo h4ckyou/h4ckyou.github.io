@@ -919,7 +919,7 @@ I spent a lot of time trying to write an algorithm that generates all valid numb
 Next i wrote a mathematical representation which represents the way we'd set our byte:
 
 ```
-22a + 100b + 15c + (256 - 9)d = value_we_want
+22a + 100b + 15c + (256 - 9)d = value_we_want % 256
 ```
 
 I tried use:
@@ -928,6 +928,28 @@ I tried use:
 
 But sadly i failed at that
 
+After some while i remembered [Z3](https://github.com/Z3Prover/z3) which is an SAT Solver
+
+Using that worked perfectly 
+
+```python
+def create(val):
+    s = Solver()
+    a = BitVec("a", 8)
+    b = BitVec("b", 8)
+    c = BitVec("c", 8)
+    d = BitVec("d", 8)
+
+    s.add((a * 0x16) + (b * 0x64) + (c * 0xF) + (d * (0x100 - 9)) == val)
+    
+    if s.check() == sat:
+        m = s.model()
+        a = m[a].as_long()
+        b = m[b].as_long()
+        c = m[c].as_long()
+        d = m[d].as_long()
+        return [a, b, c, d]
+```
 
 
 
