@@ -1483,10 +1483,28 @@ call printFlag
 
 We can simply see that we would never get the flag because after it initializes the variable to 0 it compares it to 1 which is never going to be True thus jumping to the portion where the program returns
 
+Also if the check is True then it sets up the register for calling the `printFlag` function where `rdi` points to the address of the flag and rsi is set to 8
 
+So how do we solve this?
 
+Well i yet again patched it
 
+We can simply patch the `jnz` instruction to a `jz` instruction
+![image](https://github.com/user-attachments/assets/f3b7b083-d552-4f6a-86ac-2fbba5f4f5bf)
+![image](https://github.com/user-attachments/assets/4846d706-3c52-4d66-b218-0c670c2b35cd)
 
+```
+Edit -> Patch Program -> Assemble
+```
+
+Now we save the patch like we did previously
+
+To get the flag, we simply just execute the binary
+![image](https://github.com/user-attachments/assets/9a642b5d-7c2e-4828-aea0-ee5d4579b52c)
+
+```
+Flag: r00t{p4tch_th3_bin_and_h4ve_fun}
+```
 
 
 
