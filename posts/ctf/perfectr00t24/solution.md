@@ -584,7 +584,7 @@ Since the libc, linker and Dockerfile was provided I patched the binary to use t
 Running it to get an overview of what it does shows this
 ![image](https://github.com/user-attachments/assets/eb7e57e0-c0e2-463f-86d1-6b36cc31ccba)
 
-It seems to receive our input twice and prints it out before the program closes
+It seems to receive our input twice and prints it out before the program returns
 
 Loading it up in IDA here's the main function
 ![image](https://github.com/user-attachments/assets/516971e3-1a21-449c-b8d7-c1dec00e7939)
@@ -638,6 +638,29 @@ Dance *__fastcall dance(__int64 *func)
   return chunk;
 }
 ```
+
+- What this does is to allocate some dynamic memory of size 40 bytes and the pointer to that memory is stored into variable `chunk`
+- Next it changes the permission of the newly allocated memory to read, write and execute via a call to mprotect
+- It then sets `chunk->func` to the address of `select_tune` which was the parameter passed into it
+- Then it reads in our input of at most 48 bytes into `chunk->name`
+- Finally it returns the pointer to the allocated memory
+
+Back to the main function
+- The pointer to the allocated memory is stored into variable `ptr1`
+- It then prints out `ptr1->name`
+- And it calls the funtion pointed by `ptr1->func` passing `ptr1` as the parameter
+- It repeats this step again
+- Then it finally frees the memory allocated and returns
+
+Now what's the vulnerability?
+
+Well there are two vulnerabilities:
+- Heap overflow
+- Format string bug
+
+
+
+
 
 
 
