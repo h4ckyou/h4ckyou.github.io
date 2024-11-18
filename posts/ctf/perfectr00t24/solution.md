@@ -1068,6 +1068,7 @@ Okay nothing much here and the vulnerability is obvious, we have a buffer overfl
 What now?
 
 I looked at the available functions and saw this
+
 ![image](https://github.com/user-attachments/assets/861d54e1-b5b3-488c-9406-f448e09a3e29)
 
 So there's no easy win function for us to jump to 😢
@@ -1076,16 +1077,20 @@ This means we need to ROP
 
 There are two ways i actually attempted to solve this:
 - First i did ret2shellcode because i noticed that even though ASLR is turned on the stack is always at a constant address for some reason and basically since NX is disabled this means the stack is rwx. With that I overwrote the instruction pointer to the start of the buffer which holds our shellcode and that worked! I then built a docker container based on the Dockerfile provided to replicate this and i noticed that the stack address changed but it's always at a constant value fixing my exploit to use the new stack works but yet again running the exploit when the binary is ran with socat doesn't work
-- Next thing i tried was to ROP after i opened a ticket and the admins said that wasn't the intended solution since he forgot to enable NX
+- Next thing i tried was to ROP because i opened a ticket and the admins said that ret2shellcode wasn't the intended solution since he forgot to enable NX
 
 Now how do we ROP?
 
-I am familiar with x86_64 rop but not ARM so i did a little bit of research on ARM assembly because rop is pretty much chaining instructions present in the binary to perform something like spawnning shell etc.
+I am familiar with x86_64 rop but not ARM so i did a little bit of research on ARM assembly because rop is pretty much chaining instructions present in the binary to perform stuffs like spawnning shell etc.
 
 Using this arm assembly [tutorial](https://azeria-labs.com/writing-arm-assembly-part-1/) by Azeria i learnt some few things which i needed to solve the challenge
 
+The first thing we need to know is the set of registers present in an ARM processor
+![image](https://github.com/user-attachments/assets/90871517-b921-4c8c-9636-31b7d345e346)
+![image](https://github.com/user-attachments/assets/16e9ec7d-b14f-4b55-bdd2-868db4716b85)
 
-
+Now some quick idea of the instruction set 
+![image](https://github.com/user-attachments/assets/b3dec406-74cc-4a9f-8bce-faafe023afa6)
 
 
 
