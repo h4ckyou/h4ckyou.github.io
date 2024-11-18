@@ -1459,6 +1459,30 @@ Running it shows this
 Similarly to `Go Dark` let us run strace
 ![image](https://github.com/user-attachments/assets/4ad8fa1b-016c-40d1-98d5-540d0494d29e)
 
+Yet again we see it does nothing!
+
+Loading it up in IDA shows this
+![image](https://github.com/user-attachments/assets/f691a0e5-bf73-467b-95b7-09714acf4301)
+
+Hmmm it doesn't seem to do anything and why's that?
+
+Well let us take a look at the disassembly
+![image](https://github.com/user-attachments/assets/f12b8930-cb0c-471d-9b44-2fc9ca429a17)
+
+From IDA's nice graph view we can see the following instructions:
+
+```c
+mov [rbp-4], 0
+cmp [rbp-4], 1
+jnz return
+mov esi, 8
+lea rax, flag
+mov rdi, rax
+call printFlag
+```
+
+We can simply see that we would never get the flag because after it initializes the variable to 0 it compares it to 1 which is never going to be True thus jumping to the portion where the program returns
+
 
 
 
