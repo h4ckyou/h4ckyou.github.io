@@ -1741,9 +1741,44 @@ At this point it's clear on what we should do
 
 Basically we need to leverage the file read to generate the debug pin
 
-You can read more on it [here]()
+You can read more on it [here](https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/werkzeug#werkzeug-console-pin-exploit)
 
+I actually attempted to use an automated [exploit](https://github.com/Ruulian/wconsole_extractor) with some few modifications at first but that didn't work 
 
+But it gave me insight on all the data i needed like the flask path which is required for the pin generation
+
+I wrote a script alternatively to find it and you can get it [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/query.py)
+
+But any ways here's what we need for generating the pin:
+
+```
+probably_public_bits:
+- username: root
+- modname: flask.app
+- getattr(app, '__name__', getattr(app.__class__, '__name__')): Flask
+- getattr(mod, '__file__', None): /usr/local/lib/python3.9/site-packages/flask/app.py
+```
+
+Now this is the tricky part and that's getting the `private_bits` value
+
+I exfiltrated the `debug.py` source code from the server and you can find it [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/debug.py) because it's easier to reference what we are meant to do
+
+For the `str(uuid.getnode())` which is the server mac address we can get that by identifying the active network interface used by the app
+![image](https://github.com/user-attachments/assets/6d904160-e015-4682-aa4e-e1f078a2d716)
+
+```
+- /proc/net/arp
+- /sys/class/net/eth0/address
+```
+
+From doing that we get the mac as `2485377892361` which is the equivalent to `str(uuid.getnode())` from [here](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/debug.py#L194)
+
+Next we need the second value which is the `machine_id`
+
+Since i'm a lazy person i just copy/paste the machine_id made some [modification](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/get_machine_id.py) and ran it 
+
+But for it to work we need to exfiltrate three files:
+- 
 
 
 
