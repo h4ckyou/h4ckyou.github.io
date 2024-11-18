@@ -658,8 +658,15 @@ Well there are two vulnerabilities:
 - Heap overflow
 - Format string bug
 
+The heap overflow exists because we are reading at most 48 bytes into `chunk->name`  which can only hold up 32bytes of data
 
+While the format string bug is because it prints the content of `chunk->name` without using a format specifier
 
+Ok what now?
+
+Our goal is to get code execution and how i went about it was using the format string bug (fsb) to leak pointers to the libc region which enabled me to calculate the libc base address hence letting me know where `system` resides in libc
+
+Next i used the heap overflow to modify the function pointer of the second chunk to be allocated to that of `system` such that when the function pointer is about to be executed it would rather call `system` rather than `select_tune`
 
 
 
