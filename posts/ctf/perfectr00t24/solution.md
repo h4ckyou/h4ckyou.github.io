@@ -690,7 +690,7 @@ Now when the function pointer is about to be executed it would do `ptr2->func()(
 
 To do that we just set the first 8 bytes to be `/bin/sh\x00` then is effectively does: `system("/bin/sh")`
 
-Doing that works!
+Doing that works, here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Heaps%20Dont%20Lie/solve.py)
 ![image](https://github.com/user-attachments/assets/97db2295-35c4-4707-904c-60716cf13fb8)
 
 ```
@@ -744,6 +744,10 @@ def solve():
 
     io.interactive()
 ```
+
+#### Sea Shells
+![image](https://github.com/user-attachments/assets/1cf85aa1-9305-4f3c-ba5b-3414743357d0)
+
 
 
 
