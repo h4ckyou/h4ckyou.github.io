@@ -1778,7 +1778,16 @@ Next we need the second value which is the `machine_id`
 Since i'm a lazy person i just copy/paste the machine_id made some [modification](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/get_machine_id.py) and ran it 
 
 But for it to work we need to exfiltrate three files:
-- 
+![image](https://github.com/user-attachments/assets/9ce60738-8b1a-4ce3-9cef-60f5981b58df)
+
+- /etc/machine-id
+- /proc/sys/kernel/random/boot_id
+- /proc/self/cgroup
+
+Cool only the last two is available so i just saved them and ran the script
+![image](https://github.com/user-attachments/assets/0b26eb84-fd28-4664-a447-4e277176834f)
+
+Now the machine id is basically `b74d9c2d-6b44-4cae-ba65-bc72beee82ef72e167d0b32f63740bd9e2c72f1a711a59903070e41f3c6a1ca6d8e563ab16ae` and we need to add that to our final [script]() to get the pin 
 
 
 
