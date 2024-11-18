@@ -1787,8 +1787,18 @@ But for it to work we need to exfiltrate three files:
 Cool only the last two is available so i just saved them and ran the script
 ![image](https://github.com/user-attachments/assets/0b26eb84-fd28-4664-a447-4e277176834f)
 
-Now the machine id is basically `b74d9c2d-6b44-4cae-ba65-bc72beee82ef72e167d0b32f63740bd9e2c72f1a711a59903070e41f3c6a1ca6d8e563ab16ae` and we need to add that to our final [script]() to get the pin 
+Now the machine id is basically `b74d9c2d-6b44-4cae-ba65-bc72beee82ef72e167d0b32f63740bd9e2c72f1a711a59903070e41f3c6a1ca6d8e563ab16ae` and we need to add that to our final [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Console-idation/generate.py) to get the pin 
+![image](https://github.com/user-attachments/assets/09f2ffa7-998b-4cd0-b457-6f552d350479)
 
+Using that pin worked!
+![image](https://github.com/user-attachments/assets/bc5c3449-82a6-4398-8ed5-f9403883b6b0)
+
+And now we can get code execution and read the flag
+![image](https://github.com/user-attachments/assets/d81fda06-b3fe-4050-b641-9dba17f599d1)
+
+```
+Flag: r00t{069aba00c086ad9da32ddd8e9}
+```
 
 
 
