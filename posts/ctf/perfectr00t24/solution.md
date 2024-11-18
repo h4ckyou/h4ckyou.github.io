@@ -1012,7 +1012,36 @@ It also works remotely but the thing is that it takes time
 For me during the time i solved it, it took about 30minutes and one condition causing that is likely network latency, nevertheless i got the flag
 
 ####  Arm and a leg 
+![image](https://github.com/user-attachments/assets/8ada2e4f-f6ea-4137-9b02-0a15fcb6e8fd)
 
+I enjoyed this challenge because this is my first arm rop and it took me quite a while 
+
+Checking the file type and protection shows this
+![image](https://github.com/user-attachments/assets/63be40e1-119d-4aae-8dd2-ea181f0d4036)
+
+We are working with a 32 bit arm executable which is dynamically linked and not stripped
+
+We can also see that no protection is enabled!
+
+If you tried to execute it you'll probably get an error and that's because you can't execute an arm executable on intel
+
+So we need an environment that would enable us to execute and debug it
+
+For me i went with emulating using qemu you can find more [here](https://azeria-labs.com/arm-on-x86-qemu-user/)
+
+```
+- sudo apt install gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf binutils-arm-linux-gnueabihf-dbg
+- sudo apt install gdb-multiarch qemu-user
+```
+
+For the gdb debugging i used [gef](https://github.com/hugsy/gef)
+
+Now let's get to it
+
+Running the binary to get an overview of what it does shows this
+![image](https://github.com/user-attachments/assets/a3fd4aac-d90f-44f0-b3f4-3713dc092be0)
+
+Okay nothing much
 
 
 
