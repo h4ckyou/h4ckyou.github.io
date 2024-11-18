@@ -587,7 +587,39 @@ Running it to get an overview of what it does shows this
 It seems to receive our input twice and prints it out before the program closes
 
 Loading it up in IDA here's the main function
+![image](https://github.com/user-attachments/assets/516971e3-1a21-449c-b8d7-c1dec00e7939)
 
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  Dance *ptr1; // [rsp+8h] [rbp-18h]
+  Dance *ptr2; // [rsp+10h] [rbp-10h]
+
+  ptr1 = dance(select_tune);
+  printf("Default tune : ");
+  printf(ptr1->name, argv);
+  printf("Tune: ");
+  (ptr1->func)(ptr1);
+  putchar(10);
+  ptr2 = dance(select_style);
+  printf("Style: ");
+  (ptr2->func)(ptr2);
+  printf("And so, the dance stops.");
+  free(ptr1);
+  free(ptr2);
+  return 0;
+}
+```
+
+Note that I already had to create a struct to make it more readable, here's my struct definition
+![image](https://github.com/user-attachments/assets/ea020d6d-8e44-48f2-a9d0-8d04a2785eba)
+
+```c
+struct Dance {
+  char name[32];
+  long *func;
+};
+```
 
 
 
