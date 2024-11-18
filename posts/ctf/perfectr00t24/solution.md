@@ -1157,8 +1157,125 @@ Doing that works!
 Flag: r00t{It_4lw4y5_c05t5_4n_4rm_4nd_4_l39_245ef81}
 ```
 
+### Rev 6/6 :~
+
+#### Re-Incarnation 
+
+We are given this binary and the supposedly encrypted flag 
+![image](https://github.com/user-attachments/assets/7926d733-df51-4e49-9b9f-51ca2e14bc7e)
+![image](https://github.com/user-attachments/assets/898b712a-4b94-432e-93ce-c0ce37fe06c5)
+
+First thing i did was to check what language it's written in using [DiE](https://github.com/horsicq/Detect-It-Easy)
+![image](https://github.com/user-attachments/assets/febe36ce-62ad-4c8d-9cfd-d0b1d6b31657)
+
+Compiled with GCC and it was written in either C or C++
+
+Running it shows this
+![image](https://github.com/user-attachments/assets/3ceebcdc-1813-4c95-b770-0458c72fedf2)
+
+Seems it recevies our input then generates some number based on that input
+
+Loading it up in IDA here's the main function
+![image](https://github.com/user-attachments/assets/0ed15042-34f5-4d8d-a9a7-e8c5af9ae8c7)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  int i; // [rsp+Ch] [rbp-74h]
+  _BYTE v5[104]; // [rsp+10h] [rbp-70h] BYREF
+  unsigned __int64 v6; // [rsp+78h] [rbp-8h]
+
+  v6 = __readfsqword(0x28u);
+  printf("Enter a string: ");
+  __isoc99_scanf("%99s", v5);
+  for ( i = 0; v5[i]; ++i )
+  {
+    generate_character((char)v5[i]);
+    printf("%lu \n", glob_canary);
+  }
+  putchar(10);
+  return 0;
+}
+```
+
+So it's just like we assumed, it takes in a string and for each character in that string it generates a certain number
+
+Let us take a look at the `generate_character` function
+![image](https://github.com/user-attachments/assets/dffc7927-6459-4164-8a92-55b7a1b72d83)
+
+```c
+__int64 __fastcall generate_character(unsigned __int64 a1)
+{
+  __int64 v1; // rax
+  __int64 result; // rax
+  unsigned __int64 v3; // [rsp+28h] [rbp-8h]
+
+  if ( !a1 )
+  {
+    puts("Invalid entry. Exiting");
+    exit(-1);
+  }
+  v3 = 8 * ((16 * (a1 >> 5) * ((a1 >> 5) ^ (8 * a1)) + (a1 >> 5)) >> 2);
+  v1 = 2 * (v3 ^ (4 * (a1 >> 5) * ((a1 >> 5) ^ (8 * a1)) - (unsigned __int16)(a1 >> 5)))
+     + (unsigned __int16)(v3 ^ (16 * (a1 >> 5) * ((a1 >> 5) ^ (8 * a1)) + (a1 >> 5)));
+  result = v1 * v1;
+  glob_canary = result;
+  return result;
+}
+```
+
+Ok cool it seems to just do some math operations on the character provided and the result is then returned
+
+The best way to solve this is via brute force since no sane person would want to reverse that operation if it's possible
+
+There are probably multiple ways to go about it 
+
+First we can perform a brute force using the binary as the oracle or just reimplement that function and brute force
+
+Here's what i mean for the first choice
+![image](https://github.com/user-attachments/assets/4a077a01-405e-4d34-bf4a-82af646e3df6)
+
+We can basically tell the program to check if the value it generated equals the expected value and if it is then that means the character we gave in is a valid flag character
+
+But that's just stressful so here's a more easier approach:
+- We encrypt all printable characters and then we do a reverse mapping based on the result returned and our encrypted flag
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Re-Incarnation/solve.py)
+
+```python
+import string
+from pwn import *
+import ast
+
+charset = string.ascii_lowercase + string.ascii_uppercase + string.digits + "{}_"
+enc_str = open("flag.txt").read().split()
+enc = [int(item) for item in enc_str]
+flag = ""
 
 
+io = process("./re-incarnation")
+io.sendline(charset.encode())
+io.recvuntil(b": ")
+r = io.recvall().splitlines()
+io.close()
+
+numbers = [int(item.strip()) for item in r if item != b""] 
+mapping = {num: char for char, num in zip(charset, numbers)}
+flag = ""
+
+for val in enc:
+    flag += mapping[val]
+
+print(flag)
+```
+
+Running it gives the flag
+![image](https://github.com/user-attachments/assets/abf53162-9828-4290-b36d-f2bb20ec011b)
+
+
+```
+Flag: r00t{Pl3453_73ll_m3_y0u_d1d_n07_bru73f0rc3_288a858f9}
+```
 
 
 
