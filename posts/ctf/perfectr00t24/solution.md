@@ -675,7 +675,7 @@ To leak libc, I set a breakpoint at `main+78`, which is just before the program 
 Offset 11 holds a libc address and we can confirm by checking the memory region that address resides in
 ![image](https://github.com/user-attachments/assets/8c147dff-252d-4337-9352-3e86364cea2a)
 
-Now to calculate the libc base we need to get the offset from our leak to the libc which we can easily do by subtracting it
+Now to calculate the base of libc we need to get the offset from our leak to the libc base which we can easily do by subtracting it
 ![image](https://github.com/user-attachments/assets/7454fed4-6b27-4796-ae08-4051226c8816)
 
 ```
@@ -684,6 +684,7 @@ x/gx 0x7f467b42a1ca-0x7f467b400000 = 0x2a1ca
 
 This means that whenever we leak the pointer at stack offset 11 we would get a libc address then when we subtract it with `0x2a1ca` we'd get the libc base
 
+Ok now what? we now need to set `chunk->func` to `system` by filling up `chunk->name[32]` and the next 8 bytes will be `chunk->func`
 
 
 
