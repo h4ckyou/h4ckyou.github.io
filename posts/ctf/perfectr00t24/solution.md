@@ -896,7 +896,12 @@ In a while loop it does this:
 - Option 4: increments the current value of `steer` specified at `idx` by 100
 - Option 5: increments the current value of `steer` specified at `idx` by 15
 - Option 6: decrements the current value of `steer` specified at `idx` by 9
-- Option 7: creates a new mapping in the virtual address space of the calling process with read, write, and execute permissions using a call to mmap
+- Option 7: creates a new mapping in the virtual address space of the calling process with read, write, and execute permissions using a call to mmap, then it copies all byte from `steer` into the new memory allocated and executes the content in it
+
+Ok great, this is a shellcoding challenge but with a twist
+
+The twist is that we can't directly set the value at `steer` specified at `idx` to any value
+
 
 
 
