@@ -582,6 +582,7 @@ Ok this time around we see that all protections are enabled
 Since the libc, linker and Dockerfile was provided I patched the binary to use the same libc provided, but later on i figured it wasn't using the right libc as the remote instance for some reason which lead me to build a docker container with the Dockefile and i extracted the libc from there which worked.
 
 Running it to get an overview of what it does shows this
+![image](https://github.com/user-attachments/assets/eb7e57e0-c0e2-463f-86d1-6b36cc31ccba)
 
 It seems to receive our input twice and prints it out before the program closes
 
