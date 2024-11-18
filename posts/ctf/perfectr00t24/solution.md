@@ -416,6 +416,8 @@ With that as our goal here's my exploit [script](https://github.com/h4ckyou/h4ck
 Running it works
 ![image](https://github.com/user-attachments/assets/7dca908e-9510-4be1-8c1d-2415c2db1ebb)
 
+Another way of solving this rather than a GOT overwrite is to overwrite the `injection_size` to a large value such that we would be able to break out of the `quote` do a command injection to directly call `/bin/sh`
+
 ```
 Flag: r00t{At_th4t_r4t3_Y0u_mu5t_b3_5t4lk1n9_m3_3ac1294}
 ```
@@ -569,6 +571,10 @@ Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/
 Flag: r00t{h34p_0v3rfl0w_1n_th3_f0rc3_1ebfe9e04a01ac4b00d4bd194b1bd505}
 ```
 
+#### Heaps Don't Lie 
+![image](https://github.com/user-attachments/assets/fba99779-0358-41a1-b654-f5835fc25952)
+
+Checking the file type shows this
 
 
 
