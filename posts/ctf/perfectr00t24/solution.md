@@ -1444,6 +1444,34 @@ Running it gives the flag
 Flag: r00t{uguntu_g0ing_t0_the_r00t}
 ```
 
+#### Box
+![image](https://github.com/user-attachments/assets/e66a8efc-b180-46fd-8741-39a111368258)
+
+We are given a web url and a binary hmmm
+
+Let us check it out, from the file type details we can tell this is another Goland compiled binary
+![image](https://github.com/user-attachments/assets/ef5bcb0e-989a-442a-a6f7-e3184e694ab4)
+![image](https://github.com/user-attachments/assets/9669b162-02df-4c1e-9cae-a868a7ed84cc)
+
+Running it shows this
+![image](https://github.com/user-attachments/assets/3803c46b-3827-416f-9179-e72e27cebf36)
+
+First thing that caught my attention is the debug log
+
+I looked it up: `GIN-debug` and got [this](https://github.com/gin-gonic/gin/blob/master/debug.go)
+![image](https://github.com/user-attachments/assets/b06f5bee-9b68-4465-bff8-e6fd6425c080)
+
+So it's a HTTP web framework written in Go
+
+
+
+
+
+
+
+
+
+
 #### Pores
 ![image](https://github.com/user-attachments/assets/cf4068c1-f280-4942-96e8-c6f7ae8042e3)
 
