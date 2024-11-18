@@ -1277,6 +1277,190 @@ Running it gives the flag
 Flag: r00t{Pl3453_73ll_m3_y0u_d1d_n07_bru73f0rc3_288a858f9}
 ```
 
+#### Go Dark
+![image](https://github.com/user-attachments/assets/683b5c19-0e7d-4753-9a2c-ad4ae6143931)
+
+Hmm the description says this isn't a C binary so we can guess it's a Golang binary from the challenge name
+
+Anyways checking the file with Detect It Easy shows this
+![image](https://github.com/user-attachments/assets/b9f98ee2-d941-4a18-a0e0-f9754095b62e)
+![image](https://github.com/user-attachments/assets/c7ff3b2e-d086-4753-9cc0-acce68bb542f)
+
+As we expected this is a Golang binary
+
+Running it shows this
+![image](https://github.com/user-attachments/assets/7dcbe472-b7af-415f-b9a1-44a4a99a55ce)
+
+It just seems to do nothing
+
+If we monitor the system calls with strace we'd see it really does nothing but just exits
+![image](https://github.com/user-attachments/assets/eed793e4-0ce4-4af8-852f-638c98fc1cb2)
+![image](https://github.com/user-attachments/assets/87f65e0f-3f2f-46f9-bc36-d9ae79a7b5ad)
+
+Loading it up in IDA shows this luckily debug_info was enabled and here's the main function
+![image](https://github.com/user-attachments/assets/1dbcecce-ca16-4e2d-8ffc-7f486a1eee37)
+
+We can see that before it calls the `printFlag` function it would exit as shown from the result of strace
+
+Meaning we need to call that function but what's a more easier way?
+
+Well we can just patch the call to `os_Exit`
+![image](https://github.com/user-attachments/assets/de087934-17db-4027-9d12-c604ccd937ba)
+![image](https://github.com/user-attachments/assets/3cc9dd9d-b7a8-4f58-86b4-405deda28439)
+
+How i patched it was by clicking on the instruction then checking the hex view and modifying the bytecode to nops
+![image](https://github.com/user-attachments/assets/ef82250a-35d1-435c-bb15-585b8014f0fe)
+
+Let us save the applied patch and we can do this by checking `Edit -> Patch Program -> Apply changes to input file`
+
+Doing that we can then get the flag by simply running the binary
+![image](https://github.com/user-attachments/assets/98134822-65fc-4d3c-aed3-a06e024bad8c)
+
+The `printFlag` function itself does a simple xor operation on an integer array so you can as just reimplement it
+
+```c
+// main.printFlag
+// local variable allocation has failed, the output may be wrong!
+void __golang main_printFlag()
+{
+  __int64 v0; // rcx OVERLAPPED
+  __int64 v1; // rdi OVERLAPPED
+  int v2; // r8
+  error_0 v3; // r9
+  __int128 v4; // xmm15
+  __int64 i; // rax
+  void *v6; // rcx
+  __int64 v7; // rsi
+  _slice_interface__0 *p_a; // rcx
+  int v9; // r8
+  __int64 v10; // [rsp+0h] [rbp-110h]
+  _QWORD v11[30]; // [rsp+8h] [rbp-108h]
+  _slice_interface__0 a; // [rsp+F8h] [rbp-18h] BYREF
+  error_0 v13; // 0:r9.16
+  string_0 v14; // 0:rax.8,8:rbx.8
+  io_Writer_0 v15; // 0:rax.8,8:rbx.8
+  _slice_interface__0 v16; // 0:rcx.8,8:rdi.16
+
+  v11[0] = 122LL;
+  v11[1] = 56LL;
+  v11[2] = 56LL;
+  v11[3] = 124LL;
+  v11[4] = 115LL;
+  v11[5] = 125LL;
+  v11[6] = 111LL;
+  v11[7] = 125LL;
+  v11[8] = 102LL;
+  v11[9] = 124LL;
+  v11[10] = 125LL;
+  v11[11] = 87LL;
+  v11[12] = 111LL;
+  v11[13] = 56LL;
+  v11[14] = 97LL;
+  v11[15] = 102LL;
+  v11[16] = 111LL;
+  v11[17] = 87LL;
+  v11[18] = 124LL;
+  v11[19] = 56LL;
+  v11[20] = 87LL;
+  v11[21] = 124LL;
+  v11[22] = 96LL;
+  v11[23] = 109LL;
+  v11[24] = 87LL;
+  v11[25] = 122LL;
+  v11[26] = 56LL;
+  v11[27] = 56LL;
+  v11[28] = 124LL;
+  v11[29] = 117LL;
+  for ( i = 0LL; i < 30; i = v10 + 1 )
+  {
+    v10 = i;
+    *(_OWORD *)&a.array = v4;
+    v14.len = v11[i] ^ 8LL;
+    runtime_intstring(0LL, v14.len, *(string_0 *)&v0);
+    runtime_convTstring(v14, v6);
+    a.array = (interface__0 *)&RTYPE_string;
+    a.len = (int)v14.str;
+    v14.len = (int)os_Stdout;
+    v14.str = (uint8 *)&go_itab__ptr_os_File_comma_io_Writer;
+    v1 = 1LL;
+    v7 = 1LL;
+    p_a = &a;
+    fmt_Fprint((io_Writer_0)v14, *(_slice_interface__0 *)(&v1 - 1), v9, v13);
+  }
+  v15.data = os_Stdout;
+  v15.tab = (internal_abi_ITab *)&go_itab__ptr_os_File_comma_io_Writer;
+  v16.array = 0LL;
+  *(_OWORD *)&v16.len = 0uLL;
+  fmt_Fprintln(v15, v16, v2, v3);
+}
+```
+
+An alternative [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Go%20Dark/solve.py)
+
+```python
+from pwn import xor
+
+v11 = bytearray(30)
+v11[0] = 122;
+v11[1] = 56;
+v11[2] = 56;
+v11[3] = 124;
+v11[4] = 115;
+v11[5] = 125;
+v11[6] = 111;
+v11[7] = 125;
+v11[8] = 102;
+v11[9] = 124;
+v11[10] = 125;
+v11[11] = 87;
+v11[12] = 111;
+v11[13] = 56;
+v11[14] = 97;
+v11[15] = 102;
+v11[16] = 111;
+v11[17] = 87;
+v11[18] = 124;
+v11[19] = 56;
+v11[20] = 87;
+v11[21] = 124;
+v11[22] = 96;
+v11[23] = 109;
+v11[24] = 87;
+v11[25] = 122;
+v11[26] = 56;
+v11[27] = 56;
+v11[28] = 124;
+v11[29] = 117;
+
+key = 8
+
+print(xor(v11, key))
+```
+
+Running it gives the flag
+![image](https://github.com/user-attachments/assets/478bfefa-73d9-44e9-806d-a5d22bd4ef27)
+
+```
+Flag: r00t{uguntu_g0ing_t0_the_r00t}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
