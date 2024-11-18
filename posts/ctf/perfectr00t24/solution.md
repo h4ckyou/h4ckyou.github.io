@@ -1107,7 +1107,7 @@ This is how i did it, first i setup gdb server using qemu
 qemu-arm -g 5000 ./arm_and_a_leg
 ```
 
-Next i:
+Next :
 - loaded `gdb-multiarch` on the binary `arm_and_a_leg`
 - generated a cyclic pattern of 100 bytes
 - connected to the gdb server listening on port 5000
@@ -1129,17 +1129,33 @@ We can see that the `$pc` register holds `0x61616172`, now we can just get the o
 
 Later on i figured we needed to add 4 more bytes which makes our offset 72, i really don't know the reason why it's that way 😅
 
+So what now? first we need to leak libc because system wasn't resolved in the binary and because the system function resides in libc we need to get the libc base
 
+How do we achieve that? Well we can leak it by calling `puts@plt(puts@got)` thereby leaking the value stored in the got of puts which points to the puts function in libc
 
+To do that we need to control `r0` which is the first parameter, after looking through the gadgets shown by ROPgadget i really couldn't find any one that would work so what now
 
+Luckily i did `info func` and saw this
+![image](https://github.com/user-attachments/assets/b54751b5-1baa-4df3-8b44-54b276ca3719)
 
+We can see that it has a `__libc_csu_init` function and from my knowledge on 64 bits rop i knew that this could be used to control the rdi, rsi, rdx registers if there's no gadget to control it using a technique known as ret2csu
 
+So i just researched on arm ret2csu and found this really helpful [blog](https://gbyolo.gitlab.io/posts/2020/07/ret2csu-arm-32bit/)
 
+My solution is pretty much based on that as it enabled me to control the r0 register and thereby leaking libc
 
+From there it was pretty much straight forward this is how it goes:
+- Leak libc
+- Return back to main for second stage exploitation
+- Call system on /bin/sh
+- Profit
 
+Doing that works!
+![image](https://github.com/user-attachments/assets/d4b010af-03fa-4281-a013-1e8aac16ff13)
 
-
-
+```
+Flag: r00t{It_4lw4y5_c05t5_4n_4rm_4nd_4_l39_245ef81}
+```
 
 
 
