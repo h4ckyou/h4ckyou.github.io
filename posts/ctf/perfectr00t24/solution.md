@@ -1,4 +1,4 @@
-<h3> Perfectroot CTF 2024 </h3>
+![image](https://github.com/user-attachments/assets/4a73e719-ec89-4707-be93-c1a40ac9fd9f)<h3> Perfectroot CTF 2024 </h3>
 
 ![image](https://github.com/user-attachments/assets/b55b9b6d-8b2c-429a-bd9f-b2542a787953)
 
@@ -1463,7 +1463,45 @@ I looked it up: `GIN-debug` and got [this](https://github.com/gin-gonic/gin/blob
 
 So it's a HTTP web framework written in Go
 
+Just incase i'll let you know i don't know Go language so i won't go deep in explaining things because i myself don't understand much
 
+Anyways we can see that it defined some routes and it's handles
+
+```
+[GIN-debug] GET    /                         --> main.indexHandler (3 handlers)
+[GIN-debug] GET    /Z2V0RmxhZwo=             --> main.getFlagHandler (3 handlers)
+[GIN-debug] POST   /Z2V0RmxhZwo=             --> main.getFlagHandler (3 handlers)
+[GIN-debug] GET    /aGVsbG9Xb3JsZAo=         --> main.helloWorldHandler (3 handlers)
+[GIN-debug] GET    /c2F5bmFtZQo=             --> main.sayNameHandler (3 handlers)
+[GIN-debug] POST   /c2F5bmFtZQo=             --> main.sayNameHandler (3 handlers)
+[GIN-debug] GET    /YWJvdXQK                 --> main.aboutHandler (3 handlers)
+```
+
+Based on those routes it would call the handler
+
+Our interest if obviously `main.getFlagHandler`
+
+But let us just get an overview of the various result from accessing the routes
+
+Index handler:
+![image](https://github.com/user-attachments/assets/28ffb99e-e7af-4287-9979-3af5e9c7ac7e)
+
+GetFlag handler:
+![image](https://github.com/user-attachments/assets/69b387c5-3cf5-4b09-83bb-e7e726950d2f)
+
+HelloWorld handler:
+![image](https://github.com/user-attachments/assets/f78fa21e-89fa-4303-b966-2d62e3d08471)
+
+About handler:
+![image](https://github.com/user-attachments/assets/f05b46dd-8bd1-45c2-8e29-54454c7bb82e)
+
+SayName handler:
+![image](https://github.com/user-attachments/assets/5d462306-86d9-4709-bb5d-a4cb111caf82)
+
+Now let us look at the Flag handler
+
+Opening the binary in IDA we can see the list of functions defined in main and they all correspond to the handlers
+![image](https://github.com/user-attachments/assets/8683233a-62b0-44e0-b8f0-6f91e221bd8f)
 
 
 
