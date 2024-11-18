@@ -575,6 +575,37 @@ Flag: r00t{h34p_0v3rfl0w_1n_th3_f0rc3_1ebfe9e04a01ac4b00d4bd194b1bd505}
 ![image](https://github.com/user-attachments/assets/fba99779-0358-41a1-b654-f5835fc25952)
 
 Checking the file type shows this
+![image](https://github.com/user-attachments/assets/f7de4756-0380-4912-b1c8-2c4a5aae08e0)
+
+Ok this time around we see that all protections are enabled
+
+Since the libc, linker and Dockerfile was provided I patched the binary to use the same libc provided, but later on i figured it wasn't using the right libc as the remote instance for some reason which lead me to build a docker container with the Dockefile and i extracted the libc from there which worked.
+
+Running it to get an overview of what it does shows this
+
+It seems to receive our input twice and prints it out before the program closes
+
+Loading it up in IDA here's the main function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
