@@ -1087,16 +1087,47 @@ Using this arm assembly [tutorial](https://azeria-labs.com/writing-arm-assembly-
 
 The first thing we need to know is the set of registers present in an ARM processor
 ![image](https://github.com/user-attachments/assets/90871517-b921-4c8c-9636-31b7d345e346)
-![image](https://github.com/user-attachments/assets/16e9ec7d-b14f-4b55-bdd2-868db4716b85)
+![image](https://github.com/user-attachments/assets/08356d21-2305-425f-b5a3-bd19d025e784)
 
-Now some quick idea of the instruction set 
+Now some quick idea on the instruction set 
 ![image](https://github.com/user-attachments/assets/b3dec406-74cc-4a9f-8bce-faafe023afa6)
 
+Ok good now time to look for rop gadgets
 
+I wasn't able to get any using [ropper](https://github.com/sashs/Ropper) but [ROPgadget](https://github.com/JonathanSalwan/ROPgadget) worked fine
+![image](https://github.com/user-attachments/assets/c3b92de3-ca20-4660-ba5f-1345853c3803)
+![image](https://github.com/user-attachments/assets/f478f34f-0b67-453d-8bf1-227f0f892545)
+![image](https://github.com/user-attachments/assets/fbdfc5e9-77a7-49c4-b035-9e772f3a1290)
 
+So our goal is to call `system('/bin/sh')` so first let us determine the offset needed to overwrite the `pc` register
 
+This is how i did it, first i setup gdb server using qemu
 
+```
+qemu-arm -g 5000 ./arm_and_a_leg
+```
 
+Next i:
+- loaded `gdb-multiarch` on the binary `arm_and_a_leg`
+- generated a cyclic pattern of 100 bytes
+- connected to the gdb server listening on port 5000
+
+Here's the command:
+
+```
+- gdb-multiarch arm_and_a_leg
+- pattern create 200
+- target remote :5000
+- continue
+```
+
+This is how it is after doing that
+![image](https://github.com/user-attachments/assets/e628df2c-9de0-43b6-9199-c1ff07dfa01c)
+
+We can see that the `$pc` register holds `0x61616172`, now we can just get the offset of that
+![image](https://github.com/user-attachments/assets/9301d2a0-957d-4cd7-9f3a-b4bfbc2b9d20)
+
+Later on i figured we needed to add 4 more bytes which makes our offset 72, i really don't know the reason why it's that way 😅
 
 
 
