@@ -756,7 +756,7 @@ Running it to get an overview of what it does shows this
 
 We have 7 options to choose from and on choosing option 7 the program crashes
 
-Loading it in iDA shows this
+Loading it in IDA shows this
 ![image](https://github.com/user-attachments/assets/e3d3e155-e9a4-40b8-bcdc-d12097e9d58d)
 
 ```c
@@ -890,9 +890,13 @@ Yikes! Anyways let us understand what it does:
 In a while loop it does this:
 - Prints the menu
 - Receives our input which is the choice and converts it to an integer
-- If we choose 1, it decrements idx by 1, checks if it's less than 0, and sets idx to 0 if true.
-- If we choose 2, it increments idx by 1, checks if it's greater than 255, and sets idx to 0 if true.
-
+- Option 1: decrements idx by 1, checks if it's less than 0, and sets idx to 0 if true.
+- Option 2: it increments idx by 1, checks if it's greater than 255, and sets idx to 0 if true.
+- Option 3: increments the current value of `steer` specified at `idx` by 22
+- Option 4: increments the current value of `steer` specified at `idx` by 100
+- Option 5: increments the current value of `steer` specified at `idx` by 15
+- Option 6: decrements the current value of `steer` specified at `idx` by 9
+- Option 7: creates a new mapping in the virtual address space of the calling process with read, write, and execute permissions using a call to mmap
 
 
 
