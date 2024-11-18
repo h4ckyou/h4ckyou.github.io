@@ -748,6 +748,177 @@ def solve():
 #### Sea Shells
 ![image](https://github.com/user-attachments/assets/1cf85aa1-9305-4f3c-ba5b-3414743357d0)
 
+Checking the file type and protections shows this
+![image](https://github.com/user-attachments/assets/85558bcb-55be-4ff1-bc8e-99a8f4a7a9aa)
+
+Running it to get an overview of what it does shows this
+![image](https://github.com/user-attachments/assets/a4f1a334-054c-40d4-9c7c-6a829304d301)
+
+We have 7 options to choose from and on choosing option 7 the program crashes
+
+Loading it in iDA shows this
+![image](https://github.com/user-attachments/assets/e3d3e155-e9a4-40b8-bcdc-d12097e9d58d)
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  void (*shellcode)(void); // rax
+  __int64 v5; // rbx
+  __int64 v6; // rbx
+  __int64 v7; // rbx
+  __int64 v8; // rbx
+  __int64 v9; // rbx
+  __int64 v10; // rbx
+  __int64 v11; // rbx
+  __int64 v12; // rbx
+  __int64 v13; // rbx
+  __int64 v14; // rbx
+  __int64 v15; // rbx
+  __int64 v16; // rbx
+  __int64 v17; // rbx
+  __int64 v18; // rbx
+  __int64 v19; // rbx
+  __int64 v20; // rbx
+  char s[128]; // [rsp+20h] [rbp-A0h] BYREF
+  void (*sc)(void); // [rsp+A0h] [rbp-20h]
+  int choice; // [rsp+A8h] [rbp-18h]
+  int idx; // [rsp+ACh] [rbp-14h]
+
+  init();
+  puts("Welcome aboard Captain, please help us steer this ship!\n");
+  idx = 0;
+  while ( 1 )
+  {
+    puts("What should we do?");
+    puts("1) Steer to the left");
+    puts("2) Steer to the right");
+    puts("3) Hoist the sails!");
+    puts("4) Full speed ahead!");
+    puts("5) Secure the lines.");
+    puts("6) Anchor down!");
+    puts("7) Throw the lines!");
+    if ( !fgets(s, 128, stdin) )
+      return 0;
+    choice = atoi(s);
+    switch ( choice )
+    {
+      case 1:
+        if ( --idx < 0 )
+          idx = 0;
+        break;
+      case 2:
+        if ( ++idx > 0xFF )
+          idx = 0;
+        break;
+      case 3:
+        steer[idx] += 22;
+        break;
+      case 4:
+        steer[idx] += 100;
+        break;
+      case 5:
+        steer[idx] += 15;
+        break;
+      case 6:
+        steer[idx] -= 9;
+        break;
+      case 7:
+        puts("OK, let's dock this ship!");
+        shellcode = mmap(0LL, 0x1000uLL, 7, 34, -1, 0LL);
+        v22 = shellcode;
+        v5 = qword_4048;
+        *shellcode = *steer;
+        *(shellcode + 1) = v5;
+        v6 = qword_4058;
+        *(shellcode + 2) = qword_4050;
+        *(shellcode + 3) = v6;
+        v7 = qword_4068;
+        *(shellcode + 4) = qword_4060;
+        *(shellcode + 5) = v7;
+        v8 = qword_4078;
+        *(shellcode + 6) = qword_4070;
+        *(shellcode + 7) = v8;
+        v9 = qword_4088;
+        *(shellcode + 8) = qword_4080;
+        *(shellcode + 9) = v9;
+        v10 = qword_4098;
+        *(shellcode + 10) = qword_4090;
+        *(shellcode + 11) = v10;
+        v11 = qword_40A8;
+        *(shellcode + 12) = qword_40A0;
+        *(shellcode + 13) = v11;
+        v12 = qword_40B8;
+        *(shellcode + 14) = qword_40B0;
+        *(shellcode + 15) = v12;
+        v13 = qword_40C8;
+        *(shellcode + 16) = qword_40C0;
+        *(shellcode + 17) = v13;
+        v14 = qword_40D8;
+        *(shellcode + 18) = qword_40D0;
+        *(shellcode + 19) = v14;
+        v15 = qword_40E8;
+        *(shellcode + 20) = qword_40E0;
+        *(shellcode + 21) = v15;
+        v16 = qword_40F8;
+        *(shellcode + 22) = qword_40F0;
+        *(shellcode + 23) = v16;
+        v17 = qword_4108;
+        *(shellcode + 24) = qword_4100;
+        *(shellcode + 25) = v17;
+        v18 = qword_4118;
+        *(shellcode + 26) = qword_4110;
+        *(shellcode + 27) = v18;
+        v19 = qword_4128;
+        *(shellcode + 28) = qword_4120;
+        *(shellcode + 29) = v19;
+        v20 = qword_4138;
+        *(shellcode + 30) = qword_4130;
+        *(shellcode + 31) = v20;
+        sc();
+        break;
+      default:
+        continue;
+    }
+  }
+}
+```
+
+Yikes! Anyways let us understand what it does:
+- Calls the `init` function which disables buffering on `stdin & stdout`
+- Initializes the `idx` variable to `0`
+
+In a while loop it does this:
+- Prints the menu
+- Receives our input which is the choice and converts it to an integer
+- If we choose 1, it decrements idx by 1, checks if it's less than 0, and sets idx to 0 if true.
+- If we choose 2, it increments idx by 1, checks if it's greater than 255, and sets idx to 0 if true.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
