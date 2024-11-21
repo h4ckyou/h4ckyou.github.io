@@ -20,7 +20,7 @@ Challenges:
 **Rules**
 
 Going over to the discord channel and checking the #announcement page gives the flag
-![image](https://github.com/user-attachments/assets/8ec1e651-47c2-4989-972d-b314bb4801d1)
+![image](https://github.com/user-attachments/assets/3ab7dd3c-c8dd-49e8-a660-f083f2fa3eaf)
 
 ```
 Flag: battleCTF{HereWeGo}
