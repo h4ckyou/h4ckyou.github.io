@@ -28,8 +28,8 @@ Flag: battleCTF{HereWeGo}
 
 **Invite Code**
 
-This challenge was actually released prior to the ctf beginning and you can find it on the discord here
-![image](https://github.com/user-attachments/assets/1da6c398-493c-462b-933d-e2758158e7bb)
+This challenge was actually released prior to the beginning of the ctf and you can find it on the discord here
+![image](https://github.com/user-attachments/assets/ff54bcd8-a0b6-48cd-bd34-ce49d7fb9cb3)
 
 After decoding from hex it gives this
 ![image](https://github.com/user-attachments/assets/ab4af42a-ec7c-4093-b78f-cb8f9432e720)
