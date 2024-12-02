@@ -32,4 +32,42 @@ Now i ran the binary to get an overview of what it does
 
 It seems to print some menu, receives our choice and based on the choice provided does some other stuffs
 
-With that in mind i 
+With that in mind it's time to figure out the vulnerability
+
+Using IDA (ofc) i decompiled the binary and here's the main function
+![image](https://github.com/user-attachments/assets/23f960fc-1c0e-4062-9810-c87c3c442909)
+
+First it calls the `setup` function which disables buffering on `stdout`
+![image](https://github.com/user-attachments/assets/9a50f60a-ddd6-41a8-beea-6f7a49c1c440)
+
+Then it prints out some text which is the menu thingy
+
+After that it reads in our input and checks this:
+- If we give it 1 it would exit
+- If we give it anything aside 1 or 2 it would exit
+- If we give it 2 it would call the `question` function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
