@@ -165,11 +165,62 @@ The important address i mentioned are at offset:
 - 27
 - 29
 
+Doing that we can have the important leaks and also jump back to the `question` function
+![image](https://github.com/user-attachments/assets/15d3ab0f-84f7-40ce-a0ac-bac1428e9ed3)
+![image](https://github.com/user-attachments/assets/0e7d67bb-ab43-420a-9959-226df8054725)
 
+Incase you are wondering how i got those offset you can read [this](https://github.com/Mymaqn/The-danger-of-repetivive-format-string-vulnerabilities-and-abusing-exit-on-full-RELRO?tab=readme-ov-file#the-danger-of-repetivive-format-string-vulnerabilities-and-abusing-exit-on-full-relro)
 
+Now you might have also wondered what's the use of leaking a stack address well here's why:
+- Since we overwrote the saved rbp with junk value, when the `main` function is about to `ret` it would crash
 
+So i leaked that inorder to calculate the saved rbp which was previously there such that during my next overwrite i would replace it with the original value
 
+That was my initial plan
 
+But why exactly would it crash?
+
+The reason is because of the instruction at `main+173`
+![image](https://github.com/user-attachments/assets/154e35f2-ff55-4b8d-8f1c-bbecd6d652fa)
+
+```
+leave
+ret
+```
+
+That instruction is equivalent to
+
+```
+mov rsp, rbp
+pop rbp
+pop rip
+```
+
+And the reason it does that is just a C function epilogue thingy
+
+Pretty much that, but then my exploitation plan was to write a ropchain on `main's` return address stack frame
+
+Basically i planned on using the format string bug for code execution but then i thought why that? 
+
+It's pretty stressful because i would have to keep on calling `question` multiple times to do the arbitrary write though it might work but let us not overcomplicate things!
+
+At this point we have leaks right? so what i decided to do was to stack pivot!
+
+And i leveraged the fact that main used a `leave; ret` instruction to stack pivot
+
+You can find more on the technique [here](https://ir0nstone.gitbook.io/notes/binexp/stack/stack-pivoting#leave-ret)
+
+What i did was to basically fill `question` saved rbp with the address of our `buffer` which currently holds our ropchain then when `main` is about to return it's current `rbp` would be pointing to the `buf` address
+
+And after executing the instruction
+
+```
+mov rsp, rbp
+pop rbp
+pop rip
+```
+
+It would 
 
 
 
