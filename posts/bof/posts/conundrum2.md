@@ -325,6 +325,10 @@ if __name__ == '__main__':
 Running it works.
 ![image](https://github.com/user-attachments/assets/30f5382f-e1c5-4205-8b33-bb15f7943f09)
 
+I'm still yet to make the writeup for another of his challenge i solved recently in a ctf hosted by perfectroot which was mainly about bypassing seccomp using `name_to_handle_at, open_by_handle_at, pread64 & writev` syscalls, you can check my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Kumbavu%20Zako/solve.py) and [C poc](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/perfectr00t24/scripts/Kumbavu%20Zako/poc.c) here
+![poc](https://github.com/user-attachments/assets/9ec58f16-6b2d-41c1-aa87-b9ab95d4914d)
+
+
 That's all, thanks for reading :)
 
 
