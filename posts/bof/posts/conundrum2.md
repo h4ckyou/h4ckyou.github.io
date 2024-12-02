@@ -148,7 +148,22 @@ With that in mind, our goal becomes straightforward:
 
 However, we won’t simply fill the buffer with junk. Instead, we’ll use some format string specifiers such that after it's passed to `printf` it would give us memory leaks
 
-But what offset should we actually leak from because we can't spam the buffer with `%p.` though that works but i prefer not doing it that way because it could overwrite some pointers on the stack and those points might be important addresses mapping to libc, ld, etc
+But what offset should we actually leak from because we can't spam the buffer with `%p.` though that works but i prefer not doing it that way because it could overwrite some pointers on the stack and those points might be important addresses mapping to libc, ld, etc.
+
+This is how i do it, we need to set a breakpoint at the call to `printf` which is at `question+86`
+![image](https://github.com/user-attachments/assets/0ab4dbe8-ea9a-4210-8998-f20b8e7dea7b)
+
+Next we take a look at the stack
+![image](https://github.com/user-attachments/assets/7bba3f75-8663-47a5-9778-568fefd8f90b)
+
+We can see some important pointers mapping to libc, ld, stack, elf
+
+I would leak that of libc, stack and the elf
+
+The important address i mentioned are at offset:
+- 24
+- 27
+- 29
 
 
 
