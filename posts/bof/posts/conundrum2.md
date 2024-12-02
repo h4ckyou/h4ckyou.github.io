@@ -133,16 +133,22 @@ We can see that the binary is actually going to return back to `0x000055f4a36009
 So our goal is that instead of overwritting the 4 bytes of the return address we would overwrite just the lsb 
 ![image](https://github.com/user-attachments/assets/1cffe83a-6a8d-4914-a205-11dcff298b82)
 
-I looked for a suitable offset to target `main+134` to be the best because it would zero out the eax register and call the `question` function
+I looked for a suitable offset to target, and `main+134` seemed to be the best choice because it zeros out the eax register and calls the question function
 
+Why is this the best choice, you might ask? The reason is simply that it falls within the same address range as the address the question function returns to
 
+We could have considered jumping back to main, but that would require nibble-level brute-forcing. This is because, even if the last 3 nibbles of an address are the same, the upper bytes are randomized due to ASLR and PIE
 
+It's best to avoid brute-forcing in order to make the exploit more reliable
 
+With that in mind, our goal becomes straightforward:
+- Fill the buffer
+- Overwrite the saved rbp
+- Overwrite one byte of the return address to point to `main+134`
 
+However, we won’t simply fill the buffer with junk. Instead, we’ll use some format string specifiers such that after it's passed to `printf` it would give us memory leaks
 
-
-
-
+But what offset should we actually leak from because we can't spam the buffer with `%p.` though that works but i prefer not doing it that way because it could overwrite some pointers on the stack and those points might be important addresses mapping to libc, ld, etc
 
 
 
