@@ -65,7 +65,7 @@ int question()
 It looks awfully small :) 
 
 From this we know that:
-- It would clear up the buffer `s` of at 128 bytes filling it with null bytes
+- It would clear up the buffer `s` up to 128 bytes filling it with null bytes
 - Prints out some texts
 - Receives our input which is stored in s
 - Prints out input
@@ -87,7 +87,7 @@ But looking at the overflow we can see that we can't fully control the return ad
 4 bytes for the saved return address
 ```
 
-Regardless of that we don't know the memory mapping of the binary itself due to `PIE` that means we need to leak it to be able to pivot around the binary
+Regardless of that we don't know the memory mapping of the binary itself due to `PIE` that means we need to leak it to be able to pivot around memory
 
 Ideally we could exploit the fsb to get code execution but that requires multiple arbitrary write and this is not the case since we only have one shot to calling `printf`
 
@@ -96,6 +96,61 @@ So what now?
 Well this is how i went around this
 
 First we need memory leaks and that's really important and i leveraged the fsb for that
+
+But thinking further we also need a way to call the `question` function again if possible multiple times 
+
+What do i mean, well we could get memory leaks using the fsb but here's what happens
+![image](https://github.com/user-attachments/assets/f4043d82-0852-40eb-83b9-6ca0cf9cc801)
+
+See!!, it would just exit so this means we have to call the `question` function again and to do that i leveraged a partial overwrite using the overflow
+
+Here's what i mean, before the function is about to return this is how the memory looks like
+![image](https://github.com/user-attachments/assets/5c65bfd6-c44c-459f-bde5-c0a044f31580)
+
+```
+pwndbg> x/50gx $rsp
+0x7ffc5281c090:	0x4141414141414141	0x0000000000000000
+0x7ffc5281c0a0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c0b0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c0c0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c0d0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c0e0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c0f0:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c100:	0x0000000000000000	0x0000000000000000
+0x7ffc5281c110:	0x00007ffc5281c130	0x000055f4a360094d
+```
+
+Basically this is the stack view
+![image](https://github.com/user-attachments/assets/f87e96df-17cf-43a1-b6f3-438c889b7187)
+
+```
+buffer -> saved rbp -> return address
+```
+
+We can see that the binary is actually going to return back to `0x000055f4a360094d` and that points to `main+114`
+![image](https://github.com/user-attachments/assets/71c866f6-2b79-476a-a803-b3d6e2d4db7f)
+
+So our goal is that instead of overwritting the 4 bytes of the return address we would overwrite just the lsb 
+![image](https://github.com/user-attachments/assets/1cffe83a-6a8d-4914-a205-11dcff298b82)
+
+I looked for a suitable offset to target `main+134` to be the best because it would zero out the eax register and call the `question` function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
