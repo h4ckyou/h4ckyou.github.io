@@ -204,7 +204,56 @@ The free_memory function does this:
 
 The implementation here is correct because after free'ing it null's out the memory address stored in the variable.
 
-This means there's no UAF bug (Use After Free) present.
+This means there's no UAF bug (Use After Free).
+
+Function `show_memory()`:
+
+![image](https://github.com/user-attachments/assets/d0f33bc2-a5a5-451a-a690-76292cab87ce)
+
+```c
+__int64 __fastcall show_memory()
+{
+  unsigned int idx; // eax
+  char *content; // rdi
+
+  __printf_chk(1, "(Starting from 0) Index:\n> ");
+  idx = read_num();
+  if ( idx > 9 )
+    return 0xFFFFFFFBLL;
+  content = ptr[idx].content;
+  if ( !content )
+    return 0xFFFFFFFBLL;
+  puts(content);
+  return 0LL;
+}
+```
+
+The show_memory function does this:
+- Based on the `idx` receives it checks if `ptr[idx].content` isn't null
+- Then it prints out the value stored in `ptr[idx].content`
+
+So based on this we can tell this would probably be used as a read primitive to get leaks and aside that it's not really vulnerable to anything!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
