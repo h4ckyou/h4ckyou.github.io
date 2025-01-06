@@ -234,6 +234,34 @@ The show_memory function does this:
 
 So based on this we can tell this would probably be used as a read primitive to get leaks!
 
+#### Exploitation
+
+Based on the reverse engineering we've done we know that:
+- We have a one byte heap overflow
+- Maximum chunks that can be allocated is 10
+- Ability to free a chunk
+- Ability to print a chunk
+
+First thing we would want is getting info leaks specifically libc!
+
+Prior to libc version ≥ 2.26, there’s Tcache:
+
+Each thread has a per-thread cache (called the tcache) containing a small collection of chunks which can be accessed without needing to lock an arena. These chunks are stored as an array of singly-linked lists, like fastbins, but with links pointing to the payload (user area) not the chunk header. Each bin contains one size chunk, so the array is indexed (indirectly) by chunk size. Unlike fastbins, the tcache is limited in how many chunks are allowed in each bin (tcache_count). If the tcache bin is empty for a given requested size, the next larger sized chunk is not used (could cause internal fragmentation), instead the fallback is to use the normal malloc routines i.e. locking the thread’s arena and working from there [ref](https://sourceware.org/glibc/wiki/MallocInternals#Thread_Local_Cache_.28tcache.29).
+
+To do that we would need to deal with the way the tcache works. By default the tcache list will only hold seven entries, which we can see in the [malloc.c](https://elixir.bootlin.com/glibc/glibc-2.29/source/malloc/malloc.c#L323) source code from this version of libc:
+
+```c
+#if USE_TCACHE
+-------------------------------------------------------
+....................Truncated .........................
+-------------------------------------------------------
+/* This is another arbitrary limit, which tunables can change.  Each
+   tcache bin will hold at most this number of chunks.  */
+# define TCACHE_FILL_COUNT 7
+#endif
+```
+
+
 
 
 
