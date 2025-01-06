@@ -305,7 +305,7 @@ And if we reallocate it back we would get the chunk which was freed, only if the
 
 Also take note that the data structure used by the Tcache is (Last In First Out := LIFO)
 
-This means if we get the chunk which was previously holding pointers to the libc region we can just set the first 8 bytes to some value and then when we use the `show_memory` function it would print out the data given + the pointer to the `main_arena`
+This means if we get the chunk which was previously holding pointers to the libc region we can just set the first 8 bytes (this is the *fd when freed but it becomes the user data region when allocated) to some value and then when we use the `show_memory` function it would print out the data given + the value of `bk` which is a pointer to the `main_arena` struct
 
 That works because `puts()` will keep on printing until it meets a null terminator
 
