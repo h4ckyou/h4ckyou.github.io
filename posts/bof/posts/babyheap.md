@@ -244,9 +244,25 @@ Based on the reverse engineering we've done we know that:
 
 First thing we would want is getting info leaks specifically libc!
 
-Prior to libc version ≥ 2.26, there’s Tcache:
+Tcache was introduced in libc version 2.26
 
-Each thread has a per-thread cache (called the tcache) containing a small collection of chunks which can be accessed without needing to lock an arena. These chunks are stored as an array of singly-linked lists, like fastbins, but with links pointing to the payload (user area) not the chunk header. Each bin contains one size chunk, so the array is indexed (indirectly) by chunk size. Unlike fastbins, the tcache is limited in how many chunks are allowed in each bin (tcache_count). If the tcache bin is empty for a given requested size, the next larger sized chunk is not used (could cause internal fragmentation), instead the fallback is to use the normal malloc routines i.e. locking the thread’s arena and working from there [ref](https://sourceware.org/glibc/wiki/MallocInternals#Thread_Local_Cache_.28tcache.29).
+Each thread has a per-thread cache (called the tcache) containing a small collection of chunks which can be accessed without needing to lock an arena. These chunks are stored as an array of singly-linked lists, like fastbins, but with links pointing to the payload (user area) not the chunk header. Each bin contains one size chunk, so the array is indexed (indirectly) by chunk size. Unlike fastbins, the tcache is limited in how many chunks are allowed in each bin (tcache_count). If the tcache bin is empty for a given requested size, the next larger sized chunk is not used (could cause internal fragmentation), instead the fallback is to use the normal malloc routines i.e. locking the thread’s arena and working from there. [source](https://sourceware.org/glibc/wiki/MallocInternals#Thread_Local_Cache_.28tcache.29).
+
+Based on how the ptmalloc allocator works, this is the algorithm used when allocating memory:
+![image](https://github.com/user-attachments/assets/e5cedcf6-4e21-4ae9-904b-51154c5dc183)
+
+And this is free algorithm
+![image](https://github.com/user-attachments/assets/71d6d117-075b-4d63-94c8-e8b3ea308b32)
+
+In a nutshell, free works like this:
+- If there is room in the tcache, store the chunk there and return.
+- If the chunk is small enough, place it in the appropriate fastbin.
+- If the chunk was mmap'd, munmap it.
+- See if this chunk is adjacent to another free chunk and coalesce if it is.
+- Place the chunk in the unsorted list, unless it's now the "top" chunk.
+- If the chunk is large enough, coalesce any fastbins and see if the top chunk is large enough to give some memory back to the system. Note that this step might be deferred, for performance reasons, and happen during a malloc or other call.
+
+We would leverage how free works to place a chunk into the unsorted bin and the reason for doing that is if a freed chunk is the only chunk in unsorted bin, then it will hold a pointer to an arena. But in our program, there’s only 1 arena — the main arena. So we get a pointer to some fixed offset in libc.
 
 To do that we would need to deal with the way the tcache works. By default the tcache list will only hold seven entries, which we can see in the [malloc.c](https://elixir.bootlin.com/glibc/glibc-2.29/source/malloc/malloc.c#L323) source code from this version of libc:
 
