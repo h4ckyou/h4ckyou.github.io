@@ -264,7 +264,9 @@ In a nutshell, free works like this:
 
 We would leverage how free works to place a chunk into the unsorted bin and the reason for doing that is if a freed chunk is the only chunk in unsorted bin, then it will hold a pointer to an arena. But in our program, there’s only 1 arena — the main arena. So we get a pointer to some fixed offset in libc.
 
-To do that we would need to deal with the way the tcache works. By default the tcache list will only hold seven entries, which we can see in the [malloc.c](https://elixir.bootlin.com/glibc/glibc-2.29/source/malloc/malloc.c#L323) source code from this version of libc:
+To do that, we need to make an allocation such that, when freed and the tcache is filled up, it won't be small enough to be placed into the fastbin.
+
+The fastbin holds freed chunk between size of `0x20 - 0x80` and by default the tcache list will only hold seven entries, which we can see in the [malloc.c](https://elixir.bootlin.com/glibc/glibc-2.29/source/malloc/malloc.c#L323) source code from this version of libc:
 
 ```c
 #if USE_TCACHE
@@ -277,16 +279,9 @@ To do that we would need to deal with the way the tcache works. By default the t
 #endif
 ```
 
-
-
-
-
-
-
-
-
-
-
+Since the size that can be allocated by the program is either `0xF8 | 0x177` this means if we make 8 allocations of size `0xF8` and then free it:
+- 7 chunks will be placed in the tcache bin
+- 1 chunk will be placed in the unsorted bin
 
 
 
