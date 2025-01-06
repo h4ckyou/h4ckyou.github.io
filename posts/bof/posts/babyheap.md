@@ -229,13 +229,10 @@ __int64 __fastcall show_memory()
 ```
 
 The show_memory function does this:
-- Based on the `idx` receives it checks if `ptr[idx].content` isn't null
+- Based on the `idx` received it checks if `ptr[idx].content` isn't null
 - Then it prints out the value stored in `ptr[idx].content`
 
-So based on this we can tell this would probably be used as a read primitive to get leaks and aside that it's not really vulnerable to anything!
-
-
-
+So based on this we can tell this would probably be used as a read primitive to get leaks!
 
 
 
