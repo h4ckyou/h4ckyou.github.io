@@ -35,3 +35,53 @@ Time to fire up IDA to reverse this
 ```
 Note: the binary was stripped so i had already renamed variables, data types, function names
 ```
+
+Loading it up in IDA, here's the main function
+
+![image](https://github.com/user-attachments/assets/2b17f6c9-1ca5-4160-911e-d0d810f777d5)
+
+```c
+void __fastcall __noreturn main(int a1, char **a2, char **a3)
+{
+  setvbuf(stdout, 0LL, 2, 0LL);
+  setvbuf(stdin, 0LL, 1, 0LL);
+  setvbuf(stderr, 0LL, 2, 0LL);
+  challenge();
+}
+```
+
+Nothing much, it just disables buffering on `stdin, stdout & stderr` then it calls the `challenge` function
+
+This is the `challenge` function
+
+![image](https://github.com/user-attachments/assets/c5016285-9877-49a0-b194-083fd2e55443)
+![image](https://github.com/user-attachments/assets/8f0160e2-8cf8-4212-981f-a64a60e0a19d)
+
+From this we can see that based on our choice which we can either choose from `M, F, S, E` it calls the correpsonding function:
+- allocate_memory()
+- free_memory()
+- show_memory()
+- exit()
+
+Our main goal is to work with the first 3 options since exiting at this point is of no use to us.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
