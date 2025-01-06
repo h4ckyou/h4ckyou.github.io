@@ -164,16 +164,47 @@ It looks all good but there's actually a vulnerability here:
   }
 ```
 
-From the code above, we can see that `i` is set to `0` but the check is actually comparing `i` to `size`, but because indexing of an array starts at 0 the comparism should have been `if (size - 1 == i)`
+From the code above, we can see that `i` is set to `0` but the check is actually comparing `i` to `size`, since indexing of an array starts at `0` the comparism should have been `if (size - 1 == i)`
 
 This leads to a one byte heap overflow hence off by one
 
+Function `free_memory()`:
 
+![image](https://github.com/user-attachments/assets/9ff2b232-b349-4d7f-a91f-a0557bd1d01f)
 
+```c
+__int64 __fastcall free_memory()
+{
+  unsigned int num; // eax
+  __int64 idx; // rdx
+  char *content; // rdi
+  Heap *addr; // rbx
 
+  puts("(Starting from 0) Index:\n> ");
+  num = read_num();
+  if ( num > 9 )
+    return 0xFFFFFFFCLL;
+  idx = num;
+  content = ptr[idx].content;
+  if ( !content )
+    return 0xFFFFFFFCLL;
+  addr = &ptr[idx];
+  memset(content, 0, ptr[idx].size);
+  free(addr->content);
+  addr->size = 0;
+  addr->content = 0LL;
+  return 0LL;
+}
+```
 
+The free_memory function does this:
+- Receives the `idx` to use to access the `ptr` array
+- If `ptr[idx].content` isn't null (i.e it contains a heap chunk), it zero's out `ptr[idx].size` then it frees `ptr[idx].content`
+- After that is done, it clears out the pointer and the size that corresponds with the freed index
 
+The implementation here is correct because after free'ing it null's out the memory address stored in the variable.
 
+This means there's no UAF bug (Use After Free) present.
 
 
 
