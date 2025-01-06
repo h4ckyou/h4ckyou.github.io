@@ -127,10 +127,41 @@ __int64 allocate_memory()
 }
 ```
 
+The allocate_memory function does this:
+- Get's the `idx` which is used to reference where it stores our data on the global variable `ptr`
+- Reads in the size and makes sure it isn't greater than `0x177`
+- If the size is less than or equal to `0xF8` it will allocate a dynamic memory via a call to `malloc()` of size `0xF8` else it allocates a dynamic memory of size `0x178`
 
+Note that the global variable is of type Heap, which is a struct I defined myself. Its size is 8, meaning we can only make 8 allocations.
 
+```c
+struct Heap {
+char *content;
+int size;
+```
 
+Moving on:
+- It would set `ptr[idx].size` to our provided `size` and also `ptr[idx].content` to the address returned by the call to `malloc`
+- Then it reads into `ptr[idx].content` some data until it meet's a new line or the number of bytes we've read in so far equals the size we provided
 
+It looks all good but there's actually a vulnerability here:
+- Off by one overflow
+
+```c
+  read(0, &buf, 1uLL);
+  i = 0LL;
+  mem = &ptr[idx];
+  while ( buf != '\n' && buf )
+  {
+    mem->content[i] = buf;
+    read(0, &buf, 1uLL);
+    if ( size == i )
+      return 0LL;
+    ++i;
+  }
+```
+
+From the code above, we can see that `i` is set to `0` but the check is actually comparing `i` to `size`, but because indexing of an array starts at 0 the comparism should have been `if (size - 1 == i)`
 
 
 
