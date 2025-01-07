@@ -303,7 +303,7 @@ struct malloc_chunk {
 
 And if we reallocate it back we would get the chunk which was freed, only if the chunk which we are attempting to allocate is of the same size as the freed chunk
 
-This means if we get the chunk which was previously holding pointers to the libc region we can just set the first 8 bytes (this is the *fd when freed but it becomes the user data region when allocated) to some value and then when we use the `show_memory` function it would print out the data given + the value of `bk` which is a pointer to the `main_arena` struct
+This means if we get the chunk which was previously holding pointers to the libc region we can just set the first 8 bytes (this is the `fd `when freed but it becomes the user data region when allocated) to some value and then when we use the `show_memory` function it would print out the data given + the value of `bk` which is a pointer to the `main_arena` struct
 
 That works because `puts()` will keep on printing until it meets a null terminator
 
