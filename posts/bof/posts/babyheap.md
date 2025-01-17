@@ -136,8 +136,8 @@ Note that the global variable is of type Heap, which is a struct I defined mysel
 
 ```c
 struct Heap {
-char *content;
-int size;
+  char *content;
+  int size;
 }
 
 Heap ptr[10];
@@ -232,7 +232,7 @@ The show_memory function does this:
 - Based on the `idx` received it checks if `ptr[idx].content` isn't null
 - Then it prints out the value stored in `ptr[idx].content`
 
-So based on this we can tell this would probably be used as a read primitive to get leaks!
+So based on this we can tell this would probably be used as a write primitive to get leaks!
 
 #### Exploitation
 
