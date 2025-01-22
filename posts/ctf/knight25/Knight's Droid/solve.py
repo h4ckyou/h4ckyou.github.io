@@ -1,4 +1,4 @@
-def shift_cipher_decrypt(ciphertext, key):
+def decrypt(ciphertext, key):
     plaintext = ""
     for char in ciphertext:
         if char.isalpha():
