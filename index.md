@@ -9,7 +9,7 @@ title: Home
 ### Welcome To My Cyber Security Blog, H4X0R
 * * *
 
-Hi 👋, Welcome To My Blog I'm Mark a First Year Computer Science Student at `Federal University of Technology (Minna)`.
+Hi 👋, Welcome To My Blog I'm Mark a 2nd Year Computer Science Student at `Federal University of Technology (Minna)`.
 
 I Post Different Writeups, Articles, Any Stuffs Related To Hacking & Programming That I Learn xD......
 
