@@ -15,6 +15,7 @@ Capture the Flag (CTF) in computer security is an exercise in which "flags" are 
 <hr>
 <hr>
 
+- [[February 01 2025]] [Nullcon 2025](https://h4ckyou.github.io/ctf/nullcon25/writeup.html)
 - [[November 10 2024]] [BlueHens CTF 2024](https://h4ckyou.github.io/posts/ctf/bluehens24/writeup.html)
 - [[October 21 2024]] [BattleCTF 2024 Qualif](https://h4ckyou.github.io/posts/ctf/battlectf24/writeup.html) `Forensics, Pwn, Web`
 - [[August 23 2024]] [LITCTF 2024](https://h4ckyou.github.io/posts/ctf/LITCTF24/writeup.html)
