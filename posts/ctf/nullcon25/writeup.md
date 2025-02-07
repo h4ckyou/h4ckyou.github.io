@@ -32,7 +32,7 @@ The goal is simple, we first use the fsb to leak a libc address then we leverege
 
 In order to leak libc we can just leak pointers on the stack, but because pie is disabled i just decided to leak it by reading the value of the got of printf
 
-Here's my exploit [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/nullcon25/Hateful/solve.py)
+Here's my [exploit](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/nullcon25/Hateful/solve.py)
 ![image](https://github.com/user-attachments/assets/e353d2af-9a47-4321-bb58-d41f30cfd317)
 
 Running it on the remote instance works
@@ -100,8 +100,35 @@ We are working with glibc 2.36
 
 So that version has safe linking enabled and no hooks, but because we have a stack leak we can write over main return addres our ropchain
 
+Since this uses the tcache bin we will leverage a UAF to perform tcache poisoning but for that we need to get a heap leak in order to break the safe linking mechanism
 
+Our step is as follow:
+- Leak libc & heap
+- Corrupt tcache->next to get overlapping chunk to the stack address
+- Write ropchain on stack
+- Leave program to trigger ropchain
 
+For getting a libc leak we can easily take advantage of the fact that we control the size of the memory to be allocated
+
+Just simply allocate a chunk that's greater than the size the tcache bin can hold `1032 bytes` then on freeing it, the chunk will be placed in the unsorted bin
+
+And since the unsorted bin fd/bk will be pointing to the main_arena struct (during it's first use) we can read that and essentially get a libc leak
+
+To get a heap leak, we just free a chunk that will be placed in the tcache bin, that way it's fd will point to a heap address
+
+One other thing we need to handle is tcache misaligned chunk check, the stack return address of the main function isn't alligned so we just subtract it by 8 to make it alligned 
+
+And with that we're set to go
+
+Here's my [exploit](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/nullcon25/Hateful%202/solve.py)
+![image](https://github.com/user-attachments/assets/e730d2aa-374b-4479-a52c-837c390189e0)
+
+Running it works remotely
+![image](https://github.com/user-attachments/assets/489b27c2-5d35-4f73-b687-305cf49e0337)
+
+```
+Flag: ENO{W3_4R3_50RRY_4G41N_TH4T_TH3_M3554G3_W45_N0T_53NT_T0_TH3_R1GHT_3M41L}
+```
 
 
 
