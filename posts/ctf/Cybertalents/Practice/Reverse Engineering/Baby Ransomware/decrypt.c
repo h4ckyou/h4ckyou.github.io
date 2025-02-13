@@ -2,72 +2,70 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <time.h>
 
-struct Table {
+struct evil {
     uint8_t array[256];
     uint32_t i;
     uint32_t j;
 };
 
-struct Table *table;
+struct evil *obj;
 char *content;
-char *key = "Troll1337";
-// char key[16] = "Hell";
+long size;
+char key[16] = "Hell";
 
-void swap(uint32_t i, uint32_t j) {
-    uint32_t value = table->array[i];
-    table->array[i] = table->array[j];
-    table->array[j] = value;
+void swap(uint8_t i, uint8_t j) {
+    uint8_t value = obj->array[i];
+    obj->array[i] = obj->array[j];
+    obj->array[j] = value;
 }
 
-void init_table() {
-
-    table = malloc(sizeof(struct Table));
-    memset(table, 0, sizeof(struct Table));
+void initialize() {
+    obj = malloc(sizeof(struct evil));
     uint32_t size = strlen(key);
 
     for (size_t i = 0; i <= 255; i++) {
-        table->array[i] = i;
+        obj->array[i] = i;
     }
 
-    table->j = 0;
+    obj->j = 0;
 
-    for (table->i = 0; table->i <= 255; table->i++) {
-        table->j = (table->array[table->i] + table->j + key[table->i % size]) % 256;
-        swap(table->i, table->j);
-        // printf("val: %d\n", table->j);
+    for (obj->i = 0; obj->i <= 255; obj->i++) {
+        obj->j = (obj->array[obj->i] + obj->j + key[obj->i % size]) % 256;
+        swap(obj->i, obj->j);
     }
     
-    table->j = 0;
-    table->i = 0;
+    obj->j = 0;
+    obj->i = 0;
 
 }
 
 uint8_t get_byte(){
-    table->i = (table->i + 1) % 256;
-    table->j = (table->j + table->array[table->i]) % 256;
-    swap(table->i, table->j);
-    return table->array[(uint8_t)(table->array[table->i] + table->array[table->j])];
+    obj->i = (obj->i + 1) % 256;
+    obj->j = (obj->j + obj->array[obj->i]) % 256;
+    swap(obj->i, obj->j);
+    uint8_t pos = obj->array[obj->i] + obj->array[obj->j];
+    return obj->array[pos];
 }
 
-void decrypt(long size) {
-    
-        init_table();
 
-        for (size_t i = 0; i < size; i++) {
-            uint8_t key = get_byte();
-            printf("%c", content[i] ^ key);
-        }
+char *decrypt() {
+    char *result = malloc(size);
 
-        free(table);
+    for (size_t i = 0; i < size; i++){
+        uint8_t key = get_byte();
+        result[i] = key ^ content[i];
+    }
+
+    return result;
 }
 
-void brute(long size) {
+void brute() {
     char digit_str[2] = {0};
-    int value = 0;
-    uint32_t start = 0x67916000;
-    uint32_t end = start + 0x1000;
+    uint16_t value = 0;
+    uint32_t timestamp = 0x5f1c438e;
+    uint32_t start = timestamp - 0x10000;
+    uint32_t end = timestamp + 0x100000;
 
     for (uint32_t seed = start; seed <= end; seed++) {
         srand(seed);
@@ -77,33 +75,32 @@ void brute(long size) {
             snprintf(digit_str, 2, "%d", value);
             strncat(key, digit_str, 1);
         }
+        
+        initialize();
 
-        init_table();
+        char *data = decrypt();
+        
+        if (strstr(data, "FLAG")) {
+            printf("%s", data);
+            exit(EXIT_SUCCESS);
+        }
 
-        // for (size_t i = 0; i <= size; i++){
-        //     uint8_t key1 = get_byte();
-        //     if (key == 0xa4)
-        // }
-
-        uint8_t key1 = get_byte();
-        uint8_t key2 = get_byte();
-        uint8_t key3 = get_byte();
-
-        putchar(0xa);
         memset(key, 0, 16);
         strncpy(key, "Hell", 4);
 
-        free(table);
-        table = NULL;
+        free(obj);
+        free(data);
+
+        obj = NULL;
+        data = NULL;
     }
 
-    
 }
 
 int main(int argc, char *argv[]) {
 
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
+        fprintf(stderr, "Usage: %s filename \n", argv[0]);
         return 1;
     }
 
@@ -114,7 +111,7 @@ int main(int argc, char *argv[]) {
     }
 
     fseek(file, 0, SEEK_END);
-    long size = ftell(file);
+    size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
     content = malloc(size);
@@ -126,6 +123,6 @@ int main(int argc, char *argv[]) {
     fread(content, 1, size, file); 
     fclose(file);
 
-    decrypt(size);
+    brute();
 
 }
