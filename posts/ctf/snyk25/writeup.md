@@ -229,9 +229,60 @@ This means the special number is 20
 Flag: flag{h556cdd`=ag.c53664:45569368391gc}
 ```
 
+#### PShell
 
+We are given a powershell file
+![image](https://github.com/user-attachments/assets/25abb2a2-9070-457f-b2ec-154c5dd45868)
 
+I saw it will base64 decoded the `$encoded` variable so i just decoded it myself
+![image](https://github.com/user-attachments/assets/0c0dd1e9-3520-4dc1-adf1-693f37f25b13)
 
+It will base64 decode another string then compare the environment variable `MAGIC_KEY` with `Sup3rS3cr3t!` and if it matches it prints the decoded value
+
+Yet again i decoded it myself
+![image](https://github.com/user-attachments/assets/a7043e59-3024-47e0-9a59-7bcc44395037)
+
+```
+Flag: flag{45d23c1f6789badc1234567890123456}
+```
+
+#### It's Go Time
+
+We are given just a binary
+![image](https://github.com/user-attachments/assets/90105b5d-9555-4a9c-8306-bf29962dfdb6)
+
+Running `Detect It Easy` on it we see it's a Go compiled binary
+![image](https://github.com/user-attachments/assets/f439b7df-4026-4e40-9b31-1ca698eeb75f)
+
+Running it we are asked to input some key
+![image](https://github.com/user-attachments/assets/8483e9d1-f749-4486-927d-f0935064965c)
+
+This is similar to the rust challenge
+
+Also i am not familiar with Go rev so this challenge was much difficult to me but the overall idea was easy
+
+Loading it up in IDA here's the main function
+![image](https://github.com/user-attachments/assets/e6c4c75f-8c34-4650-a72e-bd4482294118)
+![image](https://github.com/user-attachments/assets/693dcf3f-f97f-4f7c-84a7-e4bac721b046)
+
+Hmmm, i don't understand, but we can make assumption that it just reads the input and probably does some check?
+
+To confirm I checkced the available functions and saw this
+![image](https://github.com/user-attachments/assets/8b68ff57-19c3-48d0-b0c8-3fd3eaa4e001)
+
+The `main.validateByte` function looks interesting so i checked it
+![image](https://github.com/user-attachments/assets/a12f42b0-1989-435a-b26d-93cc59245a27)
+
+Before i moved on to anything else i needed to make sure it was actually being used by the program so i checked the `xrefs` and got this
+![image](https://github.com/user-attachments/assets/cccc6e96-68d4-4455-8102-32884c1f953d)
+
+It seems `main.gowrap1` calls the function so i went there
+![image](https://github.com/user-attachments/assets/04915f89-7109-445e-bb66-2e7146a00e22)
+
+I also checked the `xrefs` to this function
+![image](https://github.com/user-attachments/assets/421aad0b-f252-4d3b-b261-f6552d9a2b7b)
+
+I see it's loaded in `main.main` which is all good since this means the `main.main` function will later call the `main.validateByte` function
 
 
 
