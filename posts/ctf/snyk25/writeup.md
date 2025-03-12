@@ -82,7 +82,7 @@ With this we know that:
 - v1[15] = 104
 ```
 
-We can just throw that in python and print it's byte representation
+We can just throw that in python and print it's bytes representation
 
 ```python
 import struct
@@ -116,6 +116,50 @@ Running it works and we get the flag
 ```
 Flag: flag{cc811d4486decc3379dd13688a46603f}
 ```
+
+#### Letters To Num
+
+We are given two files
+![image](https://github.com/user-attachments/assets/9020ea56-fbde-499c-9b58-15d25619c2bb)
+
+We can make assumption that the `letter2nums.elf` file encoded the original flag and `encflag.txt` is the result
+
+Loading it up in IDA here's the main function
+![image](https://github.com/user-attachments/assets/35a5c8bc-8634-48bc-9c10-6dbfc6e7174b)
+
+First it calls the `readFlag` function passing a filename and an output buffer as the parameter
+![image](https://github.com/user-attachments/assets/baf44057-f2df-46e1-b083-f1174b04354d)
+
+The function simply reads the `flag.txt` file and stores the content in `flag_buf`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
