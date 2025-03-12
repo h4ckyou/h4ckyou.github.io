@@ -310,13 +310,40 @@ void __golang main_validateByte(uint8 input, int index, chan_chan_left__main_val
 First it makes sure that the `index` is not greater than or equal to `16`
 ![image](https://github.com/user-attachments/assets/b9b343a1-8c49-4e5b-92b9-b6fc8da00811)
 
-But actually we need to know the parameters passed into this function
+Then it extracts some bytes from `main_expectedBytes[index]` and takes the bitwise `NOT` operator on the result then it does `input[index] + index` xored with `0x42` and compared with the value in `v4` 
 
-```c
-void __golang main_validateByte(uint8 input, int index, chan_chan_left__main_validationResult_0 results)
+We just need to extract the value stored in `main_expectedBytes` and do the reverse operation of it
+![image](https://github.com/user-attachments/assets/65e32acd-ef51-4913-9455-8ea4c689fabe)
+
+Here's my solve
+
+```python
+import struct
+
+enc_bytes = [0xcbc68c9994cd9785, 0xcc938f9e98c79bca]
+buf = struct.pack("<Q", enc_bytes[0]) + struct.pack("<Q", enc_bytes[1])
+key = 0x42
+
+flag = ""
+
+for i in range(0, len(buf)):
+    value = ((~buf[i] & 0xff) ^ key) - i
+    flag += chr(value)
+
+with open("a.out", "w") as f:
+    f.write(flag)
 ```
 
+Running it works
+![image](https://github.com/user-attachments/assets/61e6c9f6-bcaf-4e8c-8757-fda979cd2cae)
 
+```
+Flag: flag{78b229bed60e12514c94e85126b43ec4}
+```
+
+That's all, thanks for reading
+
+GG to my team mates they were on fire 🔥
 
 
 
