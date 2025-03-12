@@ -2,7 +2,7 @@
 
 ![image](https://github.com/user-attachments/assets/0e0fd28f-0748-4ce2-b415-f7b68321237f)
 
-This is my writeup for the Go reverse engineering challenge
+This is my writeup for some of the challenges i solved
 
 I did solve all reverse engineering but i was really busy with school so hence my writeup coming late
 
