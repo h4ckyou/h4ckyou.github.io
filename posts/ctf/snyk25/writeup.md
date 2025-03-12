@@ -132,6 +132,18 @@ First it calls the `readFlag` function passing a filename and an output buffer a
 
 The function simply reads the `flag.txt` file and stores the content in `flag_buf`
 
+Next it calls the `c` function passing some text as first parameter, the `flag_buf` as the second parameter and an output buffer `buf` as the third parameter
+![image](https://github.com/user-attachments/assets/1a8a714f-6ae1-47cc-81b4-cf2af2435daa)
+
+What this simply does is to merge the first parameter with the second parameter effectively creating an output buffer where it's content is the `first message and plaintext flag content`
+
+Then finally it calls the `writeFlag` function which takes an output filename and the buffer containing what we want to encode
+![image](https://github.com/user-attachments/assets/1a8756f7-775a-4662-b9b3-02b4daf7ef03)
+
+This first opens the filename with flag set as `writable` then it gets the length of the `buf` by calling function `sl`
+![image](https://github.com/user-attachments/assets/5346b467-a223-409a-9d9b-3f812cccc0c0)
+
+The `sl` function calculates the length of the `buf` recursively 
 
 
 
