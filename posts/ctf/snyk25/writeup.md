@@ -135,20 +135,57 @@ The function simply reads the `flag.txt` file and stores the content in `flag_bu
 Next it calls the `c` function passing some text as first parameter, the `flag_buf` as the second parameter and an output buffer `buf` as the third parameter
 ![image](https://github.com/user-attachments/assets/1a8a714f-6ae1-47cc-81b4-cf2af2435daa)
 
-What this simply does is to merge the first parameter with the second parameter effectively creating an output buffer where it's content is the `first message and plaintext flag content`
+What this simply does is to serializes the first message along with the plaintext flag into an output buffer
 
 Then finally it calls the `writeFlag` function which takes an output filename and the buffer containing what we want to encode
 ![image](https://github.com/user-attachments/assets/1a8756f7-775a-4662-b9b3-02b4daf7ef03)
 
-This first opens the filename with flag set as `writable` then it gets the length of the `buf` by calling function `sl`
+The function first opens the filename with flag set as `writable` then it gets the length of the `buf` by calling function `sl`
 ![image](https://github.com/user-attachments/assets/5346b467-a223-409a-9d9b-3f812cccc0c0)
 
 The `sl` function calculates the length of the `buf` recursively 
 
+Then finally it iterates through the size of the `buf` in chunks of 2 and calls the `encodeChars` function on `buf[i] and buf[i+1]` where the output is then stored in the file stream opened earlier
+![image](https://github.com/user-attachments/assets/f9eb3a52-ff66-4918-a622-3054ae86a3b8)
 
+The `encodeChars` function really doesn't do much
 
+```c
+__int64 __fastcall encodeChars(char byte1, char byte2)
+{
+  int result; // eax
 
+  result = byte1 << 8;                          // upper byte
+  LOWORD(result) = byte2;
+  return (byte1 << 8) | (unsigned int)result;
+}
+```
 
+It takes two bytes (byte1 and byte2) and packs them into a 16-bit integer
+
+We can easily recover the plaintext
+
+Here's my solve
+
+```python
+array = []
+
+with open("encflag.txt", "r") as f:
+    for line in f.readlines():
+        value = line.strip()
+        array.append(int(value))
+
+decoded = b""
+
+for i in range(len(array)):
+    value = array[i].to_bytes(2, byteorder="big")
+    decoded += value
+
+print(decoded)
+```
+
+Running it we get the flag
+![image](https://github.com/user-attachments/assets/e3ebd9b1-f0a9-42e8-b4b5-af86feb38fd1)
 
 
 
