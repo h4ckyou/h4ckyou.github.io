@@ -187,6 +187,47 @@ print(decoded)
 Running it we get the flag
 ![image](https://github.com/user-attachments/assets/e3ebd9b1-f0a9-42e8-b4b5-af86feb38fd1)
 
+```
+Flag: flag{3b050f5a716e51c89e9323baf3a7b73b}
+```
+
+#### Math For Me
+
+We are given just a single executable
+![image](https://github.com/user-attachments/assets/189cf6ff-35b5-415e-b522-971e430ad0c6)
+
+If we run it we're asked to input a specific number
+![image](https://github.com/user-attachments/assets/d97b1f1c-ee7b-44ec-89c5-1c53add7166c)
+
+Loading it up in IDA here's the main function
+![image](https://github.com/user-attachments/assets/952415c1-8390-4f4a-bbcb-155ea7ce45f0)
+
+Basically based on the number provided it will validate if it's right then uses that number to generate the flag
+
+That means the main thing is `check_number`
+![image](https://github.com/user-attachments/assets/abe3cdde-b6ef-4954-8cf3-3a6656feead8)
+
+Just a very basic math
+
+```
+(5 * a1 + 4) / 2 == 52
+```
+
+We just need to solve for `a1` in the equation
+
+```
+(5 * a1 + 4) = (52 * 2)
+5 * a1 = (52 * 2) - 4
+a1 = ((52 * 2) - 4) // 5
+a1 = 20
+```
+
+This means the special number is 20
+![image](https://github.com/user-attachments/assets/297e7245-641b-434f-b643-c0b155672ec1)
+
+```
+Flag: flag{h556cdd`=ag.c53664:45569368391gc}
+```
 
 
 
