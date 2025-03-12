@@ -268,6 +268,7 @@ Loading it up in IDA here's the main function
 Hmmm, i don't understand, but we can make assumption that it just reads the input and probably does some check?
 
 To confirm I checkced the available functions and saw this
+
 ![image](https://github.com/user-attachments/assets/8b68ff57-19c3-48d0-b0c8-3fd3eaa4e001)
 
 The `main.validateByte` function looks interesting so i checked it
@@ -284,12 +285,36 @@ I also checked the `xrefs` to this function
 
 I see it's loaded in `main.main` which is all good since this means the `main.main` function will later call the `main.validateByte` function
 
+Now we can dig deep in the validate function
 
+```c
+// main.validateByte
+void __golang main_validateByte(uint8 input, int index, chan_chan_left__main_validationResult_0 results)
+{
+  char v3; // [rsp+0h] [rbp-1Ah]
+  char v4; // [rsp+1h] [rbp-19h]
+  int elem; // [rsp+2h] [rbp-18h] BYREF
+  bool v6; // [rsp+Ah] [rbp-10h]
 
+  if ( index >= (unsigned __int64)qword_592B08 )
+    runtime_panicIndex();
+  v4 = ~*((_BYTE *)main_expectedBytes + index);
+  v3 = (input + index) ^ 0x42;
+  time_Sleep(10000000LL);
+  elem = index;
+  v6 = v4 == v3;
+  runtime_chansend1((runtime_hchan_0 *)results, &elem);
+}
+```
 
+First it makes sure that the `index` is not greater than or equal to `16`
+![image](https://github.com/user-attachments/assets/b9b343a1-8c49-4e5b-92b9-b6fc8da00811)
 
+But actually we need to know the parameters passed into this function
 
-
+```c
+void __golang main_validateByte(uint8 input, int index, chan_chan_left__main_validationResult_0 results)
+```
 
 
 
