@@ -38,8 +38,28 @@ Decompiling it we have this
 ![image](https://github.com/user-attachments/assets/f3d9428e-7655-4535-b12d-ae24cbf19b6f)
 ![image](https://github.com/user-attachments/assets/cca302e1-cf63-4f6c-a1de-873b991204f7)
 
+Looks so cryptic lmao!
 
+Reading through it step by step it's clear that it will first print some text then receive our input
+![image](https://github.com/user-attachments/assets/0836803a-b3a3-42a3-ab8f-9c466c044523)
 
+Next it will make sure the received input length is 16 then it compares the input with some hardcoded value, if all the bytes matches it will then compute the md5 hash and print it out
+![image](https://github.com/user-attachments/assets/0e913ed9-bad1-455a-be70-8bd8bfbce3c7)
+
+So the important part is here:
+
+```c
+  {
+    if ( *(_BYTE *)v1 == 49
+      && *(_QWORD *)(v1 + 1) == 0x1F221731232D1F26LL
+      && *(_DWORD *)(v1 + 9) == 1684542258
+      && *(_BYTE *)(v1 + 13) == 100
+      && *(_BYTE *)(v1 + 14) == 104
+      && *(_BYTE *)(v1 + 15) == 104 )
+    {
+```
+
+We simply just need to make sure the bytes it checks matches
 
 
 
