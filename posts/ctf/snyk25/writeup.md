@@ -61,10 +61,61 @@ So the important part is here:
 
 We simply just need to make sure the bytes it checks matches
 
+Since IDA is so awesome it already defined the right data type making life easier for us
 
+So `v1` is the buffer where it stores our input
 
+Just a quick note:
+- BYTE -> 1 byte
+- WORD -> 2 bytes
+- DWORD -> 4 bytes
+- QWORD -> 8 bytes
 
+With this we know that:
 
+```
+- v1[0] = 49
+- v1[1:9] = 0x1F221731232D1F26
+- v1[9:13] = 1684542258
+- v1[13] = 100
+- v1[14] = 104
+- v1[15] = 104
+```
+
+We can just throw that in python and print it's byte representation
+
+```python
+import struct
+
+v1 = [0] * 16
+
+qword = 0x1F221731232D1F26
+dword = 0x64681332
+
+value1 = struct.pack("<Q", qword)
+value2 = struct.pack("<I", dword)
+
+v1[0] = 49
+v1[1:9] = value1
+v1[9:13] = value2
+v1[13] = 100
+v1[14] = 104
+v1[15] = 104
+
+expected = bytes(v1)
+
+print(expected, len(expected))
+
+with open("a.out", "wb") as f:
+    f.write(expected)
+```
+
+Running it works and we get the flag
+![image](https://github.com/user-attachments/assets/2a55049f-ce47-4464-a03c-47e23353c877)
+
+```
+Flag: flag{cc811d4486decc3379dd13688a46603f}
+```
 
 
 
