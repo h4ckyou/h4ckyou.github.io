@@ -32,6 +32,7 @@ I tackled mostly the pwn and rev challenges and this writeup contains the soluti
 ![image](https://github.com/user-attachments/assets/4e895ce7-3bc4-405a-98d9-043d809ec49e)
 
 We are given the source code and binary
+![image](https://github.com/user-attachments/assets/3aaa5004-6848-4564-bac2-721aaff74cb0)
 
 Reading the source code, in the main function 
 ![image](https://github.com/user-attachments/assets/d9a9ccfc-84f4-4ff8-b85a-67d661f003a9)
@@ -58,6 +59,7 @@ Running it, we get the flag
 ![image](https://github.com/user-attachments/assets/6c95b2e2-8a39-4762-b48e-19c7eb9d49b7)
 
 Same as the previous challenge we are also provided with the source code and binary
+![image](https://github.com/user-attachments/assets/d532d95a-4718-4186-a1a7-788a19f977b6)
 
 Starting from the main function we see it calls the `call_functions` function
 ![image](https://github.com/user-attachments/assets/bb48a252-a8da-4c02-ae39-3e63ee12946f)
@@ -134,6 +136,7 @@ Running strings on it we can infer it's a c++ compiled binary
 ![image](https://github.com/user-attachments/assets/a9be228e-31c9-4841-8645-97e0cde481c0)
 
 Using IDA to decompile here's the main function
+![image](https://github.com/user-attachments/assets/438d4c3e-e6dd-4f9a-9c9b-6918e4ca3811)
 ![image](https://github.com/user-attachments/assets/35b48d7f-349b-42f4-84b5-6310cb8416ba)
 
 Basically it prints out some text, sleeps for 2 seconds then creates a `std::string` variable with content `/bin/bash -c 'md5sum /root/flag.txt'` then updates our `gid & uid` to `0` then finally calls the `system` function on the command
@@ -190,6 +193,7 @@ I just reused my previous solve for the path hijack and that worked
 ![image](https://github.com/user-attachments/assets/a057fab9-577b-44c9-b12d-c1301b1e98c5)
 
 We're given the source code and binary
+![image](https://github.com/user-attachments/assets/a6abba6b-e630-460d-ae09-131d7e6ca7bc)
 
 Here's the main function
 
