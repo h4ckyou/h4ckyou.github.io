@@ -300,3 +300,22 @@ The out of bound read occurs in the add message function since it doesn't check 
 But this isn't so much useful because there's nothing really important before the entries as you can see from the stack view 
 ![image](https://github.com/user-attachments/assets/28dbab7c-0c43-41be-bc58-1d46fc45a07a)
 
+Now the main bug which we'll exploiting is the overflow in feedback
+
+We see it's defined as a char array of 8 bytes but we're reading in 32 bytes of data to the array
+
+At first it might look like an easy win here? but if you take a look at the stack view you'll see this
+![image](https://github.com/user-attachments/assets/80634c26-14bd-4176-9ef9-a5014ece7338)
+
+```
+-000000000000000C     char feedback[8];
+-0000000000000004     _DWORD total_entries;
++0000000000000000     _QWORD __saved_registers;
++0000000000000008     _UNKNOWN *__return_address;
+```
+
+The offset from the feedback array to the return address is:
+- 8 + 8 + 8 = 24
+
+This means the first 24 bytes will first fill up the `feedback` array, the `total_entries`, some padding (4 bytes) after `total_entires` and then the `saved rbp` 
+
