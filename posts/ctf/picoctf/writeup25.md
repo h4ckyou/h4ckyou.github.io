@@ -250,6 +250,23 @@ Running it works
 
 ![image](https://github.com/user-attachments/assets/7796db3b-e89d-476e-aced-0845e4a3cdba)
 
+We are given the source code and binary
+
+First we'll take a look at the protections on the binary
+![image](https://github.com/user-attachments/assets/8026ae9f-3e4e-41a5-be8b-1133bb9cc907)
+
+The binary literally has no protection enabled, okay looks good!
+
+Running it shows this
+![image](https://github.com/user-attachments/assets/5356c86f-dcaa-46f9-a95a-bfabd56a26d9)
+
+It has just two main options we can choose from
+
+Since we have the source code let's take a look at it
+![image](https://github.com/user-attachments/assets/61c1c648-145a-4914-81ea-c07e6cd16364)
+
+It's not so much!
+
 
 
 
