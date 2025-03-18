@@ -278,8 +278,16 @@ typedef struct entry {
 } entry_t;
 ```
 
+I'll look through just the important details
 
+If we decide to add a new recipient it will make read into `entries[total_entries].name` 32 bytes of data 
 
+If we decide to send a message it will receive the index of the the entries we want to store the message and read 64 bytes of data into the `msg` field of the `entry_t` struct
+
+And finally when we choose exit it will ask for our feedback where it reads in up to 32 bytes of data to the feedback array, null terminates it and returns
+
+Okay cool so now this are the list of vulnerabilities here:
+- 
 
 
 
