@@ -185,7 +185,31 @@ I just reused my previous solve for the path hijack and that worked
 ![image](https://github.com/user-attachments/assets/f44c3188-d666-4944-b780-55189521c32a)
 
 
+#### Echo Valley
 
+![image](https://github.com/user-attachments/assets/a057fab9-577b-44c9-b12d-c1301b1e98c5)
+
+We're given the source code and binary
+
+Here's the main function
+![image](https://github.com/user-attachments/assets/2773847f-40d2-4cc1-9283-97a6970b52f8)
+
+It just calls the `echo_valley` function which does this
+![image](https://github.com/user-attachments/assets/fc5ddfde-c2fd-45d0-8464-1e39dc3dc152)
+
+This simply just keeps receiving our input and printing it out back until we give it `exit` before it returns back to `main`
+
+There's also a win function
+![image](https://github.com/user-attachments/assets/eebf1af5-11d1-47fd-9beb-5a931409db54)
+
+So our goal is simply to somehow call that function
+
+The bug is an obvious format string bug
+
+Looking at the protection on the binary we get this
+![image](https://github.com/user-attachments/assets/d017f981-a632-418c-97d8-44298df577ea)
+
+We see that all protections are enabled
 
 
 
