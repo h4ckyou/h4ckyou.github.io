@@ -97,7 +97,7 @@ We can see at offset 19 holds a pointer to the `elf` section
 Now we calculate the offset of that address to the pie base
 ![image](https://github.com/user-attachments/assets/2fc7f85e-81ae-47eb-8434-a4a3a26dde5b)
 
-This means if we the address at offset 19 and subtract it with `0x1441` that would be the pie base
+This means if we get the address at offset 19 and subtract it with `0x1441` that would give the pie base
 
 And with that we can easily just jump to the win function address
 
@@ -134,8 +134,27 @@ Running strings on it we can infer it's a c++ compiled binary
 ![image](https://github.com/user-attachments/assets/a9be228e-31c9-4841-8645-97e0cde481c0)
 
 Using IDA to decompile here's the main function
+![image](https://github.com/user-attachments/assets/35b48d7f-349b-42f4-84b5-6310cb8416ba)
 
+Basically it prints out some text, sleeps for 2 seconds then creates a `std::string` variable with content `/bin/bash -c 'md5sum /root/flag.txt'` then updates our `gid & uid` to `0` then finally calls the `system` function on the command
 
+This basically just calculates the `md5sum` value of the file `/root/flag.txt`
+
+The issue here is the way the `md5sum` binary is being used, it doesn't specify the full path thus we can hijack the binary so that it executes something else
+
+The first step is to create a malicious `md5sum` binary, i just did something really easy
+![image](https://github.com/user-attachments/assets/7b38f6b1-a4bc-440c-b388-1cc29cf4e887)
+
+Next we add our current directory to the environment `PATH` variable
+![image](https://github.com/user-attachments/assets/304f90a4-4378-445d-8088-e9e3924ea0af)
+
+```
+echo "cat /root/flag.txt > a.txt"  > md5sum
+chmod +x md5sum
+export PATH=/home/ctf-player:$PATH
+```
+
+We can see that on executing the `flaghasher` binary we get the flag!
 
 
 
