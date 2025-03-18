@@ -286,10 +286,10 @@ If we decide to send a message it will receive the index of the the entries we w
 
 And finally when we choose exit it will ask for our feedback where it reads in up to 32 bytes of data to the feedback array, null terminates it and returns
 
-Okay cool so now this are the list of vulnerabilities here:
-- 
+Okay cool so now what's the vulnerability?
 
+Well there are some bugs here such as:
+- Buffer overflow in feedback
+- Out of bound read in add message
 
-
-
-
+There's also an overflow in add recipient but i wouldn't consider it that much of a risk because even though it overwrites the `msg` field when we attempt to add a message it will sti
