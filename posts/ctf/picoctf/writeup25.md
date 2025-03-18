@@ -25,4 +25,51 @@ I tackled mostly the pwn and rev challenges and this writeup contains the soluti
 - Binary Instrumentation 2
 - Perplexed
 
-There's currently an embargo so i'll update once it's over
+### Binary Exploitation
+
+#### PIE Time 1
+
+![image](https://github.com/user-attachments/assets/4e895ce7-3bc4-405a-98d9-043d809ec49e)
+
+We are given the source code and binary
+
+Reading the source code, in the main function 
+![image](https://github.com/user-attachments/assets/d9a9ccfc-84f4-4ff8-b85a-67d661f003a9)
+
+This would:
+- Give us an elf section leak specically the `main` function address
+- Receives some hex value and casts it as a function pointer which is later called
+
+The program has a win function which would print the flag
+![image](https://github.com/user-attachments/assets/e2aec084-042b-41d8-9637-5a5f67ad0e9c)
+
+We simply just need to jump to function
+
+Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/PIE%20Time%201/solve.py)
+![image](https://github.com/user-attachments/assets/81993aca-c2f7-4913-b926-1959816c3382)
+
+Running it, we get the flag
+![image](https://github.com/user-attachments/assets/eedb3f6f-264e-4f2d-8505-cf1669799c30)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
