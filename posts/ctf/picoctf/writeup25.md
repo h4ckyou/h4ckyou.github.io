@@ -83,8 +83,32 @@ There's an obvious format string bug since it uses `printf` on our controlled bu
 
 We will leverage that to get memory leaks
 
+To calculate the offset where a pointer to the elf section is on the stack i'll use gdb 
+
+Using `gdb-pwndbg` and setting a breakpoint at `b *call_functions+80`
+![image](https://github.com/user-attachments/assets/dd29fe46-ef95-415f-9c94-702a1338c65f)
+
+Here's how the stack looks like
+![image](https://github.com/user-attachments/assets/5122f6e2-70ac-45fb-a6eb-b10c493db89d)
+
+We can see at offset 19 holds a pointer to the `elf` section
+![image](https://github.com/user-attachments/assets/82741b9d-6c01-4f53-9d7a-bfdbc276d134)
+
+Now we calculate the offset of that address to the pie base
+![image](https://github.com/user-attachments/assets/2fc7f85e-81ae-47eb-8434-a4a3a26dde5b)
+
+This means if we the address at offset 19 and subtract it with `0x1441` that would be the pie base
+
+And with that we can easily just jump to the win function address
+
+Here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/PIE%20Time%202/solve.py)
+![image](https://github.com/user-attachments/assets/91df4ae7-983a-46bf-8728-f9663223940b)
+
+Running it works
+![image](https://github.com/user-attachments/assets/1328eefd-cbdb-40d5-aaa0-a6b7e975147c)
 
 
+#### Hash Only 1
 
 
 
