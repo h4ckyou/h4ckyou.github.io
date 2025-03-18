@@ -156,7 +156,33 @@ export PATH=/home/ctf-player:$PATH
 
 We can see that on executing the `flaghasher` binary we get the flag!
 
+#### Hash Only 2
 
+![image](https://github.com/user-attachments/assets/6f67310d-7107-4d51-8175-fc21083c0c51)
+
+Connecting to the ssh remote instance we get this
+![image](https://github.com/user-attachments/assets/d3675b0e-faa3-4e32-a441-5c3223edcec7)
+
+Every thing looks all good until i tried finding the suid binary `flaghasher` and it shows this error:
+
+```
+-rbash: /dev/null: restricted: cannot redirect output
+```
+
+So it seems we are in a restricted shell called `rbash`
+
+Looking it up for bypass we find that it can be easily bypassed using the `-t "bash --noprofile"` argument
+
+Doing that works
+![image](https://github.com/user-attachments/assets/113b137c-d81a-40e3-b019-fefd47ca502a)
+
+The `flaghasher` binary is still present but just in a different directory
+
+Executing it shows the same thing as the previous one
+![image](https://github.com/user-attachments/assets/54149357-7737-4e0a-8579-778e3b861b45)
+
+I just reused my previous solve for the path hijack and that worked
+![image](https://github.com/user-attachments/assets/f44c3188-d666-4944-b780-55189521c32a)
 
 
 
