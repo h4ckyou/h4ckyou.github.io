@@ -292,4 +292,11 @@ Well there are some bugs here such as:
 - Buffer overflow in feedback
 - Out of bound read in add message
 
-There's also an overflow in add recipient but i wouldn't consider it that much of a risk because even though it overwrites the `msg` field when we attempt to add a message it will sti
+There's also an overflow in add recipient but i wouldn't consider it that much of a risk because even though it overwrites the `msg` field when we attempt to add a message it will replace what we overwrote with our new message
+
+The out of bound read occurs in the add message function since it doesn't check if `index` is less than `0`
+![image](https://github.com/user-attachments/assets/a17552ea-8b27-4432-a6ec-3130d146bce0)
+
+But this isn't so much useful because there's nothing really important before the entries as you can see from the stack view 
+![image](https://github.com/user-attachments/assets/28dbab7c-0c43-41be-bc58-1d46fc45a07a)
+
