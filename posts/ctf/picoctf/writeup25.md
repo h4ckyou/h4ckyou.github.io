@@ -38,9 +38,10 @@ Reading the source code, in the main function
 
 This would:
 - Give us an elf section leak specically the `main` function address
-- Receives some hex value and casts it as a function pointer which is later called
+- Receives a hex value and casts it as a function pointer which is later called
 
 The program has a win function which would print the flag
+
 ![image](https://github.com/user-attachments/assets/e2aec084-042b-41d8-9637-5a5f67ad0e9c)
 
 We simply just need to jump to function
@@ -52,6 +53,35 @@ Running it, we get the flag
 ![image](https://github.com/user-attachments/assets/eedb3f6f-264e-4f2d-8505-cf1669799c30)
 
 
+#### PIE Time 2
+
+![image](https://github.com/user-attachments/assets/6c95b2e2-8a39-4762-b48e-19c7eb9d49b7)
+
+Same as the previous challenge we are also provided with the source code and binary
+
+Starting from the main function we see it calls the `call_functions` function
+![image](https://github.com/user-attachments/assets/bb48a252-a8da-4c02-ae39-3e63ee12946f)
+
+Here's what the function does
+![image](https://github.com/user-attachments/assets/71c22757-a1dc-41ff-98a4-85d2cce00e32)
+
+So first it:
+- Receives our input and then prints it out
+- Receives a hex value which is casted as a function pointer and later called
+
+This also has a win function
+![image](https://github.com/user-attachments/assets/236746ed-f131-425a-ade3-5ed0ad774aa6)
+
+Our goal is to jump there yet again
+
+But this time we are not given any memory leaks, and checking the protection enabled on the binary we get this
+![image](https://github.com/user-attachments/assets/2adfd7cd-1fae-4b3f-9cd7-15075796b67e)
+
+This means we need to leak some memory address
+
+There's an obvious format string bug since it uses `printf` on our controlled buffer without using a format specifier
+
+We will leverage that to get memory leaks
 
 
 
