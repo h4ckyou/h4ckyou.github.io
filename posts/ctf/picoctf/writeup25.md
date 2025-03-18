@@ -41,12 +41,12 @@ This would:
 - Receives a hex value and casts it as a function pointer which is later called
 
 The program has a win function which would print the flag
-
 ![image](https://github.com/user-attachments/assets/e2aec084-042b-41d8-9637-5a5f67ad0e9c)
 
 We simply just need to jump to function
 
 Here's my solve [script](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/PIE%20Time%201/solve.py)
+
 ![image](https://github.com/user-attachments/assets/81993aca-c2f7-4913-b926-1959816c3382)
 
 Running it, we get the flag
