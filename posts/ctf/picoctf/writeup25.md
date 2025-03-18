@@ -243,6 +243,10 @@ With this we will leverage the format string bug by gaining arb write and our go
 Here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/Echo%20Valley/solve.py)
 ![image](https://github.com/user-attachments/assets/27ad8f4c-04e1-4255-8192-cc852510fd2d)
 
+Running it works
+![image](https://github.com/user-attachments/assets/4f1a75a1-f2f4-44d2-9e1c-6feffd75b1a5)
+
+#### Handoff
 
 
 
