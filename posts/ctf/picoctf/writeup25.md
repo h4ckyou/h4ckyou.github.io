@@ -269,8 +269,14 @@ It has just two main options we can choose from
 Since we have the source code let's take a look at it
 ![image](https://github.com/user-attachments/assets/61c1c648-145a-4914-81ea-c07e6cd16364)
 
-It's not so much!
+First we have a struct called `entry_t` that manages the `name` and `message` of the recipient
 
+```c
+typedef struct entry {
+	char name[8];
+	char msg[64];
+} entry_t;
+```
 
 
 
