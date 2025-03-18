@@ -192,6 +192,7 @@ I just reused my previous solve for the path hijack and that worked
 We're given the source code and binary
 
 Here's the main function
+
 ![image](https://github.com/user-attachments/assets/2773847f-40d2-4cc1-9283-97a6970b52f8)
 
 It just calls the `echo_valley` function which does this
@@ -210,6 +211,37 @@ Looking at the protection on the binary we get this
 ![image](https://github.com/user-attachments/assets/d017f981-a632-418c-97d8-44298df577ea)
 
 We see that all protections are enabled
+
+The first thing we would need are memory leaks
+
+I leaked `pie` and `stack`
+
+The reason i leaked a stack address is because i'll be overwriting the saved rip of the `echo_valley` function to the `print_flag` function
+
+Setting a breakpoint at `echo_valley+218` here's what is on the stack
+![image](https://github.com/user-attachments/assets/d4c9689d-d612-4ceb-a155-bd2e4b22d314)
+
+At offset `20 & 21` holds some stack and pie address
+![image](https://github.com/user-attachments/assets/c70ddec1-820d-49f0-8616-05d3a4e4d9d7)
+
+And that's what i leaked
+![image](https://github.com/user-attachments/assets/08df8a37-9647-469f-b23c-ee009fcd025f)
+
+To calculate the saved rip address i set a breakpoint at `echo_valley+249` then inputted `exit`
+![image](https://github.com/user-attachments/assets/6ae5f81c-ad30-4fea-b6d8-5c7a5786466a)
+
+Now we look at the stack frame
+![image](https://github.com/user-attachments/assets/fa6bbcbd-625f-4f59-9dd0-1d06db6b7b3d)
+
+Now we just subtract our leaked stack address with that of the saved rip
+![image](https://github.com/user-attachments/assets/7e9b2ccd-e878-4de6-9ed9-352c301cb220)
+
+It's just `8` 
+
+With this we will leverage the format string bug by gaining arb write and our goal is to overwrite the saved rip to the win function
+
+Here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/Echo%20Valley/solve.py)
+![image](https://github.com/user-attachments/assets/27ad8f4c-04e1-4255-8192-cc852510fd2d)
 
 
 
