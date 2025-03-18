@@ -110,6 +110,30 @@ Running it works
 
 #### Hash Only 1
 
+![image](https://github.com/user-attachments/assets/5b71a020-aec2-4d03-a17d-ca1b5cdf5f89)
+
+We are given an ssh instance to connect to and also an alternative command to copy the `flaghasher` binary from the remote host to our local host
+
+Let us first take a look at what the binary does on the remote instance
+![image](https://github.com/user-attachments/assets/961bc6d3-9436-4e74-b693-d52f802229a8)
+
+Running it we see it computes the md5 hash of the `/root/flag.txt` file
+
+We obviously can't derive the content of the flag from just the hash so we need to some how figure a way around this
+
+To copy the binary to our host we use this command
+
+```
+scp -P 53610 ctf-player@shape-facility.picoctf.net:~/flaghasher .
+```
+
+After the transfer, checking the file type shows it's a 64 bits binary
+![image](https://github.com/user-attachments/assets/645bec08-f6ba-45b8-ab4b-d5c226161391)
+
+Running strings on it we can infer it's a c++ compiled binary
+![image](https://github.com/user-attachments/assets/a9be228e-31c9-4841-8645-97e0cde481c0)
+
+Using IDA to decompile here's the main function
 
 
 
