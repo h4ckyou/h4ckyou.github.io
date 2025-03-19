@@ -358,16 +358,43 @@ Running it works
 ![image](https://github.com/user-attachments/assets/a3d1ad1b-ccac-44a9-b42e-dcba95c0862e)
 
 
+### Reverse Engineering
 
+I'm yet to write about this but i solved all challenges in this category, I'm a bit tired but all my solves are [here](https://github.com/h4ckyou/h4ckyou.github.io/tree/main/posts/ctf/picoctf/scripts/2025/Reverse%20Engineering)
 
+The Binary Instrumentation 1 & 2 isn't there because it's windows rev which i solved by debugging on my windows host
 
+- Binary Instrumentation 1
+But the idea behind the challenge 1 is that it will resolve some winapi functions and then executes a region of memory which holds some shellcode that later calls a function that is meant to print the flag
 
+The issue is that it's going to take a lot of time since it uses a sleep variant to make the program pause execution
 
+Rather than patching the function call i just scrolled down a bit and saw the base64 encoded flag which is supposed to be printed to stdout after the sleep is done so i just decoded and i got the flag
 
+- Binary Instrumentation 2
+This one really took me quite a lot of time (3 hours) the reason is i'm not so much familiar with windows reversing 
 
+So i really spent lot of time in the debugger
 
+But the challenge itself basically also resolves some api and then executes some shellcode 
 
+The issue with this one is when it tries to perform some winapi call it fails for some reason :( 
 
+But before it exists i created a dump of the new memory region it creates 
+
+And decompiling it i got the flag, but you can as well just scroll down in the memory dump and you'll see a suspicious base64 looking string
+
+- Perplexed
+The other challenge which gave me issue was perplexed though to reverse it wasn't so difficult but for some reason i wasn't getting the last bytes to be printable
+
+It really frustrated me and i ended up brute forcing using gdb scripting
+
+This is my rant here:
+![image](https://github.com/user-attachments/assets/f127f782-73fd-4ce3-b797-3f79b72b6c9a)
+![image](https://github.com/user-attachments/assets/01bb0a1f-1e32-4b3a-b6f4-0caebffbfd72)
+
+And finally
+![image](https://github.com/user-attachments/assets/585d4793-57b2-49c5-a01b-59e9a7cb6640)
 
 
 
