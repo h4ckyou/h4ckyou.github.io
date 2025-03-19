@@ -364,14 +364,14 @@ I'm yet to write about this but i solved all challenges in this category, I'm a 
 
 The Binary Instrumentation 1 & 2 isn't there because it's windows rev which i solved by debugging on my windows host
 
-- Binary Instrumentation 1
+- Binary Instrumentation 1:
 But the idea behind the challenge 1 is that it will resolve some winapi functions and then executes a region of memory which holds some shellcode that later calls a function that is meant to print the flag
 
 The issue is that it's going to take a lot of time since it uses a sleep variant to make the program pause execution
 
 Rather than patching the function call i just scrolled down a bit and saw the base64 encoded flag which is supposed to be printed to stdout after the sleep is done so i just decoded and i got the flag
 
-- Binary Instrumentation 2
+- Binary Instrumentation 2:
 This one really took me quite a lot of time (3 hours) the reason is i'm not so much familiar with windows reversing 
 
 So i really spent lot of time in the debugger
