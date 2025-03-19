@@ -58,7 +58,6 @@ Running it, we get the flag
 ![image](https://github.com/user-attachments/assets/6c95b2e2-8a39-4762-b48e-19c7eb9d49b7)
 
 Same as the previous challenge we are also provided with the source code and binary
-![image](https://github.com/user-attachments/assets/d532d95a-4718-4186-a1a7-788a19f977b6)
 
 Starting from the main function we see it calls the `call_functions` function
 ![image](https://github.com/user-attachments/assets/bb48a252-a8da-4c02-ae39-3e63ee12946f)
