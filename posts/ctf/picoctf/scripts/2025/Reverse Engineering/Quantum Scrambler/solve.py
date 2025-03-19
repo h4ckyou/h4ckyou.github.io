@@ -10,6 +10,7 @@ def unscramble(L):
         i -= 1
     return L
 
+# hey don't mind my ass code
 def get_hex(L):
     res = []
     for i in L:
