@@ -313,11 +313,11 @@ At first it might look like an easy win here? but if you take a look at the stac
 ```
 
 The offset from the feedback array to the return address is:
-- 8 + 8 + 8 = 24
+- 8 + 4 + 8 = 20
 
-This means the first 24 bytes will first fill up the `feedback` array, the `total_entries`, some padding (4 bytes) after `total_entires` and then the `saved rbp` 
+This means the first 20 bytes will first fill up the `feedback` array, the `total_entries` and then the `saved rbp` 
 
-That effectively leaves us with us 8 bytes for rip control
+That effectively leaves us with roughly 8 bytes for rip control
 
 What???
 
@@ -325,10 +325,10 @@ How do we pwn this with just 8 bytes of rip control
 
 Things began getting tough at this point
 
-I neglected the fact that `NX` was disabled and that means the stack is `rwx` 
+I neglected the fact that `NX` was disabled at first and that means the stack is `rwx` 
 
 During the time spent on trying to solve this challenge (about 5 hours or so) i attempted:
-- stack pivot to got which got me a libc leak but i couldn't pop shell because i had just 8 bytes rip control and one gadget didn't work :(
+- stack pivot to the global offset table which got me a libc leak but i couldn't pop shell because i had just 8 bytes rip control and one gadget didn't work :(
 
 Then i decided to take a look at the rop gadgets again and got this
 ![image](https://github.com/user-attachments/assets/a180524f-ced5-41ed-8a7b-dc25cfd3543b)
@@ -343,11 +343,19 @@ We see that `rax` is a controllable buffer and that represents our `feedback` ar
 
 This means we can place shellcode as the feedback then set rip to the `jmp rax` gadget effectively giving us shellcode execution
 
-Phew!
+Phew! But now we know that, how can we spawn a shell?
 
+Remember that the entries are actually stored on the stack! This means we can make `rsp` point to `entries[0]` which would hold our shellcode!
 
+I calculated the offset between the current stack with where `entries[0]` is stored to be `0x2e4`
 
+So with a `sub rsp` instruction + a `jmp rsp` instruction i pivoted the stack to our execve shellcode and got code execution!
 
+Here's my [solve](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/picoctf/scripts/2025/Binary%20Exploitation/Handoff/solve.py)
+![image](https://github.com/user-attachments/assets/0e89c56c-63d7-484b-bf3d-6a871888a942)
+
+Running it works
+![image](https://github.com/user-attachments/assets/a3d1ad1b-ccac-44a9-b42e-dcba95c0862e)
 
 
 
