@@ -32,7 +32,6 @@ I tackled mostly the pwn and rev challenges and this writeup contains the soluti
 ![image](https://github.com/user-attachments/assets/4e895ce7-3bc4-405a-98d9-043d809ec49e)
 
 We are given the source code and binary
-![image](https://github.com/user-attachments/assets/3aaa5004-6848-4564-bac2-721aaff74cb0)
 
 Reading the source code, in the main function 
 ![image](https://github.com/user-attachments/assets/d9a9ccfc-84f4-4ff8-b85a-67d661f003a9)
