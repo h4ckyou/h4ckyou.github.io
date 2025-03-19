@@ -288,7 +288,7 @@ Okay cool so now what's the vulnerability?
 
 Well there are some bugs here such as:
 - Buffer overflow in feedback
-- Out of bound read in add message
+- Out of bound write in add message
 
 There's also an overflow in add recipient but i wouldn't consider it that much of a risk because even though it overwrites the `msg` field when we attempt to add a message it will replace what we overwrote with our new message
 
