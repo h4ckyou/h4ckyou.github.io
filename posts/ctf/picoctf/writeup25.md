@@ -319,3 +319,53 @@ The offset from the feedback array to the return address is:
 
 This means the first 24 bytes will first fill up the `feedback` array, the `total_entries`, some padding (4 bytes) after `total_entires` and then the `saved rbp` 
 
+That effectively leaves us with us 8 bytes for rip control
+
+What???
+
+How do we pwn this with just 8 bytes of rip control
+
+Things began getting tough at this point
+
+I neglected the fact that `NX` was disabled and that means the stack is `rwx` 
+
+During the time spent on trying to solve this challenge (about 5 hours or so) i attempted:
+- stack pivot to got which got me a libc leak but i couldn't pop shell because i had just 8 bytes rip control and one gadget didn't work :(
+
+Then i decided to take a look at the rop gadgets again and got this
+![image](https://github.com/user-attachments/assets/a180524f-ced5-41ed-8a7b-dc25cfd3543b)
+![image](https://github.com/user-attachments/assets/944bc477-e529-4a03-a35f-6be47735060d)
+
+The one of interest is the `jmp rax`
+
+Taking a look at the registers when it's about to return shows this (set bp at vuln+485)
+![image](https://github.com/user-attachments/assets/11885c5e-88e0-4fd5-a4cb-daf6455aa1ac)
+
+We see that `rax` is a controllable buffer and that represents our `feedback` array!
+
+This means we can place shellcode as the feedback then set rip to the `jmp rax` gadget effectively giving us shellcode execution
+
+Phew!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
