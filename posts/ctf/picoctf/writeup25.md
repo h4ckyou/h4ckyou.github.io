@@ -137,7 +137,7 @@ Using IDA to decompile here's the main function
 ![image](https://github.com/user-attachments/assets/438d4c3e-e6dd-4f9a-9c9b-6918e4ca3811)
 ![image](https://github.com/user-attachments/assets/35b48d7f-349b-42f4-84b5-6310cb8416ba)
 
-Basically it prints out some text, sleeps for 2 seconds then creates a `std::string` variable with content `/bin/bash -c 'md5sum /root/flag.txt'` then updates our `gid & uid` to `0` then finally calls the `system` function on the command
+The program first prints a message to the terminal and pauses for two seconds. It then defines a command string containing `/bin/bash -c 'md5sum /root/flag.txt'`. After that, it escalates privileges by setting both the group ID (gid) and user ID (uid) to 0. Finally, it executes the command using the system function.
 
 This basically just calculates the `md5sum` value of the file `/root/flag.txt`
 
