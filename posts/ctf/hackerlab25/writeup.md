@@ -22,6 +22,10 @@ I don't have much time to make writeup on everything I did
 #### NeuroNet Collapse
 ![image](https://github.com/user-attachments/assets/7a101c2b-5414-4756-b874-a5256ef81555)
 
-This was the first pwn challenge as they were only in total two pwn challenges
+This was the first "pwn" challenge as they were only in total two pwn challenges
 
-I actually solved this one
+I actually solved this one the next day after it was released cause i was busy 
+
+But hey it was still a bit fun :)
+
+Less talking let's get into the challenge....
