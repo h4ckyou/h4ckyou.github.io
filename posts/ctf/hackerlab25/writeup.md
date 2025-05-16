@@ -29,3 +29,15 @@ I actually solved this one the next day after it was released cause i was busy
 But hey it was still a bit fun :)
 
 Less talking let's get into the challenge....
+
+We are given an executable called `labyrinthe`, checking the file type and protection enabled on it we get this
+![image](https://github.com/user-attachments/assets/0aab73af-2457-4ee9-91c8-7b2687853b95)
+
+So this is a 64 bits executable which is dynamically linked and the only protection enabled is NX and PIE
+
+Running it we get this
+![image](https://github.com/user-attachments/assets/45642e94-ceff-4fd3-8266-4fad155e5740)
+
+Now i don't understand French and i didn't really bother translating that
+
+I moved to my decompiler which is IDA
