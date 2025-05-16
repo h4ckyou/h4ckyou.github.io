@@ -197,3 +197,7 @@ LABEL_31:
 ```
 
 Note: I already had renamed the variables and types
+
+Looking through the whole program it's obvious that there's not really anywhere where we can give it our input aside the part where it receives our choice
+
+
