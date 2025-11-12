@@ -7,3 +7,11 @@ I mainly focused on the binary exploitation challenges.
 
 This writeup contains the solution for the challenge named `Hoard` which had three solves and i was the 3rd blood..
 <img width="1917" height="738" alt="image" src="https://github.com/user-attachments/assets/bd0cfbd8-defc-41f8-8dc2-034613841a10" />
+
+```
+Name: Hoard
+Desc: Hoarding flags in a CTF is a shameful behavior and should be stopped.
+Author: ptr-yudai
+Link: http://hoard.org/
+```
+
