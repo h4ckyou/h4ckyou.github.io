@@ -101,8 +101,8 @@ int main() {
 ```
 
 Pretty straight forward code
-- We can make up to 256 allocations where the size is constant (8)
-- The pointer is stored to the global variable `note`, hence it's always updated
+- We can make up to 256 allocations where the size is constant
+- The pointer is stored in the global variable `note`
 - We can free the pointer stored in note as many times as we want
 
 Some things to take note of:
