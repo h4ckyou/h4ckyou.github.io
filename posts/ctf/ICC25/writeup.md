@@ -15,3 +15,49 @@ Author: ptr-yudai
 Link: http://hoard.org/
 ```
 
+Here's the link to the attachment: [link](https://github.com/h4ckyou/h4ckyou.github.io/blob/main/posts/ctf/ICC25/files/firectf_icc-2025-whylz_distfiles_hoard-6543862fd682e5d69103645ac29369e3.tar)
+
+We are provided with this files
+
+```
+~/Desktop/CTF/ICC25/Hoard/hoard ❯ ls -l
+.rw-r--r-- mark mark 165 B  Thu Jan  1 00:00:00 1970 compose.yml
+.rw-r--r-- mark mark 424 B  Thu Jan  1 00:00:00 1970 Dockerfile
+.rw-r--r-- mark mark  11 B  Thu Jan  1 00:00:00 1970 flag.txt
+.rwxr-xr-x mark mark  16 KB Thu Jan  1 00:00:00 1970 hoard
+.rwxr-xr-x mark mark 473 KB Thu Jan  1 00:00:00 1970 libhoard.so
+.rw-r--r-- mark mark 749 B  Thu Jan  1 00:00:00 1970 main.c
+.rw-r--r-- mark mark  43 B  Thu Jan  1 00:00:00 1970 run
+```
+
+Kinda weird the timestamp all shows `Thu Jan 1 1970` when today's date is `Wed Nov 12 2025`
+
+Looking through the docker file:
+
+```
+FROM ubuntu:24.04@sha256:04f510bf1f2528604dc2ff46b517dbdbb85c262d62eacc4aa4d3629783036096 AS base
+RUN apt-get update && apt-get install libstdc++6
+WORKDIR /app
+ADD --chmod=555 run .
+ADD --chmod=555 hoard .
+ADD --chmod=555 libhoard.so .
+ADD --chmod=444 flag.txt /flag.txt
+RUN mv /flag.txt /flag-$(md5sum /flag.txt | awk '{print $1}').txt
+
+FROM pwn.red/jail
+COPY --from=base / /srv
+ENV JAIL_TIME=300 JAIL_CPU=100 JAIL_MEM=10M
+```
+
+It basically just generates a random file name (this probably suggesting our goal is to get code execution) before setting up the red pwn jail.
+
+So the important files we need to check now are: `run, hoard & libhoard.so`
+
+The first file: basically sets the `LD_PRELOAD` variable to the shared library `libhoard.so`
+
+```bash
+#!/bin/sh
+LD_PRELOAD=./libhoard.so ./hoard
+```
+
+
