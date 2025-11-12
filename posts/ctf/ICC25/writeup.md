@@ -109,5 +109,18 @@ Some things to take note of:
 - No IO functions being used
 - _exit() is used
 
+So now that we know how the code works, how to exploit it? 
 
+Well the bug there is pretty obvious, after it frees the chunk it doesn't set the pointer to null this means we can double free a chunk and as well a Read-After-Free.
+
+From the challenge description and setup code we see that it makes use of the `libhoard.so` file
+
+I wasn't familiar with what Hoard meant but luckily the link to the source was given
+<img width="1920" height="697" alt="image" src="https://github.com/user-attachments/assets/5c1f6dd8-6ff8-4934-ae2b-891b428b979d" />
+
+So `Hoard` is essentially a memory allocator, others we have are `dlmalloc, ptmalloc2, jemalloc` etc.
+
+The project is open source so we can grab the source code from: [here](https://github.com/emeryberger/Hoard)
+
+Side Note: When I started solving this challenge I didn't see any reference to how it works in details exactly (maybe i didn't search well enough) so i kinda left it till i saw it got blooded and i went back to give it a try... 
 
