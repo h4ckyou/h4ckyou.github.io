@@ -118,7 +118,7 @@ From the challenge description and setup code we see that it makes use of the `l
 I wasn't familiar with what Hoard meant but luckily the link to the source was given
 <img width="1920" height="697" alt="image" src="https://github.com/user-attachments/assets/5c1f6dd8-6ff8-4934-ae2b-891b428b979d" />
 
-So `Hoard` is essentially a memory allocator, others we have are `dlmalloc, ptmalloc2, jemalloc` etc.
+So `Hoard` is essentially a memory allocator, others we have are `dlmalloc, ptmalloc, jemalloc` etc.
 
 The project is open source so we can grab the source code from: [here](https://github.com/emeryberger/Hoard)
 
