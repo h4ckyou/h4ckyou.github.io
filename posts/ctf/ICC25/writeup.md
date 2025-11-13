@@ -122,6 +122,6 @@ So `Hoard` is essentially a memory allocator, others we have are `dlmalloc, ptma
 
 The project is open source so we can grab the source code from: [here](https://github.com/emeryberger/Hoard)
 
-Side Note: When I started solving this challenge I didn't see any reference to how it works in details exactly (maybe i didn't search well enough) so i kinda left it till i saw it got blooded and i went back to give it a try... 
+Since this is a memory a
 
 
