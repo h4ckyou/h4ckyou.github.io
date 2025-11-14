@@ -187,6 +187,13 @@ But first there's something that we should take note of
 
 During allocation, hoard first checks if the heap is already initialized and if it isn't initializes the heap and the memory allocated is gotten from making a `mmap` syscall
 
+One thing about that is, when a chunk of memory is allocated using `mmap` the offset between the libc region and that memory is usually a bit constant 
+
+So suppose we have an address of a mmap chunk then we can offset it to get the libc base
+
+To achieve this we need to first leak the address of the chunk, and we can do this using a double free
+
+
 
 
 
