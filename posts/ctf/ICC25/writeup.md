@@ -181,7 +181,11 @@ And `free`
   }
 ```
 
+Since this is a heap challenge this means we need to do heap related attacks, and we know this allocator manages free list using a LIFO data structure (similarly to Tcache)
 
+But first there's something that we should take note of
+
+During allocation, hoard first checks if the heap is already initialized and if it isn't initializes the heap and the memory allocated is gotten from making a `mmap` syscall
 
 
 
