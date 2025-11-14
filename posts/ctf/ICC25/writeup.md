@@ -211,6 +211,89 @@ With libc leak gotten now we corrupt the pointer in the freelist to gain arb wri
 
 Limitation with that is we can only write 8 bytes into the allocated memory...
 
+What now? 
+
+Checking the protection on libc we get this
+
+```
+~/Desktop/CTF/ICC25/Hoard/hoard/pew ❯ checksec libc.so.6 
+[*] '/home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6'
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      Canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+    FORTIFY:    Enabled
+    SHSTK:      Enabled
+    IBT:        Enabled
+    Stripped:   No
+    Debuginfo:  Yes
+```
+
+So the GOT isn't writable, but that doesn't apply to the shared library `libhoard.so`
+
+```
+~/Desktop/CTF/ICC25/Hoard/hoard/pew ❯ checksec libhoard.so 
+[*] '/home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so'
+    Arch:       amd64-64-little
+    RELRO:      Partial RELRO
+    Stack:      Canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+    SHSTK:      Enabled
+    IBT:        Enabled
+    Stripped:   No
+    Debuginfo:  Yes
+```
+
+The library is mapped into memory
+
+```
+gef> vmmap
+[ Legend: Code | Heap | Stack | Writable | ReadOnly | None | RWX ]
+Start              End                Size               Offset             Perm Path
+0x00005592773dd000 0x00005592773de000 0x0000000000001000 0x0000000000000000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/hoard_patched
+0x00005592773de000 0x00005592773df000 0x0000000000001000 0x0000000000001000 r-x /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/hoard_patched  <-  $rip
+0x00005592773df000 0x00005592773e0000 0x0000000000001000 0x0000000000002000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/hoard_patched
+0x00005592773e0000 0x00005592773e1000 0x0000000000001000 0x0000000000002000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/hoard_patched  <-  $r14
+0x00005592773e1000 0x00005592773e4000 0x0000000000003000 0x0000000000003000 rw- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/hoard_patched
+0x00007f3dc8400000 0x00007f3dc84a2000 0x00000000000a2000 0x0000000000000000 r-- /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.34
+0x00007f3dc84a2000 0x00007f3dc85d2000 0x0000000000130000 0x00000000000a2000 r-x /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.34
+0x00007f3dc85d2000 0x00007f3dc8660000 0x000000000008e000 0x00000000001d2000 r-- /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.34
+0x00007f3dc8660000 0x00007f3dc866f000 0x000000000000f000 0x000000000025f000 r-- /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.34
+0x00007f3dc866f000 0x00007f3dc8672000 0x0000000000003000 0x000000000026e000 rw- /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.34
+0x00007f3dc8672000 0x00007f3dc8676000 0x0000000000004000 0x0000000000000000 rw-
+0x00007f3dc8800000 0x00007f3dc8828000 0x0000000000028000 0x0000000000000000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6
+0x00007f3dc8828000 0x00007f3dc89b0000 0x0000000000188000 0x0000000000028000 r-x /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6
+0x00007f3dc89b0000 0x00007f3dc89ff000 0x000000000004f000 0x00000000001b0000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6  <-  $r10, $r11
+0x00007f3dc89ff000 0x00007f3dc8a03000 0x0000000000004000 0x00000000001fe000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6
+0x00007f3dc8a03000 0x00007f3dc8a05000 0x0000000000002000 0x0000000000202000 rw- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libc.so.6
+0x00007f3dc8a05000 0x00007f3dc8a12000 0x000000000000d000 0x0000000000000000 rw-
+0x00007f3dc8b10000 0x00007f3dc8b21000 0x0000000000011000 0x0000000000000000 r-- /usr/lib/x86_64-linux-gnu/libm.so.6
+0x00007f3dc8b21000 0x00007f3dc8b9e000 0x000000000007d000 0x0000000000011000 r-x /usr/lib/x86_64-linux-gnu/libm.so.6
+0x00007f3dc8b9e000 0x00007f3dc8bfe000 0x0000000000060000 0x000000000008e000 r-- /usr/lib/x86_64-linux-gnu/libm.so.6
+0x00007f3dc8bfe000 0x00007f3dc8bff000 0x0000000000001000 0x00000000000ed000 r-- /usr/lib/x86_64-linux-gnu/libm.so.6
+0x00007f3dc8bff000 0x00007f3dc8c00000 0x0000000000001000 0x00000000000ee000 rw- /usr/lib/x86_64-linux-gnu/libm.so.6
+0x00007f3dc8c00000 0x00007f3dc8c07000 0x0000000000007000 0x0000000000000000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so
+0x00007f3dc8c07000 0x00007f3dc8c0c000 0x0000000000005000 0x0000000000007000 r-x /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so
+0x00007f3dc8c0c000 0x00007f3dc8c0e000 0x0000000000002000 0x000000000000c000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so
+0x00007f3dc8c0e000 0x00007f3dc8c0f000 0x0000000000001000 0x000000000000e000 r-- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so
+0x00007f3dc8c0f000 0x00007f3dc8c10000 0x0000000000001000 0x000000000000f000 rw- /home/mark/Desktop/CTF/ICC25/Hoard/hoard/pew/libhoard.so
+```
+
+So this means if we can overwrite the got of a function here then we can get rip control (limited to just 8 bytes)
+
+What to do? I did try use one gadget but as expected it failed!
+
+Then i thought of checking the (xx)malloc/free function code path to see if there's any function pointer that resides in a rw region which i could overwrite to a  one gadget but i didn't do that because i feared i might not find any or, one gadget constraint might not be satisfied..
+
+With this i decided to go through a path that would end up making me either ROP / call system('/bin/sh')
+
+Doing the later seems much easier, because if we can overwrite `free@got` to `system` and `note -> /bin/sh` then this is profit! Right? right?..
+
+Unfortunately it wasn't as easy as that
+
+
 
 
 
