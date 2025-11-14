@@ -287,12 +287,15 @@ What to do? I did try use one gadget but as expected it failed!
 
 Then i thought of checking the (xx)malloc/free function code path to see if there's any function pointer that resides in a rw region which i could overwrite to a  one gadget but i didn't do that because i feared i might not find any or, one gadget constraint might not be satisfied..
 
-With this i decided to go through a path that would end up making me either ROP / call system('/bin/sh')
+With this, I decided to take the path that would let me either build a ROP chain or call system("/bin/sh").
 
-Doing the later seems much easier, because if we can overwrite `free@got` to `system` and `note -> /bin/sh` then this is profit! Right? right?..
+Doing the latter seems much easier, because if I can overwrite `free@GOT` with `system` and make the note contain `/bin/sh`, then it’s profit, right?
 
-Unfortunately it wasn't as easy as that
+Unfortunately it wasn't as easy as that!
 
+Here i can easily get arbitrary 8 bytes write
+<img width="1920" height="1024" alt="image" src="https://github.com/user-attachments/assets/fb2baa71-1242-4e57-93e0-f0f1c7526c50" />
+<img width="1920" height="126" alt="image" src="https://github.com/user-attachments/assets/d8859501-b52c-4af6-bfde-bc7b41ed17bd" />
 
 
 
