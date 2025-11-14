@@ -122,6 +122,73 @@ So `Hoard` is essentially a memory allocator, others we have are `dlmalloc, ptma
 
 The project is open source so we can grab the source code from: [here](https://github.com/emeryberger/Hoard)
 
-Since this is a memory a
+Since this is a memory allocator understanding a bit of how the (de)allocations works is necessary (i guess?)
+
+I won't explain that here, you can read this [paper](https://www.cs.utexas.edu/~mckinley/papers/asplos-2000.pdf)
+
+Hoard allocates memory from the system in chunks we call superblocks. Each superblock is an array of some number of blocks (objects) and contains a free list of its available blocks maintained
+in LIFO order to improve locality. All superblocks are the same size (S), a multiple of the system page size. Objects larger than half the size of a superblock are managed directly using the virtual memory system (i.e., they are allocated via mmap and freed usingmunmap). All of the blocks in a superblock are in the same size class. By using size classes that are a power of b apart (where b is greater than 1) and rounding the requested size up to the near-est size class, we bound worst-case internal fragmentation within a block to a factor of b. In order to reduce external fragmentation, we recycle completely empty superblocks for re-use by any size class.
+
+Anyways let's get to exploitation..
+
+First `malloc` is hooked by the `libhoard.so` library to call this function
+
+```c
+#if defined(__GNUG__)
+  void * xxmalloc (size_t sz)
+#else
+  void * __attribute__((flatten)) xxmalloc (size_t sz) __attribute__((alloc_size(1))) __attribute((malloc))
+#endif
+  {
+    if (isCustomHeapInitialized()) {
+      void * ptr = getCustomHeap()->malloc (sz);
+      if (ptr == nullptr) {
+	fprintf(stderr, "INTERNAL FAILURE.\n");
+	abort();
+      }
+      return ptr;
+    }
+    // We still haven't initialized the heap. Satisfy this memory
+    // request from the local buffer.
+    void * ptr = initBufferPtr;
+    initBufferPtr += sz;
+    if (initBufferPtr > initBuffer + MAX_LOCAL_BUFFER_SIZE) {
+      abort();
+    }
+    {
+      static bool initialized = false;
+      if (!initialized) {
+	initialized = true;
+#if !defined(_WIN32)
+	/* fprintf(stderr, versionMessage); */
+#endif
+      }
+    }
+    return ptr;
+  }
+```
+
+And `free`
+
+```c
+#if defined(__GNUG__)
+  void xxfree (void * ptr)
+#else
+  void xxfree (void * ptr)
+#endif
+  {
+    getCustomHeap()->free (ptr);
+  }
+```
+
+
+
+
+
+
+
+
+
+
 
 
