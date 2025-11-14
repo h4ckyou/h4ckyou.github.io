@@ -283,22 +283,30 @@ Start              End                Size               Offset             Perm
 
 So this means if we can overwrite the got of a function here then we can get rip control (limited to just 8 bytes)
 
-What to do? I did try use one gadget but as expected it failed!
-
-Then i thought of checking the (xx)malloc/free function code path to see if there's any function pointer that resides in a rw region which i could overwrite to a  one gadget but i didn't do that because i feared i might not find any or, one gadget constraint might not be satisfied..
-
-With this, I decided to take the path that would let me either build a ROP chain or call system("/bin/sh").
-
-Doing the latter seems much easier, because if I can overwrite `free@GOT` with `system` and make the note contain `/bin/sh`, then it’s profit, right?
-
-Unfortunately it wasn't as easy as that!
-
 Here i can easily get arbitrary 8 bytes write
 <img width="1920" height="1024" alt="image" src="https://github.com/user-attachments/assets/fb2baa71-1242-4e57-93e0-f0f1c7526c50" />
 <img width="1920" height="126" alt="image" src="https://github.com/user-attachments/assets/d8859501-b52c-4af6-bfde-bc7b41ed17bd" />
 
+What to do? I did try use one gadget but as expected it failed!
 
+Then i thought of checking the (xx)malloc/free function code path to see if there's any function pointer that resides in a rw region which i could overwrite to a  one gadget but i didn't do that because i might not find any and even if i did find, one gadget constraint might not be satisfied.
 
+With this, I decided to take the path that would let me either build a ROP chain or call system("/bin/sh").
+
+Doing the latter seems much easier, because if I can overwrite `xxfree@GOT` with `system` and make the note contain `/bin/sh`, then it’s profit, right?
+
+Unfortunately it wasn't as easy as that!
+
+The reason why it doesn't work is because after allocation the note pointer gets updated to the allocated memory
+
+So here if we overwrite `xxfree@got` to `system` and we try to make a new allocation inorder to overwrite `note` it would make the program exit because the freelist is corrupted so it allocates memory to the function of xxfree itself, so when we attempt to read into that memory `read` will fail and the program handles that
+
+<img width="1920" height="449" alt="image" src="https://github.com/user-attachments/assets/4e5e2841-c93d-45c5-984b-d44616d11ec0" />
+<img width="1920" height="176" alt="image" src="https://github.com/user-attachments/assets/6ac3b61d-47fe-48bc-829c-3ed69b2378b6" />
+<img width="1920" height="95" alt="image" src="https://github.com/user-attachments/assets/f6a9d3d1-cce0-48eb-957d-123b4a273edc" />
+<img width="937" height="270" alt="image" src="https://github.com/user-attachments/assets/4a65143f-3b55-49bd-b2f6-05328854e386" />
+
+So yes this is quite a complication...
 
 
 
