@@ -445,7 +445,5 @@ if __name__ == '__main__':
 
 I really enjoyed this challenge tbh, i at first was in doubt as to whether i should give up on it and try something else, but good thing i pushed harder!
 
-This year being my first ICC and International Onsite CTF was great, I enjoyed the challenges and hope to participate in the next edition being stronger (watch out)!
-
-
+This was my first ICC and my first international onsite CTF, and it was an amazing experience. I really enjoyed the challenges, and I’m hoping to come back stronger for the next edition... watch out!
 
