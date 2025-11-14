@@ -316,6 +316,8 @@ Like i initially already said, `note` contains the pointer to the got of `xxfree
 
 So instead of overwriting the got to `system`, i overwrote it to `gets`
 
+Doing that, we get an unbounded overflow into the got of the `libhoard` library
+
 Luckily `xxfree@got` was before `xxmalloc@got`
 <img width="1920" height="943" alt="image" src="https://github.com/user-attachments/assets/69e7d994-1815-433b-b430-6afbb2b4288f" />
 
