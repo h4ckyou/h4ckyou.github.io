@@ -15,7 +15,7 @@ Capture the Flag (CTF) in computer security is an exercise in which "flags" are 
 <hr>
 <hr>
 
-- [[November 15 2025]] [ICC 2025](https://h4ckyou.github.io/posts/ctf/ICC25/writeup.html)
+- [[November 15 2025]] [ICC 2025](https://h4ckyou.github.io/posts/ctf/ICC25/writeup.html) `Pwn`
 - [[March 19 2025]] [Pico CTF 2025](https://h4ckyou.github.io/posts/ctf/picoctf/writeup25.html)
 - [[March 12 2025]] [Fetch The Flag 2025](https://h4ckyou.github.io/posts/ctf/snyk25/writeup.html)
 - [[February 01 2025]] [Nullcon 2025](https://h4ckyou.github.io/ctf/nullcon25/writeup.html)
