@@ -6,10 +6,10 @@ order: 4
 
 **-> Whoami?**
 
-📖 Computer Science Student @ FUTM
-👀 Cybersecurity Enthusiast & CTF Player
-💻 RE, Pwn, Malware Analysis, Offensive Security
-📫 Discord: @h4cky0u
+📖 Computer Science Student @ FUTM <br>
+👀 Cybersecurity Enthusiast & CTF Player <br> 
+💻 RE, Pwn, Malware Analysis, Offensive Security <br>
+📫 Discord: @h4cky0u <br>
 
 
 **-> About Me?**
