@@ -7,7 +7,7 @@ math: true
 mermaid: true
 media_subpath: /assets/posts/2025-11-25-ICC-Recap
 image:
-  path: preview.jpg
+  path: preview.png
 ---
 
 ## International Cybersecurity Challenge (ICC) - Tokyo Japan
