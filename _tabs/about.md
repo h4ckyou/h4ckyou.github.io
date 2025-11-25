@@ -8,8 +8,8 @@ order: 4
 
 📖 Computer Science Student @ FUTM <br>
 👀 Cybersecurity Enthusiast & CTF Player <br> 
-💻 RE, Pwn, Malware Analysis, Offensive Security <br>
-📫 Discord: @h4cky0u <br>
+💻 Pwn, RE, Offensive Security <br>
+📫 Discord: @h4cky0u
 
 
 **-> About Me?**
