@@ -16,7 +16,7 @@ timezone:
 
 title: h4cky0u's blog # the main title
 
-tagline: Cybersecurity Analyst | Security Researcher | CTF Player # it will display as the subtitle
+tagline: Cybersecurity Analyst | CTF Player # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   A blog where I document my reverse engineering, exploit development, malware analysis, and offensive security findings.
