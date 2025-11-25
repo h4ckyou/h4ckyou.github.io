@@ -1,7 +1,7 @@
 ---
-title: First Blog
+title: First Blog Post
 date: 2025-11-25 13:10:30 +0000
-categories: [blog]
+categories: [Blog]
 tags: [blog]
 math: true
 mermaid: true
