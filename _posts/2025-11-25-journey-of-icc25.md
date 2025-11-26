@@ -205,6 +205,25 @@ It was absolutely insane.
 
 Unfortunately, we didn't place well in the Attack-Defense CTF, but this only motivates us to push harder and come back stronger next year, God willing.
 
+After the CTF ended, we went for an After-Party
+
+Here are some images I took
+
+<figure>
+  <img src="after_party.jpg" alt="party0">
+  <img src="interesting.jpg" alt="party1">
+  <img src="sweet.jpg" alt="party002">
+  <img src="sweet2.jpg" alt="party022">
+  <img src="food.jpg" alt="party222">
+  <img src="whyme.jpg" alt="party3">
+  <img src="smile.jpg" alt="party4">
+  <img src="ohboy.jpg" alt="party5">
+  <figcaption style="text-align:center;">
+    After-Party Event
+  </figcaption>
+</figure>
+
+
 ## Day 4 - Sightseeing Program & Awards ceremony
 
 In the morning, we gathered with other teams and went sightseeing.
@@ -253,6 +272,13 @@ Now I'm going to show a bit of pictures I took 😄
   <img src="aziz.jpg" alt="aziz">
   <figcaption style="text-align:center;">
     Me with @aziz0x00, bruh where's he looking at :sob:
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="vadel.jpg" alt="mvadel">
+  <figcaption style="text-align:center;">
+    Mvadel captured unaware
   </figcaption>
 </figure>
 
@@ -312,4 +338,63 @@ Now I'm going to show a bit of pictures I took 😄
     Certified Hashira
   </figcaption>
 </figure>
+
+<figure>
+  <img src="swags.jpg" alt="swags">
+  <figcaption style="text-align:center;">
+    I bought some souvenirs as well
+  </figcaption>
+</figure>
+
+After this, we went for the award ceremony
+
+Team Europe won both the Jeopardy and AD CTF, congratulations to team :celebrate:
+![Europe](europe.jpg)
+
+We were give a coin (kinda like a metal) as a token of appreciation for our participation:
+<figure>
+  <img src="coin.jpg" alt="coin">
+  <figcaption style="text-align:center;">
+    Here it is
+  </figcaption>
+</figure>
+
+And finally we took a team photo!
+
+<figure>
+  <img src="teamphoto.jpg" alt="groupphoto">
+  <figcaption style="text-align:center;">
+    Good luck spotting me :sob:
+  </figcaption>
+</figure>
+
+After this we went for some networking dinner.
+
+We waited till the event closed and after that, I, Charles and Daniel went to a supermarket to see if we could get an headphone (though sadly they were closed)
+
+Final pictures at Japan!!!
+
+<figure>
+  <img src="icc_rocks.jpg" alt="single">
+  <img src="noice.jpg" alt="double">
+  <figcaption style="text-align:center;">
+    ICC 2025
+  </figcaption>
+</figure>
+
+
+## Conclusion
+
+The International CyberSecurity Challenge was one of the best events that I have ever attended in my life.
+
+Competing with top teams, connecting with talented people, and experiencing such a high-level competition really motivated me.
+
+The biggest lesson I learned: 
+- if you want to be the best, you need to **face the best, learn from them, push yourself to their level and eventually beat them**
+
+No one reaches the finals overnight, the competition draws from hundreds of players worldwide.  
+
+Being part of it inspired me to come back stronger next year with AFRICC.
+
+See ya!
 
