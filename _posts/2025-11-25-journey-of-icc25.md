@@ -158,7 +158,7 @@ It was built by the GOAT @**ptr-yudai** who spent a **WHOLE YEAR** developing th
 
 It was absolutely insane.
 
-![ptr-yudai](yudai.png]
+![ptr-yudai](yudai.png)
 
 Unfortunately, we didn't place well in the Attack-Defense CTF, but this only motivates us to push harder and come back stronger next year, God willing.
 
@@ -166,6 +166,9 @@ Unfortunately, we didn't place well in the Attack-Defense CTF, but this only mot
 
 In the morning, we gathered with other teams and went sightseeing.
 
-Now I'm going to show lots of pictures I took 😄
+Now I'm going to show a bit of pictures I took 😄
 
-![Japanese Tea Garden](japanese_tea_garden.jpg)
+<figure>
+  <img src="japanese_tea_garden.jpg" alt="Japanese Tea Garden">
+  <figcaption>Japanese Tea Garden</figcaption>
+</figure>
