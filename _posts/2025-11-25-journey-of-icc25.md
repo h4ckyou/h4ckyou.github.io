@@ -293,7 +293,7 @@ Now I'm going to show a bit of pictures I took 😄
 <figure>
   <img src="cars.jpg" alt="cars">
   <figcaption style="text-align:center;">
-    Took a picture of some cars, I wonder who I took this for :think:
+    Took a picture of some cars, I wonder who I took this for 🤔
   </figcaption>
 </figure>
 
@@ -348,10 +348,10 @@ Now I'm going to show a bit of pictures I took 😄
 
 After this, we went for the award ceremony
 
-Team Europe won both the Jeopardy and AD CTF, congratulations to team :celebrate:
+Team Europe won both the Jeopardy and AD CTF, congratulations to team 🎉
 ![Europe](europe.jpg)
 
-We were give a coin (kinda like a metal) as a token of appreciation for our participation:
+We were given a coin (kinda like a metal) as a token of appreciation for our participation:
 <figure>
   <img src="coin.jpg" alt="coin">
   <figcaption style="text-align:center;">
