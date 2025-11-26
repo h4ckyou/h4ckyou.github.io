@@ -385,16 +385,15 @@ Final pictures at Japan!!!
 
 ## Conclusion
 
-The International CyberSecurity Challenge was one of the best events that I have ever attended in my life.
+The International CyberSecurity Challenge was one of the best events I have ever attended.
 
-Competing with top teams, connecting with talented people, and experiencing such a high-level competition really motivated me.
+Competing with top teams, connecting with talented people, and experiencing such a high-level competition motivated me to push my limits and keep learning.
 
-The biggest lesson I learned: 
-- if you want to be the best, you need to **face the best, learn from them, push yourself to their level and eventually beat them**
+The biggest lesson I learned:
+- If you want to be the best, you need to face the best, learn from them, push yourself to their level, and eventually surpass them.
 
-No one reaches the finals overnight, the competition draws from hundreds of players worldwide.  
+No one reaches the finals overnight, the competition draws from hundreds of players worldwide.
 
-Being part of it inspired me to come back stronger next year with AFRICC.
+Being part of ICC not only inspired me to come back stronger next year with AFRICC, but also to focus on improving my skills and preparing even harder for future challenges.
 
 See ya!
-
