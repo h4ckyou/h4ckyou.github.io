@@ -76,13 +76,25 @@ It was my very first time traveling to Japan or anywhere in Asia, for that matte
 
 Nevertheless, the trip wasn’t as exhausting as I expected, and I found myself excited for what was ahead.
 
+<figure>
+  <img src="me@japan.jpg" alt="h4cky0u at Japan">
+  <figcaption style="text-align:center;">
+    Me at Japan :eyes:
+  </figcaption>
+</figure>
 
 
 ### International CyberSecurity Challenge Event
 
 The ICC ran for a total of 4 days (Nov 11th - 14th):
 
-![Banner](streetbanner.jpg)
+<figure>
+  <img src="streetbanner.jpg" alt="Team Poster">
+
+  <figcaption style="text-align:center;">
+    ICC Banner on the road of Chiba
+  </figcaption>
+</figure>
 
 ## Day 1 - Registration of teams & Opening Ceremony Orientation
 
@@ -90,15 +102,33 @@ We received our name tags, swags, stickers, and other goodies.
 
 During the opening ceremony, the Japanese Minister of Cyber Security gave an opening remark:
 
-![Minister](minister.jpg)
+<figure>
+  <img src="minister.jpg" alt="Minister">
+
+  <figcaption style="text-align:center;">
+    Minister Giving Remarks
+  </figcaption>
+</figure>
 
 Here's our team poster:
 
-![AFRICC POSTER](poster.jpg)
+<figure>
+  <img src="poster.jpg" alt="Team Poster">
+
+  <figcaption style="text-align:center;">
+    Team Poster
+  </figcaption>
+</figure>
 
 My name tag:
 
-![h4cky0u](nametag.jpg)
+<figure>
+  <img src="nametag.jpg" alt="Nametag">
+
+  <figcaption style="text-align:center;">
+    My Name Tag
+  </figcaption>
+</figure>
 
 After the ceremony the organizers opened both the Jeopardy and the Attack-Defense networks for testing purposes by the players. It was a pretty good decision since there were some minor network issues that were resolved later.
 
@@ -123,6 +153,16 @@ The CTF span across 9 hours and almost 6 categories. It was pretty intense as th
 I'm pleased we placed 7th in the Jeopardy CTF. I focused on the pwnable challenges and solved 3 out of 6. I was mostly the only one working on them, so the pressure was real.
 
 One of the challenges I solved ended with only 3 solves total, and I was the 3rd solver, which honestly made me proud.
+
+<figure>
+  <img src="scoreboard.jpg" alt="Jeopardy Scoreboard">
+  <img src="pwnsolve.jpg" alt="Pwn Solves">
+
+  <figcaption style="text-align:center;">
+    Final Scoreboard & Challenges I Solved
+  </figcaption>
+</figure>
+
 
 ![Scoreboard](scoreboard.png)
 ![Pwn Solves](pwnsolve.jpg)
