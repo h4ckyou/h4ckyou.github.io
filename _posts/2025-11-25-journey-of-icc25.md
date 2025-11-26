@@ -81,7 +81,7 @@ Nevertheless, the trip wasn’t as exhausting as I expected, and I found myself 
 
 The ICC ran for a total of 4 days (Nov 11th - 14th):
 
-![Banner][streetbanner.jpg]
+![Banner](streetbanner.jpg)
 
 ## Day 1 - Registration of teams & Opening Ceremony Orientation
 
@@ -89,15 +89,15 @@ We received our name tags, swags, stickers, and other goodies.
 
 During the opening ceremony, the Japanese Minister of Cyber Security gave an opening remark:
 
-![Minister][minister.jpg]
+![Minister](minister.jpg)
 
 Here's our team poster:
 
-![AFRICC POSTER][poster.jpg]
+![AFRICC POSTER](poster.jpg)
 
 My name tag:
 
-![h4cky0u][nametag.jpg]
+![h4cky0u](nametag.jpg)
 
 After the ceremony the organizers opened both the Jeopardy and the Attack-Defense networks for testing purposes by the players. It was a pretty good decision since there were some minor network issues that were resolved later.
 
@@ -123,8 +123,8 @@ I'm pleased we placed 7th in the Jeopardy CTF. I focused on the pwnable challeng
 
 One of the challenges I solved ended with only 3 solves total, and I was the 3rd solver, which honestly made me proud.
 
-![Scoreboard][scoreboard.png]
-![Pwn Solves][pwnsolve.jpg]
+![Scoreboard](scoreboard.png)
+![Pwn Solves](pwnsolve.jpg)
 
 ## Day 3 - Attack-Defense CTF
 
@@ -158,7 +158,7 @@ It was built by the GOAT @**ptr-yudai** who spent a **WHOLE YEAR** developing th
 
 It was absolutely insane.
 
-![ptr-yudai][yudai.png]
+![ptr-yudai](yudai.png]
 
 Unfortunately, we didn't place well in the Attack-Defense CTF, but this only motivates us to push harder and come back stronger next year, God willing.
 
@@ -168,4 +168,4 @@ In the morning, we gathered with other teams and went sightseeing.
 
 Now I'm going to show lots of pictures I took 😄
 
-![Japanese Tea Garden][japanese_tea_garden.jpg]
+![Japanese Tea Garden](japanese_tea_garden.jpg)
