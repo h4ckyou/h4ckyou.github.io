@@ -227,12 +227,19 @@ Now I'm going to show a bit of pictures I took 😄
   <img src="history_talk.jpg" alt="Japanese Tea Garden 3">
 
   <figcaption style="text-align:center;">
-    Various views from the Japanese Tea Garden
+    Various views from the Japanese Garden - Mihama-en
   </figcaption>
 </figure>
 
 <figure>
-  <img src="wow.jpg" alt="Beautiful 1">
+  <img src="tour.jpg" alt="tour">
+  <figcaption style="text-align:center;">
+    Tour guide
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="wow1.jpg" alt="Beautiful 1">
   <img src="wow2.jpg" alt="Beautiful 2">
   <img src="wow3.jpg" alt="Beautiful 3">
   <img src="wow4.jpg" alt="Beautiful 4">
@@ -241,3 +248,68 @@ Now I'm going to show a bit of pictures I took 😄
     Some beautiful scenery
   </figcaption>
 </figure>
+
+<figure>
+  <img src="aziz.jpg" alt="aziz">
+  <figcaption style="text-align:center;">
+    Me with @aziz0x00, bruh where's he looking at :sob:
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="narita.jpg" alt="narita">
+  <img src="monster.jpg" alt="monster">
+  <figcaption style="text-align:center;">
+    On our way to Narita, so taking a drink..
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="cars.jpg" alt="cars">
+  <figcaption style="text-align:center;">
+    Took a picture of some cars, I wonder who I took this for :think:
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="woah.jpg" alt="temple">
+  <figcaption style="text-align:center;">
+    A temple at Naritasan
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="charles.jpg" alt="cars">
+  <figcaption style="text-align:center;">
+    Charles and I...
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="aziz2.jpg" alt="aziz2">
+  <figcaption style="text-align:center;">
+    Okay! aziz redeemed himself
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="daniel.jpg" alt="daniel">
+  <figcaption style="text-align:center;">
+    Why is Daniel full on black??? ~~(except his cap)~~
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="kek.jpg" alt="me">
+  <figcaption style="text-align:center;">
+    Lovely background
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="katana.jpg" alt="katana">
+  <figcaption style="text-align:center;">
+    Certified Hashira
+  </figcaption>
+</figure>
+
