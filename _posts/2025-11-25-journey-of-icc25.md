@@ -155,7 +155,7 @@ I'm pleased we placed 7th in the Jeopardy CTF. I focused on the pwnable challeng
 One of the challenges I solved ended with only 3 solves total, and I was the 3rd solver, which honestly made me proud.
 
 <figure>
-  <img src="scoreboard.jpg" alt="Jeopardy Scoreboard">
+  <img src="scoreboard.png" alt="Jeopardy Scoreboard">
   <img src="pwnsolve.jpg" alt="Pwn Solves">
 
   <figcaption style="text-align:center;">
@@ -170,7 +170,7 @@ At first, the whole network setup was new and confusing, but after a while, thin
 
 Once again, I worked on the pwnable challenge (CGIPanic).
 
-These challenges involved a lot of CGI pain, multiple bugs, but difficult to chain into a one stage exploit.
+This challenge involved a lot of CGI pain, multiple bugs, but difficult to chain into a one stage exploit.
 
 I managed to get working exploits for two different CGI services.
 
@@ -197,7 +197,7 @@ It was built by the GOAT @**ptr-yudai** who spent a **WHOLE YEAR** developing th
 It was absolutely insane.
 
 <figure>
-  <img src="yudai.jpg" alt="ptr-yudai">
+  <img src="yudai.png" alt="ptr-yudai">
   <figcaption style="text-align:center;">
     The :goat:
   </figcaption>
