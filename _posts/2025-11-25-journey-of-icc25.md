@@ -382,6 +382,39 @@ Final pictures at Japan!!!
   </figcaption>
 </figure>
 
+## Departure 
+
+My return flight back to Dakar was on the 10th Nov, so I had to stay at an Airbnb (thank you once again Serdab 🙏) since the hotel checkout was 8th Nov.
+
+<figure>
+  <img src="sakura.jpg" alt="sakura">
+  <figcaption style="text-align:center;">
+    Japan is really cold 🥶
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="snack.jpg" alt="snack">
+  <figcaption style="text-align:center;">
+    Got some snack at the airport, it was delicious 😋
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="game.jpg" alt="game">
+  <figcaption style="text-align:center;">
+    Got bored so I played angry bird on the plane, I kinda suck at it 😂 
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="bye.jpg" alt="bye">
+  <figcaption style="text-align:center;">
+  My final flight from Ethiopia to Dakar 🥲
+  </figcaption>
+</figure>
+
+
 
 ## Conclusion
 
