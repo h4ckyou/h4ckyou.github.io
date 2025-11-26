@@ -77,6 +77,7 @@ It was my very first time traveling to Japan or anywhere in Asia, for that matte
 Nevertheless, the trip wasn’t as exhausting as I expected, and I found myself excited for what was ahead.
 
 
+
 ### International CyberSecurity Challenge Event
 
 The ICC ran for a total of 4 days (Nov 11th - 14th):
@@ -170,5 +171,5 @@ Now I'm going to show a bit of pictures I took 😄
 
 <figure>
   <img src="japanese_tea_garden.jpg" alt="Japanese Tea Garden">
-  <figcaption>Japanese Tea Garden</figcaption>
+  <figcaption style="text-align:center;">Japanese Tea Garden</figcaption>
 </figure>
