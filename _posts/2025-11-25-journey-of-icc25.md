@@ -170,6 +170,11 @@ In the morning, we gathered with other teams and went sightseeing.
 Now I'm going to show a bit of pictures I took 😄
 
 <figure>
-  <img src="japanese_tea_garden.jpg" alt="Japanese Tea Garden">
-  <figcaption style="text-align:center;">Japanese Tea Garden</figcaption>
+  <img src="japanese_tea_garden.jpg" alt="Japanese Tea Garden 1">
+  <img src="green_tea.jpg" alt="Japanese Tea Garden 2">
+  <img src="history_talk.jpg" alt="Japanese Tea Garden 3">
+
+  <figcaption style="text-align:center;">
+    Various views from the Japanese Tea Garden
+  </figcaption>
 </figure>
