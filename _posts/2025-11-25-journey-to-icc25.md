@@ -338,7 +338,7 @@ Now I'm going to show a bit of pictures I took 😄
 
 After this, we went for the award ceremony
 
-Team Europe won both the Jeopardy and AD CTF, congratulations to team 🎉
+Team Europe won both the Jeopardy and AD CTF, congratulations to them 🎉
 ![Europe](europe.jpg)
 
 We were given a coin (kinda like a metal) as a token of appreciation for our participation:
