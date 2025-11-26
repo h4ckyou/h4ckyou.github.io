@@ -164,9 +164,6 @@ One of the challenges I solved ended with only 3 solves total, and I was the 3rd
 </figure>
 
 
-![Scoreboard](scoreboard.png)
-![Pwn Solves](pwnsolve.jpg)
-
 ## Day 3 - Attack-Defense CTF
 
 At first, the whole network setup was new and confusing, but after a while, things started to make sense.
@@ -199,7 +196,12 @@ It was built by the GOAT @**ptr-yudai** who spent a **WHOLE YEAR** developing th
 
 It was absolutely insane.
 
-![ptr-yudai](yudai.png)
+<figure>
+  <img src="yudai.jpg" alt="ptr-yudai">
+  <figcaption style="text-align:center;">
+    The :goat:
+  </figcaption>
+</figure>
 
 Unfortunately, we didn't place well in the Attack-Defense CTF, but this only motivates us to push harder and come back stronger next year, God willing.
 
@@ -216,5 +218,26 @@ Now I'm going to show a bit of pictures I took 😄
 
   <figcaption style="text-align:center;">
     Various views from the Japanese Tea Garden
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="japanese_tea_garden.jpg" alt="Japanese Tea Garden 1">
+  <img src="green_tea.jpg" alt="Japanese Tea Garden 2">
+  <img src="history_talk.jpg" alt="Japanese Tea Garden 3">
+
+  <figcaption style="text-align:center;">
+    Various views from the Japanese Tea Garden
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="wow.jpg" alt="Beautiful 1">
+  <img src="wow2.jpg" alt="Beautiful 2">
+  <img src="wow3.jpg" alt="Beautiful 3">
+  <img src="wow4.jpg" alt="Beautiful 4">
+  <img src="wow5.jpg" alt="Beautiful 5">
+  <figcaption style="text-align:center;">
+    Some beautiful scenery
   </figcaption>
 </figure>
