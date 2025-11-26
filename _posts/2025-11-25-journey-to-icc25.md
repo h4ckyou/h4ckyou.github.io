@@ -341,7 +341,7 @@ After this, we went for the award ceremony
 Team Europe won both the Jeopardy and AD CTF, congratulations to them 🎉
 ![Europe](europe.jpg)
 
-We were given a coin (kinda like a metal) as a token of appreciation for our participation:
+We were given a coin (kinda like a medal) as a token of appreciation for our participation:
 <figure>
   <img src="coin.jpg" alt="coin">
   <figcaption style="text-align:center;">
