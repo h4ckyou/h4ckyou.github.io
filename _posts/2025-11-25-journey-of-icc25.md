@@ -79,7 +79,7 @@ Nevertheless, the trip wasn’t as exhausting as I expected, and I found myself 
 <figure>
   <img src="me@japan.jpg" alt="h4cky0u at Japan">
   <figcaption style="text-align:center;">
-    Me at Japan :eyes:
+    Me at Japan 👀
   </figcaption>
 </figure>
 
@@ -271,7 +271,7 @@ Now I'm going to show a bit of pictures I took 😄
 <figure>
   <img src="aziz.jpg" alt="aziz">
   <figcaption style="text-align:center;">
-    Me with @aziz0x00, bruh where's he looking at :sob:
+    Me with @aziz0x00, bruh where's he looking at 😭
   </figcaption>
 </figure>
 
@@ -364,7 +364,7 @@ And finally we took a team photo!
 <figure>
   <img src="teamphoto.jpg" alt="groupphoto">
   <figcaption style="text-align:center;">
-    Good luck spotting me :sob:
+    Good luck spotting me 😏
   </figcaption>
 </figure>
 
@@ -378,7 +378,7 @@ Final pictures at Japan!!!
   <img src="icc_rocks.jpg" alt="single">
   <img src="noice.jpg" alt="double">
   <figcaption style="text-align:center;">
-    ICC 2025
+    ICC 2025 Recap
   </figcaption>
 </figure>
 
