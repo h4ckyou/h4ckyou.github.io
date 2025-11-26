@@ -199,7 +199,7 @@ It was absolutely insane.
 <figure>
   <img src="yudai.png" alt="ptr-yudai">
   <figcaption style="text-align:center;">
-    The :goat:
+    The 🐐
   </figcaption>
 </figure>
 
