@@ -7,7 +7,7 @@ math: true
 mermaid: true
 media_subpath: /assets/posts/2025-12-07-Tiny-Machine
 image:
-  path: dreamhack.png
+  path: preview.png
 ---
 
 ## Dreamhack - Tiny Machine
@@ -133,8 +133,95 @@ The VM then initializes its instruction pointer to **221**, which is the startin
 
 Finally, the VM enters its execution loop by calling the **run** method.
 
-The **run** method basically processes the bytecode stored in the VM’s memory. It follows the classic CPU life cycle: (fetch - decode - execute).
+The **run** method basically processes the bytecode stored in the VM’s memory. It follows the classic instruction cycle: (fetch - decode - execute).
+
 
 ### Reversing
 
+First let us execute the program.
 
+```bash
+ ~/Desktop/Lab/DreamHack/Pwn/Tiny-Machine ❯ python3 tiny_machine.py 
+asdf
+asdf
+
+~/Desktop/Lab/DreamHack/Pwn/Tiny-Machine ❯ python3 tiny_machine.py
+haha
+haha
+
+~/Desktop/Lab/DreamHack/Pwn/Tiny-Machine ❯ python3 tiny_machine.py
+who am i
+who am i
+
+~/Desktop/Lab/DreamHack/Pwn/Tiny-Machine ❯ python3 tiny_machine.py
+wutt
+wutt
+                                      
+```
+
+So basically it receives our input then prints it back..
+
+Now we understand the instruction set, the next thing is to understand what the bytecode exactly does.
+
+In order to achieve this, I wrote a disassembler.
+
+```python
+    def disasm(self, memory, start=0, end=None):
+        if end is None:
+            end = len(memory)
+
+        ip = start
+        while ip < end:
+            opcode = memory[ip]
+            mnem = self.OPCODES.get(opcode, f"UNK({opcode})")
+
+            if opcode in (0,1,2,3,4,5):
+                dest = memory[ip+1]
+                src  = memory[ip+2]
+
+                if opcode == 0:
+                    op_str = f"{mnem} r{dest}, mem[r{src}]"
+                elif opcode == 1:
+                    op_str = f"{mnem} mem[r{dest}], r{src}"
+                elif opcode == 2:
+                    op_str = f"{mnem} r{dest}, #{src}"
+                elif opcode == 5:
+                    op_str = f"{mnem} r{dest}, #{src}"
+                else:
+                    op_str = f"{mnem} r{dest}, r{src}"
+
+                print(f"0x{ip:03X}: {op_str}")
+                ip += 3
+
+            elif opcode == 6: 
+                offset = memory[ip+1]
+                print(f"0x{ip:03X}: {mnem} 0x{(ip+offset)&0xff:03X}")
+                ip += 2
+
+            elif opcode == 7: 
+                offset = memory[ip+1]
+                print(f"0x{ip:03X}: {mnem} 0x{(ip+offset)&0xff:03x}")
+                ip += 2
+
+            elif opcode == 8:
+                print(f"0x{ip:03X}: EXT")
+                ip += 1
+
+            else:
+                print(f"0x{ip:03X}: UNKNOWN({opcode})")
+                ip += 1
+
+```
+
+And we can disassemble the bytecode with this:
+
+```python
+from tinyvm import *
+
+FLAG = b'DH{xxxxxxxxxxxxxxxxxxxxxxxxx}'
+memory = list(FLAG + b'\xFF' * 192 + b'\x02\x02\x1d\x07\x02\x08\x01\x02\x01\x05\x02\x01\x05\x01\xf6\x06\xf4\x02\x00\x01\x02\x02\x1d\x00\x01\x02\x08\x05\x02\x01\x05\x01\xf6\x06\xf6')
+
+vm = TinyMachine()
+vm.disasm(memory, 221)
+
+```
