@@ -335,8 +335,38 @@ Since we know the index starts from *29*, overwriting this to *0* would start pr
 0x0F1: MOV_R_IMM r2, #29
 ```
 
-I made an assembler to aid me with this, here's the full code:
+There's a bit of problem with this approach though.
 
+The problem is, the *write* operation will keep printing till it hits a new line.
+
+But here, after we reach the end of the vm bytecode, the first byte of the FLAG is going to be overwritten with a new line character since there will be a wrap up (8 bit).
+
+This simply is going to prevent us from printing the flag, because now that the first character is a new line the *write* operation stops in its first loop.
+
+In order to go around this, I needed to bypass this check which is this:
+
+```c
+0x0FB: ADD_R_IMM r1, #246
+0x0FE: JNZ 0x0F4
+```
+
+Here the operation is this:
+
+```python
+(byte + 246) % 256 == 0
+byte = 10
+```
+
+We just need another value that would end up being 0 and not 10, in my case I use 0xff
+
+```
+(byte + 1) % 256 == 0
+byte = 0xff
+```
+
+Now i just simply need to start my input with 0xff, and the vm would print till it hits it.
+
+I made an assembler to aid me with this, here's the full code:
 
 ```python
 # tinyvm.py
