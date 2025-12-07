@@ -290,7 +290,7 @@ while (true) {
 Moving on, when it sees a new line, the loop breaks then it does this:
 - It moves *1* into *r0* and *29* into *r2*.
 - Then it fetches the byte stored at the vm memory relative to *r2* and puts it in *r1*.
-- A syscall IO instruction is then called, in this case *r0* is *1* which refers to *write* operation
+- A syscall IO instruction is then called, in this case *r0* is *1* which refers to *write* operation.
 - So the value at *r1* is then printed to *stdout*.
 - The index *r2* is incremented by *1*, and it does the same trick that reads until it hits a new line but in this case *writes*!.
 
@@ -306,3 +306,24 @@ while (true) {
     index++;
 }
 ```
+
+### Exploitation
+
+So, what's the vulnerability?
+
+Well it's really obvious, there's a buffer overflow due to how it handles the *read* operation.
+
+Rather than limiting the number of bytes to read into the buffer based on the exact size of the vm input buffer it rather uses our input to determine when to stop.
+
+What can we leverage with this?
+
+Since the data (flag, input, vm bytecode) are all contiguous in memory we can leverage this overflow to overwrite the vm bytecode thus having control flow over the vm.
+
+What to overwrite? 
+
+We know that the flag is already in memory, so we simply just need a way to print it out.
+
+This is the approach I made use of.
+
+Since we know th
+
