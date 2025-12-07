@@ -12,5 +12,8 @@ image:
 
 ## Dreamhack - Tiny Machine
 
-Overview: The **Tiny Machine** challenge is a 8-bits register based virtual machine written in Python. The flag is loaded in to memory and the memory comprises of our *flag + user input + machine code* all adjacent in memory. There's a buffer overflow in the vm memory due to how the vm handles our input. Invalid instruction execution or any sort of exception are handled to make the program exit. The vm intended functionality is to read our input and print it out back, but we will leverage the vulnerability to leak the flag.
+Overview: The **Tiny Machine** challenge implements a simple 8-bit register-based virtual machine written in Python. The VM loads the flag into memory, allocates space for our input right after it, and finally places the VM bytecode at the end meaning all data are laid out contiguously in memory.
 
+The vulnerability comes from how the VM handles input, there's a buffer overflow during the read operation, allowing user-controlled bytes to overwrite adjacent memory, including parts of the VM program itself. Any invalid opcode or runtime exception causes the VM to exit. 
+
+The VM intended functionality is to read our input and print it out back, but we will leverage the vulnerability to leak the flag directly from memory.
