@@ -35,7 +35,6 @@ class TinyMachine():
         self.ip = 0
         self.registers = [0, 0, 0, 0]
         self.halted = False
-        self.addr = 221
 
     def setIp(self, ip):
         self.ip = ip
@@ -101,5 +100,23 @@ machine.ip = 221
 machine.run()
 ```
 
-Looking through the code we see some handy comments for each switch cases in the `TinyMachine` which gives us an idea of what each opcode does.
+Looking through the code we see some handy comments for each switch cases in the **TinyMachine** class, and that gives us an idea of what each opcode does.
 
+The important thing here is to first determine the instruction set the VM provides.
+
+- Registers: The VM exposes 4 general-purpose 8-bit registers (r0, r1, r2, r3).
+- Instruction Set: There are 9 opcodes (0–8) corresponding to:
+    - Data movement:
+        - **LOAD** - loads data from memory into a register
+        - **STORE** - stores a register’s value into memory
+        - **MOV_R_IMM** - moves an immediate value into a register
+        - **MOV_R_R** - moves data between two registers
+    - Arithmetic:
+        - **ADD_R_R** - adds two registers
+        - **ADD_R_IMM** - adds an immediate value to a register
+    - Branching:
+        - **JNZ** - jumps relative if a specific register (r1) is non-zero
+        - **JMP** - jumps relative to the instruction pointer
+    - System IO:
+        - **EXT** - performs read/write operations via the VM
+- Memory Size: 256 bytes
