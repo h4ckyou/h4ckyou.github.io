@@ -309,13 +309,13 @@ while (true) {
 
 ### Exploitation
 
-# So, what's the vulnerability?
+#### So, what's the vulnerability?
 
 Well it's really obvious, there's a buffer overflow due to how it handles the *read* operation.
 
 Rather than limiting the number of bytes to read into the buffer based on the exact size of the vm input buffer it rather uses our input to determine when to stop.
 
-# What can we leverage with this?
+#### What can we leverage with this?
 
 Since the data (flag, input, vm bytecode) are all contiguous in memory we can leverage this overflow to overwrite the vm bytecode thus having control flow over the vm.
 
@@ -323,7 +323,7 @@ Since the data (flag, input, vm bytecode) are all contiguous in memory we can le
 [ FLAG ][ USER INPUT BUFFER ][ VM BYTECODE ]
 ```
 
-# What to overwrite? 
+#### What to overwrite? 
 
 We know that the flag is already in memory, so we simply just need a way to print it out.
 
@@ -357,9 +357,9 @@ Here the operation is this:
 byte = 10
 ```
 
-We just need another value that would end up being 0 and not 10, in my case I use 0xff
+We just need another value that would end up being 0 and not having to be a 10, in my case I use 0xff
 
-```
+```python
 (byte + 1) % 256 == 0
 byte = 0xff
 ```
