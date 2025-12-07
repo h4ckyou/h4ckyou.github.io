@@ -5,7 +5,7 @@ categories: [CTF, Dreamhack]
 tags: [pwnable]
 math: true
 mermaid: true
-media_subpath: /assets/posts/2025-11-07-Tiny-Machine
+media_subpath: /assets/posts/2025-12-07-Tiny-Machine
 image:
   path: dreamhack.png
 ---
