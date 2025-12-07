@@ -20,7 +20,7 @@ The vulnerability comes from how the VM handles input, there's a buffer overflow
 
 The VM intended functionality is to read our input and print it out back, but we will leverage the vulnerability to leak the flag directly from memory.
 
-### Challenge Analysis
+### Program Analysis
 
 We are given just a single python file called *tiny_machine.py*
 
@@ -100,7 +100,7 @@ machine.ip = 221
 machine.run()
 ```
 
-Looking through the code we see some handy comments for each switch cases in the **TinyMachine** class, and that gives us an idea of what each opcode does.
+Looking through the code we see some handy comments for each switch cases in the **run** method of the **TinyMachine** class, and that gives us an idea of what each opcode does.
 
 The important thing here is to first determine the instruction set the VM provides.
 
@@ -120,3 +120,21 @@ The important thing here is to first determine the instruction set the VM provid
     - System IO:
         - **EXT** - performs read/write operations via the VM
 - Memory Size: 256 bytes
+
+
+After running the challenge, the program initializes the VM’s memory layout.
+- The FLAG is stored at the beginning of memory.
+- An input buffer, where our provided bytes will later be read.
+- The VM bytecode.
+
+Once the memory is fully built, the program instantiates an object of the **TinyMachine** class.
+
+The VM then initializes its instruction pointer to **221**, which is the starting offset of the bytecode inside the memory.
+
+Finally, the VM enters its execution loop by calling the **run** method.
+
+The **run** method basically processes the bytecode stored in the VM’s memory. It follows the classic CPU life cycle: (fetch - decode - execute).
+
+### Reversing
+
+
