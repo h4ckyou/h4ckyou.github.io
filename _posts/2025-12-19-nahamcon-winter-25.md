@@ -810,7 +810,7 @@ The exploit chain combines two techniques to achieve authentication bypass:
 
 #### Program Analysis
 
-We are given a *Dockerfile*:
+We are given a *Dockerfile*
 
 ```dockerfile
 FROM debian:bookworm-slim
@@ -907,4 +907,84 @@ leoo
 
 Loading the binary up in IDA, here's the main function
 
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  int v3; // ebx
+  __pid_t v4; // eax
+  pthread_t th; // [rsp+0h] [rbp-20h] BYREF
+  unsigned __int64 v7; // [rsp+8h] [rbp-18h]
+
+  v7 = __readfsqword(0x28u);
+  load_config();
+  v3 = time(0LL);
+  v4 = getpid();
+  srand(v4 ^ v3 ^ (2 * g_cfg.ts));
+  if ( pthread_create(&th, 0LL, (void *(*)(void *))rpc_server_thread, 0LL) )
+  {
+    perror("pthread_create");
+    return 1;
+  }
+  else
+  {
+    pthread_join(th, 0LL);
+    return 0;
+  }
+}
 ```
+
+We see the main function first calls the `load_config` function:
+
+```c
+void __cdecl load_config()
+{
+  char *s; // [rsp+0h] [rbp-10h]
+  char *m; // [rsp+8h] [rbp-8h]
+
+  g_cfg.port = 3500;
+  s = getenv("SNOREX_SERIAL");
+  if ( !s || !*s )
+    s = "FAKEZ-2K-CAM01";
+  strncpy(g_cfg.serial, s, 0xFuLL);
+  m = getenv("SNOREX_MAC");
+  if ( !m || !*m )
+    m = "AB:12:4D:7C:20:10";
+  strncpy(g_cfg.mac, m, 0x11uLL);
+  pthread_mutex_lock(&g_usr_mutex);
+  g_usr_ctx.encrypt_data = usrMgr_getEncryptDataStr();
+  pthread_mutex_unlock(&g_usr_mutex);
+  fprintf(stderr, "[snorex] rpc port=%u\n", g_cfg.port);
+}
+```
+
+This updates the `g_cfg` struct fields to the necessary values
+
+```c
+00000000 struct __attribute__((aligned(2))) SONIA_CONFIG // sizeof=0x38
+00000000 {                                       // XREF: .bss:g_cfg/r
+00000000     uint16_t port;                      // XREF: rpc_server_thread+B2/r
+00000000                                         // rpc_server_thread:loc_2076/r ...
+00000002     char serial[16];                    // XREF: usrMgr_getEncryptDataStr+103/o
+00000002                                         // load_config+4D/o
+00000012     char mac[18];                       // XREF: usrMgr_getEncryptDataStr+F9/o
+00000012                                         // load_config+98/o
+00000024     uint32_t ts;                        // XREF: refresh_secrets+13/w
+00000024                                         // refresh_secrets:loc_152C/r ...
+00000028     uint8_t rand_bytes[15];             // XREF: refresh_secrets+23/o
+00000028                                         // refresh_secrets+5C/o ...
+00000037     // padding byte
+00000038 };
+
+00000000 struct USR_MGR_CTX // sizeof=0x8
+00000000 {                                       // XREF: .bss:g_usr_ctx/r
+00000000     USR_MGR_ENCRYPT_DATA *encrypt_data; // XREF: PasswdFind_getAuthCode+31/r
+00000000                                         // handle_auth+57/r ...
+00000008 };
+
+00000000 struct USR_MGR_ENCRYPT_DATA // sizeof=0x108
+00000000 {
+00000000     char tag[8];
+00000008     char encrypt_str[256];
+00000108 };
+```
+
