@@ -327,7 +327,7 @@ printf(s, random_pin);
 
 We'll use this during the second stage to easily leak the *pin*
 
-Since *random_pin* is used as the second parameter, we can use the format specifier `%2$d` to leak the value in `esi`
+Since *random_pin* is used as the second parameter, we can use the format specifier `%2$d` to leak the *dword* in `rsi`
 
 Here's the solve:
 
@@ -798,21 +798,113 @@ And we get the flag 😜
 
 #### Challenge Information
 - **Difficulty**: Advanced
-- **Based on**: CVE-2024-52545
+- **Based on**: [LorexExploit](https://github.com/sfewer-r7/LorexExploit?tab=readme-ov-file)
 
-This challenge is based on CVE-2024-52545, which affects the IQ Service running on TCP port 9876. The vulnerability allows an unauthenticated attacker to perform out-of-bounds heap reads. According to the CVE description, this issue was patched in firmware version 2.800.0000000.8.R.20241111.
+This challenge is based on *CVE-2024-52545*, which affects the IQ Service running on TCP port 9876. The vulnerability allows an unauthenticated attacker to perform out-of-bounds heap reads. According to the CVE description, this issue was patched in firmware version 2.800.0000000.8.R.20241111.
 
 The exploit chain combines two techniques to achieve authentication bypass:
 
 1. Heap feng shui to manipulate heap layout and position target data
-2. Unauthenticated out-of-bounds heap read to leak the device password
-3. Authentication using leaked credentials
+2. Unauthenticated out-of-bounds heap read to leak the device secret code
+3. Authentication using leaked secret
 
 #### Program Analysis
 
-We are provided with a zipfile that has 3 files:
+We are given a *Dockerfile*:
+
+```dockerfile
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y gcc make libc6-dev libssl-dev && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY snorex_sonia /app/
+
+RUN chmod +x snorex_sonia
+
+ENV SNOREX_SERIAL=FAKEZ-2K-CAM01
+ENV SNOREX_MAC=AB:12:4D:7C:20:10
+ENV FLAG=flag{now_repeat_against_remote_server}
+
+EXPOSE 3500
+
+CMD ["./snorex_sonia"]
+```
+
+A *start.sh* file:
 
 ```bash
- ~/Desktop/CTF/NahamconWinter25/Snorex ❯ ls Dockerfile start.sh snorex_sonia 
-Dockerfile  snorex_sonia  start.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="snorex"
+CONTAINER="snorex"
+
+docker build -t "$IMAGE" .
+
+docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+
+docker run \
+  --rm \
+  --name "$CONTAINER" \
+  -p 3500:3500 \
+  "$IMAGE"  
+```
+
+And the challenge file *snorex_sonic*
+
+Looking at the filetype and protections enabled we get this:
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ file snorex_sonia 
+snorex_sonia: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=099466942a10f6753c1177645a57c127b73c86bb, for GNU/Linux 3.2.0, with debug_info, not stripped
+                                                                                                                                                                                             
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ checksec snorex_sonia 
+[*] '/home/../Desktop/CTF/NahamconWinter25/Snorex/snorex_sonia'
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      Canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+    Stripped:   No
+    Debuginfo:  Yes
+```
+
+So the binary is not stripped and it has debug info which makes reversing less painful 
+
+All protections are also enabled
+
+We also see something interesting in the *Dockerfile*, it sets some environment variable:
+
+```bash
+ENV SNOREX_SERIAL=FAKEZ-2K-CAM01
+ENV SNOREX_MAC=AB:12:4D:7C:20:10
+ENV FLAG=flag{now_repeat_against_remote_server}
+```
+
+Running the binary we get this:
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ ./snorex_sonia 
+[snorex] rpc port=3500
+[rpc] listening on 3500
+```
+
+It seems to listen on port *3500*, connecting to that we don't get much
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ nc localhost 3500                                          
+asdf
+pe                                                                                                                                                                                           
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ nc localhost 3500
+pew
+hi
+leoo
+```
+
+#### Reversing
+
+Loading the binary up in IDA, here's the main function
+
 ```
