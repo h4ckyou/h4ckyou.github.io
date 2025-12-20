@@ -14,7 +14,9 @@ image:
 
 ### Overview
 
-This writeup covers all pwn challenges from NahamCon Winter CTF 2025. The event featured two pwnable challenges: VulnBank and Snorex.
+This writeup covers all pwn challenges from NahamCon Winter CTF 2025. The event featured two pwnable challenges:
+- VulnBank
+- Snorex
 
 ### VulnBank
 
@@ -796,3 +798,21 @@ And we get the flag 😜
 
 #### Challenge Information
 - **Difficulty**: Advanced
+- **Based on**: CVE-2024-52545
+
+This challenge is based on CVE-2024-52545, which affects the IQ Service running on TCP port 9876. The vulnerability allows an unauthenticated attacker to perform out-of-bounds heap reads. According to the CVE description, this issue was patched in firmware version 2.800.0000000.8.R.20241111.
+
+The exploit chain combines two techniques to achieve authentication bypass:
+
+1. Heap feng shui to manipulate heap layout and position target data
+2. Unauthenticated out-of-bounds heap read to leak the device password
+3. Authentication using leaked credentials
+
+#### Program Analysis
+
+We are provided with a zipfile that has 3 files:
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ ls Dockerfile start.sh snorex_sonia 
+Dockerfile  snorex_sonia  start.sh
+```
