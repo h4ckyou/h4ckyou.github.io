@@ -796,4 +796,3 @@ And we get the flag 😜
 
 #### Challenge Information
 - **Difficulty**: Advanced
-
