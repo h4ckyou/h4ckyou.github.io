@@ -20,9 +20,9 @@ This writeup covers all pwn challenges from NahamCon Winter CTF 2025. The event 
 
 #### Challenge Information
 - **Difficulty**: Medium
-- **First Blood**: :blood:
+- **First Blood**: 🩸
 
-VulnBank requires chaining multiple vulnerabilities to achieve code execution. The exploit path involves:
+VulnBank requires chaining multiple vulnerabilities to achieve rip control. The exploit path involves:
 
 1. Exploiting a format string vulnerability to leak memory addresses and the authentication PIN
 2. Using the leaked PIN to bypass authentication
@@ -791,4 +791,9 @@ This incident will definitely not be logged. Probably.
 ```
 
 And we get the flag 😜
+
+### Snorex
+
+#### Challenge Information
+- **Difficulty**: Advanced
 
