@@ -300,7 +300,7 @@ LABEL_22:
 - If *v5* or *attempts* isn't null it enters another block of code which does this:
     - If *v5* is null, it generates a new random pin and updates *v5* to *1*
     - Else if the condition isn't met then it calls *printf* on the *pin* string
-- If any of the condition isn't meet (v5 and attempts are zero) it calls *printf* on the *pin* string then generates a random pin
+- If any of the condition isn't meet (*v5* and attempts are zero) it calls *printf* on the *pin* string then generates a random pin
 - If the first byte of the string is null, it goes to the start of the while loop
 - Our pin string is converted to an integer and compared with the generated pin, if it matches and attempts isn't null it breaks out of the loop else it prints the error message and increments attempts by 1
 - Outside the while loop, it reads the environment variable *FLAG1* and prints it out
@@ -325,7 +325,7 @@ printf(s, random_pin);
 
 We'll use this during the second stage to easily leak the *pin*
 
-Since *random_pin* is used as the second parameter, we can use the format specifier `%2$d` to leak the value in `edx`
+Since *random_pin* is used as the second parameter, we can use the format specifier `%2$d` to leak the value in `esi`
 
 Here's the solve:
 
