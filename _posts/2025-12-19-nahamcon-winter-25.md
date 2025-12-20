@@ -1,11 +1,11 @@
 ---
 title: NahamCon Winter CTF 2025
-date: 2025-12-20 17:00:00 +0000
+date: 2025-12-19 17:00:00 +0000
 categories: [CTF, Writeup]
 tags: [pwnable]
 math: true
 mermaid: true
-media_subpath: /assets/posts/2025-12-19-Nahamcon-Winter
+media_subpath: /assets/posts/2025-12-19-Nahamcon-Winter-25
 image:
   path: preview.png
 ---
