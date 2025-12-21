@@ -992,7 +992,7 @@ Essentially it setups the camera serial name, mac address and finally the encryp
 
 This binary deals with concurrency since it's multi-threaded hence it ensures to lock mutexes when it accesses global shared memory so i'll be skipping any thread related functions unless necessary.
 
-The `usrMgr_getEncryptDataStr` function allocates heap memory of size `sizeof(USR_MGR_ENCRYPT_DATA) == 0x108` (264 bytes). It then calls `refresh_secrets`, which updates the `ts` field in the `g_cfg` global object with the current timestamp and generates a 15-byte random data stream.
+The *usrMgr_getEncryptDataStr* function allocates heap memory of size `sizeof(USR_MGR_ENCRYPT_DATA) == 0x108` (264 bytes). It then calls `refresh_secrets`, which updates the `ts` field in the `g_cfg` global object with the current timestamp and generates a 15-byte random data stream.
 
 The random bytes are converted to their hexadecimal representation, and the function constructs an encrypted string by concatenating the following fields:
 
@@ -1150,3 +1150,73 @@ LABEL_18:
 }
 ```
 
+This function implements a basic threaded TCP server. It creates a socket, binds it to the configured port, and listens for incoming connections. For each accepted connection, a new detached thread (`client_thread`) is spawned to handle the client's file descriptor. 
+
+Here's the client thread's handler
+
+**client_thread:**
+```c
+void *__cdecl client_thread(void *arg)
+{
+  set_sock_timeouts((int)arg, 5);
+  while ( !handle_request((int)arg) )
+    ;
+  close((int)arg);
+  pthread_mutex_lock(&g_conn_mutex);
+  if ( g_conn_count > 0 )
+    --g_conn_count;
+  pthread_mutex_unlock(&g_conn_mutex);
+  return 0LL;
+}
+```
+
+So it calls *handle_request* on the `client fd`.
+
+**handle_request:**
+```c
+int __cdecl handle_request(int fd)
+{
+  int r; // [rsp+1Ch] [rbp-24h]
+  uint32_t cmd; // [rsp+20h] [rbp-20h]
+  uint32_t len; // [rsp+24h] [rbp-1Ch]
+  uint8_t *buf; // [rsp+28h] [rbp-18h]
+  uint32_t hdr[2]; // [rsp+30h] [rbp-10h] BYREF
+  unsigned __int64 v7; // [rsp+38h] [rbp-8h]
+
+  v7 = __readfsqword(0x28u);
+  if ( read_full(fd, hdr, 8uLL) )
+    return -1;
+  cmd = ntohl(hdr[0]);
+  len = ntohl(hdr[1]);
+  if ( len > 0xF4240 )
+    return -1;
+  buf = 0LL;
+  if ( !len )
+    goto LABEL_10;
+  buf = (uint8_t *)malloc(len);
+  if ( !buf )
+    return -1;
+  if ( read_full(fd, buf, len) )
+  {
+    free(buf);
+    return -1;
+  }
+  else
+  {
+LABEL_10:
+    r = -1;
+    if ( cmd > 1 )
+    {
+      if ( cmd == 6 )
+        r = handle_iq(6u, buf, len, fd);
+    }
+    else
+    {
+      r = handle_auth(cmd, buf, len, fd);
+    }
+    if ( buf )
+      free(buf);
+    return r;
+  }
+}
+```
