@@ -988,3 +988,69 @@ This updates the `g_cfg` struct fields to the necessary values
 00000108 };
 ```
 
+Essentially it setups the camera serial name, mac address and finally the encrypted data.
+
+This binary deals with concurrency since it's multithreaded hence it ensures to lock mutexes when it accesses global shared memory so i'll be skipping any thread related functions unless necessary.
+
+The *usrMgr_getEncryptDataStr* function basically allocates a heap memory of size `sizeof(USR_MGR_ENCRYPT_DATA) == 0x108`, then it calls `refresh_secrets` which generates random stream of data of whose length is 15 bytes.
+
+After that it converts those random data to it's hex representation and setups the final encrypted string which is a concatenation of:
+
+```bash
+[1] | [Serial Name] | [Timestamp] | [Mac Address] | [Random Hex String]
+```
+
+The seperator for each data is either a newline or two newlines.
+
+```c
+USR_MGR_ENCRYPT_DATA *__cdecl usrMgr_getEncryptDataStr()
+{
+  unsigned int v; // [rsp+Ch] [rbp-44h]
+  size_t i; // [rsp+10h] [rbp-40h]
+  USR_MGR_ENCRYPT_DATA *d; // [rsp+18h] [rbp-38h]
+  char rand_hex[40]; // [rsp+20h] [rbp-30h] BYREF
+  unsigned __int64 v5; // [rsp+48h] [rbp-8h]
+
+  v5 = __readfsqword(0x28u);
+  d = (USR_MGR_ENCRYPT_DATA *)malloc(0x108uLL);
+  if ( !d )
+    return 0LL;
+  refresh_secrets();
+  memset(d, 0, sizeof(USR_MGR_ENCRYPT_DATA));
+  memcpy(d, "SNOREX1", 7uLL);
+  for ( i = 0LL; i <= 0xE; ++i )
+  {
+    v = g_cfg.rand_bytes[i];
+    rand_hex[2 * i] = a0123456789abcd[v >> 4];
+    rand_hex[2 * i + 1] = a0123456789abcd[v & 0xF];
+  }
+  rand_hex[30] = 0;
+  snprintf(d->encrypt_str, 0x100uLL, "1\n%s\n%u\n\n%s\n%s\n", g_cfg.serial, g_cfg.ts, g_cfg.mac, rand_hex);
+  return d;
+}
+
+void __cdecl refresh_secrets()
+{
+  uint32_t ts; // ebx
+  __pid_t v1; // eax
+  int fd; // [rsp+Ch] [rbp-24h]
+  size_t i; // [rsp+10h] [rbp-20h]
+
+  g_cfg.ts = time(0LL);
+  memset(g_cfg.rand_bytes, 0, sizeof(g_cfg.rand_bytes));
+  fd = open("/dev/urandom", 0);
+  if ( fd < 0 )
+  {
+    ts = g_cfg.ts;
+    v1 = getpid();
+    srand(ts ^ v1);
+    for ( i = 0LL; i <= 0xE; ++i )
+      g_cfg.rand_bytes[i] = rand();
+  }
+  else
+  {
+    read(fd, g_cfg.rand_bytes, 0xFuLL);
+    close(fd);
+  }
+}
+```
