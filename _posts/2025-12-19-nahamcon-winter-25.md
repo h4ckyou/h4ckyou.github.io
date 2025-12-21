@@ -990,18 +990,19 @@ This updates the `g_cfg` struct fields to the necessary values
 
 Essentially it setups the camera serial name, mac address and finally the encrypted data.
 
-This binary deals with concurrency since it's multithreaded hence it ensures to lock mutexes when it accesses global shared memory so i'll be skipping any thread related functions unless necessary.
+This binary deals with concurrency since it's multi-threaded hence it ensures to lock mutexes when it accesses global shared memory so i'll be skipping any thread related functions unless necessary.
 
-The *usrMgr_getEncryptDataStr* function basically allocates a heap memory of size `sizeof(USR_MGR_ENCRYPT_DATA) == 0x108`, then it calls `refresh_secrets` which generates random stream of data of whose length is 15 bytes.
+The `usrMgr_getEncryptDataStr` function allocates heap memory of size `sizeof(USR_MGR_ENCRYPT_DATA) == 0x108` (264 bytes). It then calls `refresh_secrets`, which updates the `ts` field in the `g_cfg` global object with the current timestamp and generates a 15-byte random data stream.
 
-After that it converts those random data to it's hex representation and setups the final encrypted string which is a concatenation of:
+The random bytes are converted to their hexadecimal representation, and the function constructs an encrypted string by concatenating the following fields:
 
-```bash
+```
 [1] | [Serial Name] | [Timestamp] | [Mac Address] | [Random Hex String]
 ```
 
-The seperator for each data is either a newline or two newlines.
+Each field is separated by a newline (`\n`) for strings, and double newlines (`\n\n`) for integers.
 
+**usrMgr_getEncryptDataStr:**
 ```c
 USR_MGR_ENCRYPT_DATA *__cdecl usrMgr_getEncryptDataStr()
 {
@@ -1028,7 +1029,10 @@ USR_MGR_ENCRYPT_DATA *__cdecl usrMgr_getEncryptDataStr()
   snprintf(d->encrypt_str, 0x100uLL, "1\n%s\n%u\n\n%s\n%s\n", g_cfg.serial, g_cfg.ts, g_cfg.mac, rand_hex);
   return d;
 }
+```
 
+**refresh_secrets:**
+```c
 void __cdecl refresh_secrets()
 {
   uint32_t ts; // ebx
@@ -1054,3 +1058,95 @@ void __cdecl refresh_secrets()
   }
 }
 ```
+
+The `refresh_secrets` function attempts to read 15 random bytes from `/dev/urandom`. If this fails (file descriptor is negative), it falls back to pseudorandom generation using `srand` with a seed derived from the current timestamp and process ID. However, since `/dev/urandom` is a standard Linux interface and unlikely to fail under normal conditions, the random data will almost certainly be sourced from `/dev/urandom` rather than the fallback PRNG.
+
+After the configuration is loaded, it prints to `stderr` the port it listens on.
+
+Back to the main function, it seeds `srand` with the current time, the process id, the timestamp it recorded during config load multiplied by 2, and this data are xored together.
+
+A new thread is created called the:
+
+**rpc_server_thread:**
+```c
+void *__cdecl __noreturn rpc_server_thread(void *arg)
+{
+  int opt; // [rsp+1Ch] [rbp-34h] BYREF
+  int listen_fd; // [rsp+20h] [rbp-30h]
+  int cfd; // [rsp+24h] [rbp-2Ch]
+  pthread_t th; // [rsp+28h] [rbp-28h] BYREF
+  sockaddr_in addr; // [rsp+30h] [rbp-20h] BYREF
+  unsigned __int64 v6; // [rsp+48h] [rbp-8h]
+
+  v6 = __readfsqword(0x28u);
+  listen_fd = socket(2, 1, 0);
+  if ( listen_fd < 0 )
+  {
+    perror("socket");
+    _exit(1);
+  }
+  opt = 1;
+  if ( setsockopt(listen_fd, 1, 2, &opt, 4u) )
+  {
+    perror("setsockopt");
+    _exit(1);
+  }
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = 2;
+  addr.sin_port = htons(g_cfg.port);
+  addr.sin_addr.s_addr = htonl(0);
+  if ( bind(listen_fd, (const struct sockaddr *)&addr, 0x10u) )
+  {
+    perror("bind");
+    _exit(1);
+  }
+  if ( listen(listen_fd, 16) )
+  {
+    perror("listen");
+    _exit(1);
+  }
+  fprintf(stderr, "[rpc] listening on %u\n", g_cfg.port);
+  while ( 1 )
+  {
+    while ( 1 )
+    {
+      while ( 1 )
+      {
+        cfd = accept(listen_fd, 0LL, 0LL);
+        if ( cfd >= 0 )
+          break;
+        if ( *__errno_location() != 4 )
+          perror("accept");
+      }
+      pthread_mutex_lock(&g_conn_mutex);
+      if ( g_conn_count < g_conn_max )
+        break;
+      pthread_mutex_unlock(&g_conn_mutex);
+      close(cfd);
+    }
+    ++g_conn_count;
+    pthread_mutex_unlock(&g_conn_mutex);
+    if ( set_sock_timeouts(cfd, 5) )
+      break;
+    if ( pthread_create(&th, 0LL, (void *(*)(void *))client_thread, (void *)cfd) )
+    {
+      close(cfd);
+      pthread_mutex_lock(&g_conn_mutex);
+      if ( g_conn_count > 0 )
+        --g_conn_count;
+LABEL_18:
+      pthread_mutex_unlock(&g_conn_mutex);
+    }
+    else
+    {
+      pthread_detach(th);
+    }
+  }
+  close(cfd);
+  pthread_mutex_lock(&g_conn_mutex);
+  if ( g_conn_count > 0 )
+    --g_conn_count;
+  goto LABEL_18;
+}
+```
+
