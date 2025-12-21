@@ -1002,7 +1002,6 @@ The random bytes are converted to their hexadecimal representation, and the func
 
 Each field is separated by a newline (`\n`) for strings, and double newlines (`\n\n`) for integers.
 
-**usrMgr_getEncryptDataStr:**
 ```c
 USR_MGR_ENCRYPT_DATA *__cdecl usrMgr_getEncryptDataStr()
 {
@@ -1031,7 +1030,6 @@ USR_MGR_ENCRYPT_DATA *__cdecl usrMgr_getEncryptDataStr()
 }
 ```
 
-**refresh_secrets:**
 ```c
 void __cdecl refresh_secrets()
 {
@@ -1065,9 +1063,8 @@ After the configuration is loaded, it prints to `stderr` the port it listens on.
 
 Back to the main function, it seeds `srand` with the current time, the process id, the timestamp it recorded during config load multiplied by 2, and this data are xored together.
 
-A new thread is created called the:
+A new thread is created called the `rpc_server_thread`:
 
-**rpc_server_thread:**
 ```c
 void *__cdecl __noreturn rpc_server_thread(void *arg)
 {
@@ -1152,9 +1149,8 @@ LABEL_18:
 
 This function implements a basic threaded TCP server. It creates a socket, binds it to the configured port, and listens for incoming connections. For each accepted connection, a new detached thread (`client_thread`) is spawned to handle the client's file descriptor. 
 
-Here's the client thread's handler
+Here's the client thread's handler:
 
-**client_thread:**
 ```c
 void *__cdecl client_thread(void *arg)
 {
@@ -1172,7 +1168,6 @@ void *__cdecl client_thread(void *arg)
 
 So it calls *handle_request* on the `client fd`.
 
-**handle_request:**
 ```c
 int __cdecl handle_request(int fd)
 {
@@ -1220,3 +1215,4 @@ LABEL_10:
   }
 }
 ```
+
