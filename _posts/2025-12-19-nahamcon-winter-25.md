@@ -871,9 +871,9 @@ snorex_sonia: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamical
     Debuginfo:  Yes
 ```
 
-So the binary is not stripped and it has debug info which makes reversing less painful 
+So the binary is not stripped and it has debug info which makes reversing less painful.
 
-All protections are also enabled
+All protections are also enabled.
 
 We also see something interesting in the *Dockerfile*, it sets some environment variable:
 
@@ -957,7 +957,7 @@ void __cdecl load_config()
 }
 ```
 
-This updates the `g_cfg` struct fields to the necessary values
+This updates the `g_cfg` struct fields to the necessary values:
 
 ```c
 00000000 struct __attribute__((aligned(2))) SONIA_CONFIG // sizeof=0x38
@@ -1394,7 +1394,7 @@ The function constructs a response header by converting values to network byte o
 
 The 8-byte header is sent to the client first. If `out.curr_length` is non-zero, the response data from `ctx` is then sent with a length of `out.curr_length` bytes.
 
-Cool, with this we can move on to analysing the `handle_auth` command handler
+Cool, with this we can move on to analysing the `handle_auth` command handler:
 
 ```c
 int __cdecl handle_auth(uint32_t cmd, uint8_t *buf, uint32_t len, int fd)
@@ -1619,7 +1619,7 @@ And getting authenticated requires knowing the `encrypt_str` value, of course we
 
 But the main issue is the random hex string.
 
-Leveraging the oob heap read we can dump the content of adjacent heap chunks, but really there's nothing of interest there.
+Leveraging the oob heap read we can dump the content of adjacent heap chunks, but really there's nothing of interest there during thread creation.
 
 The reason is because the `encrypt_str` value is stored on the main heap thread (main arena) and because this uses the `ptmalloc` allocator this means every thread has it's own heap.
 
