@@ -1214,5 +1214,372 @@ LABEL_10:
     return r;
   }
 }
+
+int __cdecl read_full(int fd, void *buf, size_t len)
+{
+  size_t done; // [rsp+28h] [rbp-18h]
+  __int64 r; // [rsp+38h] [rbp-8h]
+
+  done = 0LL;
+  while ( done < len )
+  {
+    r = recv(fd, (char *)buf + done, len - done, 0);
+    if ( !r )
+      return -1;
+    if ( r >= 0 )
+    {
+      done += r;
+    }
+    else if ( *__errno_location() != 4 )
+    {
+      return -1;
+    }
+  }
+  return 0;
+}
 ```
+
+The function first reads an 8-byte protocol header with the following structure:
+- *First Dword (4 bytes)*: Command to execute
+- *Second Dword (4 bytes)*: Size of data to allocate and read
+
+The allocation size is restricted to a maximum of `0xF4240` bytes.
+
+After reading the header, the function allocates memory of the specified size and reads the request data into this buffer.
+
+Two command handlers are accessible:
+- `handle_auth` (cmd <= 1)
+- `handle_iq` (cmd == 6)
+
+Let us understand the `handle_iq` handler
+
+```c
+
+00000000 struct MI_IQ_CONTEXT // sizeof=0x100
+00000000 {
+00000000     uint8_t hdr[64];
+00000040     uint8_t payload[192];
+00000100 };
+
+int __cdecl handle_iq(uint32_t cmd, uint8_t *buf, uint32_t len, int fd)
+{
+  MI_IQ_CONTEXT *ctx; // [rsp+28h] [rbp-28h]
+  MI_IQ_BUFFER out; // [rsp+30h] [rbp-20h] BYREF
+  uint32_t hdr[2]; // [rsp+40h] [rbp-10h] BYREF
+  unsigned __int64 v10; // [rsp+48h] [rbp-8h]
+
+  v10 = __readfsqword(0x28u);
+  if ( cmd != 6 )
+    return -1;
+  ctx = (MI_IQ_CONTEXT *)malloc(0x100uLL);
+  if ( !ctx )
+    return -1;
+  memset(ctx, 0, sizeof(MI_IQ_CONTEXT));
+  out.heap_ptr = (uint8_t *)ctx;
+  out.max_length = 256;
+  out.curr_length = 0;
+  MI_IQSERVER_GetApi(buf, len, &out);
+  hdr[0] = htonl(0);
+  hdr[1] = htonl(out.curr_length);
+  if ( write_full(fd, hdr, 8uLL) || out.curr_length && write_full(fd, ctx, out.curr_length) )
+  {
+    free(ctx);
+    return -1;
+  }
+  else
+  {
+    free(ctx);
+    return 0;
+  }
+}
+```
+
+- First it ensures that the `cmd` equals the handler value `6`
+- Allocates a memory of type `MI_IQ_CONTEXT` which is `256` bytes
+- Does some variable initialization such as setting the `heap_ptr` to the context memory, the maximum length and current length
+
+After that, function *MI_IQSERVER_GetApi* is called:
+
+```c
+void __cdecl MI_IQSERVER_GetApi(uint8_t *in_data, uint32_t in_length, MI_IQ_BUFFER *out)
+{
+  uint32_t v3; // eax
+  uint16_t max_word; // [rsp+22h] [rbp-3Eh]
+  unsigned int raw_len; // [rsp+24h] [rbp-3Ch]
+  size_t i; // [rsp+28h] [rbp-38h]
+  size_t i_0; // [rsp+30h] [rbp-30h]
+  MI_IQ_CONTEXT *ctx; // [rsp+38h] [rbp-28h]
+  __int64 meta; // [rsp+40h] [rbp-20h]
+  __int64 meta_8; // [rsp+48h] [rbp-18h]
+
+  if ( in_data && out && out->heap_ptr && in_length > 3 && _byteswap_ushort(*(_WORD *)in_data) == 0x2803 )
+  {
+    max_word = _byteswap_ushort(*((_WORD *)in_data + 1));
+    raw_len = 4 * (max_word + 2);
+    if ( raw_len > 0x400 )
+      raw_len = 1024;
+    out->curr_length = raw_len;
+    ctx = (MI_IQ_CONTEXT *)out->heap_ptr;
+    memcpy(out->heap_ptr, "IQDA", 4uLL);
+    memcpy(&ctx->hdr[4], "CH01", 4uLL);
+    LODWORD(meta) = htonl(0x3E80u);
+    HIDWORD(meta) = htonl(0x249F00u);
+    LODWORD(meta_8) = htonl(max_word);
+    v3 = time(0LL);
+    HIDWORD(meta_8) = htonl(v3);
+    *(_QWORD *)&ctx->hdr[8] = meta;
+    *(_QWORD *)&ctx->hdr[16] = meta_8;
+    for ( i = 24LL; i <= 0x3F; ++i )
+      ctx->hdr[i] = (i & 0x1F) + 0x80;
+    for ( i_0 = 0LL; i_0 <= 0xBF; ++i_0 )
+      ctx->payload[i_0] = rand();
+  }
+}
+```
+
+The parameters of this function are:
+- our input data
+- the size specified
+- a pointer to the *MI_IQ_BUFFER* structure
+
+Basic checks are done to ensure all required data are set, and it also checks if the protocol identifier (the lower `word` of `in_data` converted to `big-endian`) equals `0x2803`.
+
+Next it gets the `max_word` and multiplies by `4` and if it's greater than `0x400` it sets `raw_len` to the maximum len which is `0x400`.
+
+It updates `out->curr_length` to `raw_len` and then setups some header stuffs.
+
+Going back to the caller function *handle_iq*:
+
+```c
+ hdr[0] = htonl(0);
+ hdr[1] = htonl(out.curr_length);
+  if ( write_full(fd, hdr, 8uLL) || out.curr_length && write_full(fd, ctx, out.curr_length) )
+  {
+    free(ctx);
+    return -1;
+  }
+  else
+  {
+    free(ctx);
+    return 0;
+  }
+
+int __cdecl write_full(int fd, const void *buf, size_t len)
+{
+  size_t done; // [rsp+28h] [rbp-18h]
+  __int64 w; // [rsp+38h] [rbp-8h]
+
+  done = 0LL;
+  while ( done < len )
+  {
+    w = send(fd, (char *)buf + done, len - done, 0);
+    if ( !w )
+      return -1;
+    if ( w >= 0 )
+    {
+      done += w;
+    }
+    else if ( *__errno_location() != 4 )
+    {
+      return -1;
+    }
+  }
+  return 0;
+}
+```
+
+The function constructs a response header by converting values to network byte order (big-endian):
+- `hdr[0]`: Set to `0` (status code)
+- `hdr[1]`: Set to `out.curr_length` (response data length)
+
+The 8-byte header is sent to the client first. If `out.curr_length` is non-zero, the response data from `ctx` is then sent with a length of `out.curr_length` bytes.
+
+Cool, with this we can move on to analysing the `handle_auth` command handler
+
+```c
+int __cdecl handle_auth(uint32_t cmd, uint8_t *buf, uint32_t len, int fd)
+{
+  int v5; // eax
+  char *v6; // rax
+  _BOOL4 ok; // [rsp+28h] [rbp-48h]
+  uint32_t rlen; // [rsp+2Ch] [rbp-44h]
+  const char *flag; // [rsp+30h] [rbp-40h]
+  USR_MGR_ENCRYPT_DATA *d; // [rsp+38h] [rbp-38h]
+  USR_MGR_ENCRYPT_DATA *old; // [rsp+40h] [rbp-30h]
+  uint32_t hdr[2]; // [rsp+48h] [rbp-28h] BYREF
+  char expected[24]; // [rsp+50h] [rbp-20h] BYREF
+  unsigned __int64 v15; // [rsp+68h] [rbp-8h]
+
+  v15 = __readfsqword(0x28u);
+  if ( cmd )
+  {
+    if ( cmd == 1 )
+    {
+      if ( buf && len > 0xF )
+      {
+        PasswdFind_getAuthCode(expected);
+        v5 = memcmp(buf, expected, 0x10uLL);
+        ok = v5 == 0;
+        if ( v5 )
+          v6 = "Unauthorized\n";
+        else
+          v6 = getenv("FLAG");
+        flag = v6;
+        if ( !v6 || !*v6 )
+          flag = "flag{now_repeat_against_remote_server}";
+        rlen = strlen(flag);
+        hdr[0] = htonl(!ok);
+        hdr[1] = htonl(rlen);
+        if ( write_full(fd, hdr, 8uLL) )
+          return -1;
+        else
+          return write_full(fd, flag, rlen);
+      }
+      else
+      {
+        return -1;
+      }
+    }
+    else
+    {
+      return -1;
+    }
+  }
+  else
+  {
+    d = usrMgr_getEncryptDataStr();
+    if ( d )
+    {
+      pthread_mutex_lock(&g_usr_mutex);
+      old = g_usr_ctx.encrypt_data;
+      g_usr_ctx.encrypt_data = d;
+      pthread_mutex_unlock(&g_usr_mutex);
+      if ( old )
+        free(old);
+      hdr[0] = htonl(0);
+      hdr[1] = htonl(0);
+      return write_full(fd, hdr, 8uLL);
+    }
+    else
+    {
+      return -1;
+    }
+  }
+}
+```
+
+We have two `handle_auth` command handler cases:
+- cmd == 1: represents authentication
+- cmd == 0: represents resetting the encrypted data
+
+For authentication (i.e cmd == 1):
+
+```c
+
+char expected[24];
+
+if ( cmd == 1 )
+  {
+    if ( buf && len > 0xF )
+    {
+      PasswdFind_getAuthCode(expected);
+      v5 = memcmp(buf, expected, 0x10uLL);
+      ok = v5 == 0;
+      if ( v5 )
+        v6 = "Unauthorized\n";
+      else
+        v6 = getenv("FLAG");
+      flag = v6;
+      if ( !v6 || !*v6 )
+        flag = "flag{now_repeat_against_remote_server}";
+      rlen = strlen(flag);
+      hdr[0] = htonl(!ok);
+      hdr[1] = htonl(rlen);
+      if ( write_full(fd, hdr, 8uLL) )
+        return -1;
+      else
+        return write_full(fd, flag, rlen);
+    }
+    else
+    {
+      return -1;
+    }
+  }
+  else
+  {
+    return -1;
+}
+```
+
+- The authentication flow requires that `buf` is non-null and `len` is greater than 15 bytes
+- The function then retrieves the expected authentication code via `PasswdFind_getAuthCode` which stores the result in `expected`
+- Finally it performs a `memcmp` to verify that the first 16 bytes of `buf` match the expected value
+- If authentication succeeds, the flag is returned; otherwise, an "Unauthorized" message is sent
+
+How is the auth code generated?
+
+```c
+void __cdecl PasswdFind_getAuthCode(char *out_hex16)
+{
+  unsigned __int8 b; // [rsp+1Bh] [rbp-35h]
+  int i; // [rsp+1Ch] [rbp-34h]
+  USR_MGR_ENCRYPT_DATA *d; // [rsp+20h] [rbp-30h]
+  size_t n; // [rsp+28h] [rbp-28h]
+  unsigned __int8 digest[24]; // [rsp+30h] [rbp-20h] BYREF
+  unsigned __int64 v6; // [rsp+48h] [rbp-8h]
+
+  v6 = __readfsqword(0x28u);
+  *out_hex16 = 0;
+  pthread_mutex_lock(&g_usr_mutex);
+  d = g_usr_ctx.encrypt_data;
+  if ( g_usr_ctx.encrypt_data )
+  {
+    n = strnlen(g_usr_ctx.encrypt_data->encrypt_str, 0x100uLL);
+    MD5(d->encrypt_str, n, digest);
+    for ( i = 0; i <= 7; ++i )
+    {
+      b = digest[i];
+      out_hex16[2 * i] = a0123456789abcd[b >> 4];
+      out_hex16[2 * i + 1] = a0123456789abcd[b & 0xF];
+    }
+    out_hex16[16] = 0;
+    pthread_mutex_unlock(&g_usr_mutex);
+  }
+  else
+  {
+    memcpy(out_hex16, "0000000000000000", 0x11uLL);
+    pthread_mutex_unlock(&g_usr_mutex);
+  }
+}
+```
+
+It simply computes the `MD5` hash of `g_usr_ctx.encrypt_data->encrypt_str` and converts to `hex` if `g_usr_ctx.encrypt_data` is non-null.
+
+So our goal is this, we need to somehow retrieve the content of `encrypt_str` and with that, we can get authenticated hence getting the flag.
+
+Analysing the reset handle_auth case (i.e cmd == 0):
+
+```c
+    d = usrMgr_getEncryptDataStr();
+    if ( d )
+    {
+      pthread_mutex_lock(&g_usr_mutex);
+      old = g_usr_ctx.encrypt_data;
+      g_usr_ctx.encrypt_data = d;
+      pthread_mutex_unlock(&g_usr_mutex);
+      if ( old )
+        free(old);
+      hdr[0] = htonl(0);
+      hdr[1] = htonl(0);
+      return write_full(fd, hdr, 8uLL);
+    }
+    else
+    {
+      return -1;
+    }
+```
+
+- This first calls `usrMgr_getEncryptDataStr` and from our initial analysis we know that this function simply setups the necessary information needed for `encrypt_str`
+- Then it updates the `g_usr_ctx.encrypt_data` field to the new `encrypt_str`, and frees the previous `encrypt_str`
+- Finally writes 8 null bytes to our client fd
 
