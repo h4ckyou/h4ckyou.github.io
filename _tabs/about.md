@@ -10,6 +10,7 @@ typedef struct {
     const char *status;
     const char *passion;
     const char *skills[3];
+    const char certs[];
     const char *discord;
 } Pwner;
 
@@ -17,6 +18,7 @@ Pwner me = {
     .status = "Computer Science Student",
     .passion = "Cybersecurity Enthusiast & CTF Player",
     .skills = {"Pwn", "RE", "Offensive Security"},
+    .certs = {"CPTS"},
     .discord = "@h4cky0u"
 };
 ```
