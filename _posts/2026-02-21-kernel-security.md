@@ -22,7 +22,7 @@ Interestingly, I solved it using a method different from the one originally inte
 
 ### Setup
 
-Since I planned to debug locally, I needed to install the necessary tooling to replicate the challenge environment.
+Since I planned to debug locally, I needed to have the necessary tooling and kernel build to replicate the challenge environment.
 
 Fortunately, pwn.college provides a ready-to-use script that builds a kernel matching the exact version used in the dojo instance. This makes local debugging significantly easier.
 
@@ -74,6 +74,120 @@ chown 0.0 /flag
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
 ```
 
+We also need to know how the kernel is booted in order to identify what protections are enabled
 
+Here's the function that handles boot when we execute the `vm start` command on the dojo shell
 
+```python
+def extra_boot_flags():
+    nokaslr = True
+    if os.path.exists("/challenge/.kaslr"):
+        nokaslr = False
+    if args.nokaslr is not None:
+        nokaslr = args.nokaslr
 
+    nopti = False
+    if os.path.exists("/challenge/.nopti"):
+        nopti = True
+
+    panic_on_oops = False
+    if os.path.exists("/challenge/.panic_on_oops"):
+        panic_on_oops = True
+
+    result = []
+    if nokaslr:
+        result.append("nokaslr")
+
+    if nopti:
+        result.append("nopti")
+
+    if panic_on_oops:
+        result.append("oops=panic")
+        result.append("panic_on_warn=1")
+
+    return result
+
+def start():
+    bzImage = "/challenge/bzImage" if os.path.exists("/challenge/bzImage") else "/opt/linux/bzImage"
+    kvm = os.path.exists("/dev/kvm")
+    cpu = "host" if kvm else "qemu64"
+    append = " ".join([
+        "rw",
+        "rootfstype=9p",
+        "rootflags=trans=virtio",
+        "console=ttyS0",
+        "init=/opt/pwn.college/vm/init",
+        *extra_boot_flags(),
+        f"PATH={os.environ['PATH']}",  # PATH is safe (exec-suid)
+    ])
+
+    qemu_argv = [
+        "/usr/bin/qemu-system-x86_64",
+        "-kernel", bzImage,
+        "-cpu", f"{cpu},smep,smap",
+        "-fsdev", "local,id=rootfs,path=/,security_model=passthrough",
+        "-device", "virtio-9p-pci,fsdev=rootfs,mount_tag=/dev/root",
+        "-fsdev", "local,id=homefs,path=/home/hacker,security_model=passthrough",
+        "-device", "virtio-9p-pci,fsdev=homefs,mount_tag=/home/hacker",
+        "-device", "e1000,netdev=net0",
+        "-netdev", "user,id=net0,hostfwd=tcp::22-:22",
+        "-m", "2G",
+        "-smp", "2" if kvm else "1",
+        "-nographic",
+        "-monitor", "none",
+        "-append", append,
+    ]
+
+    if kvm:
+        qemu_argv.append("-enable-kvm")
+
+    if is_privileged():
+        qemu_argv.append("-s")
+
+    argv = [
+        "/usr/sbin/start-stop-daemon",
+        "--start",
+        "--pidfile", "/run/vm/vm.pid",
+        "--make-pidfile",
+        "--background",
+        "--no-close",
+        "--quiet",
+        "--oknodo",
+        "--startas", qemu_argv[0],
+        "--",
+        *qemu_argv[1:]
+    ]
+
+    subprocess.run(argv,
+                   stdin=subprocess.DEVNULL,
+                   stdout=open("/run/vm/vm.log", "a"),
+                   stderr=subprocess.STDOUT,
+                   check=True)
+
+```
+
+I spawned a privileged instance so as to modify the code and add a `print` statement to see the full command!
+
+![boot](boot.png)
+
+With this I got the full startup command
+
+```bash
+/usr/bin/qemu-system-x86_64 \
+    -kernel bzImage \
+    -initrd $PWD/initramfs.cpio.gz \
+    -cpu host,smep,smap \
+    -enable-kvm \
+    -fsdev local,security_model=passthrough,id=fsdev0,path=$HOME \
+    -device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=hostshare \
+    -m 2G \
+    -smp 2 \
+    -nographic \
+    -monitor none \
+    -s \
+    -append "console=ttyS0"
+```
+
+I just added that to the `launch.sh` file
+
+![launch](launch.png)
