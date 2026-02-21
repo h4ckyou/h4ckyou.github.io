@@ -379,7 +379,7 @@ Then compile and transfer it to the filesystem
 ```bash
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ musl-gcc leak.c -o leak -static
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cp leak fs/
-mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ 
 ```
 
 We can then boot the kernel.
@@ -444,6 +444,120 @@ Looking at the registers at the `call` instruction I saw this
 
 ![state](state.png)
 
-We actually control `$rdi, [$rax], [$rbp]`, so i thought why not find possible gadgets that let's me stack pivot?
+We actually control `$rdi, [$rax], [$rbp]`, so i thought why not find possible gadgets that let's me stack pivot after all this is the kernel itself there should be one right?
 
-Hence my search started
+Hence my gadget search began.
+
+I made use of `ROPgadget` and to ensure it's giving me gadgets from the `.text` section only I did this
+
+![ropgadget](ropgadget.png)
+
+```
+- readelf -S vmlinux | grep .text
+- ROPgadget --binary vmlinux --range 0xffffffff81000000-0xffffffff81200000 >> gadgets.txt
+```
+
+With that it identified `100k+` gadgets
+
+```bash
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ wc -l gadgets.txt 
+137108 gadgets.txt
+```
+
+But we are only interested in gadgets that can make us control `rsp`
+
+I made use of this search in `vscode` => `rdi ; pop rsp ; ret`
+
+And luckily, it identified a gadget
+
+```
+0xffffffff811ac939 : push rdi ; pop rsp ; ret
+```
+
+This pushes the address of `rdi` to the stack and pops it, effectively making `rsp` point to our `buffer`.
+
+With this we can control `rip` and perform kernel rop.
+
+What now?
+
+Well unlike userspace pwn where the goal is to mostly gain code execution, in kernelspace pwn our goal is to perform privilege escalation.
+
+One way to achieve this is to change our credential
+
+All the processes in Linux have a set of credentials that define their permissions.
+
+The `prepare_kernel_cred` function is used to prepare a new set of credentials, while `commit_creds` applies those credentials to the current process. 
+
+This is handled on the heap within a structure known as the `cred` structure. And each process (task) is managed by a structure called a `task_struct` structure, which contains a pointer to a `cred` structure.
+
+
+```c
+struct cred {
+	atomic_t	usage;
+#ifdef CONFIG_DEBUG_CREDENTIALS
+	atomic_t	subscribers;	/* number of processes subscribed */
+	void		*put_addr;
+	unsigned	magic;
+#define CRED_MAGIC	0x43736564
+#define CRED_MAGIC_DEAD	0x44656144
+#endif
+	kuid_t		uid;		/* real UID of the task */
+	kgid_t		gid;		/* real GID of the task */
+	kuid_t		suid;		/* saved UID of the task */
+	kgid_t		sgid;		/* saved GID of the task */
+	kuid_t		euid;		/* effective UID of the task */
+	kgid_t		egid;		/* effective GID of the task */
+	kuid_t		fsuid;		/* UID for VFS ops */
+	kgid_t		fsgid;		/* GID for VFS ops */
+	unsigned	securebits;	/* SUID-less security management */
+	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
+	kernel_cap_t	cap_permitted;	/* caps we're permitted */
+	kernel_cap_t	cap_effective;	/* caps we can actually use */
+	kernel_cap_t	cap_bset;	/* capability bounding set */
+	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+#ifdef CONFIG_KEYS
+	unsigned char	jit_keyring;	/* default keyring to attach requested
+					 * keys to */
+	struct key	*session_keyring; /* keyring inherited over fork */
+	struct key	*process_keyring; /* keyring private to this process */
+	struct key	*thread_keyring; /* keyring private to this thread */
+	struct key	*request_key_auth; /* assumed request_key authority */
+#endif
+#ifdef CONFIG_SECURITY
+	void		*security;	/* LSM security */
+#endif
+	struct user_struct *user;	/* real user ID subscription */
+	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+	struct ucounts *ucounts;
+	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
+	/* RCU deletion */
+	union {
+		int non_rcu;			/* Can we skip RCU deletion? */
+		struct rcu_head	rcu;		/* RCU deletion hook */
+	};
+} __randomize_layout;
+
+
+struct task_struct {
+    ...
+	/* Process credentials: */
+
+	/* Tracer's credentials at attach: */
+	const struct cred __rcu		*ptracer_cred;
+
+	/* Objective and real subjective task credentials (COW): */
+	const struct cred __rcu		*real_cred;
+
+	/* Effective (overridable) subjective task credentials (COW): */
+	const struct cred __rcu		*cred;
+    ...
+}
+```
+
+The `cred` structure is created at the time of process creation and is stored in the `task_struct` of the process.
+
+In Linux, `task_struct` is the data structure that represents a process. It contains all the information associated with a running task, effectively serving as the Linux equivalent of a Process Control Block (PCB).
+
+The `real_cred` pointer points to the original credentials of the process, while the `cred` pointer points to the effective credentials that are currently in use. So in the case of Privilege Escalation, we just need to focus on process credentials and how to manipulate them. So our goal is to change the `cred` and `real_cread` pointers in the `task_struct` of the process to `root` credentials ([init_cred](https://elixir.bootlin.com/linux/v5.14.9/source/kernel/cred.c#L41)).
+
+To do this, we will use the `prepare_kernel_cred` function to prepare a new set of credentials and then use the `commit_creds` function to apply those credentials to the current process. The `prepare_kernel_cred` function takes a pointer to a `task_struct` as an argument, which is usually the current process. If we pass `NULL`, it will prepare the credentials for the `init` process, which has root privileges.
