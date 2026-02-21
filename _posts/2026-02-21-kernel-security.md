@@ -591,3 +591,70 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
 }
 ```
 
+After updating our process credentials we still have to return back to userspace.
+
+This is important because if we do not return to userspace safely, the kernel will panic and stop our exploit before using root privileges to do anything.
+
+Transitioning between user space and kernel space involves switching CPU privilege modes. 
+
+Going from user space to kernel space is typically done via a syscall or an interrupt like `int 0x80`. 
+
+Here's a sample code:
+
+```c
+// musl-gcc sample.c -o sample -static
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main()
+{
+    int fd = open("/dev/urandom", O_RDONLY);
+    close(fd);
+    return 0;
+}
+```
+
+We set a breakpoint at `do_syscall_64` and on executing the program we get this backtrace
+
+![syscall_1](syscall_1.png)
+
+This means that `do_syscall_64` was called from `entry_SYSCALL_64`
+
+Here's the routine of the function
+
+![syscall_2](syscall_2.png)
+![syscall_3](syscall_3.png)
+
+First it's going to execute the `swapgs` instruction which switches the `GS` segment base register of the userspace to the kernel space
+
+Then it's going to save the registers before calling the `do_syscall_64` function
+
+![syscall_4](syscall_4.png)
+
+After executing the syscall, the kernel will try to return to user space. There are two main instructions used for this purpose: `sysretq` and `iretq`. 
+
+The `sysretq` instruction is used to return from a syscall, while the `iretq` instruction is used to return from an interrupt or exception. In the case of syscalls, the kernel will use `sysretq` to switch back to user mode and restore the user space registers.
+
+There are also 2 functions that are used to return to user space: `syscall_return_via_sysret` and `swapgs_restore_regs_and_return_to_usermode`. In this case, the kernel will use `syscall_return_via_sysret`.
+
+Here's the disassembly for `swapgs_restore_regs_and_return_to_usermode`:
+
+![syscall_5](syscall_5.png)
+![syscall_6](syscall_6.png)
+![syscall_7](syscall_7.png)
+
+`swapgs_restore_regs_and_return_to_usermode` appears relatively straightforward to implement. 
+
+In general, it restores the user-space registers and switches the CPU back to user mode (ring 3). 
+
+Before transitioning to user mode, it also performs a bitwise OR operation on the CR3 register with `0x1000`.
+
+This is important because the CR3 register is used to manage the page tables in the x86 architecture, and this operation ensures that the CPU is correctly set up to access user-space memory. 
+
+The way `swapgs_restore_regs_and_return_to_usermode` restore user-space registers is just push the value of `rip`, `cs`, `rflags`, `rsp`, and `ss` to the stack, and then the `iretq` instruction will pop that value from the stack and restore the user-space registers. 
+
+These value must be in the correct order:
+
+![ret2usr](ret2usr.png)
+
