@@ -42,6 +42,40 @@ We can also extract the challenge's kernel module from the dojo
 ![challenge](challenge.png)
 ![scp](scp.png)
 
+I then placed the kernel module into the uncompressed filesystem because on boot all kernel modules are loaded
+
+A modification I also did was to disable switching to the user `ctf` for debug purpose (by commenting - see last line of the code)
+
+```
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cp babykernel_level10.1.ko fs/
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cat fs/init 
+#!/bin/sh
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t 9p -o trans=virtio,version=9p2000.L,nosuid hostshare /home/ctf
+for f in $(ls *.ko); do
+    insmod $f
+done
+sysctl -w kernel.perf_event_paranoid=1
+
+cat <<EOF
+
+
+Boot took $(cut -d' ' -f1 /proc/uptime) seconds
+
+
+Welcome to pwn.college
+
+EOF
+chmod 600 /flag
+chown 0.0 /flag
+/bin/sh
+
+#exec su -l ctf
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
+```
+
 
 
 
