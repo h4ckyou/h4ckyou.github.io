@@ -191,3 +191,21 @@ With this I got the full startup command
 I just added that to the `launch.sh` file
 
 ![launch](launch.png)
+
+### Analysis
+
+From the setup code we can see that there are mainly 3 protections enabled
+
+(K)ASLR - Short for (Kernel) Address Space Layout Randomization that introduces another random element to make exploitation more difficult. Libraries and application-specific segments (like the stack, or heap) are loaded into different, random addresses upon each execution. This denies an attacker easy access to target addresses, functions, ROP gadgets and more. Exploitation typically requires an information leak of any kind.
+
+SMEP - Supervisor Mode Execution Prevention, a kernel feature that marks all userland memory pages in the page table as non-executable, when a process's execution is in kernel-mode. This effectively eliminates the option to jump back to an attacker written and controlled user-land function (e.g. within the actual exploit). We require kernel ROP for effective exploitation. Common bypasses include pure in-kernel ROP chains, a stack pivot + user-land ROP, or abusing mmap'ed pages.
+
+SMAP - Supervisor Mode Access Prevention, a complimentary feature to SMEP that also marks the same pages as non-accessible when execution happens in kernel-mode. As a result, user land page tables are not readable or writable anymore. S
+
+To ease debugging, I disabled `kaslr` 
+
+```bash
+- -append "console=ttyS0"
++ -append "console=ttyS0 nokaslr"
+```
+
