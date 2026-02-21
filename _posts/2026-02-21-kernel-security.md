@@ -332,7 +332,7 @@ One obstacle, however, is that KASLR (Kernel Address Space Layout Randomization)
 
 That said, if we are able to obtain a kernel address leak, we can defeat KASLR by calculating the kernel base address. Once the base is known, we can leverage any useful gadget within the kernel's .text section to construct our exploit.
 
-#### Leaks?
+#### Leaks
 
 To obtain a kernel leak, I identified two possible approaches:
 - Missing null termination, causing `printk` to read beyond the intended buffer and leak an adjacent kernel pointer.
@@ -342,7 +342,7 @@ Both approaches rely on retrieving output from the kernel log ring buffer (`dmes
 
 In my solution, I chose to exploit the first method. The lack of proper null termination allows `printk` to continue reading into adjacent memory, ultimately leaking a kernel address. This leak is sufficient to recover the randomized kernel base and bypass KASLR.
 
-The kernel pointer after `buf` is the address of the `printk` function.
+After the `buf` is the address of the `printk` function so this means we will end up leaking `printk` address.
 
 I'll show how it looks in memory, this is the code I wrote for filling up `buf` with `A's`
 
@@ -415,3 +415,35 @@ Continuing execution and running `./leak` we hit the `breakpoint`
 ```bash
 gef> telescope $rdi
 ```
+
+From examining the memory layout, we observe that immediately after the buffer lies a pointer to `printk`.
+
+Because the buffer is not properly null-terminated, `printk` continues reading past the intended boundary when logging the user-controlled input. As a result, it reads into the adjacent memory region which includes the stored function pointer.
+
+![dmesg](dmesg.png)
+
+With kernel address leak obtained we can defeat `KASLR`
+
+![calculate](calculate.png)
+
+#### LPE
+
+With `KASLR` defeated this means we have just one arbitrary call as we control the address of `logger->log_function`
+
+The intended solution was to make use of the `run_cmd` kernel function.
+
+![run_cmd](run_cmd.png)
+
+This function basically executes a command in userspace as root!
+
+But to be honest, when I tried solving the challenge I couldn't make use of it and I eventually figured why - `/bin/sh` is interactive hence it wouldn't work (spawn a shell), alternatives like `chmod` to make the `flag` world-readable is sufficient.
+
+So what now? 
+
+Looking at the registers at the `call` instruction I saw this
+
+![state](state.png)
+
+We actually control `$rdi, [$rax], [$rbp]`, so i thought why not find possible gadgets that let's me stack pivot?
+
+Hence my search started
