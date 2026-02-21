@@ -480,15 +480,17 @@ With this we can control `rip` and perform kernel rop.
 
 What now?
 
-Well unlike userspace pwn where the goal is to mostly gain code execution, in kernelspace pwn our goal is to perform privilege escalation.
+Unlike user space exploitation, where the primary objective is typically to gain arbitrary code execution within the context of the vulnerable process, kernel exploitation has a different end goal.
 
-One way to achieve this is to change our credential
+In kernel space, the objective is usually to achieve privilege escalation specifically, to transition from an unprivileged user to root.
+
+One way to achieve this is to change our credentials.
 
 All the processes in Linux have a set of credentials that define their permissions.
 
-The `prepare_kernel_cred` function is used to prepare a new set of credentials, while `commit_creds` applies those credentials to the current process. 
-
 This is handled on the heap within a structure known as the `cred` structure. And each process (task) is managed by a structure called a `task_struct` structure, which contains a pointer to a `cred` structure.
+
+In Linux, `task_struct` is the data structure that represents a process. It contains all the information associated with a running task, effectively serving as the Linux equivalent of a Process Control Block (PCB).
 
 
 ```c
@@ -556,8 +558,34 @@ struct task_struct {
 
 The `cred` structure is created at the time of process creation and is stored in the `task_struct` of the process.
 
-In Linux, `task_struct` is the data structure that represents a process. It contains all the information associated with a running task, effectively serving as the Linux equivalent of a Process Control Block (PCB).
-
 The `real_cred` pointer points to the original credentials of the process, while the `cred` pointer points to the effective credentials that are currently in use. So in the case of Privilege Escalation, we just need to focus on process credentials and how to manipulate them. So our goal is to change the `cred` and `real_cread` pointers in the `task_struct` of the process to `root` credentials ([init_cred](https://elixir.bootlin.com/linux/v5.14.9/source/kernel/cred.c#L41)).
 
-To do this, we will use the `prepare_kernel_cred` function to prepare a new set of credentials and then use the `commit_creds` function to apply those credentials to the current process. The `prepare_kernel_cred` function takes a pointer to a `task_struct` as an argument, which is usually the current process. If we pass `NULL`, it will prepare the credentials for the `init` process, which has root privileges.
+To do this, we will use the `prepare_kernel_cred` function to prepare a new set of credentials and then use the `commit_creds` function to apply those credentials to the current process.
+
+The `prepare_kernel_cred` function takes a pointer to a `task_struct` as an argument, which is usually the current process. 
+
+If we pass `NULL`, it will prepare the credentials for the `init` process, which has root privileges.
+
+```c
+struct cred *prepare_kernel_cred(struct task_struct *daemon)
+{
+	const struct cred *old;
+	struct cred *new;
+
+	new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
+	if (!new)
+		return NULL;
+
+	kdebug("prepare_kernel_cred() alloc %p", new);
+
+	if (daemon)
+		old = get_task_cred(daemon);
+	else
+		old = get_cred(&init_cred);
+
+    ...
+
+    return new;
+}
+```
+
