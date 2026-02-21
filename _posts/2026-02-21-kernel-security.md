@@ -209,8 +209,6 @@ To ease debugging, I disabled `kaslr`
 + -append "console=ttyS0 nokaslr"
 ```
 
-Now we can start reversing....
-
 Here's the module's info
 
 ![modinfo](modinfo.png)
@@ -235,6 +233,75 @@ drwxr-xr-x    2 root     0               40 Feb  7 16:08 root
 drwxr-xr-x    2 root     0             1480 Feb  7 16:08 sbin
 dr-xr-xr-x   12 root     0                0 Feb 21 10:42 sys
 drwxr-xr-x    4 root     0               80 Feb  7 16:08 usr
-/ #
+/ # poweroff -f
+[  133.984898] ACPI: Preparing to enter system sleep state S5
+[  133.985627] reboot: Power down
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
 ```
+
+Time to reverse engineer the kernel module!
+
+This is the `init_module`
+
+```c
+int __cdecl init_module()
+{
+  proc_entry = (proc_dir_entry *)proc_create("pwncollege", 438LL, 0LL, &fops);
+  printk(&unk_C20);
+  printk(&unk_BD0);
+  printk(&unk_C20);
+  return 0;
+}
+```
+
+This function registers a new entry in the proc filesystem and associates it with custom kernel handlers. Any interaction with `/proc/pwncollege` from user space will invoke the corresponding callbacks defined in the `file_operations` structure (`fops`).
+
+
+```c
+void __cdecl cleanup_module()
+{
+  if ( proc_entry )
+    proc_remove();
+}
+```
+
+This function simply deletes the registered entry.
+
+Looking at the registered handlers, I saw just two
+
+![ida_fops](ida_fops.png)
+
+The `device_release` handler doesn't do much.
+
+```c
+__int64 device_release()
+{
+  return 0LL;
+}
+```
+
+This means our target is at `device_write`
+
+```c
+ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, loff_t *offset)
+{
+  ssize_t v4; // r12
+  $03BF2B29B6BBB97215B935736F34BBB0 logger; // [rsp+0h] [rbp+0h] BYREF
+  unsigned __int64 vars108; // [rsp+108h] [rbp+108h]
+
+  vars108 = __readgsqword(0x28u);
+  memset(&logger, 0, sizeof(logger));
+  logger.log_function = (int (*)(const char *, ...))&printk;
+  if ( length > 0x108 )
+  {
+    _warn_printk("Buffer overflow detected (%d < %lu)!\n", 264LL);
+    BUG();
+  }
+  v4 = length - copy_from_user(&logger, buffer);
+  logger.log_function((const char *)&logger);
+  return v4;
+}
+```
+
+This code isn't really much..
 
