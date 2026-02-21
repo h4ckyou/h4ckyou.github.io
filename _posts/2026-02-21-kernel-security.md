@@ -332,7 +332,7 @@ One obstacle, however, is that KASLR (Kernel Address Space Layout Randomization)
 
 That said, if we are able to obtain a kernel address leak, we can defeat KASLR by calculating the kernel base address. Once the base is known, we can leverage any useful gadget within the kernel's .text section to construct our exploit.
 
-#### Leaks
+#### Leak
 
 To obtain a kernel leak, I identified two possible approaches:
 - Missing null termination, causing `printk` to read beyond the intended buffer and leak an adjacent kernel pointer.
@@ -428,7 +428,9 @@ With kernel address leak obtained we can defeat `KASLR`
 
 #### LPE
 
-With `KASLR` defeated this means we have just one arbitrary call as we control the address of `logger->log_function`
+With `KASLR` defeated this means we can then make use of any kernel address of our choice.
+
+Back to the challenge, we have just one arbitrary call as we control the address of `logger->log_function`
 
 The intended solution was to make use of the `run_cmd` kernel function.
 
