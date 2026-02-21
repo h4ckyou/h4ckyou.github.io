@@ -194,7 +194,7 @@ I just added that to the `launch.sh` file
 
 ### Analysis
 
-From the setup code we can see that there are mainly 3 protections enabled
+From the setup code we can see that there are 3 protections enabled
 
 (K)ASLR - Short for (Kernel) Address Space Layout Randomization that introduces another random element to make exploitation more difficult. Libraries and application-specific segments (like the stack, or heap) are loaded into different, random addresses upon each execution. This denies an attacker easy access to target addresses, functions, ROP gadgets and more. Exploitation typically requires an information leak of any kind.
 
@@ -207,5 +207,34 @@ To ease debugging, I disabled `kaslr`
 ```bash
 - -append "console=ttyS0"
 + -append "console=ttyS0 nokaslr"
+```
+
+Now we can start reversing....
+
+Here's the module's info
+
+![modinfo](modinfo.png)
+
+Running the `launch.sh`, we can confirm that it's loaded
+
+```
+/ # lsmod
+challenge 16384 0 - Live 0xffffffffc0000000 (O)
+/ # ls -l
+total 272
+-rwxr-xr-x    1 ctf      1000        268536 Feb 21 10:14 babykernel_level10.1.ko
+drwxr-xr-x    2 root     0             1900 Feb  7 16:08 bin
+drwxr-xr-x    2 root     0               60 Oct 27 19:12 dev
+drwxrwxr-x    2 ctf      1000            60 Feb  7 13:56 etc
+-rw-------    1 root     0               19 Feb  7 13:56 flag
+drwxr-xr-x    3 root     0               60 Feb  7 16:08 home
+-rwxrwxr-x    1 ctf      1000           363 Feb  8 16:40 init
+lrwxrwxrwx    1 root     0               11 Feb  7 16:08 linuxrc -> bin/busybox
+dr-xr-xr-x   62 root     0                0 Feb 21 10:42 proc
+drwxr-xr-x    2 root     0               40 Feb  7 16:08 root
+drwxr-xr-x    2 root     0             1480 Feb  7 16:08 sbin
+dr-xr-xr-x   12 root     0                0 Feb 21 10:42 sys
+drwxr-xr-x    4 root     0               80 Feb  7 16:08 usr
+/ #
 ```
 
