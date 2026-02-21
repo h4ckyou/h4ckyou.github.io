@@ -18,10 +18,7 @@ Having completed the Kernel Security module at [pwn.college](https://pwn.college
 
 Interestingly, I solved it using a method different from the one originally intended
 
-<div align="center">
-  <img src="module.png" alt="module" width="400">
-  <img src="completed.png" alt="completed" width="400">
-</div>
+<img src="completed.png" alt="completed" width="400">
 
 ### Setup
 
@@ -42,9 +39,9 @@ mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$
 
 We can also extract the challenge's kernel module from the dojo
 
-![ICC](challenge.png)
-
-
-
+<div align="center">
+  <img src="challenge.png" alt="challenge" width="400">
+  <img src="scp.png" alt="scp" width="400">
+</div>
 
 
