@@ -30,7 +30,7 @@ You can find the repository here: [https://github.com/pwncollege/pwnkernel/tree/
 
 Here's the compiled kernel boot image
 
-```
+```bash
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ file vmlinux bzImage 
 vmlinux: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=eae7b711fb29722f5df763b3704c582490813ebf, with debug_info, not stripped
 bzImage: Linux kernel x86 boot executable bzImage, version 5.4.0 (root@buildkitsandbox) #1 SMP Mon Oct 27 19:12:19 UTC 2025, RO-rootFS, swap_dev 0XA, Normal VGA
@@ -42,11 +42,11 @@ We can also extract the challenge's kernel module from the dojo
 ![challenge](challenge.png)
 ![scp](scp.png)
 
-I then placed the kernel module into the uncompressed filesystem because on boot all kernel modules are loaded
+I then placed the kernel module into the uncompressed filesystem because on boot all kernel modules placed at `/` are loaded
 
 A modification I also did was to disable switching to the user `ctf` for debug purpose (by commenting - see last line of the code)
 
-```
+```bash
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cp babykernel_level10.1.ko fs/
 mark@rwx:~/Desktop/Labs/PwnCollege/Kernel/pwnkernel$ cat fs/init 
 #!/bin/sh
@@ -61,9 +61,7 @@ sysctl -w kernel.perf_event_paranoid=1
 
 cat <<EOF
 
-
 Boot took $(cut -d' ' -f1 /proc/uptime) seconds
-
 
 Welcome to pwn.college
 
