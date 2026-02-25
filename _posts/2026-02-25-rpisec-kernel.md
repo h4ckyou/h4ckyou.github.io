@@ -272,3 +272,141 @@ module_init(m_init);
 module_exit(m_exit);
 ```
 
+When the module is loaded with `insmod` the function `m_init` gets called
+
+```c
+static int __init m_init(void) {
+	struct proc_dir_entry* procfile = proc_create(NAME, 0666, 0, &proc_ops);
+	if (!procfile) {
+		printk(KERN_INFO "[!] couldnt create proc entry\n");
+		return -ENOMEM;
+	}
+	printk(KERN_INFO "[+] scheduler module loaded\n");
+	printk(KERN_INFO "[+] priority scheduling simulator\n");
+	printk(KERN_INFO "[+] add process to queue with priority: echo '7' > /proc/sched\n");
+	printk(KERN_INFO "[+] remove next process from queue: cat /proc/sched\n");
+	add_proc(make_proc(1));
+	add_proc(make_proc(0));
+	add_proc(make_proc(2));
+	add_proc(make_proc(51));
+	printk(KERN_INFO "[+] sample processes queued\n");
+	return 0;
+}
+```
+
+After creating a character device exposed at `/proc/sched`, the program proceeds to create simulated "processes" with predefined priority levels. Note that this is only a simulation no real processes are actually created.
+
+The data structure used to manage process priorities is named `cpu_proc`. It is implemented as a linked list, where each node stores a priority level and a pointer to its corresponding function handler.
+
+```c
+struct cpu_proc {
+	struct cpu_proc* next;
+	long prio;
+	void (*compute)(void);
+};
+
+struct cpu_proc* head;
+```
+
+Here's the insertion logic.
+
+The `make_proc` function dynamically allocates a new `cpu_proc` structure using `kmalloc`. After initializing its next pointer to NULL and assigning the provided priority value, it selects the appropriate handler based on the priority level.
+
+The handler is assigned via a switch statement, mapping each priority level to its corresponding function (high_prio, med_prio, low_prio, or a default handler).
+
+The `add_proc` function inserts the newly created node into the linked list. If the list is empty, the new node becomes the head. Otherwise, the function traverses the list until it reaches the final node and appends the new process to the end. 
+
+```c
+struct cpu_proc* make_proc(long prio) {
+	struct cpu_proc* pr = kmalloc(sizeof(struct cpu_proc), GFP_KERNEL);
+	pr->next = NULL;
+	pr->prio = prio;
+	switch (prio) {
+		case 0:
+			pr->compute = high_prio;
+			break;
+		case 1:
+			pr->compute = med_prio;
+			break;
+		case 2:
+			pr->compute = low_prio;
+			break;
+		default:
+			pr->compute = other_prio;
+			break;
+	}
+	return pr;
+}
+
+void add_proc(struct cpu_proc* pr) {
+	if (!head)
+		head = pr;
+	else {
+		struct cpu_proc* tail = head;
+		while (tail->next)
+			tail = tail->next;
+		tail->next = pr;
+	}
+}
+```
+
+The registered module file operations are defined here:
+
+```c
+static const struct file_operations proc_ops = {
+	.owner = THIS_MODULE,
+	.write = proc_write,
+	.read = proc_read
+};
+```
+
+`proc_write` parses a priority value from userspace, creates a corresponding `cpu_proc` node, appends it to the linked list, and logs the operation. In short, it inserts a new priority entry into the scheduler list.
+
+```c
+static ssize_t proc_write(struct file* file, const char* buf, size_t len, loff_t* off) {
+	long prio;
+	if (sscanf(buf, "%ld", &prio) != 1) {
+		printk(KERN_INFO "[x] expected long, not: %s\n", buf);
+		return -EINVAL;
+	}
+	add_proc(make_proc(prio));
+	printk(KERN_INFO "[+] added process with priority %ld\n", prio);
+	return len;
+}
+```
+
+`proc_read` removes the highest-priority process from the scheduler list and invokes its associated handler function.
+
+```c
+static ssize_t proc_read(struct file* file, char* buf, size_t len, loff_t* off) {
+	struct cpu_proc* pr = pop_proc();
+	if (!pr)
+		printk(KERN_INFO "[!] pls no hack me :P\n");
+	else {
+		pr->compute();
+		printk(KERN_INFO "[+] ran process with priority: %ld\n", pr->prio);
+	}
+	return 0;
+}
+
+struct cpu_proc* pop_proc(void) {
+	struct cpu_proc* cur = head, *prev = NULL;
+	struct cpu_proc* min = cur, *minPrev = prev;
+	while (cur) {
+		if (cur->prio < min->prio) {
+			min = cur;
+			minPrev = prev;
+		}
+		prev = cur;
+		cur = cur->next;
+	}
+	if (!minPrev)
+		head = min->next;
+	else
+		minPrev->next = min->next;
+	return min;
+}
+```
+
+### Vulnerability
+
