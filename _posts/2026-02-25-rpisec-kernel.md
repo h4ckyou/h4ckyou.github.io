@@ -486,8 +486,6 @@ typedef struct cpu_proc {
 
 uint32_t pr_size = sizeof(cpu_proc);
 
-uint64_t user_cs, user_ss, user_sp, user_rflags, user_rip, fd, prio;;
-
 uint64_t prepare_kernel_cred = 0xffffffff8104f850;
 uint64_t commit_creds = 0xffffffff8104f520;
 
