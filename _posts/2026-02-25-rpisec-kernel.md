@@ -512,7 +512,6 @@ void privesc() {
         "call r15;"
         ".att_syntax"
     );
-
 }
 
 void pop_queue() {
