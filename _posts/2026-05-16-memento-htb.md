@@ -5,7 +5,7 @@ categories: [CTF, HackTheBox]
 tags: [pwnable]
 math: true
 mermaid: true
-media_subpath: /assets/posts/2026-05-16-Memento
+media_subpath: /assets/posts/2026-05-16-memento
 image:
   path: preview.png
 ---
