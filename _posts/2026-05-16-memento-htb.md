@@ -14,7 +14,7 @@ image:
 
 ### Background
 
-I decided to work on the **Memento** pwn challenge on **Hack The Box** after it was recommended by **HTB**, especially since it was set to expire in just two days.
+I decided to work on the **Memento** pwn challenge on **Hack The Box** after it was recommended, especially since it was set to retire in just two days.
 
 At first, I wasn't planning to spend too much time on it, but once I started digging into the challenge, I got completely hooked. Surprisingly, it ended up taking me a little over a day to finally solve.
 
