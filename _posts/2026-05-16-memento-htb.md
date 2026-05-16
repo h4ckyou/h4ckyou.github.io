@@ -249,3 +249,60 @@ As you might have already seen, there's not much this program has to offer..
 The vulnerability is fairly straightforward:
 - an off-by-one write
 - a signedness bug in input validation
+
+What can we do with the off-by-one write?
+
+Well, recall the `mem_t` structure:
+
+```c
+struct mem_t {
+  char v6[24];
+  long count;
+  char *data;
+}
+```
+
+With an off-by-one we can corrupt the `count` field of the structure.
+
+How useful and exploitable is this though? After all, the program does ensure that count never exceeds 24.
+
+Well, the interesting part is that the program increments `mem->data` after every write:
+
+```c
+*mem->data++ = v2;
+```
+
+This means that if we somehow manage to make `mem->data` point to itself (&mem->data), we can start partially overwriting the pointer itself and gain control over where future writes go.
+
+At that point, we essentially get writes on the stack, which leads directly to memory corruption.
+
+Thinking about it, there are two major problems we run into:
+- we can only read up to `c` times, and there's a check ensuring it doesn't exceed 24
+- once `count` becomes greater than 0x18, the program stops writing to `data`
+
+That's where the actual vulnerability comes into play.
+
+There's a signedness bug during input validation:
+
+```c
+char c; // [rsp+7h] [rbp-9h]
+
+c = fgetc(stdin);
+if ( c <= 24 )
+{
+  while ( c-- ) {...}
+}
+```
+
+`c` is defined as a signed char, meaning its range is `-128` to `127`.
+
+Because of this, values such as `-128` still satisfy the condition:
+
+```c
+c <= 24
+```
+
+And this allows the loop to iterate far more times than intended.
+
+Why this matters is because, to perform the final partial overwrite on `mem->data`, we need a total of 33 bytes to be processed..something that normally shouldn't be possible with the 24 byte limit in place.
+
