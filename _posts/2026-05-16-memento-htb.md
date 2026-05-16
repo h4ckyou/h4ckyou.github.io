@@ -456,7 +456,7 @@ I was so tired I ended up doing a full ROP with the following end goal:
 
 It would have been easier to make a ROP chain to just `mprotect()` the `bss`, `read()` to it and jump to it xD
 
-> An issue that occurred with `gets()` was that the `pop rsi` gadget contained a newline character which made the call to `gets` stop. I didn't realize on time and almost went insane.. but the fix was to use a varient of it and assert the payload doesn't contain `\n`
+> An issue that occurred with `gets()` was that the `pop rsi` gadget contained a newline character which made the call to `gets` stop. I didn't realize on time and almost went insane.. but the fix was to use a variant of it and assert the payload doesn't contain `\n`
 
 Well, that's all 😎
 
