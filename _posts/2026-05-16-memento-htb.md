@@ -46,7 +46,7 @@ mark@rwx:~/Desktop/Labs/HTB/Challenges/Memento$
 
 All protections are enabled on this binary.
 
-Executing the binary doesn't reveal much on the program's behavious
+Executing the binary doesn't reveal much on the program's behaviour
 
 ```bash
 mark@rwx:~/Desktop/Labs/HTB/Challenges/Memento$ ./memento
@@ -59,3 +59,124 @@ c
 ^C
 mark@rwx:~/Desktop/Labs/HTB/Challenges/Memento$ 
 ```
+
+Loading it up in IDA Pro, here's the main function:
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  unsigned __int64 i; // [rsp+10h] [rbp-40h]
+  int v5; // [rsp+18h] [rbp-38h]
+  mem_t v6; // [rsp+20h] [rbp-30h] BYREF
+  unsigned __int64 v7; // [rsp+48h] [rbp-8h]
+
+  v7 = __readfsqword(0x28u);
+  v6.data = (char *)calloc(1uLL, 0x20uLL);
+  if ( v6.data )
+  {
+    for ( i = 0LL; i < 0x20; ++i )
+    {
+      v5 = fgetc(stdin);
+      if ( v5 == -1 )
+        break;
+      v6.data[i] = v5;
+      if ( (char)v5 == '}' )
+      {
+        if ( !strncmp("HTB{", v6.data, 4uLL) )
+        {
+          v6.count = 0LL;
+          v6.data = (char *)&v6;
+          loop(&v6);
+        }
+        break;
+      }
+    }
+    fputs("fatal: could not get flag\n", stderr);
+  }
+  else
+  {
+    fputs("fatal: could not alloc\n", stderr);
+  }
+  return 1;
+}
+```
+
+`loop` function:
+
+```c
+void __fastcall __noreturn loop(mem_t *mem)
+{
+  int c; // [rsp+4h] [rbp-Ch]
+
+  while ( 1 )
+  {
+    c = fgetc(stdin);
+    if ( c == -1 )
+      break;
+    switch ( c )
+    {
+      case 'A':
+        remember(mem);
+        break;
+      case 'B':
+        recall(mem);
+        break;
+      case 'C':
+        reset(mem);
+        break;
+      default:
+        fputs(":(", stderr);
+        break;
+    }
+  }
+  fputs(":/", stderr);
+  exit(2);
+}
+```
+
+`remember` function:
+
+```c
+void __fastcall remember(mem_t *mem)
+{
+  char v2; // [rsp+0h] [rbp-10h]
+  char c; // [rsp+7h] [rbp-9h]
+
+  c = fgetc(stdin);
+  if ( c <= 24 )
+  {
+    while ( c-- )
+    {
+      v2 = fgetc(stdin);
+      if ( mem->count <= 0x18uLL )
+      {
+        *mem->data++ = v2;
+        ++mem->count;
+      }
+    }
+  }
+}
+```
+
+`recall` function:
+
+```c
+void __fastcall recall(mem_t *mem)
+{
+  fwrite(mem, mem->count, 1uLL, stdout);
+  fflush(stdout);
+}
+```
+
+`reset` function:
+
+```c
+void __fastcall reset(mem_t *mem)
+{
+  mem->count = 0LL;
+  mem->data = (char *)mem;
+}
+```
+
+> `Note`: The shown pseudocode is what i already did reverse (the structures...)
+{: .prompt-tip }
