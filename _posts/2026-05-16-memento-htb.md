@@ -448,7 +448,7 @@ Btw, I tried to cheese the challenge by dumping the heap using `dd` since I coul
 dd if=/proc/${PID}/mem of=/tmp/dump.bin bs=1 skip=$((0x55678e7c9000)) count=$((0x55678e7ea000 - 0x55678e7c9000)) status=progress
 ```
 
-Well, I ended up going back to ROP. To stay on the safe side with all the stack weirdness, I used a `gets()` call to get an unbounded write, which let me further corrupt the return address and build a proper chain to dump the heap contents - smart I'd say 😏
+Well, I ended up going back to ROP. To stay on the safe side with all the stack weirdness and a bit of restricted write, I used a `gets()` call to get an unbounded write, which let me further corrupt the return address and build a proper chain to dump the heap contents - smart I'd say 😏
 
 I was so tired I ended up doing a full ROP with the following end goal:
 - retrieved `top_chunk` from `main_arena.top`
