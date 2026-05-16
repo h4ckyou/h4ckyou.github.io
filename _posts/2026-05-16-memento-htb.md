@@ -312,7 +312,7 @@ Well, that part is actually pretty straightforward. We can simply keep overwriti
 
 Since the comparison only checks whether `count` is less than or equal to `0x18`, resetting the lower byte to a small value keeps the check satisfied while the upper bytes remain `0`.
 
-Before getting into the actual corruption primitive though, the first thing we need is leaks.
+Before getting into the actual memory write primitive though, the first thing we need is leaks.
 
 > The remote libc wasn't provided and my exploit ended up using a gadget in libc, so I created a primitive to let me leak libc on the remote to determine the libc in use.
 {: .prompt-tip }
@@ -323,4 +323,7 @@ And because we can overwrite `count` via the off-by-one, we can set it `0xff-1` 
 
 Then leak memory using the function.
 
+Here's the stack frame after setting `count` to `0xff`
 
+![frame_one](frame_one.png)
+![stack_one](stack_one.png)
