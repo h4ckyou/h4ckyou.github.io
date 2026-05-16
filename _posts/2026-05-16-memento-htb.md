@@ -327,3 +327,38 @@ Here's the stack frame after setting `count` to `0xff`
 
 ![frame_one](frame_one.png)
 ![stack_one](stack_one.png)
+![dump_one](dump_one.png)
+
+The way to overwrite count is by first filling the buffer with 24 bytes.
+
+Since the write pointer keeps incrementing across calls unless `reset` is triggered, we can simply perform another write with one extra byte, causing the next write to land directly on count and corrupt it.
+
+Looking at the stack frame of the `main` function, we can see that there are various pointers (stack / pie / libc) on the stack.
+
+I ended up getting all because they ended up being really useful for exploitation.
+
+I wrote a gdb script (sm0g told me "noob" - crazy pwner fr) to help me easily parse the `mem_t` (even though it's not really a complicated structure lol)
+
+```gdb
+set print pretty on
+
+define print_mem_t
+    set $base = (char *)$arg0
+
+    printf "====== mem_t @ %p ======\n", $base
+
+    printf "v6:\n"
+    x/24bx $base
+
+    set $count = *(long *)($base + 24)
+    printf "count : 0x%lx (%ld)\n", $count, $count
+
+    set $data = *(char **)($base + 32)
+    printf "data  : %p\n", $data
+
+    printf "========================\n"
+end
+```
+
+With leaks gotten, we can now advance with how to gain code execution.
+
