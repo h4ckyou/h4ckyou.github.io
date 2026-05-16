@@ -240,3 +240,12 @@ void __fastcall reset(mem_t *mem)
 ```
 
 It sets `mem->count` to 0, effectively clearing any recorded length, and resets `mem->data` to point back to the beginning of the `mem_t` structure itself.
+
+
+### Exploitation
+
+As you might have already seen, there's not much this program has to offer..
+
+The vulnerability is fairly straightforward:
+- an off-by-one write
+- a signedness bug in input validation
