@@ -178,5 +178,20 @@ void __fastcall reset(mem_t *mem)
 }
 ```
 
-> `Note`: The shown pseudocode is what i already did reverse (the structures...)
+> `Note`: The shown pseudocode is what i already did reverse (the structure...)
 {: .prompt-tip }
+
+Here's the structure the program uses:
+
+```c
+00000000 struct mem_t // sizeof=0x28
+00000000 {                                       // XREF: main/r
+00000000     char v6[24];
+00000018     __int64 count;                      // XREF: main:loc_14CC/w
+00000020     char *data;                         // XREF: main+2B/w main+31/r ...
+00000028 };
+```
+
+The main function allocates a heap chunk via a call to `calloc`, then if it succeeds, it reads in user input to the chunk of at most `0x20` bytes which matches the size passed to `calloc`. Once the character provided matches `}` it then goes ahead and compare it with the flag format `HTB{`.
+
+If the check is successful, it's going to update `v6.count` to `0LL` and then `v6.data` to the start of the `mem_t` structure.
