@@ -304,5 +304,23 @@ c <= 24
 
 And this allows the loop to iterate far more times than intended.
 
-Why this matters is because, to perform the final partial overwrite on `mem->data`, we need a total of 33 bytes to be processed..something that normally shouldn't be possible with the 24 byte limit in place.
+Why this matters is because, to perform the final partial overwrite on `mem->data`, we need a total of 33 bytes to be processed...something that normally shouldn't be possible with the 24 byte limit in place.
+
+With that in place, how do we bypass the `count` check?
+
+Well, that part is actually pretty straightforward. We can simply keep overwriting `count` back to 0.
+
+Since the comparison only checks whether `count` is less than or equal to `0x18`, resetting the lower byte to a small value keeps the check satisfied while the upper bytes remain `0`.
+
+Before getting into the actual corruption primitive though, the first thing we need is leaks.
+
+> The remote libc wasn't provided and my exploit ended up using a gadget in libc, so I created a primitive to let me leak libc on the remote to determine the libc in use.
+{: .prompt-tip }
+
+Looking at the function `recall`, we see that the amount of bytes printed is determined by `mem->count`
+
+And because we can overwrite `count` via the off-by-one, we can set it `0xff-1` which ends up being `0xff` when incremented. 
+
+Then leak memory using the function.
+
 
