@@ -14,5 +14,4 @@ image:
 
 ### Overview
 
-**Kernel Adventures: Part 1** is a medium-rated pwn challenge built around recovering a user's password derived from a hash function and exploiting a double fetch vulnerability.
-
+**Kernel Adventures: Part 1** is a medium-difficulty kernel pwn challenge focused on reversing a password verification routine and exploiting a double-fetch vulnerability to achieve privilege escalation.
