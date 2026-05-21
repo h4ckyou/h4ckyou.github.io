@@ -117,7 +117,7 @@ qemu-system-x86_64 \
     -smp cores=2
 ```
 
-Recall that *notes.txt* mentioned the password hashes had been zeroed out. We can confirm by checking it out.
+The *notes.txt* mentioned the password hashes had been zeroed out.
 
 ```bash
 mark@rwx:~/Desktop/Labs/HTB/Challenges/KernelAdventure1/release$ cd rootfs/
@@ -137,8 +137,6 @@ So currently there are 3 users:
 - *root*
 - *user*
 - *admin*
-
-The */etc/shadow* file confirms that the password hashes were removed, matching the words from *notes.txt*.
 
 Next, let's inspect the *init* script, which is the first user-space process executed during system boot.
 
@@ -271,8 +269,8 @@ The relevant entries in the `fops` structure are:
 
 This means the device supports only two main operations:
 
-- **read()** -`dev_read`
-- **write()** - `dev_write`
+- **read()** is handled with `dev_read`
+- **write()** is handled with `dev_write`
 
 The *dev_read* function is invoked when a user-space process calls the read syscall on `/dev/mysu`.
 
@@ -290,4 +288,102 @@ size_t __fastcall dev_read(__int64 filp, void *buf, unsigned __int64 size, __int
 ```
 
 It ensures that the provided size is less than or equal to `0x20` before it copies the data stored at `users` to the user-space buffer.
+
+The *dev_write* function is invoked when a user-space process calls the write syscall on `/dev/mysu`.
+
+```c
+unsigned __int64 __fastcall dev_write(__int64 a1, buf_t *buf, unsigned __int64 size, __int64 offset)
+{
+  int uid; // ebp
+  _DWORD *cred; // rax
+
+  if ( size <= 7 )
+    return 0LL;
+  if ( buf->uid != users.users[0].uid )
+  {
+    if ( users.users[1].uid != buf->uid )
+      return 0LL;
+    goto LABEL_8;
+  }
+  if ( (unsigned int)hash(buf->password) != users.users[0].hash )
+  {
+    if ( users.users[1].uid != buf->uid )
+      return 0LL;
+LABEL_8:
+    if ( (unsigned int)hash(buf->password) != users.users[1].hash )
+      return 0LL;
+  }
+  uid = buf->uid;
+  cred = (_DWORD *)prepare_creds();
+  cred[1] = uid;
+  cred[2] = uid;
+  cred[3] = uid;
+  cred[4] = uid;
+  cred[5] = uid;
+  cred[6] = uid;
+  cred[7] = uid;
+  cred[8] = uid;
+  commit_creds(cred);
+  return size;
+}
+```
+
+> `Note`: The shown pseudocode is what I already did reverse (the structure...)
+
+Before I dig into what the `dev_write` handler does, I'll explain the structures which I created.
+
+First we have a `user_t` structure which contains the details of a specific user, in this case the *uid* and *password hash* (as defined by the kernel module).
+
+```c
+00000000 struct user_t // sizeof=0x10
+00000000 {                                       // XREF: .data:users/r
+00000000     struct cred_t users[2];             // XREF: dev_write+8/r
+00000000                                         // dev_write+18/r ...
+00000010 };
+
+00000000 struct cred_t // sizeof=0x8
+00000000 {                                       // XREF: user_t/r
+00000000     int uid;                            // XREF: dev_write+18/r
+00000000                                         // dev_write+3C/r
+00000004     int hash;                           // XREF: dev_write+31/r
+00000004                                         // dev_write+4D/r
+00000008 };
+
+static user_t users;
+```
+
+Then we have `buf_t` which is the *uid* and *password string* provided by the user-space process.
+
+```c
+00000000 struct buf_t // sizeof=0x4;variable_size
+00000000 {
+00000000     int uid;
+00000004     char password[];
+00000004 };
+```
+
+Back to the write handler, the overall authentication flow works as follows:
+- It first checks that the size provided to `write()` is greater than 7, rejecting smaller inputs.
+- It then parses the supplied `UID` and compares it against the list of valid users stored in the global users structure.
+- If the UID does not match any known entry, the function exits early.
+- If a match is found, it proceeds to compute a hash of the provided password and compares it against the stored hash for that user.
+- When the comparison succeeds, it constructs a credential structure for the target user and updates the current process credentials accordingly, effectively switching privileges.
+
+In essence, the module behaves like a simplified kernel-level *su*, where access to a user account requires both a valid UID and the correct plaintext password.
+
+> But what is the password hash?
+{: .prompt-tip }
+
+Inspecting the global users variable shows:
+
+```c
+.data:0000000000000540 ; user_t users
+.data:0000000000000540 users           user_t <<<3E8h, 0>, <3E9h, 0>>>
+```
+
+From this, we can see that the password hash fields are currently initialized to zero.
+
+This also matches the hint from *notes.txt*.
+
+On the remote however, it doesn't persist so the hash is there, but because we can leak it using `dev_read` this means we can recover the hash.
 
