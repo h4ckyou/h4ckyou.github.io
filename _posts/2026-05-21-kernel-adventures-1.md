@@ -12,3 +12,7 @@ image:
 
 ## HackTheBox - Kernel Adventures 1
 
+### Overview
+
+**Kernel Adventures: Part 1** is a medium-rated pwn challenge built around recovering a user's password derived from a hash function and exploiting a double fetch vulnerability.
+
