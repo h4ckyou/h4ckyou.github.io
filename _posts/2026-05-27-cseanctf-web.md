@@ -20,8 +20,6 @@ Here are my writeups as the author for some of them.
 
 #### CNotes
 
-![details](cnotes_details.png)
-
 **Challenge Name** : CNotes
 
 **Description** :
@@ -40,10 +38,12 @@ We've also rolled out a new feature: you can now report abuse, and an admin will
 
 **author** : h4cky0u
 
+**solves** : 7/17
+
 ##### Source Code Analysis
 
 The web application source code was provided
 
-Here's the structure
+Here's the file structure
 
 ![one](cnotes_one.png)
