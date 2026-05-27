@@ -1,5 +1,5 @@
 ---
-title: Web Writeup @ CTF 2026
+title: Web Writeup @ CSEAN CTF 2026
 date: 2026-05-27 03:00:00 +0000
 categories: [CTF]
 tags: [web]
@@ -23,9 +23,10 @@ Here are my writeups as the author for some of them.
 ![details](cnotes_details.png)
 
 **Challenge Name** : CNotes
+
 **Description** :
 
-```
+```description
 Online note-taking has always felt like too much hassle.
 
 Creating accounts, remembering passwords… it gets tiring.
@@ -36,4 +37,13 @@ Just open it and start writing.
 
 We've also rolled out a new feature: you can now report abuse, and an admin will review it.
 ```
+
 **author** : h4cky0u
+
+##### Source Code Analysis
+
+The web application source code was provided
+
+Here's the structure
+
+![one](cnotes_one.png)
