@@ -18,7 +18,7 @@ CSEAN CTF has concluded with 9 web challenges released.
 
 Here are my writeups as the author for some of them.
 
-#### CNotes
+### CNotes
 
 - **Challenge Name** : CNotes
 - **Description** :
@@ -38,7 +38,7 @@ We've also rolled out a new feature: you can now report abuse, and an admin will
 - **author** : h4cky0u
 - **solves** : 7/17
 
-<h5 align="center">Source Code Analysis</h5>
+#### Source Code Analysis
 
 The web application source code was provided.
 
@@ -102,12 +102,14 @@ EXPOSE 3000
 
 USER appuser
 
-CMD node index.js
+CMD ["node", "index.js"]
 ```
 
-This simply setups a node container then creates a `appuser` user and runs the `index.js` script, from the compose file, the server is going to listen on port `3000` and that port is exposed to the main host on port `3000`.
+This simply sets up a Node.js container, creates an `appuser`, and runs the `index.js` script.
 
-It might be helpful to look through `package.json`
+From the `docker-compose.yml` file, the server listens on port `3000`, which is exposed to the host on the same port.
+
+It might be helpful to look through `package.json`:
 
 ```js
 {
@@ -133,7 +135,6 @@ Here's the main page of the challenge when visited.
     Index page
   </figcaption>
 </figure>
-
 
 `index.js`
 
@@ -615,4 +616,190 @@ If the request is successful, the response is parsed and the `DOM` is updated by
 ```js
 document.getElementById('content').innerHTML = j.content;
 ```
+
+Moving on, let us take a look at the bot setup.
+
+Here's the `Dockerfile`
+
+```dockerfile
+FROM node:17.6
+
+RUN apt-get update && apt-get install -y chromium
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+RUN groupadd appgroup && useradd -g appgroup appuser 
+
+COPY ./ ./
+
+EXPOSE 9999
+
+USER appuser
+
+CMD ["node", "server.js"]
+```
+
+It installs `chromium` inside a Node.js container and then runs the `server.js` script.
+
+As usual, we can start by examining the dependencies required by the application.
+
+`package.json`
+
+```js
+{
+  "dependencies": {
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "puppeteer": "^13.4.0"
+  }
+}
+```
+
+Here's the bot application source:
+
+`server.js`
+
+```js
+const express = require('express')
+const bot = require('./bot')
+
+const app = express()
+app.use(express.json());
+
+
+app.post('/visit', async function (req, res) {
+	res.set('Content-Type', 'text/html');
+
+	console.log(req.body)
+
+	const url = req.body.url;
+	if (typeof url === 'string' && url.startsWith('http')) {
+		try {
+			bot.visit(url);
+			res.send('visited');
+			return;
+		} catch (e) {
+			console.log(e);
+			res.status(500);
+			res.send('failed');
+			return;
+		}
+	}
+	res.status(400);
+	res.send('bad url');
+})
+
+
+app.listen(9999, '0.0.0.0');
+
+setTimeout(() => {
+    console.log("Restarting bot service");
+    process.exit(0);
+}, 10 * 60 * 1000);
+```
+
+This service exposes a single endpoint: `/visit`.
+
+It extracts the `url` value from the JSON body of the POST request, validates that it is a string starting with `http`, and then passes it to `bot.visit()`.
+
+If validation fails, the server responds with a `400 Bad Request`. If an error occurs during execution, it returns a `500` response
+
+`bot.visit` is imported here:
+
+```js
+const bot = require('./bot')
+```
+
+So we check the code:
+
+`bot.js`
+
+```js
+const puppeteer = require('puppeteer')
+const jwt = require('jsonwebtoken')
+
+const domain = process.env['DOMAIN']
+const webapp_url = 'http://' + domain + ':' + process.env.PORT
+const token = jwt.sign({ userid: 0, flag: process.env.FLAG }, process.env.JWT_SECRET_KEY)
+
+console.log(token)
+
+async function visit(url) {
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+
+	var page = await browser.newPage()
+	await page.setCookie(
+		{ name: 'session', value: token, domain: domain, path: '/' }
+	)
+
+	try {
+		await page.goto(url, { timeout: 5000 })
+
+		await new Promise(resolve => setTimeout(resolve, 2000));
+		await page.close()
+		await browser.close()
+	} catch (e) {
+		await browser.close()
+	}
+
+}
+
+module.exports = { visit }
+```
+
+- A `webapp_url` variable is created using the `domain` and `port`, although it is never actually used anywhere in the script.
+- The bot generates a JWT token containing:
+    - `userid`: 0
+    - `flag`: `process.env.FLAG`
+- A headless Chromium instance is then launched using Puppeteer.
+- A new page is created and the generated JWT is stored as the session cookie for the target domain.
+- Finally, the bot visits the supplied `URL` using `page.goto()`.
+
+This means that any page visited by the bot will automatically include the administrator session cookie containing the flag.
+
+#### Exploitation
+
+At this point, several vulnerabilities become immediately noticeable:
+
+- **SQL Injection**
+- **Cross-Site Scripting (XSS)**
+- **Arbitrary bot navigation**
+
+One might think that since we can force the bot to navigate to any URL of our choice, we could simply host a malicious page containing JavaScript to exfiltrate the administrator cookie.
+
+However, that would not work.
+
+The reason is that the bot only sets the `session` cookie for the application domain:
+
+```js
+await page.setCookie({
+    name: 'session',
+    value: token,
+    domain: domain,
+    path: '/'
+})
+```
+
+Cookies are scoped by domain, meaning the cookie will only be sent to pages belonging to that specific domain.
+
+If the bot visits an attacker-controlled site such as:
+
+```
+http://attacker.com
+```
+
+The browser will not attach the application's session cookie to that request. Additionally, JavaScript running on `attacker.com` cannot access cookies belonging to another domain because of the browser's Same-Origin Policy.
+
+As a result, simply redirecting the bot to an external attacker-controlled page is insufficient for stealing the administrator session.
+
+Instead, successful exploitation requires achieving JavaScript execution within the application's own origin.
+
+You can read more about the Same-Origin Policy here: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy
+
+With that in mind, the intended path is to leverage the XSS vulnerability to steal the administrator bot session. However, two major obstacles still remain:
+- **Content Security Policy (CSP)**
+- **Notes are isolated per `userid`**
 
