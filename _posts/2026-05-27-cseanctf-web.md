@@ -38,7 +38,7 @@ We've also rolled out a new feature: you can now report abuse, and an admin will
 - **author** : h4cky0u
 - **solves** : 7/17
 
-<h1 align="center">Source Code Analysis</h1>
+<h5 align="center">Source Code Analysis</h5>
 
 The web application source code was provided.
 
@@ -71,7 +71,9 @@ services:
       - FLAG=cseanctf26{fake_flag_for_testing}
 ```
 
-The Docker setup consists of two services: one hosting the main web application located in the `src` directory, and another responsible for running the bot, located in the `bot` directory.
+The Docker setup consists of two services: 
+- one hosting the main web application located in the `src` directory
+- another responsible for running the bot, located in the `bot` directory.
 
 It also setups some environment variable.
 
@@ -79,7 +81,7 @@ We'll begin by spinning up the container.
 
 ![docker_start_one](docker_start_one.png)
 
-Now we analyse the main web application code.
+Now we analyze the main web application code.
 
 Here's the `Dockerfile`
 
@@ -103,7 +105,7 @@ USER appuser
 CMD node index.js
 ```
 
-This simply setups a node container then creates a `appuser` user and runs the `index.js` code, from the compose file, it's going to listen on port `3000` so that port is exposed to the main host on port `3000`.
+This simply setups a node container then creates a `appuser` user and runs the `index.js` script, from the compose file, the server is going to listen on port `3000` and that port is exposed to the main host on port `3000`.
 
 It might be helpful to look through `package.json`
 
@@ -396,3 +398,95 @@ Here's an image of all:
     Report note
   </figcaption>
 </figure>
+
+`create_note`:
+
+```js
+app.post('/api/note', async (req, res) => {
+    const content = req.body.content;
+
+    const last_note_id = (
+        await db_get(
+            `SELECT MAX(noteid) AS last FROM notes WHERE userid = ${req.loggedUserId}`
+        )
+    )['last'] ?? -1;
+
+    const noteid = last_note_id + 1;
+
+    await db_get(
+        `INSERT INTO notes (noteid, userid, content)
+         VALUES (${noteid}, ${req.loggedUserId}, '${content}')`
+    );
+
+    res.json({ noteid });
+});
+```
+
+When a note is created:
+- The note content is taken from the HTTP POST body.
+- The application queries the database to find the highest existing `noteid` for the current `userid`.
+- It increments this value to generate a new `noteid`.
+- Finally, it inserts the new note into the `notes` table and returns the created `noteid` as a response.
+
+`view_note`:
+
+```js
+app.get('/api/note/:id', async (req, res) => {
+    const noteid = parseInt(req.params.id);
+
+    const note = await db_get(
+        `SELECT * FROM notes 
+         WHERE userid = ${req.loggedUserId} 
+         AND noteid = ${noteid}`
+    );
+
+    if (note) {
+        res.json(note);
+    } else {
+        res.status(404).json({ error: 'not found' });
+    }
+});
+```
+
+When a note is requested:
+- The note ID is taken from the URL parameter and converted to an integer.
+- The application queries the database for a matching record using both the current `userid` and the provided `noteid`.
+- If a matching note is found, it is returned as a JSON response.
+- Otherwise, the server responds with a `404` Not Found error.
+
+`report_note`:
+
+```js
+app.post('/api/abuse', async (req, res) => {
+    const link = req.body.link;
+    console.log(link);
+
+    if (!link || typeof link !== 'string' || !link.startsWith('http')) {
+        return res.status(400).json({ msg: 'Invalid link' });
+    }
+
+    try {
+        const r = await fetch(process.env.BOT_URL, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: link })
+        }).then(r => {
+            if (r.status === 200) {
+                res.json({ msg: 'Visited' });
+            } else {
+                res.status(r.status).json({ msg: 'Error' });
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error: ' + error });
+    }
+});
+```
+
+When a note is reported as abusive:
+- The link is extracted from the HTTP POST body.
+- It validates that the input is a string and begins with http.
+- If valid, the server forwards the link to the bot service via a POST request (`BOT_URL`) with the `URL` included in a JSON body.
+
