@@ -1585,7 +1585,7 @@ Analysing the reset handle_auth case (i.e cmd == 0):
 
 #### Vulnerability
 
-The vulnerability here is simply a `Heap Out-of-Bands (OOB) Read`.
+The vulnerability here is simply a `Heap Out-of-Bounds (OOB) Read`.
 
 During `handle_iq`, specifically here:
 
