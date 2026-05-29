@@ -482,6 +482,25 @@ heap_base = syscall(brk, 0) - PAGE
 info("heap base: %#x", heap_base)
 ```
 
+If you think about it, we now have the heap address, but we still don't really know anywhere in memory (e.g libc) and to corrupt a vtable we need a form of arbitrary write primitive.
+
+The reason we would need a libc leak is to be able to call functions like `system` or a `one gadget`, but that would require us to create an arbitrary read.
+
+In essence, increasing the number of syscalls we can make, remember we can only do it 10 times.
+
+A way around that is to change the heap protection to (`PROT_READ | PROT_WRITE | PROT_EXEC`) making the heap region `RWX`.
+
+With that we can simply just jump to the heap and get shellcode execution going.
+
+But now how do we corrupt the vtable?
+
+This was where the issue began!
+
+While going through the syscalls, I found an interesting syscall called `arch_prctl`.
+
+
+
+
 
 ### Resources
 - [https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781](https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781)
