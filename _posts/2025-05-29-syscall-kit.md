@@ -287,7 +287,7 @@ As expected, `Emulator::syscall` uses inline assembly to load the CPU registers 
 
 After the syscall runs, its return value is placed in `rax`, and that value is then written back into the object's `rax` field.
 
-The return value is also printed (as seen in the src code).
+The return value is also printed (as shown in the src code).
 
 ```cpp
 void Emulator::syscall() {
@@ -312,5 +312,19 @@ The challenge description says this:
 It's a good tool to learn syscall, isn't it?
 ```
 
-So we somehow need to leverage this emulator to trigger a syscall of our calling that would eventually spawn a shell.
+So we somehow need to leverage this emulator to trigger a syscall that would eventually spawn a shell.
+
+Looking at the setup, we can only control 3 argument of the `syscall` of our choosing.
+
+At the same time, it blocks so many syscalls that we could've easily used to gain a shell.
+
+I'm going to be using this linux kernel syscall table as a [reference](https://syscalls.mebeim.net/?table=x86/64/x64/latest)
+
+As of the latest kernel version (v6.17) there are **365 syscalls**.
+
+Does it mean we need to go through all the syscalls (354) not blocked by the emulator?
+
+Not necessarily...
+
+The approach I took was to actually parse all the syscalls based on the number of argument it takes.
 
