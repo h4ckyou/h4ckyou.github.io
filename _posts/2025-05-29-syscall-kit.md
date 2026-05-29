@@ -304,10 +304,13 @@ void Emulator::syscall() {
 
 What's the vulnerability?
 
-Well, there actually isn't any vulnerability (ig??)
+Well, there actually isn't any vulnerability
 
 The challenge description says this:
 
 ```
 It's a good tool to learn syscall, isn't it?
 ```
+
+So we somehow need to leverage this emulator to trigger a syscall of our calling that would eventually spawn a shell.
+
