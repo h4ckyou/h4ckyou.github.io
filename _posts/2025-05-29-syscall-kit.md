@@ -478,7 +478,6 @@ We can leak the heap address by doing this:
 ```python
 PAGE = 0x21000
 brk  = 0xc
-
 heap_base = syscall(brk, 0) - PAGE
 info("heap base: %#x", heap_base)
 ```
@@ -493,7 +492,6 @@ A way around that is to change the heap protection to (`PROT_READ | PROT_WRITE |
 
 ```python
 mprotect    = 0xa
-
 syscall(mprotect, heap_base, PAGE, 0x7)
 ```
 
@@ -525,6 +523,52 @@ Incase you don't know what the `FS` register is, they're segment registers, but 
 You can check it out [here](https://docs.kernel.org/arch/x86/x86_64/fsgs.html)
 
 The important thing however is that this gives us a form of arbitrary write.
+
+We can quickly test it out:
+
+```python
+arch_prctl  = 0x9e
+syscall(arch_prctl, ARCH_SET_FS, 0x414141414141)
+syscall(arch_prctl, ARCH_GET_FS, vtable_addr)
+```
+
+<figure>
+  <img src="gdb1.png" alt="gdb1">
+  <figcaption style="text-align:center;">
+    Before updating `$fs_base`
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="gdb2.png" alt="gdb2">
+  <figcaption style="text-align:center;">
+    After updating `$fs_base`
+  </figcaption>
+</figure>
+
+At this point, we've corrupt the `fs_base` register.
+
+But once the program returns to `Emulator::emulate` it crashes
+
+<figure>
+  <img src="gdb3.png" alt="gdb2">
+  <figcaption style="text-align:center;">
+    Crashed
+  </figcaption>
+</figure>
+
+This makes sense, because the `fs` register is constantly referenced during program execution (e.g reading the stack canary `fs:0x28`)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
