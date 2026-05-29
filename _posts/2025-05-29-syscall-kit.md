@@ -330,7 +330,7 @@ The approach I took was to actually parse all the syscalls based on the number o
 
 There's a json export of the syscall table [here](https://syscalls.mebeim.net/db/x86/64/x64/latest/table.json)
 
-I wrote a script to parse all the syscalls I can use that makes use of only 3 arguments.
+I wrote a script to parse all the syscalls I can use that makes use of only 3 or lesser arguments.
 
 ```python
 import json
@@ -376,7 +376,35 @@ int mprotect(unsigned long start, size_t len, unsigned long prot);
 ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
 ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
 int syscall(SYS_arch_prctl, int op, unsigned long addr);
-....
+// ....
 ```
 
+Firstly, we need to make our goal clear. Our goal is to gain `$rip` control.
 
+What possible way can this be achieved?
+
+One way would be a virtual function table (vtable) hijack.
+
+C++ is an object oriented programming language.
+
+Virtual functions is a key mechanism to support polymorphism in C++.
+
+For each class with virtual functions, depending on the class inheritance hierarchy, the compiler will create one or more associated virtual function table (vtabe).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Resources
+- [Pwning C++](https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781)
+- [Syscall Table](https://syscalls.mebeim.net/?table=x86/64/x64/latest)
+- [do_arch_prctl_64](https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kernel/process_64.c#L867)
