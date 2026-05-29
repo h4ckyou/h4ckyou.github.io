@@ -1,6 +1,6 @@
 ---
 title: Syscall Kit 
-date: 2026-05-29 09:00:00 +0000
+date: 2026-05-29 03:00:00 +0000
 categories: [CTF, Upsolve]
 tags: [pwnable]
 math: true
@@ -20,7 +20,7 @@ It is simply an emulator written in C++ that's used to execute user-provided sys
 
 There are some restrictions however, and our goal is to pop shell from this somewhat restricted sandbox.
 
-You can download the attachment [here](https://github.com/zer0pts/zer0pts-CTF-2020/tree/master/syscall%20kit/distfiles)
+You can download the challenge attachment [here](https://github.com/zer0pts/zer0pts-CTF-2020/tree/master/syscall%20kit/distfiles)
 
 ### Analysis
 
@@ -28,3 +28,286 @@ The challenge just contains two files:
 - **chall**
 - **main.cpp**
 
+Here are the protections enabled on the binary.
+
+```bash
+mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/SyscallKit$ checksec chall
+[*] '/home/mark/Desktop/Practice/BinExp/Challs/STACK/SyscallKit/chall'
+    Arch:       amd64-64-little
+    RELRO:      Full RELRO
+    Stack:      Canary found
+    NX:         NX enabled
+    PIE:        PIE enabled
+    Stripped:   No
+mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/SyscallKit$ 
+```
+
+When we run the program, we are asked to give it a syscall and it's argument.
+
+![one](one.png)
+
+In this case, I used the `exit` syscall whose `sys_num == 60`, and from the return value we can see it infact does what it says.
+
+Since we are given the source code, we don't have to reverse engineer the binary.
+
+Here's the source:
+
+```cpp
+/**
+ * syscall kit - WinterKosenCTF 2020
+ *
+ * This application is (maybe) made for educational purpose
+ * and for those who learn system calls.
+ */
+#include <iostream>
+#include <sys/syscall.h>
+
+class Emulator {
+private:
+  unsigned long rax;
+  unsigned long rdi;
+  unsigned long rsi;
+  unsigned long rdx;
+  virtual void set(std::string, unsigned long&);
+  virtual int check();
+  virtual void syscall();
+public:
+  Emulator();
+  virtual void emulate();
+};
+
+/**
+ * Constructor
+ */
+Emulator::Emulator() {
+  this->rax = 0;
+  this->rdi = 0;
+  this->rsi = 0;
+  this->rdx = 0;
+}
+
+/**
+ * Read system call number and arguments
+ */
+void Emulator::set(std::string msg, unsigned long &reg) {
+  std::cout << msg;
+  std::cin >> reg;
+  if (!std::cin.good()) exit(1);
+}
+
+/**
+ * Filter dangerous system calls
+ */
+int Emulator::check() {
+  if (this->rax >= 0x40000000)   return 1; // x32 ABI is dangerous!
+  if (this->rax == SYS_open)     return 1; // never open files
+  if (this->rax == SYS_openat)   return 1;
+  if (this->rax == SYS_write)    return 1; // no more leak
+  if (this->rax == SYS_read)     return 1; // no more overwrite
+  if (this->rax == SYS_sendfile) return 1;
+  if (this->rax == SYS_execve)   return 1; // of course not!
+  if (this->rax == SYS_execveat) return 1;
+  if (this->rax == SYS_ptrace)   return 1; // may ruine the program
+  if (this->rax == SYS_fork)     return 1;
+  if (this->rax == SYS_vfork)    return 1;
+  if (this->rax == SYS_clone)    return 1;
+  return 0;
+}
+
+/**
+ * Call syscall
+ */
+void Emulator::syscall() {
+  asm volatile ("movq %0, %%rdi":: "a"(this->rdi));
+  asm volatile ("movq %0, %%rsi":: "a"(this->rsi));
+  asm volatile ("movq %0, %%rdx":: "a"(this->rdx));
+  asm volatile ("movq %0, %%rax":: "a"(this->rax));
+  asm volatile ("syscall");
+  asm volatile ("movq %%rax, %0": "=a"(this->rax));
+}
+
+/**
+ * Run emulator
+ */
+void Emulator::emulate(void)
+{
+  int i;
+  for(i = 0; i < 10; i++) {
+    std::cout << "=========================" << std::endl;
+    this->set("syscall: ", this->rax);
+    this->set("arg1: ", this->rdi);
+    this->set("arg2: ", this->rsi);
+    this->set("arg3: ", this->rdx);
+    
+    std::cout << "=========================" << std::endl;
+    
+    if (this->check()) {
+      std::cerr << "syscall=" << this->rax << " is not allowed" << std::endl;
+      continue;
+    } else {
+      this->syscall();
+      std::cout << "retval: " << std::hex << this->rax << std::endl;
+    }
+  }
+
+  std::cout << "Bye!" << std::endl;
+}
+
+Emulator *m;
+
+void setup(void)
+{
+  std::setbuf(stdin, NULL);
+  std::setbuf(stdout, NULL);
+  std::setbuf(stderr, NULL);
+
+  m = new Emulator();
+}
+
+int main(void)
+{
+  setup();
+  m->emulate();
+  exit(0);
+}
+```
+
+The code is small, but I’ll walk through each section.
+
+First, there is a class named `Emulator`. It contains four private attributes representing the `x86_64` system call calling convention registers, along with four virtual methods and 1 public virtual method.
+
+```cpp
+class Emulator {
+private:
+  unsigned long rax;
+  unsigned long rdi;
+  unsigned long rsi;
+  unsigned long rdx;
+  virtual void set(std::string, unsigned long&);
+  virtual int check();
+  virtual void syscall();
+public:
+  Emulator();
+  virtual void emulate();
+};
+```
+
+This is the constructor. It simply initializes all of the object's register fields to zero:
+
+```cpp
+Emulator::Emulator() {
+  this->rax = 0;
+  this->rdi = 0;
+  this->rsi = 0;
+  this->rdx = 0;
+}
+```
+
+The main function first initializes the object then calls the `emulate` method:
+
+```cpp
+void setup(void)
+{
+  std::setbuf(stdin, NULL);
+  std::setbuf(stdout, NULL);
+  std::setbuf(stderr, NULL);
+
+  Emulator *m = new Emulator();
+}
+
+int main(void)
+{
+  setup();
+  m->emulate();
+  exit(0);
+}
+```
+
+The `emulate` method runs for 10 iterations. On each iteration, it sets the object's register fields using `Emulator::set`.
+
+After the registers are set, it then goes ahead to call `Emulator::check`, if the return value is `true` it would simply `continue` else it calls `Emulator::syscall`.
+
+```cpp
+void Emulator::emulate(void)
+{
+  int i;
+  for(i = 0; i < 10; i++) {
+    std::cout << "=========================" << std::endl;
+    this->set("syscall: ", this->rax);
+    this->set("arg1: ", this->rdi);
+    this->set("arg2: ", this->rsi);
+    this->set("arg3: ", this->rdx);
+    
+    std::cout << "=========================" << std::endl;
+    
+    if (this->check()) {
+      std::cerr << "syscall=" << this->rax << " is not allowed" << std::endl;
+      continue;
+    } else {
+      this->syscall();
+      std::cout << "retval: " << std::hex << this->rax << std::endl;
+    }
+  }
+
+  std::cout << "Bye!" << std::endl;
+}
+
+void Emulator::set(std::string msg, unsigned long &reg) {
+  std::cout << msg;
+  std::cin >> reg;
+  if (!std::cin.good()) exit(1);
+}
+```
+
+Our main point of interest is `Emulator::check`:
+
+```cpp
+int Emulator::check() {
+  if (this->rax >= 0x40000000)   return 1; // x32 ABI is dangerous!
+  if (this->rax == SYS_open)     return 1; // never open files
+  if (this->rax == SYS_openat)   return 1;
+  if (this->rax == SYS_write)    return 1; // no more leak
+  if (this->rax == SYS_read)     return 1; // no more overwrite
+  if (this->rax == SYS_sendfile) return 1;
+  if (this->rax == SYS_execve)   return 1; // of course not!
+  if (this->rax == SYS_execveat) return 1;
+  if (this->rax == SYS_ptrace)   return 1; // may ruine the program
+  if (this->rax == SYS_fork)     return 1;
+  if (this->rax == SYS_vfork)    return 1;
+  if (this->rax == SYS_clone)    return 1;
+  return 0;
+}
+```
+
+This method prevents the use of specific system calls, as well as any syscall value that falls into the x32 ABI range.
+
+Conceptually, it behaves like a simple seccomp filter. If the syscall number in `rax` matches one of the blocked syscalls, `check()` returns `1`, meaning the syscall should be rejected. This is similar to a seccomp rule using `SCMP_ACT_KILL_PROCESS`, where attempting to execute a blocked syscall causes the process to be terminated.
+
+As expected, `Emulator::syscall` uses inline assembly to load the CPU registers with the values stored in the object, then executes the `syscall` instruction.
+
+After the syscall runs, its return value is placed in `rax`, and that value is then written back into the object's `rax` field.
+
+The return value is also printed (as seen in the src code).
+
+```cpp
+void Emulator::syscall() {
+  asm volatile ("movq %0, %%rdi":: "a"(this->rdi));
+  asm volatile ("movq %0, %%rsi":: "a"(this->rsi));
+  asm volatile ("movq %0, %%rdx":: "a"(this->rdx));
+  asm volatile ("movq %0, %%rax":: "a"(this->rax));
+  asm volatile ("syscall");
+  asm volatile ("movq %%rax, %0": "=a"(this->rax));
+}
+```
+
+### Exploitation
+
+What's the vulnerability?
+
+Well, there actually isn't any vulnerability (ig??)
+
+The challenge description says this:
+
+```
+It's a good tool to learn syscall, isn't it?
+```
