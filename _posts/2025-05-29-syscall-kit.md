@@ -20,7 +20,7 @@ It is simply an emulator written in C++ that's used to execute user-provided sys
 
 There are some restrictions however, and our goal is to pop shell from this somewhat restricted sandbox.
 
-You can download the challenge attachment [here](https://github.com/zer0pts/zer0pts-CTF-2020/tree/master/syscall%20kit/distfiles)
+You can download the challenge attachments [here](https://github.com/zer0pts/zer0pts-CTF-2020/tree/master/syscall%20kit/distfiles)
 
 ### Analysis
 
@@ -327,4 +327,56 @@ Does it mean we need to go through all the syscalls (354) not blocked by the emu
 Not necessarily...
 
 The approach I took was to actually parse all the syscalls based on the number of argument it takes.
+
+There's a json export of the syscall table [here](https://syscalls.mebeim.net/db/x86/64/x64/latest/table.json)
+
+I wrote a script to parse all the syscalls I can use that makes use of only 3 arguments.
+
+```python
+import json
+
+NUMBER = [0, 1, 2, 0x101, 0x28, 0x3b, 0x142, 0x65, 0x39, 0x3a, 0x38]
+TABLE = "table.json"
+
+with open(TABLE, "r") as f:
+    dataset = json.load(f)
+
+syscalls = dataset["syscalls"]
+output = {
+    "syscall": []
+}
+
+for syscall in syscalls:
+    if (len(syscall["signature"]) <= 3) and (syscall["number"] not in NUMBER):
+        output["syscall"].append(syscall)
+
+# print(len(output["syscall"]))
+print(json.dumps(output))
+```
+
+Although doing that only just reduces the potential syscall we can make use of to **236**.
+
+It's still a lot.
+
+![two](two.png)
+
+I was thinking of spawning a local instance of the syscall table since it's [open source](https://github.com/mebeim/linux-syscalls) but that's just a lot of work and tbf as of *2020* it never existed.
+
+Luckily the UI is awesome, it has a view where we can see the arguments needed.
+
+![three](three.png)
+
+My goal still remained the same, check out the syscalls that uses less or equal to 3 number of arguments.
+
+Here are the syscalls I found interesting to check:
+
+```c
+int brk(void *addr);
+int mprotect(unsigned long start, size_t len, unsigned long prot);
+ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
+ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
+int syscall(SYS_arch_prctl, int op, unsigned long addr);
+....
+```
+
 
