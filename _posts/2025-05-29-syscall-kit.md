@@ -391,6 +391,38 @@ Virtual functions is a key mechanism to support polymorphism in C++.
 
 For each class with virtual functions, depending on the class inheritance hierarchy, the compiler will create one or more associated virtual function table (vtabe).
 
+Looking at the object's initialization, we can see that the `Emulator` instance is allocated on the heap:
+
+```cpp
+void setup(void)
+{
+  std::setbuf(stdin, NULL);
+  std::setbuf(stdout, NULL);
+  std::setbuf(stderr, NULL);
+
+  m = new Emulator();
+}
+```
+
+Here's the heap layout after initialization:
+
+![four](four.png)
+
+```gdb
+gef> emu_dump 0x5555556162b0
+====== Emulator @ 0x5555556162b0 ======
+[+] vtable            : 0x555555602ce0
+[+] virtual functions
+    [0] -> 0x555555401114
+    [1] -> 0x55555540116e
+    [2] -> 0x555555401290
+    [3] -> 0x5555554012d8
+===============================
+```
+
+Because the vtable pointer itself resides in a heap-allocated object, it becomes a writable target.
+
+If we can forge the vtable, then any subsequent virtual method call on the object would dereference our fake vtable and jump to our controlled function pointer instead.
 
 
 
@@ -401,10 +433,7 @@ For each class with virtual functions, depending on the class inheritance hierar
 
 
 
-
-
-
-#### Resources
-- [Pwning C++](https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781)
-- [Syscall Table](https://syscalls.mebeim.net/?table=x86/64/x64/latest)
-- [do_arch_prctl_64](https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kernel/process_64.c#L867)
+### Resources
+- [https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781](https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781)
+- [https://syscalls.mebeim.net/?table=x86/64/x64/latest](https://syscalls.mebeim.net/?table=x86/64/x64/latest)
+- [https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kernel/process_64.c#L867](https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kernel/process_64.c#L867)
