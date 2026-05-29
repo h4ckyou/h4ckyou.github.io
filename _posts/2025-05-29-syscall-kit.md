@@ -1,6 +1,6 @@
 ---
 title: Syscall Kit 
-date: 2026-05-29 03:00:00 +0000
+date: 2026-05-29 09:00:00 +0000
 categories: [CTF, Upsolve]
 tags: [pwnable]
 math: true
@@ -10,7 +10,7 @@ image:
   path: preview.png
 ---
 
-## Zer0pts 2020 - Syscall Kit
+## zer0pts 2020 - Syscall Kit
 
 ### Overview
 
