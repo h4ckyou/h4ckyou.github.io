@@ -535,14 +535,14 @@ syscall(arch_prctl, ARCH_GET_FS, vtable_addr)
 <figure>
   <img src="gdb1.png" alt="gdb1">
   <figcaption style="text-align:center;">
-    Before updating `$fs_base`
+    Before updating $fs_base
   </figcaption>
 </figure>
 
 <figure>
   <img src="gdb2.png" alt="gdb2">
   <figcaption style="text-align:center;">
-    After updating `$fs_base`
+    After updating $fs_base
   </figcaption>
 </figure>
 
@@ -557,18 +557,91 @@ But once the program returns to `Emulator::emulate` it crashes
   </figcaption>
 </figure>
 
-This makes sense, because the `fs` register is constantly referenced during program execution (e.g reading the stack canary `fs:0x28`)
+This makes sense, because the `fs` register is constantly referenced during program execution (e.g reading the stack canary `fs:0x28`).
 
+Now this forces us to write only valid addresses into memory, which slightly constrains the primitive. 
 
+However, this isn't a major obstacle because we can now overwrite the object's `vtable` pointer itself.
 
+But how to gain `$rip` from this?
 
+Here's what I initially did.
 
+If you've noticed, the third syscall argument is not actually used by the emulator / by the syscall, but we fully control its value. That makes it a convenient place to stage data.
 
+So the idea is to construct a fake object layout like this:
 
+```cpp
+*(uintptr_t*)fake_obj = &this->arg3;
+this->vtable = &fake_obj;
+```
 
+With this setup, when `Emulator::set` triggers a virtual call, execution will dereference the corrupted vtable, jump into our fake vtable, and then invoke the first function pointer.
 
+That function pointer resolves to `this->arg3`, which we control directly. 
 
+Since we've placed our staged shellcode, we are therefore able to execute shellocde, the restriction with this is that we can only use 8 bytes shellcode.
 
+Here's a sample:
+
+```python
+arch_prctl  = 0x9e
+emu_obj = heap_base + 0x122b0
+vtable_addr = heap_base + 0x200
+vtable  = emu_obj + 0x20
+
+syscall(arch_prctl, ARCH_SET_FS, vtable)
+syscall(arch_prctl, ARCH_GET_FS, vtable_addr)
+
+syscall(arch_prctl, ARCH_SET_FS, vtable_addr)
+syscall(arch_prctl, ARCH_GET_FS, emu_obj, 0x9090909090909090)
+```
+
+<figure>
+  <img src="gdb4.png" alt="gdb4">
+  <figcaption style="text-align:center;">
+    Faked vtable
+  </figcaption>
+</figure>
+
+The method `Emulator::set` is called back at `Emulator::emulate`:
+
+```cpp
+this->set("syscall: ", this->rax);
+```
+
+This is the register state at the point of the program executing our shellcode.
+
+![gdb5](gdb5.png)
+![gdb6](gdb6.png)
+
+Ideally, we would want to create a staged shellcode (i.e read syscall)
+
+```c
+ssize_t read(int fd, void buf[.count], size_t count)
+```
+
+Reason is because we can't exactly do much with just 8 bytes.
+
+So we can do a second staged shellcode to read another shellcode to the heap then call that sc address.
+
+We only need to control 4 registers (rax, rdi, rsi, rdx)
+
+In our case, all registers are populated making it tough.
+
+This was the shortest shellcode I could come up with.
+
+```
+xor eax, eax
+mov edi, eax
+mov rsi, [rsp+0x10]
+shr edx, 0x1
+syscall
+```
+
+It requires 13 bytes which is too much.
+
+![sc](sc.png)
 
 
 
