@@ -615,7 +615,7 @@ This is the register state at the point of the program executing our shellcode.
 ![gdb5](gdb5.png)
 ![gdb6](gdb6.png)
 
-Ideally, we would want to create a staged shellcode (i.e read syscall)
+Ideally, we would want to create a staged shellcode (i.e do read syscall)
 
 ```c
 ssize_t read(int fd, void buf[.count], size_t count)
@@ -623,11 +623,11 @@ ssize_t read(int fd, void buf[.count], size_t count)
 
 Reason is because we can't exactly do much with just 8 bytes.
 
-So we can do a second staged shellcode to read another shellcode to the heap then call that sc address.
+For a staged execution we can use the initial control flow to trigger a second-stage payload that lives elsewhere (e.g. heap), then jump into that.
 
-We only need to control 4 registers (rax, rdi, rsi, rdx)
+We only need to control 4 registers (rax, rdi, rsi, rdx).
 
-In our case, all registers are populated making it tough.
+In our case, all registers are populated by the emulator's calling convention, which makes clean syscall setup difficult.
 
 This was the shortest shellcode I could come up with.
 
@@ -643,6 +643,32 @@ It requires 13 bytes which is too much.
 
 ![sc](sc.png)
 
+What now?
+
+I decided to check the second subfunction (writing to `GS`)
+
+It behaves in a similar way however it doesn't require that we pass in a valid address to it.
+
+<figure>
+  <img src="gdb7.png" alt="gdb7">
+  <figcaption style="text-align:center;">
+    Before updating $gs_base
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="gdb8.png" alt="gdb8">
+  <figcaption style="text-align:center;">
+    After updating $gs_base
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="gdb9.png" alt="gdb9">
+  <figcaption style="text-align:center;">
+    Arbitarry write successful
+  </figcaption>
+</figure>
 
 
 ### Resources
