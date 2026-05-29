@@ -477,6 +477,7 @@ We can leak the heap address by doing this:
 
 ```python
 PAGE = 0x21000
+brk  = 0xc
 
 heap_base = syscall(brk, 0) - PAGE
 info("heap base: %#x", heap_base)
@@ -490,15 +491,40 @@ In essence, increasing the number of syscalls we can make, remember we can only 
 
 A way around that is to change the heap protection to (`PROT_READ | PROT_WRITE | PROT_EXEC`) making the heap region `RWX`.
 
+```python
+mprotect    = 0xa
+
+syscall(mprotect, heap_base, PAGE, 0x7)
+```
+
 With that we can simply just jump to the heap and get shellcode execution going.
 
 But now how do we corrupt the vtable?
 
 This was where the issue began!
 
-While going through the syscalls, I found an interesting syscall called `arch_prctl`.
+While going through the syscalls, I found an interesting system call called [arch_prctl](https://man7.org/linux/man-pages/man2/arch_prctl.2.html).
 
+![man2](man2.png)
+![man3](man3.png)
 
+```c
+int syscall(SYS_arch_prctl, int op, unsigned long addr);
+int syscall(SYS_arch_prctl, int op, unsigned long *addr);
+```
+
+It says:
+- when we use `ARCH_SET_FS` subfunction that we are able to set the 64-bit base for the `FS` register to `addr`
+- while the `ARCH_GET_FS` returns the 64-bit base value for the `FS` register of the calling thread and stores it in memory pointer by `addr`
+
+> The same goes for the `GS` register
+{: .prompt-tip }
+
+Incase you don't know what the `FS` register is, they're segment registers, but on modern 64-bit systems they're mostly used for thread and CPU-local data.
+
+You can check it out [here](https://docs.kernel.org/arch/x86/x86_64/fsgs.html)
+
+The important thing however is that this gives us a form of arbitrary write.
 
 
 
