@@ -380,8 +380,62 @@ The logic is pretty straightforward:
 - ensures the instruction pointer is still within `code_size`
 - then dispatches execution to the corresponding handler
 
+Suppose we want to compute the addition of two numbers (0x1336 + 0x1).
 
+Here's how we can achieve it using the VM instruction set.
 
+```js
+ICONST 0x1336
+ICONST 0x1
+ADD
+```
+
+This is how the flow is going to be:
+
+<figure>
+  <img src="stack1.png" alt="stack 1">
+  <figcaption style="text-align:center;">
+    Stack is initialized (sp = -1)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="stack2.png" alt="stack 2">
+  <figcaption style="text-align:center;">
+    We pushed 0x1336 to the stack (sp = 0)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="stack3.png" alt="stack 3">
+  <figcaption style="text-align:center;">
+    We pushed 0x1 to the stack (sp = 1)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="stack4.png" alt="stack 4">
+  <figcaption style="text-align:center;">
+    We pop from the tos (top of stack) and place the value in variale b (b = 0x1, sp = 0)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="stack5.png" alt="stack 5">
+  <figcaption style="text-align:center;">
+    We pop from the tos and place the value in variale a (a = 0x1336, sp = -1)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="stack6.png" alt="stack 6">
+  <figcaption style="text-align:center;">
+   The sum of a and b is computed and pushed to the stack (sum = 0x1337, sp = 0)
+  </figcaption>
+</figure>
+
+>That's the reason it's called a stack based virtual machine, operations are performed using the stack data structure
+{: .prompt-tip }
 
 Here's the file solve script:
 
