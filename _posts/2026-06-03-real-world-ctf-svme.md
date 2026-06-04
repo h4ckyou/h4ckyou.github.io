@@ -226,6 +226,38 @@ void vm_print_stack(int *stack, int count);
 void vm_print_data(int *globals, int count);
 ```
 
+With that in place, we can look at the VM functions.
+
+```c
+void vm_init(VM *vm, int *code, int code_size, int nglobals)
+{
+    vm->code = code;
+    vm->code_size = code_size;
+    vm->globals = calloc(nglobals, sizeof(int));
+    vm->nglobals = nglobals;
+}
+
+void vm_free(VM *vm)
+{
+    free(vm->globals);
+    free(vm);
+}
+
+VM *vm_create(int *code, int code_size, int nglobals)
+{
+    VM *vm = calloc(1, sizeof(VM));
+    vm_init(vm, code, code_size, nglobals);
+    return vm;
+}
+```
+
+When a VM instance is created, it allocates a zero-initialized VM structure and sets up its execution context: 
+- bytecode pointer
+- code size
+- a heap-allocated global variable array
+
+One notable detail is that `vm->globals` is allocated using `calloc`, even when nglobals is `0`. In that case, the allocation size becomes zero, but that would  still return a non-null pointer.
+
 
 
 Here's the file solve script:
