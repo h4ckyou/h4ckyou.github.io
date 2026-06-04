@@ -434,7 +434,7 @@ This is how the flow is going to be:
   </figcaption>
 </figure>
 
->That's the reason it's called a stack based virtual machine, operations are performed using the stack data structure
+>That's why it's called a stack-based VM. All operations are done through a stack, pushing operands on it and popping results off it instead of working directly on registers.
 {: .prompt-tip }
 
 Here's the file solve script:
