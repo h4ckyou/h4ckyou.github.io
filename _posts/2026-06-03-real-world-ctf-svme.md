@@ -905,7 +905,7 @@ We can start the process with `run` and send `0x1ff` bytes. The breakpoint set a
 ![gdb2](gdb2.png)
 ![gdb3](gdb3.png)
 
-Register `$rdi` holds a pointer to the VM structure, we can dump it
+Register `$rdi` holds a pointer to the VM structure, we can dump it:
 
 ![gdb4](gdb4.png)
 
@@ -995,7 +995,7 @@ case GSTORE:
     break;
 ```
 
->GSTORE is more easier to use, but because I wanted to show some gdb-fu i'll use STORE
+>GSTORE is more easier to use, but because I wanted to show some gdb-fu I'll use STORE
 {: .prompt-tip }
 
 This is how to calculate the offset between where we are normally supposed to write to and our target.
@@ -1012,6 +1012,13 @@ First you need to know that `callsp` is currently at `-1` because we've not exec
 Hence, the offset is `0xf84`, which corresponds to `0x3e1` in word-addressable units (divide by 4 since each word is 4 bytes).
 
 It's a pretty easy challenge once you realize that you can simply use one of the vm's field to perform your writes.
+
+A thing to note is that `vm_free` is later called and because `vm->globals` contains an invalid heap chunk it would crash. To avoid that error I simply overwrote it to `NULL`
+
+![free](free.png)
+
+>From the [glibc](https://elixir.bootlin.com/glibc/glibc-2.31/source/malloc/malloc.c#L3086) source, when you call `free(0)` is simply returns.
+{: .prompt-tip }
 
 Here's the file solve script:
 
