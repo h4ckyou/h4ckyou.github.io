@@ -256,7 +256,7 @@ When a VM instance is created, it allocates a zero-initialized VM structure and 
 - code size
 - a heap-allocated global variable array
 
-One notable detail is that `vm->globals` is allocated using `calloc`, even when nglobals is `0`. In that case, the allocation size becomes zero, but that would  still return a non-null pointer.
+One notable detail is that `vm->globals` is allocated using `calloc`, even when `nglobals` is `0`. In that case, the allocation size becomes zero, but that would  still return a non-null pointer.
 
 When `vm_free` is called, it deallocates the memory used by the VM.
 
@@ -436,6 +436,479 @@ This is how the flow is going to be:
 
 >That's why it's called a stack-based VM. All operations are done through a stack, pushing operands on it and popping results off it instead of working directly on registers.
 {: .prompt-tip }
+
+After reading the various handlers the vulnerability becomes obvious:
+
+![vuln](vuln.png)
+
+```c
+case ICONST:
+    vm->stack[++sp] = vm->code[ip++];  // push operand
+    break;
+case LOAD: // load local or arg
+    offset = vm->code[ip++];
+    vm->stack[++sp] = vm->call_stack[callsp].locals[offset];
+    break;
+case GLOAD: // load from global memory
+    addr = vm->code[ip++];
+    vm->stack[++sp] = vm->globals[addr];
+    break;
+case STORE:
+    offset = vm->code[ip++];
+    vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+    break;
+case GSTORE:
+    addr = vm->code[ip++];
+    vm->globals[addr] = vm->stack[sp--];
+    break;
+```
+
+The usual suspect for VM like challenges are OOB, and here we see an OOB read/write bug in `LOAD, GLOAD, STORE, GSTORE`.
+
+This is already enough to pwn the vm since the vulnerability gives us arbitrary read/write.
+
+But to actually pwn it we need to know how the challenge (`svme`) operates the `VM`.
+
+Loading the binary up in `IDA` here's the main function:
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  signed int i; // [rsp+10h] [rbp-220h]
+  int v5; // [rsp+14h] [rbp-21Ch]
+  VM *vm; // [rsp+18h] [rbp-218h]
+  int code[130]; // [rsp+20h] [rbp-210h] BYREF
+  unsigned __int64 v8; // [rsp+228h] [rbp-8h]
+
+  v8 = __readfsqword(0x28u);
+  for ( i = 0; (unsigned int)i <= 0x1FF; i += v5 )
+  {
+    v5 = read(0, &code[i], 512LL - i);
+    if ( v5 <= 0 )
+      break;
+  }
+  vm = vm_create(code, i / 4, 0);
+  vm_exec(vm, 0, 1);
+  vm_free(vm);
+  return 0;
+}
+```
+
+A cool trick we can use is to load the header file into IDA, because the binary wasn't compiled with debug info although not stripped. That way IDA can reconstruct the data types used by the VM.
+
+For example, here's the decompilation of `vm_exec` without structure definitions:
+
+```c
+__int64 __fastcall vm_exec(__int64 a1, int a2, char a3)
+{
+  __int64 v3; // rdx
+  __int64 result; // rax
+  int v5; // eax
+  int v6; // eax
+  int v7; // eax
+  int v8; // eax
+  int v9; // eax
+  int v10; // eax
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  int v14; // eax
+  int v15; // eax
+  int v16; // eax
+  __int64 v17; // rdx
+  int v19; // [rsp+14h] [rbp-2Ch]
+  int v20; // [rsp+18h] [rbp-28h]
+  int v21; // [rsp+1Ch] [rbp-24h]
+  int i; // [rsp+20h] [rbp-20h]
+  int j; // [rsp+24h] [rbp-1Ch]
+  int v24; // [rsp+28h] [rbp-18h]
+  int v25; // [rsp+28h] [rbp-18h]
+  int v26; // [rsp+28h] [rbp-18h]
+  int v27; // [rsp+28h] [rbp-18h]
+  int v28; // [rsp+28h] [rbp-18h]
+  int v29; // [rsp+2Ch] [rbp-14h]
+  int v30; // [rsp+2Ch] [rbp-14h]
+  int v31; // [rsp+2Ch] [rbp-14h]
+  int v32; // [rsp+2Ch] [rbp-14h]
+  int v33; // [rsp+2Ch] [rbp-14h]
+  int v34; // [rsp+30h] [rbp-10h]
+  int v35; // [rsp+30h] [rbp-10h]
+  int v36; // [rsp+30h] [rbp-10h]
+  int v37; // [rsp+30h] [rbp-10h]
+  int v38; // [rsp+34h] [rbp-Ch]
+  int v39; // [rsp+38h] [rbp-8h]
+
+  v19 = a2;
+  v20 = -1;
+  v21 = -1;
+  v3 = 4LL * a2;
+  result = *(unsigned int *)(v3 + *(_QWORD *)a1);
+  for ( i = *(_DWORD *)(v3 + *(_QWORD *)a1); i != 18; i = *(_DWORD *)(v17 + *(_QWORD *)a1) )
+  {
+    result = *(unsigned int *)(a1 + 8);
+    if ( v19 >= (int)result )
+      break;
+    if ( a3 )
+      vm_print_instr(*(_QWORD *)a1, (unsigned int)v19);
+    ++v19;
+    switch ( i )
+    {
+      case 1:
+        v29 = *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12);
+        v24 = *(_DWORD *)(a1 + 4 * (v20 - 1 + 4LL) + 12);
+        v20 = v20 - 2 + 1;
+        *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12) = v24 + v29;
+        break;
+      case 2:
+        v30 = *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12);
+        v25 = *(_DWORD *)(a1 + 4 * (v20 - 1 + 4LL) + 12);
+        v20 = v20 - 2 + 1;
+        *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12) = v25 - v30;
+        break;
+      case 3:
+        v31 = *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12);
+        v26 = *(_DWORD *)(a1 + 4 * (v20 - 1 + 4LL) + 12);
+        v20 = v20 - 2 + 1;
+        *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12) = v31 * v26;
+        break;
+      case 4:
+        v32 = *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12);
+        v27 = *(_DWORD *)(a1 + 4 * (v20 - 1 + 4LL) + 12);
+        v20 = v20 - 2 + 1;
+        *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12) = v27 < v32;
+        break;
+      case 5:
+        v33 = *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12);
+        v28 = *(_DWORD *)(a1 + 4 * (v20 - 1 + 4LL) + 12);
+        v20 = v20 - 2 + 1;
+        *(_DWORD *)(a1 + 4 * (v20 + 4LL) + 12) = v28 == v33;
+        break;
+      case 6:
+        v19 = *(_DWORD *)(4LL * v19 + *(_QWORD *)a1);
+        break;
+      case 7:
+        v5 = v19++;
+        v34 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v5);
+        v6 = v20--;
+        if ( *(_DWORD *)(a1 + 4 * (v6 + 4LL) + 12) == 1 )
+          v19 = v34;
+        break;
+      case 8:
+        v7 = v19++;
+        v35 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v7);
+        v8 = v20--;
+        if ( !*(_DWORD *)(a1 + 4 * (v8 + 4LL) + 12) )
+          v19 = v35;
+        break;
+      case 9:
+        v9 = v19++;
+        *(_DWORD *)(a1 + 4 * (++v20 + 4LL) + 12) = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v9);
+        break;
+      case 10:
+        v10 = v19++;
+        *(_DWORD *)(a1 + 4 * (++v20 + 4LL) + 12) = *(_DWORD *)(a1
+                                                             + 4
+                                                             * (*(int *)(*(_QWORD *)a1 + 4LL * v10) + 11LL * v21 + 1004)
+                                                             + 16);
+        break;
+      case 11:
+        v11 = v19++;
+        *(_DWORD *)(a1 + 4 * (++v20 + 4LL) + 12) = *(_DWORD *)(4LL * *(int *)(*(_QWORD *)a1 + 4LL * v11)
+                                                             + *(_QWORD *)(a1 + 16));
+        break;
+      case 12:
+        v12 = v19++;
+        v38 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v12);
+        v13 = v20--;
+        *(_DWORD *)(a1 + 4 * (v38 + 11LL * v21 + 1004) + 16) = *(_DWORD *)(a1 + 4 * (v13 + 4LL) + 12);
+        break;
+      case 13:
+        v14 = v19++;
+        v36 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v14);
+        v15 = v20--;
+        *(_DWORD *)(*(_QWORD *)(a1 + 16) + 4LL * v36) = *(_DWORD *)(a1 + 4 * (v15 + 4LL) + 12);
+        break;
+      case 14:
+        v16 = v20--;
+        printf("%d\n", *(_DWORD *)(a1 + 4 * (v16 + 4LL) + 12));
+        break;
+      case 15:
+        --v20;
+        break;
+      case 16:
+        v37 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * v19);
+        v39 = *(_DWORD *)(*(_QWORD *)a1 + 4LL * (v19 + 1));
+        vm_context_init(
+          44LL * ++v21 + 4016 + a1 + 12,
+          (unsigned int)(v19 + 3),
+          (unsigned int)(v39 + *(_DWORD *)(*(_QWORD *)a1 + 4LL * (v19 + 2))));
+        for ( j = 0; j < v39; ++j )
+          *(_DWORD *)(a1 + 4 * (j + 11LL * v21 + 1004) + 16) = *(_DWORD *)(a1 + 4 * (v20 - j + 4LL) + 12);
+        v20 -= v39;
+        v19 = v37;
+        break;
+      case 17:
+        v19 = *(_DWORD *)(a1 + 44LL * v21-- + 4028);
+        break;
+      default:
+        printf("invalid opcode: %d at ip=%d\n", i, v19 - 1);
+        exit(1);
+    }
+    if ( a3 )
+      vm_print_stack(a1 + 28, (unsigned int)v20);
+    v17 = 4LL * v19;
+    result = *(unsigned int *)(v17 + *(_QWORD *)a1);
+  }
+  if ( a3 )
+    return vm_print_data(*(_QWORD *)(a1 + 16), *(unsigned int *)(a1 + 24));
+  return result;
+}
+```
+
+The decompilation itself isn't so hard to read through and creating the data type is also easy as it's not a complex data structure.
+
+But who loves doing pointer arithmetic in their head? (*sm0g* does!)..
+
+Anyways to load the header file go to:
+
+```
+File -> Load File -> Parse C header file
+```
+
+Here's how it looks like after doing that:
+
+```c
+void vm_exec(VM *vm, int startip, bool trace)
+{
+  int v3; // eax
+  int v4; // eax
+  int v5; // eax
+  int v6; // eax
+  int v7; // eax
+  int v8; // eax
+  int v9; // eax
+  int v10; // eax
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  int v14; // eax
+  int returnip; // [rsp+14h] [rbp-2Ch]
+  int count; // [rsp+18h] [rbp-28h]
+  int v18; // [rsp+1Ch] [rbp-24h]
+  int i; // [rsp+20h] [rbp-20h]
+  int j; // [rsp+24h] [rbp-1Ch]
+  int v21; // [rsp+28h] [rbp-18h]
+  int v22; // [rsp+28h] [rbp-18h]
+  int v23; // [rsp+28h] [rbp-18h]
+  int v24; // [rsp+28h] [rbp-18h]
+  int v25; // [rsp+28h] [rbp-18h]
+  int v26; // [rsp+2Ch] [rbp-14h]
+  int v27; // [rsp+2Ch] [rbp-14h]
+  int v28; // [rsp+2Ch] [rbp-14h]
+  int v29; // [rsp+2Ch] [rbp-14h]
+  int v30; // [rsp+2Ch] [rbp-14h]
+  int v31; // [rsp+30h] [rbp-10h]
+  int v32; // [rsp+30h] [rbp-10h]
+  int v33; // [rsp+30h] [rbp-10h]
+  int v34; // [rsp+30h] [rbp-10h]
+  int v35; // [rsp+34h] [rbp-Ch]
+  int v36; // [rsp+38h] [rbp-8h]
+
+  returnip = startip;
+  count = -1;
+  v18 = -1;
+  for ( i = vm->code[startip]; i != 18 && returnip < vm->code_size; i = vm->code[returnip] )
+  {
+    if ( trace )
+      vm_print_instr(vm->code, returnip);
+    ++returnip;
+    switch ( i )
+    {
+      case 1:
+        v26 = vm->stack[count];
+        v21 = *(&vm->nglobals + count);
+        count = count - 2 + 1;
+        vm->stack[count] = v21 + v26;
+        break;
+      case 2:
+        v27 = vm->stack[count];
+        v22 = *(&vm->nglobals + count);
+        count = count - 2 + 1;
+        vm->stack[count] = v22 - v27;
+        break;
+      case 3:
+        v28 = vm->stack[count];
+        v23 = *(&vm->nglobals + count);
+        count = count - 2 + 1;
+        vm->stack[count] = v28 * v23;
+        break;
+      case 4:
+        v29 = vm->stack[count];
+        v24 = *(&vm->nglobals + count);
+        count = count - 2 + 1;
+        vm->stack[count] = v24 < v29;
+        break;
+      case 5:
+        v30 = vm->stack[count];
+        v25 = *(&vm->nglobals + count);
+        count = count - 2 + 1;
+        vm->stack[count] = v25 == v30;
+        break;
+      case 6:
+        returnip = vm->code[returnip];
+        break;
+      case 7:
+        v3 = returnip++;
+        v31 = vm->code[v3];
+        v4 = count--;
+        if ( vm->stack[v4] == 1 )
+          returnip = v31;
+        break;
+      case 8:
+        v5 = returnip++;
+        v32 = vm->code[v5];
+        v6 = count--;
+        if ( !vm->stack[v6] )
+          returnip = v32;
+        break;
+      case 9:
+        v7 = returnip++;
+        vm->stack[++count] = vm->code[v7];
+        break;
+      case 10:
+        v8 = returnip++;
+        vm->stack[++count] = vm->call_stack[v18].locals[vm->code[v8]];
+        break;
+      case 11:
+        v9 = returnip++;
+        vm->stack[++count] = vm->globals[vm->code[v9]];
+        break;
+      case 12:
+        v10 = returnip++;
+        v35 = vm->code[v10];
+        v11 = count--;
+        vm->call_stack[v18].locals[v35] = vm->stack[v11];
+        break;
+      case 13:
+        v12 = returnip++;
+        v33 = vm->code[v12];
+        v13 = count--;
+        vm->globals[v33] = vm->stack[v13];
+        break;
+      case 14:
+        v14 = count--;
+        printf("%d\n", vm->stack[v14]);
+        break;
+      case 15:
+        --count;
+        break;
+      case 16:
+        v34 = vm->code[returnip];
+        v36 = vm->code[returnip + 1];
+        vm_context_init(&vm->call_stack[++v18], (returnip + 3), (v36 + vm->code[returnip + 2]));
+        for ( j = 0; j < v36; ++j )
+          vm->call_stack[v18].locals[j] = vm->stack[count - j];
+        count -= v36;
+        returnip = v34;
+        break;
+      case 17:
+        returnip = vm->call_stack[v18--].returnip;
+        break;
+      default:
+        printf("invalid opcode: %d at ip=%d\n", i, returnip - 1);
+        exit(1);
+    }
+    if ( trace )
+      vm_print_stack(vm->stack, count);
+  }
+  if ( trace )
+    vm_print_data(vm->globals, vm->nglobals);
+}
+```
+
+It looks pretty much the same as the vm implementation, but what we're interested in is how the vm is initialized:
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  signed int i; // [rsp+10h] [rbp-220h]
+  int v5; // [rsp+14h] [rbp-21Ch]
+  VM *vm; // [rsp+18h] [rbp-218h]
+  int code[130]; // [rsp+20h] [rbp-210h] BYREF
+  unsigned __int64 v8; // [rsp+228h] [rbp-8h]
+
+  v8 = __readfsqword(0x28u);
+  for ( i = 0; i <= 0x1FF; i += v5 )
+  {
+    v5 = read(0, &code[i], 512LL - i);
+    if ( v5 <= 0 )
+      break;
+  }
+  vm = vm_create(code, i / 4, 0);
+  vm_exec(vm, 0, 1);
+  vm_free(vm);
+  return 0;
+}
+
+VM *vm_create(int *code, int code_size, int nglobals)
+{
+  VM *vm; // [rsp+18h] [rbp-8h]
+
+  vm = calloc(1uLL, 0x20F0uLL);
+  vm_init(vm, code, code_size, nglobals);
+  return vm;
+}
+
+void vm_init(VM *vm, int *code, int code_size, int nglobals)
+{
+  vm->code = code;
+  vm->code_size = code_size;
+  vm->globals = calloc(nglobals, 4uLL);
+  vm->nglobals = nglobals;
+}
+```
+
+The thing here is that:
+- It reads up to `0x1FF` bytes into `code`
+- Creates a vm context based on our code
+- So our code is directly executed by the vm
+
+`vm->code` is a stack pointer of the bytecode in the main function stack frame.
+
+Let's have a look at the structure in gdb.
+
+Again, the binary wasn't compiled with `debug_info`. But because we have the source we can compile an object file with symbols:
+
+![gcc](gcc.png)
+
+In gdb, we can load the symbol file
+
+![gdb](gdb.png)
+
+```bash
+mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme$ gdb -q svme_patched
+Loading GEF...
+GEF is ready, type 'gef' to start, 'gef config' to configure
+Loaded 399 commands (+111 aliases) for GDB 15.1 using Python engine 3.12
+[+] Could not find /home/mark/.gef.rc, GEF uses default settings
+Reading symbols from svme_patched...
+(No debugging symbols found in svme_patched)
+gef> add-symbol-file vm.o 0x0
+add symbol table from file "vm.o" at
+	.text_addr = 0x0
+Reading symbols from vm.o...
+gef> b *main+221
+```
+
+We can start the process with `run` and send `0x1ff` bytes. The breakpoint set at `*main+221` should hit.
+
+![gdb2](gdb2.png)
+![gdb3](gdb3.png)
+
+Register `rdi` contains the pointer to the VM structure, we can dump it
+
+![gdb4](gdb5.png)
+
 
 Here's the file solve script:
 
