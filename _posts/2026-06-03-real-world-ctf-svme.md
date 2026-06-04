@@ -907,15 +907,17 @@ We can start the process with `run` and send `0x1ff` bytes. The breakpoint set a
 
 Register `$rdi` holds a pointer to the VM structure, we can dump it
 
-![gdb4](gdb5.png)
+![gdb4](gdb4.png)
 
 ### Exploitation
 
-Our goal is to leverage the arb read/write via the OOB to gain code execution.
+Our goal is to leverage the arbitrary read/write via the OOB to gain code execution.
 
 There are many ways you can go about that but before that, we need a way to get leaks.
 
-If you notice you'll realize there's actually no way of getting leak
+If you notice you'll realize there's actually no way of getting leak to stdout and making use of that in a second stage.
+
+
 
 
 
