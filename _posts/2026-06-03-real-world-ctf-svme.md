@@ -387,7 +387,7 @@ Here's how we can achieve it using the VM instruction set.
 ```js
 ICONST 0x1336
 ICONST 0x1
-ADD
+IADD
 ```
 
 This is how the flow is going to be:
@@ -913,28 +913,105 @@ Register `$rdi` holds a pointer to the VM structure, we can dump it
 
 Our goal is to leverage the arbitrary read/write via the OOB to gain code execution.
 
-There are many ways you can go about that but before that, we need a way to get leaks.
+There are many ways you can go about that but before we do so, we need a way to get leaks.
 
-If you notice you'll realize there's actually no way of getting leak to stdout and making use of that in a second stage.
+If you think about it you'll realize there's actually no way of getting leak to `stdout` and making use of that in a second stage.
 
+So we need to do everything inplace.
 
+>How do we get leak?
+{: .prompt-tip }
 
+For getting a libc leak, there's a pointer to the stack already on the vm context, we can make use of the `GLOAD` to save that address to the vm stack.
 
+```c
+case GLOAD: // load from global memory
+    addr = vm->code[ip++];
+    vm->stack[++sp] = vm->globals[addr];
+    break;
+```
 
+The `main` function returns to `__libc_start_main+0xf3` so it holds a pointer to a libc region on the stack.
 
+We can then compute the offset to that address (the return address) using any of the arithmetic operation (although I simply used `ADD`).
 
+A way to do this is:
+- read the lower 4 bytes at `[sp+n]`
+- write the offset to what we want at `[sp+n+4]`
+- compute the sum which is then stored at `[sp+n]`
+- read the upper 4 bytes at `[sp+n+4]`
 
+```c
+case IADD:
+    b = vm->stack[sp--];           // 2nd opnd at top of stack
+    a = vm->stack[sp--];           // 1st opnd 1 below top
+    vm->stack[++sp] = a + b;       // push result
+    break;
+```
 
+And then make use of `GSTORE` to write that address to `vm->globals` effectively corrupting `vm->globals`.
 
+```c
+case GSTORE:
+    addr = vm->code[ip++];
+    vm->globals[addr] = vm->stack[sp--];
+    break;
+```
 
+Then when we do `GLOAD`, it reads a libc address (`__libc_start_main+0xf3`) to the vm stack.
 
+```c
+case GLOAD: // load from global memory
+    addr = vm->code[ip++];
+    vm->stack[++sp] = vm->globals[addr];
+    break;
+```
 
+With that we can easily compute offsets to gadgets.
 
+For getting code execution I decided to overwrite the return address with ROPchain and that's easier to achieve because we already have the main function return address stored in `vm->globals`.
 
+I made use of `STORE` to perform the write.
 
+```c
+case STORE:
+    offset = vm->code[ip++];
+    vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+    break;
+```
 
+The reason for using `STORE` is because I had the ropchain placed on the vm stack already, and i'd like to store it at a controller pointer which is `vm->globals`
 
+So we look for instruction that reads from `vm->stack` and stores it at `vm->globals` (*GSTORE* & *STORE*) matches this request:
 
+```c
+case STORE:
+    offset = vm->code[ip++];
+    vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+    break;
+case GSTORE:
+    addr = vm->code[ip++];
+    vm->globals[addr] = vm->stack[sp--];
+    break;
+```
+
+>GSTORE is more easier to use, but because I wanted to show some gdb-fu i'll use STORE
+{: .prompt-tip }
+
+This is how to calculate the offset between where we are normally supposed to write to and our target.
+
+First you need to know that `callsp` is currently at `-1` because we've not executed any `CALL` instruction which ends up creating a new stack frame.
+
+![win0](win0.png)
+![win1](win1.png)
+![win2](win2.png)
+![win3](win3.png)
+![win4](win4.png)
+![win5](win5.png)
+
+Hence, the offset is `0xf84`, which corresponds to `0x3e1` in word-addressable units (divide by 4 since each word is 4 bytes).
+
+It's a pretty easy challenge once you realize that you can simply use one of the vm's field to perform your writes.
 
 Here's the file solve script:
 
