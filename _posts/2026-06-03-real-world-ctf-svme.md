@@ -23,7 +23,7 @@ The `SVME` binary challenge is a simple stack-based virtual machine written in C
 
 Here's the source for the [vm](https://github.com/parrt/simple-virtual-machine-C)
 
-The challenge files can be found ![here](pwn_svme.zip)
+The challenge files can be found [here](https://h4ckyou.github.io/assets/posts/2026-06-03-real-world-ctf-svme/pwn_svme.zip)
 
 The bug is an *out-of-bounds read/write* in the VM memory layout.
 
@@ -37,13 +37,13 @@ We are given 3 files (svme, libc, linker)
 
 And the binary `svme` has all protections enabled.
 
-First thing to do is patched it using `pwninit`
+First thing to do is patch it using `pwninit`.
 
 ```bash
 pwninit --bin svme --libc libc-2.31.so --ld ld-2.31.so --no-template
 ```
 
-With that, the binary should be linked with the one provided
+With that, the binary should be linked with the one provided.
 
 ```bash
 mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme$ ldd svme_patched 
@@ -53,12 +53,31 @@ mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme$ ldd svme_patched
 mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme
 ```
 
-The attached slide is a presentation on "How to Build a Virtual Machine"
+The attached slide is a presentation on "How to Build a Virtual Machine".
 
 ![intro](intro.png)
 
 > The goal is to simulate a simple computer using bytecodes. An instruction set is defined including operations like add, subtract, branch, load, store, print. The bytecode format and a sample program are shown in the slide. The VM will fetch, decode and execute instructions in a cycle, operating on a stack. 
 {: .prompt-tip }
+
+You can always take your time to understand how it works, but it's just a simple stack based virtual machine.
+
+Take a a quick look at the VM's ISA.
+
+<figure>
+  <img src="isa.png" alt="instruction set">
+  <figcaption style="text-align:center;">
+    Instruction Set
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="isa2.png" alt="instruction format">
+  <figcaption style="text-align:center;">
+    Instruction Format
+  </figcaption>
+</figure>
+
 
 
 
@@ -225,3 +244,6 @@ if __name__ == '__main__':
 Running it works!
 
 ![final](final.png)
+
+
+ありがとうございます！😊
