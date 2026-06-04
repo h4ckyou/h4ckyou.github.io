@@ -434,7 +434,7 @@ This is how the flow is going to be:
   </figcaption>
 </figure>
 
->That's why it's called a stack-based VM. All operations are done through a stack, pushing operands on it and popping results off it instead of working directly on registers.
+>That's why it's called a stack-based VM. All operations are done through a stack, pushing operands on it and popping results off it instead of working directly on registers. And YES I know my drawing is horrible 😭
 {: .prompt-tip }
 
 After reading the various handlers the vulnerability becomes obvious:
