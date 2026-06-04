@@ -258,6 +258,129 @@ When a VM instance is created, it allocates a zero-initialized VM structure and 
 
 One notable detail is that `vm->globals` is allocated using `calloc`, even when nglobals is `0`. In that case, the allocation size becomes zero, but that would  still return a non-null pointer.
 
+When `vm_free` is called, it deallocates the memory used by the VM.
+
+Our main interest is of course the dispatcher (`vm_exec`), since that's where every instruction gets decoded and executed.
+
+```c
+void vm_exec(VM *vm, int startip, bool trace)
+{
+    // registers
+    int ip;         // instruction pointer register
+    int sp;         // stack pointer register
+    int callsp;     // call stack pointer register
+
+    int a = 0;
+    int b = 0;
+    int addr = 0;
+    int offset = 0;
+
+    ip = startip;
+    sp = -1;
+    callsp = -1;
+    int opcode = vm->code[ip];
+
+    while (opcode != HALT && ip < vm->code_size) {
+        if (trace) vm_print_instr(vm->code, ip);
+        ip++; //jump to next instruction or to operand
+        switch (opcode) {
+            case IADD:
+                b = vm->stack[sp--];           // 2nd opnd at top of stack
+                a = vm->stack[sp--];           // 1st opnd 1 below top
+                vm->stack[++sp] = a + b;       // push result
+                break;
+            case ISUB:
+                b = vm->stack[sp--];
+                a = vm->stack[sp--];
+                vm->stack[++sp] = a - b;
+                break;
+            case IMUL:
+                b = vm->stack[sp--];
+                a = vm->stack[sp--];
+                vm->stack[++sp] = a * b;
+                break;
+            case ILT:
+                b = vm->stack[sp--];
+                a = vm->stack[sp--];
+                vm->stack[++sp] = (a < b) ? true : false;
+                break;
+            case IEQ:
+                b = vm->stack[sp--];
+                a = vm->stack[sp--];
+                vm->stack[++sp] = (a == b) ? true : false;
+                break;
+            case BR:
+                ip = vm->code[ip];
+                break;
+            case BRT:
+                addr = vm->code[ip++];
+                if (vm->stack[sp--] == true) ip = addr;
+                break;
+            case BRF:
+                addr = vm->code[ip++];
+                if (vm->stack[sp--] == false) ip = addr;
+                break;
+            case ICONST:
+                vm->stack[++sp] = vm->code[ip++];  // push operand
+                break;
+            case LOAD: // load local or arg
+                offset = vm->code[ip++];
+                vm->stack[++sp] = vm->call_stack[callsp].locals[offset];
+                break;
+            case GLOAD: // load from global memory
+                addr = vm->code[ip++];
+                vm->stack[++sp] = vm->globals[addr];
+                break;
+            case STORE:
+                offset = vm->code[ip++];
+                vm->call_stack[callsp].locals[offset] = vm->stack[sp--];
+                break;
+            case GSTORE:
+                addr = vm->code[ip++];
+                vm->globals[addr] = vm->stack[sp--];
+                break;
+            case PRINT:
+                printf("%d\n", vm->stack[sp--]);
+                break;
+            case POP:
+                --sp;
+                break;
+            case CALL:
+                // expects all args on stack
+                addr = vm->code[ip++];			// index of target function
+                int nargs = vm->code[ip++]; 	// how many args got pushed
+                int nlocals = vm->code[ip++]; 	// how many locals to allocate
+                ++callsp; // bump stack pointer to reveal space for this call
+                vm_context_init(&vm->call_stack[callsp], ip, nargs+nlocals);
+                // copy args into new context
+                for (int i=0; i<nargs; i++) {
+                    vm->call_stack[callsp].locals[i] = vm->stack[sp-i];
+                }
+                sp -= nargs;
+                ip = addr;		// jump to function
+                break;
+            case RET:
+                ip = vm->call_stack[callsp].returnip;
+                callsp--; // pop context
+                break;
+            default:
+                printf("invalid opcode: %d at ip=%d\n", opcode, (ip - 1));
+                exit(1);
+        }
+        if (trace) vm_print_stack(vm->stack, sp);
+        opcode = vm->code[ip];
+    }
+    if (trace) vm_print_data(vm->globals, vm->nglobals);
+}
+```
+
+The logic is pretty straightforward:
+- it fetches the next instruction to execute
+- checks that it hasn't reached `HALT`
+- ensures the instruction pointer is still within `code_size`
+- then dispatches execution to the corresponding handler
+
+
 
 
 Here's the file solve script:
