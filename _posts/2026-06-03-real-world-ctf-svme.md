@@ -23,13 +23,43 @@ The `SVME` binary challenge is a simple stack-based virtual machine written in C
 
 Here's the source for the [vm](https://github.com/parrt/simple-virtual-machine-C)
 
-The challenge files can be found [here](pwn_svme.zip)
+The challenge files can be found ![here](pwn_svme.zip)
 
 The bug is an *out-of-bounds read/write* in the VM memory layout.
 
 By abusing it, you can corrupt VM state and eventually get code execution.
 
 ### Analysis
+
+We are given 3 files (svme, libc, linker)
+
+![checksec](checksec.png)
+
+And the binary `svme` has all protections enabled.
+
+First thing to do is patched it using `pwninit`
+
+```bash
+pwninit --bin svme --libc libc-2.31.so --ld ld-2.31.so --no-template
+```
+
+With that, the binary should be linked with the one provided
+
+```bash
+mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme$ ldd svme_patched 
+	linux-vdso.so.1 (0x00007ffff7fc3000)
+	libc.so.6 => ./libc.so.6 (0x00007ffff7dc2000)
+	ld-2.31.so => /lib64/ld-linux-x86-64.so.2 (0x00007ffff7fc5000)
+mark@rwx:~/Desktop/Practice/BinExp/Challs/STACK/Svme
+```
+
+The attached slide is a presentation on "How to Build a Virtual Machine"
+
+![intro](intro.png)
+
+> The goal is to simulate a simple computer using bytecodes. An instruction set is defined including operations like add, subtract, branch, load, store, print. The bytecode format and a sample program are shown in the slide. The VM will fetch, decode and execute instructions in a cycle, operating on a stack. 
+{: .prompt-tip }
+
 
 
 Here's the file solve script:
