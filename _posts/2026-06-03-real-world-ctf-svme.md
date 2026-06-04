@@ -905,9 +905,33 @@ We can start the process with `run` and send `0x1ff` bytes. The breakpoint set a
 ![gdb2](gdb2.png)
 ![gdb3](gdb3.png)
 
-Register `rdi` contains the pointer to the VM structure, we can dump it
+Register `$rdi` holds a pointer to the VM structure, we can dump it
 
 ![gdb4](gdb5.png)
+
+### Exploitation
+
+Our goal is to leverage the arb read/write via the OOB to gain code execution.
+
+There are many ways you can go about that but before that, we need a way to get leaks.
+
+If you notice you'll realize there's actually no way of getting leak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 Here's the file solve script:
