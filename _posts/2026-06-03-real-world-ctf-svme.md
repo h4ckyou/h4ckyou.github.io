@@ -1007,7 +1007,6 @@ First you need to know that `callsp` is currently at `-1` because we've not exec
 ![win2](win2.png)
 ![win3](win3.png)
 ![win4](win4.png)
-![win5](win5.png)
 
 Hence, the offset is `0xf84`, which corresponds to `0x3e1` in word-addressable units (divide by 4 since each word is 4 bytes).
 
