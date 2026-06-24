@@ -20,6 +20,13 @@ The Economic Community of West African States (ECOWAS) organizes an annual cyber
 
 Representing Nigeria, my team, error, successfully qualified for the ECOWAS Cybersecurity Regional Finals. 
 
+<figure>
+  <img src="preview2.png" alt="team error">
+  <figcaption style="text-align:center;">
+    Representing Nigeria (error)
+  </figcaption>
+</figure>
+
 The finals, held in Accra, Ghana, brought together the best cybersecurity teams from across West Africa to compete for the regional championship.
 
 Twelve teams representing twelve countries qualified for the finals:
@@ -48,4 +55,16 @@ The qualification process consisted of three phases:
 - Battleground
 
 Our team, error, placed 1st nationally in all three phases, earning the opportunity to represent Nigeria at the ECOWAS Cybersecurity Regional Finals in Accra, Ghana.
+
+### Sunday, June 7: Arrival in Accra
+
+Our flight to Accra was on *Sunday, June 7*. Before that, I had travelled back home to *Lagos, Nigeria* since I was at school, on *June 5*.
+
+At the airport, I met up with my teammates, *securedviki* and *proflamyt*.
+
+Our fourth teammate, *Theory*, was based in *Dakar, Senegal* at the time, so he travelled separately with the Senegalese team.
+
+Upon arriving in Accra, a representative from the hotel was waiting to pick us up from the airport and take us to the venue.
+
+The check-in process was smooth, and each of us was assigned an individual room
 
