@@ -91,3 +91,28 @@ I also got some good view from the hotel room.
 ![room1](hotel_room2.jpg)
 ![room2](hotel_room3.jpg)
 
+About two hours later, *Theory*, my closest friend, finally arrived. The last time I had seen him was during my three-month internship in Dakar, Senegal, so it felt really good to reunite after all that time.
+
+Later in the evening, we went out to grab something at the nearest KFC.
+
+#### Monday, June 8: Briefing
+
+Monday morning began with the official competition briefing, conducted by the organizers and Mrs. Folake Olagunju, Director of Digital Economy and Post at the ECOWAS Commission.
+
+During the session, we were introduced to the competition format, schedule, and start times. We also received a piece of news that took some time to process: the scoreboard would remain hidden throughout the entire competition. Unlike most CTF events, we would have no way of knowing our standing relative to the other teams until the competition ended.
+
+We were also informed that a separate women's cybersecurity competition would take place later that evening.
+
+The competition consisted of six phases:
+
+| Order | Phase |
+|:-----:|-------|
+| 1 | Jeopardy (Round 1) |
+| 2 | King of the Hill (Double Session, 4 Teams per Hill) |
+| 3 | Code Review |
+| 4 | Red vs Blue (Double Session) |
+| 5 | Battleground (Double Session) |
+| 6 | Jeopardy (Final Round) |
+
+Based on our experience during the qualification rounds, we already had a strong suspicion about which phase would be the most decisive. King of the Hill had consistently created the largest point differences between teams, and we expected it to play a major role in determining the final standings.
+
