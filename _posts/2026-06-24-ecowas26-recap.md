@@ -5,7 +5,7 @@ categories: [CTF]
 tags: [onsite, events]
 math: true
 mermaid: true
-media_subpath: /assets/posts/2026-06-23-Ecowas-Recap
+media_subpath: /assets/posts/2026-06-24-Ecowas-Recap
 image:
   path: preview.png
 ---
