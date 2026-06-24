@@ -39,3 +39,13 @@ Twelve teams representing twelve countries qualified for the finals:
 | 🇸🇱 Sierra Leone  | Sudo-SL                 |
 | 🇹🇬 Togo          | RedTeam-TG              |
 
+Prior to the regional finals, a national qualification round was conducted to determine the team that would represent each country.
+
+The qualification process consisted of three phases:
+
+- Jeopardy
+- King of the Hill (KoTH)
+- Battleground
+
+Our team, error, placed 1st nationally in all three phases, earning the opportunity to represent Nigeria at the ECOWAS Cybersecurity Regional Finals in Accra, Ghana.
+
