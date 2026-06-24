@@ -31,7 +31,7 @@ The finals, held in Accra, Ghana, brought together the best cybersecurity teams 
 
 Twelve teams representing twelve countries qualified for the finals:
 
-![teams](teams.png)
+![teams](teams.jpg)
 
 | Country            | Team                    |
 | ------------------ | ----------------------- |
