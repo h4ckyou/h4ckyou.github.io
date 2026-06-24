@@ -31,6 +31,8 @@ The finals, held in Accra, Ghana, brought together the best cybersecurity teams 
 
 Twelve teams representing twelve countries qualified for the finals:
 
+![teams](teams.png)
+
 | Country            | Team                    |
 | ------------------ | ----------------------- |
 | 🇧🇯 Benin         | Escadron                |
@@ -58,7 +60,7 @@ Our team, error, placed 1st nationally in all three phases, earning the opportun
 
 ### Sunday, June 7: Arrival in Accra
 
-Our flight to Accra was on *Sunday, June 7*. Before that, I had travelled back home to *Lagos, Nigeria* since I was at school, on *June 5*.
+Our flight to Accra was on *Sunday, June 7*. Before that, I had travelled back home to *Lagos, Nigeria* since I was at school, on *Friday, June 5*.
 
 At the airport, I met up with my teammates, *securedviki* and *proflamyt*.
 
