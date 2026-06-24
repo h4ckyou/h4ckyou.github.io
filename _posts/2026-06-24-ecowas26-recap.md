@@ -72,7 +72,7 @@ Our fourth teammate, *Theory*, was based in *Dakar, Senegal* at the time, so he 
 Upon arriving in Accra, a representative from the hotel was waiting to pick us up from the airport and take us to the venue.
 
 <figure>
-  <img src="plane3.png" alt="team error">
+  <img src="plane3.jpg" alt="team error">
   <figcaption style="text-align:center;">
     Interestingly, we had the entire shuttle bus to ourselves, as none of the other teams had arrived yet.
   </figcaption>
