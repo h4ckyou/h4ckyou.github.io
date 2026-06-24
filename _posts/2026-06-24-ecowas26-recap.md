@@ -65,7 +65,13 @@ Our flight to Accra was on *Sunday, June 7*. Before that, I had travelled back h
 At the airport, I met up with my teammates, *securedviki* and *proflamyt*.
 
 ![ng_gh_1](ng_gh_1.jpg)
-![plane2](plane2.jpg)
+<figure>
+  <img src="plane2.jpg" alt="aiport">
+  <figcaption style="text-align:center;">
+    Me on my phone (as usual 😭)
+  </figcaption>
+</figure>
+
 
 Our fourth teammate, *Theory*, was based in *Dakar, Senegal* at the time, so he travelled separately with the Senegalese team.
 
@@ -78,5 +84,10 @@ Upon arriving in Accra, a representative from the hotel was waiting to pick us u
   </figcaption>
 </figure>
 
-The check-in process was smooth, and each of us was assigned an individual room
+The check-in process was smooth, and each of us was assigned an individual room.
+
+I also got some good view from the hotel room.
+
+![room1](hotel_room2.jpg)
+![room2](hotel_room3.jpg)
 
