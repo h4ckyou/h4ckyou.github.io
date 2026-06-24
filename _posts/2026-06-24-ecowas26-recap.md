@@ -64,9 +64,19 @@ Our flight to Accra was on *Sunday, June 7*. Before that, I had travelled back h
 
 At the airport, I met up with my teammates, *securedviki* and *proflamyt*.
 
+![ng_gh_1](ng_gh_1.jpg)
+![plane2](plane2.jpg)
+
 Our fourth teammate, *Theory*, was based in *Dakar, Senegal* at the time, so he travelled separately with the Senegalese team.
 
 Upon arriving in Accra, a representative from the hotel was waiting to pick us up from the airport and take us to the venue.
+
+<figure>
+  <img src="plane3.png" alt="team error">
+  <figcaption style="text-align:center;">
+    Interestingly, we had the entire shuttle bus to ourselves, as none of the other teams had arrived yet.
+  </figcaption>
+</figure>
 
 The check-in process was smooth, and each of us was assigned an individual room
 
