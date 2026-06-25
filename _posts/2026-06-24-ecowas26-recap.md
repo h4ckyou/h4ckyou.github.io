@@ -306,7 +306,7 @@ For example, I got to meet **W1z4rd** from **Escadron (Benin)**, the pwn challen
 
 I also met a close friend of mine, **McSam**. After spending so much time talking online, finally meeting in person was a memorable experience.
 
-I meet many other members of cybersecurity community, including **ka3n1x**, **troylynx**, **phoenix**, **heavyghost**, **bloman**, **D4v3**, **r3solv3r**, **hades**, **mooder**, **damoreduc**, **raphael**, **em07robot**, **0xr1ck** and many others.
+I meet many other members of cybersecurity community, including **ka3n1x**, **troylynx**, **phoenix**, **heavyghost**, **bloman**, **D4v3**, **r3solv3r**, **hades**, **mooder**, **damoreduc**, **raphael**, **em07robot**, **Loufa**, **Sidy Diop**, **NTG**, **0xr1ck** and many others.
 
 Looking back, one of the best parts of the event wasn't just the competition itself, it was finally putting faces to names and meeting so many talented people whom I had only interacted with online before.
 
