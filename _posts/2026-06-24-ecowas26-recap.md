@@ -434,10 +434,32 @@ Anyway, here are some photos from the trip 😎
   </figcaption>
 </figure>
 
-
 <figure>
   <img src="IMG_4336.jpg" alt="error">
   <figcaption style="text-align:center;">
       Final scoreboard
+  </figcaption>
+</figure>
+
+### Closing notes
+
+ECOWAS CTF 2025 was more than just another competition for me.
+
+It was an opportunity to represent Nigeria alongside an incredible team, compete against some of the best players in West Africa, and meet many talented people whom I had only known through Discord, write-ups, and CTF scoreboards.
+
+The result was special, not just because we won, but because of the journey it took to get there. After years of consistent podium finishes, finally standing on the top step made every late night, every practice session, every qualification round, and every setback worth it.
+
+To everyone who organized the event, created challenges, mentored participants, and helped make the competition possible: thank you.
+
+And to my teammates - securedviki, proflamyt, and Theory, thank you for trusting me to be part of this journey. Winning the championship with you all is a memory I'll keep for a very long time.
+
+Congratulations to everyone who partcipated.
+
+Till next time.
+
+<figure>
+  <img src="IMG_6201.jpg" alt="error">
+  <figcaption style="text-align:center;">
+      Byeeee
   </figcaption>
 </figure>
