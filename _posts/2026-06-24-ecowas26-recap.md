@@ -297,7 +297,7 @@ After the competition ended, the **Cyber Security Authority (CSA) Ghana** organi
 
 By that point, most people including myself were exhausted. After several days of competition, all we really wanted was rest. Still, I didn't want to miss the opportunity, so I joined the tour.
 
-I met up with **Theory** and three members of **RedTeam-TG (Togo)**. I had previously met **Charles** and **Daniel** during the ICC in Japan, so this was my first time meeting **aaron_meta** in person.
+I met up with **Theory** and three members of **RedTeam-TG (Togo)**. I had previously met **Charles** and **Daniel** during the ICC in Japan, so this was my first time meeting **aaron_meta** in person (in terms of speaking with him more physically), I had seen him in previous editions of ECOWAS CTF.
 
 One of the highlights of the trip was finally meeting people I had only known online through Discord and various competitions.
 
