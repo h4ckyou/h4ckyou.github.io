@@ -460,7 +460,7 @@ Till next time.
 <figure>
   <img src="IMG_6201.jpg" alt="error">
   <figcaption style="text-align:center;">
-      Byeeee
+      Byeeee 👋
   </figcaption>
 </figure>
 
