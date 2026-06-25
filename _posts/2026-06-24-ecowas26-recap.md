@@ -265,3 +265,29 @@ That was the moment it finally sank in: we had made the podium. Out of every tea
 
 For the first time since the competition began, we knew that all the preparation, the qualification rounds, the late nights, and the pressure had been worth it.
 
+#### Final standings - ECOWAS Hackathon 2026 Grand Final
+
+| Rank | Country | Team |
+|------|---------|------|
+| 🥇 1st | 🇳🇬 Nigeria | **error** |
+| 🥈 2nd | 🇧🇯 Benin | Escadron |
+| 🥉 3rd | 🇹🇬 Togo | RedTeam-TG |
+
+![winner](IMG_4503.PNG)
+
+For the first time, after several years of coming close, we finally stood at the top of the podium as the 1st place.
+
+| Year | Placement |
+| ---- | --------- |
+| 2022 | 🥈 Second |
+| 2023 | 🥉 Third  |
+| 2024 | 🥉 Third  |
+| 2026 | 🥇 First  |
+
+I'm incredibly proud of what we achieved as a team. This result wasn't just about technical skill, it was the product of years of perseverance, consistency, preparation, and hard work.
+
+To my teammates - **securedviki**, **proflamyt**, and **Theory**.. thank you for everything. Competing alongside you has been a privilege. You are all exceptional players, and I'm proud of what we accomplished together.
+
+From three consecutive podium finishes to finally taking first place, this victory made every hour of preparation worth it. 🇳🇬🏆🥹
+
+### After 
