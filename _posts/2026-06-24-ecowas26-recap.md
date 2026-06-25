@@ -302,7 +302,7 @@ I met up with **Theory** and three members of **RedTeam-TG (Togo)**. I had previ
 
 One of the highlights of the trip was finally meeting people I had only known online through Discord and various competitions.
 
-For example, I got to meet **W1z4rd** from **Escadron (Benin)**, the pwn challenge author behind several of the fun and painful challenges from the **HackerLab 2025** qualifiers. He creates some genuinely excellent challenges.
+For example, I got to meet **W1z4rd** from **Escadron (Benin)**, the author behind several of the fun and painful challenges from the **HackerLab 2025** qualifiers. He creates some genuinely excellent challenges.
 
 I also met a close friend of mine, **McSam**. After spending so much time talking online, finally meeting in person was a memorable experience.
 
