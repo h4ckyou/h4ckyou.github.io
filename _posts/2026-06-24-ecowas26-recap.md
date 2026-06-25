@@ -463,3 +463,5 @@ Till next time.
       Byeeee
   </figcaption>
 </figure>
+
+ありがとうございます！😊
