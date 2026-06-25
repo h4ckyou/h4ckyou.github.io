@@ -437,6 +437,7 @@ Anyway, here are some photos from the trip 😎
   <img src="IMG_6188.jpg" alt="gh">
   <img src="IMG_6199.jpg" alt="gh">
   <img src="IMG_6200.jpg" alt="gh">
+  <img src="meee2.jpeg" alt="gh">
   <figcaption style="text-align:center;">
       Ghana 🇬🇭
   </figcaption>
