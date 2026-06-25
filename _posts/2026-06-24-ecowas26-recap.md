@@ -283,6 +283,7 @@ For the first time, after several years of coming close, we finally stood at the
 | 2022 | 🥈 Second |
 | 2023 | 🥉 Third  |
 | 2024 | 🥉 Third  |
+| 2025 | Didn't Hold |
 | 2026 | 🥇 First  |
 
 I'm incredibly proud of what we achieved as a team. This result wasn't just about technical skill, it was the product of years of perseverance, consistency, preparation, and hard work.
