@@ -273,7 +273,8 @@ For the first time since the competition began, we knew that all the preparation
 | 🥈 2nd | 🇧🇯 Benin | Escadron |
 | 🥉 3rd | 🇹🇬 Togo | RedTeam-TG |
 
-![winner](IMG_4503.PNG)
+![winner1](IMG_4503.PNG)
+![winner2](IMG_4500.PNG)
 
 For the first time, after several years of coming close, we finally stood at the top of the podium as the 1st place.
 
@@ -286,8 +287,157 @@ For the first time, after several years of coming close, we finally stood at the
 
 I'm incredibly proud of what we achieved as a team. This result wasn't just about technical skill, it was the product of years of perseverance, consistency, preparation, and hard work.
 
-To my teammates - **securedviki**, **proflamyt**, and **Theory**.. thank you for everything. Competing alongside you has been a privilege. You are all exceptional players, and I'm proud of what we accomplished together.
+To my teammates - **securedviki**, **proflamyt**, and **Theory**..thank you for everything. Competing alongside you has been a privilege. You are all exceptional players, and I'm proud of what we accomplished together.
 
-From three consecutive podium finishes to finally taking first place, this victory made every hour of preparation worth it. 🇳🇬🏆🥹
+From three consecutive podium finishes to finally taking first place, this victory made every hour of preparation worth it. 😭🏆🇳🇬
 
-### After 
+### Photos
+
+After the competition ended, the **Cyber Security Authority (CSA) Ghana** organized a tour for the participants.
+
+By that point, most people including myself were exhausted. After several days of competition, all we really wanted was rest. Still, I didn't want to miss the opportunity, so I joined the tour.
+
+I met up with **Theory** and three members of **RedTeam-TG (Togo)**. I had previously met **Charles** and **Daniel** during the ICC in Japan, so this was my first time meeting **aaron_meta** in person.
+
+One of the highlights of the trip was finally meeting people I had only known online through Discord and various competitions.
+
+For example, I got to meet **W1z4rd** from **Escadron (Benin)**, the pwn challenge author behind several of the fun and painful challenges from the **HackerLab 2025** qualifiers. He creates some genuinely excellent challenges.
+
+I also met a close friend of mine, **McSam**. After spending so much time talking online, finally meeting in person was a memorable experience.
+
+I meet many other members of cybersecurity community, including **ka3n1x**, **troylynx**, **phoenix**, **heavyghost**, **bloman**, **D4v3**, **r3solv3r**, **hades**, **mooder**, **damoreduc**, **raphael**, **em07robot** and many others.
+
+Looking back, one of the best parts of the event wasn't just the competition itself, it was finally putting faces to names and meeting so many talented people whom I had only interacted with online before.
+
+Anyway, here are some photos from the trip 😎
+
+<figure>
+  <img src="8DBCC81F-5CCB-4ED6-83F4-A8714B154DBC.jpg" alt="mcsam">
+  <img src="b6d5dd95-01ab-43ef-883f-68a213e2fa5c.jpg" alt="mcsam">
+  <figcaption style="text-align:center;">
+      Yes, this is the real McSam 😏
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="68253061-54ec-4f22-bae1-3e644cfd50d3.jpg" alt="wizard">
+  <figcaption style="text-align:center;">
+      Bruh, w1z4rd is just a chill dude 😭🔥
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4280.jpg" alt="me">
+  <figcaption style="text-align:center;">
+      I was going to go meet Theory, he had just arrived at this time
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="camphoto_758783491.jpg" alt="me">
+  <figcaption style="text-align:center;">
+      Chillin, while i waited for Theory to process the hotel check-in docs
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4301.jpg" alt="proflamyt">
+  <figcaption style="text-align:center;">
+    This is proflamyt, currently the only Blue Belt holder from pwn.college in Nigeria 😎 (i'm coming for that second spot soon!)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4302.jpg" alt="theory">
+  <img src="IMG_4456.jpg" alt="theory">
+  <figcaption style="text-align:center;">
+      Yet another photo of Theory
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4321.jpg" alt="error">
+  <figcaption style="text-align:center;">
+      Team error (aside me - i'm taking the pictures 😭)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4325.jpg" alt="food">
+  <img src="IMG_4326.jpg" alt="view">
+  <figcaption style="text-align:center;">
+      We had coffee breaks, I enjoyed this drink and the view
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4458.jpg" alt="food">
+  <img src="IMG_4459.jpg" alt="food">
+  <figcaption style="text-align:center;">
+     Breakfast taken before departure
+  </figcaption>
+</figure>
+
+
+<figure>
+  <img src="IMG_4346.jpg" alt="star">
+  <img src="IMG_4347.jpg" alt="tower">
+  <figcaption style="text-align:center;">
+      Ghana
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_4482.jpg" alt="airport">
+  <figcaption style="text-align:center;">
+      On our way to the airport, saying my goodbyes
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_6128.jpg" alt="daniel">
+  <img src="IMG_6129.jpg" alt="charles">
+  <img src="IMG_6131.jpg" alt="charles">
+  <figcaption style="text-align:center;">
+      Daniel & Charles
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_6133.jpg" alt="meta">
+  <img src="IMG_6135.jpg" alt="meta">
+  <figcaption style="text-align:center;">
+      aaron_meta (chill guy 💯)
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_6144.jpg" alt="airport">
+  <figcaption style="text-align:center;">
+      Waiting for the bus of the tour
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_6170.jpg" alt="airport">
+  <figcaption style="text-align:center;">
+      Theory is like "Welcome to Ghana"
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="IMG_6188.jpg" alt="gh">
+  <img src="IMG_6199.jpg" alt="gh">
+  <img src="IMG_6200.jpg" alt="gh">
+  <figcaption style="text-align:center;">
+      Ghana 🇬🇭
+  </figcaption>
+</figure>
+
+
+<figure>
+  <img src="IMG_4336.jpg" alt="error">
+  <figcaption style="text-align:center;">
+      Final scoreboard
+  </figcaption>
+</figure>
