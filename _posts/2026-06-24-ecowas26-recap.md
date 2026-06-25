@@ -312,7 +312,7 @@ Looking back, one of the best parts of the event wasn't just the competition its
 Anyway, here are some photos from the trip 😎
 
 <figure>
-  <img src="8DBCC81F-5CCB-4ED6-83F4-A8714B154DBC.jpg" alt="mcsam">
+  <img src="59f59df0-7bd3-4480-a431-1b14384b0a92.jpg" alt="mcsam">
   <img src="b6d5dd95-01ab-43ef-883f-68a213e2fa5c.jpg" alt="mcsam">
   <figcaption style="text-align:center;">
       Yes, this is the real McSam 😏
