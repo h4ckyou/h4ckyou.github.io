@@ -412,20 +412,28 @@ Anyway, here are some photos from the trip 😎
 </figure>
 
 <figure>
-  <img src="IMG_6144.jpg" alt="airport">
+  <img src="IMG_6144.jpg" alt="gh">
   <figcaption style="text-align:center;">
       Waiting for the bus of the tour
   </figcaption>
 </figure>
 
 <figure>
-  <img src="IMG_6170.jpg" alt="airport">
+  <img src="IMG_6170.jpg" alt="gh">
   <figcaption style="text-align:center;">
       Theory is like "Welcome to Ghana"
   </figcaption>
 </figure>
 
 <figure>
+  <img src="charles.jpg" alt="charles">
+  <figcaption style="text-align:center;">
+      Theory is like "Welcome to Ghana"
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="meee.jpeg" alt="gh">
   <img src="IMG_6188.jpg" alt="gh">
   <img src="IMG_6199.jpg" alt="gh">
   <img src="IMG_6200.jpg" alt="gh">
