@@ -453,7 +453,7 @@ Anyway, here are some photos from the trip 😎
 
 ### Closing notes
 
-ECOWAS CTF 2025 was more than just another competition for me.
+ECOWAS CTF 2026 was more than just another competition for me.
 
 It was an opportunity to represent Nigeria alongside an incredible team, compete against some of the best players in West Africa, and meet many talented people whom I had only known through Discord, write-ups, and CTF scoreboards.
 
