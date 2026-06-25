@@ -323,7 +323,7 @@ Anyway, here are some photos from the trip 😎
 <figure>
   <img src="68253061-54ec-4f22-bae1-3e644cfd50d3.jpg" alt="wizard">
   <figcaption style="text-align:center;">
-      Bruh, w1z4rd is just a chill dude 😭🔥
+      Bruh, W1z4rd is just a chill dude 😭🔥
   </figcaption>
 </figure>
 
