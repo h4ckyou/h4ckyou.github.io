@@ -17,8 +17,8 @@ typedef struct {
 Pwner me = {
     .status = "Computer Science Student",
     .passion = "Cybersecurity Enthusiast & CTF Player",
-    .skills = {"Pwn", "RE", "Offensive Security"},
-    .certs = "CPTS",
+    .skills = {"Pwn", "Offensive Security", "Reverse Engineering"},
+    .certs = "CPTS", "CRTA"
     .discord = "@h4cky0u"
 };
 ```
