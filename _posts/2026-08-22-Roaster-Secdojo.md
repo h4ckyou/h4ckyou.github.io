@@ -402,7 +402,7 @@ The command completed successfully.
 PS C:\Users\cody.gardner>
 ```
 
-Now that a new user whose credential is known is created, we can dump the local SAM registry and login as `administrator` to get the flags.
+Now that a new user whose credential is known is created, we can dump the local SAM registry hive and authenticate as `administrator` to retrieve the flags.
 
 ![enum17](enum17.png)
 ![enum18](enum18.png)
