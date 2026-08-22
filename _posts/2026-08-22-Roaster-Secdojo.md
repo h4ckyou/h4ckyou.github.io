@@ -240,7 +240,15 @@ The next step is to check whether any of these accounts are vulnerable to *AS-RE
 $krb5asrep$23$cody.gardner@SECDOJO.LOCAL:d7deb849577f0d9093856c23d5a96885$8d5ccbfd680df1a3ca313c4ae08e484f74485c67d675c50c68576a5ff02c193fbade0b356f64a9824d90fa978a02c7f3b1aecdcdfd3130314e07b9786504d62cc6f7ace91309c104e73906531ec4c00f126f67004ba86677d124f4c2ae2ae1cbee261090590039195e59d89dc307e510ae0801cb1ebbe4b5ea5b1605f049f8e91d2b3f692c17f81b982b03dd1520d8f0bd81cdedc6ce0be203e56a0aac10953c4836af0a3d472cdf572deff78877d453e90a00065668aeb2df3bb3bc0eb3a8c5cc52517050c37b80d62e773981ebcf4596ab0dc81bdfb022a0b19573fa3353ce9a2b761f496f069ffec4a7f9b280
 ```
 
-Cracking the hash with John & rockyou as the wordlist worked!
+Cracking the hash with `John the Ripper` using the `rockyou.txt` wordlist was successful!
 
 ![enum9](enum9.png)
+
+We can now confirm that the recovered credentials are valid.
+
+![enum10](enum10.png)
+
+Testing the credentials against various services on the `WSRV` machine shows that we have `RDP` access.
+
+![enum11](enum11.png)
 
