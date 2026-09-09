@@ -173,3 +173,15 @@ But a huge restriction here is *ASLR / CANARY*, we don't have leaks so how can w
 
 Well it's pretty easy.
 
+From the man page of [fork](https://man7.org/linux/man-pages/man2/fork.2.html)
+
+![main](main.png)
+
+> Key point: The child process is an exact duplicate of the parent process
+
+Because the child process is an exact duplicate of the parent process, this means that the memory mapping & canary are the same.
+
+Also since the parent listens indefinitely, no matter what happens to the child created, it would always still give the exact duplicate.
+
+We can leverage this behaviour to brute force the stack canary.
+
