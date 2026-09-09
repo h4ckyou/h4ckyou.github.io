@@ -154,6 +154,8 @@ Match means it returns 1 and we get *Username found!*, otherwise 0 and nothing.
 
 With the stack buffer overflow present, there's just 24 bytes past the end of the buffer we have control over.
 
+### Exploitation
+
 Here's an overview of the stack frame layout.
 
 ```c
@@ -177,11 +179,63 @@ From the man page of [fork](https://man7.org/linux/man-pages/man2/fork.2.html)
 
 ![main](main.png)
 
-> Key point: The child process is an exact duplicate of the parent process
+> **Key point:** the child is an exact duplicate of the parent.
 
-Because the child process is an exact duplicate of the parent process, this means that the memory mapping & canary are the same.
+`fork()` hands the child a copy of the parent's address space, which means the **stack canary and the PIE base are identical in every child**. 
 
-Also since the parent listens indefinitely, no matter what happens to the child created, it would always still give the exact duplicate.
+The parent never re-randomizes, so no matter how many children we crash, the next connection gets us another clone with the same memory space.
 
-We can leverage this behaviour to brute force the stack canary.
+That turns an unguessable 64-bit value into 8 independent byte guesses, and gives us an oracle to check each one:
+- **Wrong byte** => the canary check fails, `__stack_chk_fail` kills the child, connection drops with no output
+- **Right byte** => `check_username` returns cleanly and we get back `Username found!`
 
+We can use this same oracle to recover the saved RIP, which gives us the PIE base.
+
+There's one catch in doing this though:
+- `leave` restores `rbp` from the saved `rbp` before `ret`, and the code in `main` right after the call dereferences it (`mov eax, [rbp-0x38]` at `main+0x23a`)
+
+```bash
+.text:0000000000000C5C locret_C5C:                             ; CODE XREF: check_username+E6↑j
+.text:0000000000000C5C                 leave
+.text:0000000000000C5D                 retn
+
+.text:0000000000000EBF loc_EBF:                                ; CODE XREF: main+1F7↑j
+.text:0000000000000EC5                 mov     eax, [rbp+fd]
+.text:0000000000000EC8                 mov     edi, eax
+.text:0000000000000ECA                 call    check_username
+.text:0000000000000ECF                 test    eax, eax
+.text:0000000000000ED1                 jz      short loc_EE9
+.text:0000000000000ED3                 mov     eax, [rbp+fd]
+.text:0000000000000ED6                 mov     edx, 10h        ; n
+.text:0000000000000EDB                 lea     rsi, aUsernameFound ; "Username found!\n"
+.text:0000000000000EE2                 mov     edi, eax        ; fd
+.text:0000000000000EE4                 call    _write
+```
+
+I tried to play this by jumping to `main+0x23d` (`mov rdx, 10h`) but that wouldn't give a proper oracle because the `file descriptor` for `write` needs to be `client fd`. But here it just ends up being `1` (remember `check_username` returns `1` on valid `memcmp`).
+
+Fixing that is easy enough, leak the saved `rbp` first with the same oracle, then carry on with the plan.
+
+For overcoming the limited rip control, we can just stack pivot.
+
+Set `rbp` to `stack_buffer_address` and `rip` to `leave, ret`.
+
+Remember that the `check_username` does a `leave, ret`.
+
+So this ends up being:
+
+```bash
+; check_username' own epilogue
+mov rsp, rbp    ; leave
+pop rbp         ;   -> rbp = our fake value, from the payload
+pop rip         ; ret  -> our leave;ret gadget
+
+; the gadget
+mov rsp, rbp    ; leave
+pop rbp
+pop rip         ; ret  -> first link of the chain
+```
+
+That effectively sets `rsp` to the address of our ropchain, and then we can trigger the whole ROPchain.
+
+> Note: 
