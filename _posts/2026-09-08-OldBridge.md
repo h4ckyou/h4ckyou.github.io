@@ -137,6 +137,39 @@ __int64 __fastcall check_username(int a1)
 }
 ```
 
-The program's code is really short and the vulnerability is obvious.
+The code is short and the bug is obvious.
 
-It in
+`main` is pretty much templated socket programming. It creates a listener on the port we specify, then loops forever waiting for connections. Once we connect (`nc localhost 1337`), it forks a child to handle the actual flow in `check_username`.
+
+`check_username` takes the `client_fd` as a parameter and reads up to `0x420` (1056) bytes into a buffer that only holds `0x408` (1032):
+
+```c
+char buf[1032];
+n = read(client_fd, buf, 0x420);
+```
+
+It then XORs every byte it read with 0xD and memcmps the first 6 against `il{dih`.
+
+Match means it returns 1 and we get *Username found!*, otherwise 0 and nothing.
+
+With the stack buffer overflow present, there's just 24 bytes past the end of the buffer we have control over.
+
+Here's an overview of the stack frame layout.
+
+```c
+[ 1032 bytes buf ][ canary 8 ][ saved rbp 8 ][ return address 8 ]
+```
+
+Ideally this gives us only 8 bytes over the return address.
+
+It's not a lot but it's usable!
+
+The binary also comes with fancy gadgets that makes life easy.
+
+![gadget1](gadget1.png)
+![gadget2](gadget2.png)
+
+But a huge restriction here is *ASLR / CANARY*, we don't have leaks so how can we get them?
+
+Well it's pretty easy.
+
