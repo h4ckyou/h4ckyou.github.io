@@ -18,7 +18,7 @@ Pwner me = {
     .status = "Computer Science Student",
     .passion = "Cybersecurity Enthusiast & CTF Player",
     .skills = {"Pwn", "Offensive Security", "Reverse Engineering"},
-    .certs = "CPTS", "CRTA", "CPENT"
+    .certs = "CPTS, CRTA, CPENT"
     .discord = "@h4cky0u"
 };
 ```
