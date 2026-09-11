@@ -20,7 +20,7 @@ I won't go into detail about what made me start studying binary exploitation (ak
 
 I worked on completing the **Program Security** dojo, which gives you the **Yellow Belt**.
 
-I recommend completing this without AI of course (the challenge solving), the goal is to understand, and to do so well. Trust me, pwn.college is painful, but definitely worth it.
+I recommend completing this without AI of course (the challenge solving), the goal is to understand and know what exactly you're doing. Trust me, pwn.college is painful, but definitely worth it.
 
 In total, I solved *159* challenges ranging across:
 - Shellcoding
