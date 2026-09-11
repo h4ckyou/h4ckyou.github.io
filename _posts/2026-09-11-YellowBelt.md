@@ -1,5 +1,5 @@
 ---
-title: Gaining the Yellow Belt @ Pwn.College
+title: Gaining the Yellow Belt @ Pwn College
 date: 2026-09-11 20:38:00 +0100
 categories: [Blog]
 tags: [pwnable]
