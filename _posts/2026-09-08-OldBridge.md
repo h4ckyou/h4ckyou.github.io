@@ -1,7 +1,7 @@
 ---
 title: Old Bridge
 date: 2026-09-08 20:38:00 +0100
-categories: [blog]
+categories: [CTF, HackTheBox]
 tags: [pwnable, reversing]
 math: true
 mermaid: true
