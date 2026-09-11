@@ -7,7 +7,7 @@ math: true
 mermaid: true
 media_subpath: /assets/posts/2026-09-11-yellow-belt
 image:
-  path: preview.png
+  path: done2.png
 ---
 
 ## Program Security
@@ -20,7 +20,7 @@ I won't go into detail about what made me start studying binary exploitation (ak
 
 I worked on completing the **Program Security** dojo, which gives you the **Yellow Belt**.
 
-I recommend completing this without AI of course (the challenge solving), the goal is to understand and know what exactly you're doing. Trust me, pwn.college is painful, but definitely worth it.
+I recommend completing this without (AI autonomously doing everything for you) of course, the goal is to understand and know what exactly you're doing. Trust me, pwn.college is painful, but definitely worth it.
 
 In total, I solved *159* challenges ranging across:
 - Shellcoding
@@ -33,6 +33,9 @@ In total, I solved *159* challenges ranging across:
 - Glibc's allocator exploitation
 - Use After Free
 - Metadata corruption
+
+![preview](preview.png)
+_Program Security: 159 challenges, 100%_
 
 I actually finished the majority of these challenges months ago, but was left with 2 more REs.
 
@@ -134,8 +137,5 @@ Can you spot the bug in the code given above? If you can, then you've got some i
 After this, I plan on finishing the Blue Belt.. almost done with that haha... I've been a bit occupied with other stuff, which is why I haven't worked on it completely.
 
 ![done](done.png)
-![done2](done2.png)
-
-Thanks all for today!
 
 ありがとうございます！😊
