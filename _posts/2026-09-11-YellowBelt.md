@@ -134,7 +134,7 @@ Can you spot the bug in the code given above? If you can, then you've got some i
 After this, I plan on finishing the Blue Belt.. almost done with that haha... I've been a bit occupied with other stuff, which is why I haven't worked on it completely.
 
 ![done](done.png)
-![preview](preview.png)
+![done2](done2.png)
 
 Thanks all for today!
 
