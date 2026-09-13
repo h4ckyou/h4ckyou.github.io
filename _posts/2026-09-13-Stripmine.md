@@ -1,5 +1,5 @@
 ---
-title: Strip Mine @ Pwn College
+title: Strip Mine
 date: 2026-09-13 21:40:00 +0100
 categories: [CTF]
 tags: [reversing]
