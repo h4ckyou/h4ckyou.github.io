@@ -18,7 +18,7 @@ Pwner me = {
     .status = "Computer Science Student",
     .passion = "Cybersecurity Enthusiast & CTF Player",
     .skills = {"Pwn", "Offensive Security", "Reverse Engineering"},
-    .certs = "CPTS, CRTA, CPENT"
+    .certs = "CPTS, OSCP, CRTA, CPENT",
     .discord = "@h4cky0u"
 };
 ```
@@ -32,10 +32,17 @@ When I'm not ~~pwning~~, I'm probably watching anime.
 When I'm not watching anime, I'm probably not touching grass 😅
 
 ```c
-for (;;) {
-    Eat();
-    Sleep();
-    Pwn();
-    Repeat();
+void Eat(void);
+void Sleep(void);
+void Pwn(void);
+void Repeat(void);
+
+int main(void) {
+    for (;;) {
+        Eat();
+        Sleep();
+        Pwn();
+        Repeat();
+    }
 }
 ```
