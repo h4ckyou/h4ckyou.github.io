@@ -1,5 +1,5 @@
 ---
-title: Roaster Secdojo
+title: Roaster
 date: 2026-08-22 19:19:00 +0100
 categories: [Machines]
 tags: [Active Directory, Secdojo, Evasion]
