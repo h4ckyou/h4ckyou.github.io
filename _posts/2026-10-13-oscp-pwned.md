@@ -86,6 +86,6 @@ I'll keep working on my skills and getting better than I am now.
 
 My next goal is the Blue Belt @ pwn.college (so my next blog post might be about that... or not?).
 
-Thanks for reading, and to anyone doing the OSCP: enumerate, enumerate, enumerate!
+Thanks for reading, and to anyone preparing for the OSCP: enumerate, enumerate, enumerate!
 
 That's all! ありがとうございます！😊
